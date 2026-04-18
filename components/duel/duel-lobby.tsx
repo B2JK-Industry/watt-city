@@ -2,12 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { DUEL_GAMES, type DuelGameId } from "@/lib/duel";
 
 type Props = { username: string };
 
 export function DuelLobby({ username }: Props) {
   const router = useRouter();
   const [code, setCode] = useState("");
+  const [gameId, setGameId] = useState<DuelGameId>("currency-rush-duel");
   const [pending, setPending] = useState<"create" | "join" | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,7 +17,11 @@ export function DuelLobby({ username }: Props) {
     setError(null);
     setPending("create");
     try {
-      const res = await fetch("/api/duel/create", { method: "POST" });
+      const res = await fetch("/api/duel/create", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ gameId }),
+      });
       const json = await res.json();
       if (!res.ok || !json.ok) {
         setError(json.error ?? "Nepodarilo sa vytvoriť duel.");
@@ -65,6 +71,35 @@ export function DuelLobby({ username }: Props) {
           Staneš sa hráč A. Dostaneš kód a pošleš ho kamarátovi. Môžeš zahrať
           hneď — kamarát zahrá keď bude môcť.
         </p>
+        <div className="flex flex-col gap-2">
+          <span className="text-[10px] uppercase tracking-widest font-bold text-zinc-500">
+            Vyber hru
+          </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {DUEL_GAMES.map((g) => (
+              <button
+                key={g.id}
+                type="button"
+                onClick={() => setGameId(g.id)}
+                className={`text-left rounded-xl border-[3px] px-3 py-2.5 transition-all ${
+                  gameId === g.id
+                    ? "border-[var(--accent)] bg-[var(--accent)]/10 shadow-[3px_3px_0_0_var(--accent)]"
+                    : "border-[var(--ink)] bg-[var(--surface-2)] hover:border-[var(--accent)]/50"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">{g.emoji}</span>
+                  <div>
+                    <p className="font-black uppercase text-sm tracking-tight">
+                      {g.title}
+                    </p>
+                    <p className="text-[11px] text-zinc-400">{g.tagline}</p>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
         <button
           type="button"
           onClick={create}

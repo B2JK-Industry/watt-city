@@ -4,15 +4,48 @@ export const DUEL_TTL_SECONDS = 60 * 60 * 6; // 6 hours
 export const DUEL_ROUNDS = 6;
 export const DUEL_ROUND_SECONDS = 10;
 
-export type DuelRound = {
-  problem: {
-    from: "EUR" | "USD" | "PLN";
-    to: "EUR" | "USD" | "PLN";
-    amount: number;
-    rate: number;
-    answer: number; // canonical: amount * rate
-  };
+export type DuelGameId = "currency-rush-duel" | "math-sprint-duel";
+
+export const DUEL_GAMES: {
+  id: DuelGameId;
+  title: string;
+  emoji: string;
+  tagline: string;
+}[] = [
+  {
+    id: "currency-rush-duel",
+    title: "Kurzový šprint",
+    emoji: "💱",
+    tagline: "EUR ↔ PLN ↔ USD · presnejší vyhráva",
+  },
+  {
+    id: "math-sprint-duel",
+    title: "Matematický šprint",
+    emoji: "🧮",
+    tagline: "Počty na čas · kto bližšie, ten víťaz",
+  },
+];
+
+export type CurrencyProblem = {
+  kind: "currency";
+  from: "EUR" | "USD" | "PLN";
+  to: "EUR" | "USD" | "PLN";
+  amount: number;
+  rate: number;
+  answer: number;
 };
+
+export type MathProblem = {
+  kind: "math";
+  a: number;
+  b: number;
+  op: "+" | "-" | "×";
+  answer: number;
+};
+
+export type DuelProblem = CurrencyProblem | MathProblem;
+
+export type DuelRound = { problem: DuelProblem };
 
 export type DuelAnswer = {
   value: number;
@@ -21,7 +54,7 @@ export type DuelAnswer = {
 
 export type DuelRecord = {
   code: string;
-  gameId: "currency-rush-duel";
+  gameId: DuelGameId;
   seed: number;
   createdAt: number;
   playerA: string;
@@ -34,6 +67,7 @@ export type DuelRecord = {
 
 export type DuelSummary = {
   code: string;
+  gameId: DuelGameId;
   createdAt: number;
   playerA: string;
   playerB: string | null;
@@ -61,7 +95,11 @@ function mulberry32(seed: number): () => number {
   };
 }
 
-const RATES: { from: DuelRound["problem"]["from"]; to: DuelRound["problem"]["to"]; rate: number }[] = [
+const RATES: {
+  from: CurrencyProblem["from"];
+  to: CurrencyProblem["to"];
+  rate: number;
+}[] = [
   { from: "EUR", to: "PLN", rate: 4.3 },
   { from: "PLN", to: "EUR", rate: 1 / 4.3 },
   { from: "USD", to: "PLN", rate: 3.95 },
@@ -72,21 +110,47 @@ const RATES: { from: DuelRound["problem"]["from"]; to: DuelRound["problem"]["to"
 
 const AMOUNTS = [5, 10, 20, 25, 50, 80, 100, 150, 200];
 
-export function generateRounds(seed: number): DuelRound[] {
+export function generateRounds(
+  seed: number,
+  gameId: DuelGameId,
+): DuelRound[] {
   const rnd = mulberry32(seed);
   const rounds: DuelRound[] = [];
   for (let i = 0; i < DUEL_ROUNDS; i++) {
-    const pair = RATES[Math.floor(rnd() * RATES.length)];
-    const amount = AMOUNTS[Math.floor(rnd() * AMOUNTS.length)];
-    rounds.push({
-      problem: {
-        from: pair.from,
-        to: pair.to,
-        amount,
-        rate: pair.rate,
-        answer: Number((amount * pair.rate).toFixed(2)),
-      },
-    });
+    if (gameId === "currency-rush-duel") {
+      const pair = RATES[Math.floor(rnd() * RATES.length)];
+      const amount = AMOUNTS[Math.floor(rnd() * AMOUNTS.length)];
+      rounds.push({
+        problem: {
+          kind: "currency",
+          from: pair.from,
+          to: pair.to,
+          amount,
+          rate: pair.rate,
+          answer: Number((amount * pair.rate).toFixed(2)),
+        },
+      });
+    } else {
+      const ops: MathProblem["op"][] = ["+", "-", "×"];
+      const op = ops[Math.floor(rnd() * ops.length)];
+      let a: number, b: number, answer: number;
+      if (op === "×") {
+        a = 2 + Math.floor(rnd() * 11);
+        b = 2 + Math.floor(rnd() * 11);
+        answer = a * b;
+      } else if (op === "-") {
+        a = 20 + Math.floor(rnd() * 80);
+        b = 1 + Math.floor(rnd() * (a - 1));
+        answer = a - b;
+      } else {
+        a = 10 + Math.floor(rnd() * 90);
+        b = 10 + Math.floor(rnd() * 90);
+        answer = a + b;
+      }
+      rounds.push({
+        problem: { kind: "math", a, b, op, answer },
+      });
+    }
   }
   return rounds;
 }
@@ -107,13 +171,14 @@ export function makeCode(): string {
 
 export async function createDuel(
   playerA: string,
-  opts?: { code?: string; seed?: number },
+  opts?: { code?: string; seed?: number; gameId?: DuelGameId },
 ): Promise<DuelRecord> {
   const code = opts?.code ?? makeCode();
   const seed = opts?.seed ?? Math.floor(Math.random() * 2 ** 31);
+  const gameId = opts?.gameId ?? "currency-rush-duel";
   const record: DuelRecord = {
     code,
-    gameId: "currency-rush-duel",
+    gameId,
     seed,
     createdAt: Date.now(),
     playerA,
@@ -128,7 +193,11 @@ export async function createDuel(
 }
 
 export async function getDuel(code: string): Promise<DuelRecord | null> {
-  return await kvGet<DuelRecord>(`${KEY_PREFIX}${code}`);
+  const raw = await kvGet<DuelRecord>(`${KEY_PREFIX}${code}`);
+  if (!raw) return null;
+  // Older duel records before the gameId field was added default to currency
+  if (!raw.gameId) raw.gameId = "currency-rush-duel";
+  return raw;
 }
 
 export async function saveDuel(record: DuelRecord): Promise<void> {
@@ -146,7 +215,7 @@ export function assignPlayer(
 }
 
 export function summarize(record: DuelRecord): DuelSummary {
-  const rounds = generateRounds(record.seed);
+  const rounds = generateRounds(record.seed, record.gameId);
   const winners: ("A" | "B" | "tie")[] = [];
   let winsA = 0;
   let winsB = 0;
@@ -167,8 +236,9 @@ export function summarize(record: DuelRecord): DuelSummary {
       winsA++;
       continue;
     }
-    const dA = Math.abs(a.value - rounds[i].problem.answer);
-    const dB = Math.abs(b.value - rounds[i].problem.answer);
+    const truth = rounds[i].problem.answer;
+    const dA = Math.abs(a.value - truth);
+    const dB = Math.abs(b.value - truth);
     if (dA < dB) {
       winners.push("A");
       winsA++;
@@ -176,7 +246,6 @@ export function summarize(record: DuelRecord): DuelSummary {
       winners.push("B");
       winsB++;
     } else {
-      // tie on accuracy → faster wins; equal time = tie
       if (a.elapsedMs < b.elapsedMs) {
         winners.push("A");
         winsA++;
@@ -190,6 +259,7 @@ export function summarize(record: DuelRecord): DuelSummary {
   }
   return {
     code: record.code,
+    gameId: record.gameId,
     createdAt: record.createdAt,
     playerA: record.playerA,
     playerB: record.playerB,

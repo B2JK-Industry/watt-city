@@ -269,57 +269,65 @@ function DuelPlay({
 }) {
   const [index, setIndex] = useState(0);
   const [value, setValue] = useState("");
-  const [answers, setAnswers] = useState<DuelAnswer[]>([]);
-  const [roundStartedAt, setRoundStartedAt] = useState<number>(() => Date.now());
   const [secondsLeft, setSecondsLeft] = useState(DUEL_ROUND_SECONDS);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const answersRef = useRef<DuelAnswer[]>([]);
-  const indexRef = useRef(0);
+  const roundStartedAtRef = useRef<number>(Date.now());
+  const valueRef = useRef(value);
+  valueRef.current = value;
 
-  useEffect(() => {
-    answersRef.current = answers;
-  }, [answers]);
-  useEffect(() => {
-    indexRef.current = index;
-  }, [index]);
+  // Refs keep the tick closure stable regardless of re-renders so a keystroke
+  // no longer remounts the interval (prev bug: timer slowed / stalled while
+  // the user was typing because the effect re-ran on every value change).
+  const submitAll = useRef(onSubmit);
+  submitAll.current = onSubmit;
 
-  const commit = useCallback(
+  const advance = useCallback(
     (raw: string, auto: boolean) => {
       const parsed = Number(raw.trim().replace(",", "."));
-      const elapsed = Date.now() - roundStartedAt;
+      const elapsed = Date.now() - roundStartedAtRef.current;
       const answer: DuelAnswer = {
         value: Number.isFinite(parsed) ? parsed : Number.NaN,
         elapsedMs: auto ? DUEL_ROUND_SECONDS * 1000 : elapsed,
       };
-      const nextAnswers = [...answers, answer];
-      setAnswers(nextAnswers);
-      if (nextAnswers.length >= rounds.length) {
-        onSubmit(nextAnswers);
-      } else {
-        setIndex((i) => i + 1);
+      setIndex((prevIdx) => {
+        const nextIdx = prevIdx + 1;
+        // Use functional state capture so we always append to the latest list.
+        // Snapshot current answers via the functional setter trick:
+        answersStateRef.current = [...answersStateRef.current, answer];
+        if (answersStateRef.current.length >= rounds.length) {
+          submitAll.current(answersStateRef.current);
+          return prevIdx; // stay; parent will switch phase
+        }
         setValue("");
         setSecondsLeft(DUEL_ROUND_SECONDS);
-        setRoundStartedAt(Date.now());
-      }
+        roundStartedAtRef.current = Date.now();
+        return nextIdx;
+      });
     },
-    [answers, onSubmit, roundStartedAt, rounds.length],
+    [rounds.length],
   );
 
-  // Tick timer while playing
+  // Backing store for answers kept outside of React state so a rapid auto-
+  // submit from the timer can't lose entries in an async state batch.
+  const answersStateRef = useRef<DuelAnswer[]>([]);
+
+  const advanceRef = useRef(advance);
+  advanceRef.current = advance;
+
+  // Tick timer while playing — stable deps, no remount on keystroke.
   useEffect(() => {
     if (phase !== "playing") return;
     const id = window.setInterval(() => {
       setSecondsLeft((s) => {
         if (s <= 1) {
-          // auto-submit current value (or NaN)
-          commit(value, true);
+          advanceRef.current(valueRef.current, true);
           return DUEL_ROUND_SECONDS;
         }
         return s - 1;
       });
     }, 1000);
     return () => window.clearInterval(id);
-  }, [phase, commit, value]);
+  }, [phase]);
 
   // focus after round advances
   useEffect(() => {
@@ -341,8 +349,9 @@ function DuelPlay({
           type="button"
           className="btn btn-primary"
           onClick={() => {
-            setRoundStartedAt(Date.now());
+            roundStartedAtRef.current = Date.now();
             setSecondsLeft(DUEL_ROUND_SECONDS);
+            answersStateRef.current = [];
             onStart();
           }}
         >
@@ -374,16 +383,20 @@ function DuelPlay({
         onSubmit={(e) => {
           e.preventDefault();
           if (!value.trim()) return;
-          commit(value, false);
+          advance(value, false);
         }}
         className="card p-6 sm:p-8 flex flex-col gap-5"
       >
         <div className="flex flex-col items-center gap-2">
           <span className="text-xs uppercase tracking-widest text-zinc-400">
-            {round.problem.from} → {round.problem.to}
+            {round.problem.kind === "currency"
+              ? `${round.problem.from} → ${round.problem.to}`
+              : "Matematika"}
           </span>
           <div className="text-center text-4xl sm:text-5xl font-mono font-black">
-            {round.problem.amount} {round.problem.from} → ? {round.problem.to}
+            {round.problem.kind === "currency"
+              ? `${round.problem.amount} ${round.problem.from} → ? ${round.problem.to}`
+              : `${round.problem.a} ${round.problem.op} ${round.problem.b} = ?`}
           </div>
           <span className="text-xs text-zinc-500">
             vyhráva kto má menší rozdiel od presnej hodnoty
@@ -393,7 +406,9 @@ function DuelPlay({
           ref={inputRef}
           className="input text-center text-2xl font-mono"
           inputMode="decimal"
-          placeholder={round.problem.to}
+          placeholder={
+            round.problem.kind === "currency" ? round.problem.to : "?"
+          }
           value={value}
           onChange={(e) => setValue(e.target.value)}
           autoFocus
@@ -480,10 +495,23 @@ function ResultPanel({
                 </span>
               </div>
               <p className="text-sm">
-                <span className="text-zinc-400">
-                  {r.problem.amount} {r.problem.from} →{" "}
-                </span>
-                <strong>{correct.toFixed(2)} {r.problem.to}</strong>
+                {r.problem.kind === "currency" ? (
+                  <>
+                    <span className="text-zinc-400">
+                      {r.problem.amount} {r.problem.from} →{" "}
+                    </span>
+                    <strong>
+                      {correct.toFixed(2)} {r.problem.to}
+                    </strong>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-zinc-400">
+                      {r.problem.a} {r.problem.op} {r.problem.b} ={" "}
+                    </span>
+                    <strong>{correct}</strong>
+                  </>
+                )}
               </p>
               <AnswerRow label="A" name={duel.playerA} ans={a} truth={correct} />
               <AnswerRow

@@ -58,8 +58,8 @@ export default async function AboutPage() {
         <h2 className="brutal-heading text-2xl">{t.ideaTitle}</h2>
         <div className="card p-6 flex flex-col gap-3 text-zinc-300">
           <p>
-            Gen Z v Poľsku pošle BLIK za 2 sekundy, ale nevie čo je{" "}
-            <strong>RRSO</strong>. <a
+            Gen Z v Poľsku pošle BLIK (stratí fokus) za 2 sekundy, ale nevie čo
+            je <strong>RRSO</strong>. <a
               href="https://www.oecd.org/finance/financial-education/oecd-pisa-global-financial-literacy-survey.htm"
               className="underline text-[var(--accent)]"
               target="_blank"
@@ -248,35 +248,40 @@ export default async function AboutPage() {
             celý cyklus bez billingu.
           </p>
 
-          <div className="rounded-2xl border-[3px] border-[var(--ink)] bg-[var(--surface-2)] p-5 font-mono text-xs leading-relaxed overflow-x-auto">
-            <pre className="whitespace-pre">{`
-┌───────────────┐   ┌──────────────┐   ┌──────────────┐
-│  Vercel Cron  │──>│ Research     │──>│ Generate     │
-│  0 */6 * * *  │   │ pickSeed()   │   │ Claude 4.6   │
-└───────────────┘   └──────────────┘   └──────────────┘
-        │                                    │
-        │                            strict  ▼
-        │                           ┌──────────────┐
-        │                           │ Validate     │
-        │                           │ zod (schema) │
-        │                           └──────────────┘
-        │                                    │
-        │                                    ▼
-        │                           ┌──────────────┐
-        │                           │ Portfolio    │
-        │                           │ diversity    │
-        │                           └──────────────┘
-        │                                    │
-        │                                    ▼
-        │                           ┌──────────────┐
-        │                           │ Publish      │
-        │                           │ Upstash TTL  │
-        │                           └──────────────┘
-        │                                    │
-        ▼                                    ▼
-   /api/cron/                           Evict oldest
-   daily-game                           of 3 if full
-`}</pre>
+          <div className="rounded-2xl border-[3px] border-[var(--ink)] bg-[var(--surface-2)] p-5 sm:p-6">
+            <ol className="flex flex-wrap gap-x-3 gap-y-4 text-xs sm:text-sm">
+              {[
+                { label: "Vercel Cron", meta: "0 9 * * *" },
+                { label: "Research", meta: "pickSeed()" },
+                { label: "Generate", meta: "Claude 4.6" },
+                { label: "Validate", meta: "zod schema" },
+                { label: "Portfolio", meta: "diversity gate" },
+                { label: "Publish", meta: "Upstash TTL" },
+                { label: "Evict", meta: "oldest of 3" },
+              ].map((step, i, arr) => (
+                <li
+                  key={step.label}
+                  className="flex items-center gap-2"
+                >
+                  <div className="min-w-[128px] rounded-xl border-[3px] border-[var(--ink)] bg-[var(--surface)] px-3 py-2 shadow-[3px_3px_0_0_var(--ink)] font-mono">
+                    <p className="font-black text-sm leading-tight">
+                      {step.label}
+                    </p>
+                    <p className="text-[11px] text-zinc-400 leading-tight">
+                      {step.meta}
+                    </p>
+                  </div>
+                  {i < arr.length - 1 && (
+                    <span
+                      aria-hidden="true"
+                      className="text-[var(--accent)] font-black text-lg"
+                    >
+                      →
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ol>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
