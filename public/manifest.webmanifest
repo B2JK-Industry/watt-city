@@ -1,0 +1,32 @@
+{
+  "name": "Watt City",
+  "short_name": "Watt City",
+  "description": "Gra edukacyjna ucząca dzieci finansów osobistych.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a0f",
+  "theme_color": "#fde047",
+  "lang": "pl-PL",
+  "categories": ["education", "games"],
+  "icons": [
+    { "src": "/icons/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" },
+    { "src": "/icons/icon-512.svg", "sizes": "512x512", "type": "image/svg+xml" },
+    { "src": "/icons/icon-maskable.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Miasteczko",
+      "short_name": "Miasto",
+      "url": "/miasto",
+      "icons": [{ "src": "/icons/icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Gry",
+      "short_name": "Gry",
+      "url": "/games",
+      "icons": [{ "src": "/icons/icon-192.svg", "sizes": "192x192" }]
+    }
+  ]
+}

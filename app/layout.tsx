@@ -8,6 +8,7 @@ import { OnboardingTour } from "@/components/onboarding-tour";
 import { CsrfBootstrap } from "@/components/csrf-bootstrap";
 import { CookieConsent } from "@/components/cookie-consent";
 import { WebVitalsReporter } from "@/components/web-vitals-reporter";
+import { PwaRegister } from "@/components/pwa-register";
 import { resolveTheme } from "@/lib/theme";
 import { getSession } from "@/lib/session";
 import { userStats } from "@/lib/leaderboard";
@@ -32,6 +33,23 @@ export const metadata: Metadata = {
   title: "Watt City · Edukacja finansowa dla dzieci · Katowice",
   description:
     "Watt City — gra edukacyjna ucząca dzieci finansów osobistych. Graj w minigry → zarabiaj zasoby → buduj miasto → zaciągaj kredyt → spłacaj. SKO 2.0 prototype. Pitched to PKO BP at ETHSilesia 2026.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Watt City",
+  },
+  icons: {
+    icon: "/icons/icon-192.svg",
+    apple: "/icons/icon-192.svg",
+  },
+};
+
+export const viewport = {
+  themeColor: "#fde047",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default async function RootLayout({
@@ -68,6 +86,7 @@ export default async function RootLayout({
         </a>
         <CsrfBootstrap />
         <WebVitalsReporter />
+        <PwaRegister lang={lang} />
         <CookieConsent lang={lang} />
         <SiteNav
           username={session?.username ?? null}
