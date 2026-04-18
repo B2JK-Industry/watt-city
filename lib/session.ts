@@ -79,7 +79,14 @@ export async function createSession(username: string): Promise<void> {
 
 export async function destroySession(): Promise<void> {
   const store = await cookies();
-  store.delete(COOKIE_NAME);
+  store.set(COOKIE_NAME, "", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 0,
+    expires: new Date(0),
+  });
 }
 
 export async function getSession(): Promise<SessionPayload | null> {

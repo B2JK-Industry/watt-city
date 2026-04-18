@@ -65,14 +65,14 @@ export default async function LeaderboardPage({ searchParams }: Props) {
             entry={podium[1]}
             height="h-28"
             badge="🥈"
-            gradient="from-zinc-300 to-zinc-500"
+            bg="bg-zinc-300"
             isMe={podium[1].username === session?.username}
           />
           <PodiumCard
             entry={podium[0]}
             height="h-36"
             badge="🥇"
-            gradient="from-amber-300 to-yellow-500"
+            bg="bg-[var(--neo-yellow)]"
             isMe={podium[0].username === session?.username}
             crown
           />
@@ -80,7 +80,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
             entry={podium[2]}
             height="h-24"
             badge="🥉"
-            gradient="from-amber-600 to-orange-700"
+            bg="bg-[var(--neo-orange)]"
             isMe={podium[2].username === session?.username}
           />
         </div>
@@ -107,9 +107,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
                 return (
                   <tr
                     key={e.username}
-                    className={`border-t border-[var(--border)]/60 transition-colors ${
-                      isMe ? "bg-[var(--accent)]/10" : ""
-                    }`}
+                    className={`leaderboard-row ${isMe ? "leaderboard-row-me" : ""}`}
                   >
                     <td className="px-4 py-3 font-bold">
                       <span className="flex items-center gap-1.5">
@@ -156,38 +154,34 @@ function PodiumCard({
   entry,
   height,
   badge,
-  gradient,
+  bg,
   isMe,
   crown,
 }: {
   entry: LeaderboardEntry;
   height: string;
   badge: string;
-  gradient: string;
+  bg: string;
   isMe: boolean;
   crown?: boolean;
 }) {
   return (
-    <div
-      className={`flex flex-col items-center gap-2 ${
-        crown ? "animate-[glow-ring_2.4s_ease-in-out_infinite]" : ""
-      }`}
-    >
+    <div className="flex flex-col items-center gap-2">
       <div
-        className={`w-full ${height} rounded-2xl bg-gradient-to-b ${gradient} flex items-end justify-center p-3 text-2xl sm:text-3xl shadow-lg ${
-          isMe ? "ring-2 ring-[var(--accent)]" : ""
-        }`}
+        className={`w-full ${height} ${bg} podium-tile flex items-end justify-center p-3 text-3xl sm:text-4xl ${
+          crown ? "animate-[glow-ring_2.4s_ease-in-out_infinite]" : ""
+        } ${isMe ? "ring-4 ring-[var(--neo-pink)] ring-offset-4 ring-offset-[var(--background)]" : ""}`}
       >
         <span>{badge}</span>
       </div>
       <div className="text-center">
-        <div className="text-sm font-semibold truncate max-w-[120px] sm:max-w-[160px]">
+        <div className="text-sm font-black truncate max-w-[120px] sm:max-w-[160px] uppercase tracking-tight">
           {entry.username}
           {isMe && (
-            <span className="text-[var(--accent)] ml-1 text-xs">(ty)</span>
+            <span className="text-[var(--neo-pink)] ml-1 text-xs">(ty)</span>
           )}
         </div>
-        <div className="text-xs font-mono text-[var(--accent)]">
+        <div className="text-xs font-mono font-black text-[var(--ink)]">
           {entry.xp} XP
         </div>
       </div>

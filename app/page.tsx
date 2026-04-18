@@ -37,20 +37,34 @@ export default async function Home() {
     <div className="flex flex-col gap-12 animate-slide-up">
       <section className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-8 items-center">
         <div className="flex flex-col gap-6">
-          <span className="chip w-fit">
-            PKO XP · Gaming · ETHSilesia 2026
-          </span>
-          <h1 className="text-4xl sm:text-5xl font-bold leading-tight">
-            Ucz się grając.{" "}
-            <span className="bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] bg-clip-text text-transparent">
-              Zbieraj XP.
+          <div className="flex flex-wrap gap-2">
+            <span className="brutal-tag" style={{ background: "var(--neo-cyan)", color: "#0a0a0f" }}>
+              PKO XP · Gaming
+            </span>
+            <span className="brutal-tag" style={{ background: "var(--neo-pink)", color: "#0a0a0f" }}>
+              ETHSilesia 2026
+            </span>
+            <span className="brutal-tag" style={{ background: "var(--neo-lime)", color: "#0a0a0f" }}>
+              Katowice
+            </span>
+          </div>
+          <h1 className="text-4xl sm:text-6xl font-black leading-[0.95] uppercase tracking-tight">
+            Učiť sa <br />
+            <span className="inline-block bg-[var(--accent)] text-[#0a0a0f] px-3 py-1 border-[3px] border-[var(--ink)] shadow-[6px_6px_0_0_var(--ink)] my-1">
+              financie
             </span>{" "}
-            Vyhraj rebríček.
+            &{" "}
+            <span className="inline-block bg-[var(--neo-cyan)] text-[#0a0a0f] px-3 py-1 border-[3px] border-[var(--ink)] shadow-[6px_6px_0_0_var(--ink)] my-1">
+              energetiku
+            </span>{" "}
+            ako hra.
           </h1>
           <p className="text-lg text-zinc-300 max-w-xl">
-            XP Arena je platforma edukačných minihier. Každá ti dá body do
-            globálneho rebríčka — financie, matematika, pamäť, vedomosti.
-            Čím viac hráš, tým viac sa učíš.
+            Arkáda minihier o tom, čo Gen Z naozaj potrebuje vedieť: BLIK, ETF,
+            RRSO, účet za energiu, inflácia, kurzy. 30 sekúnd. Combo ×3.
+            Rebríček. Postavené pre{" "}
+            <strong className="text-[var(--foreground)]">PKO XP: Gaming</strong>{" "}
+            na ETHSilesia 2026 v Katowiciach.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link href="/register" className="btn btn-primary">

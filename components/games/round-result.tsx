@@ -73,37 +73,37 @@ export function RoundResult({
       {state.error && <p className="text-rose-400 text-sm">{state.error}</p>}
 
       {awarded !== null && state.result?.ok && (
-        <div className="rounded-2xl border border-[var(--accent)]/40 bg-gradient-to-br from-[var(--accent)]/10 via-[var(--accent-2)]/10 to-transparent p-5 flex flex-col gap-2">
+        <div className="relative bg-[var(--accent)] text-[#0a0a0f] border-[3px] border-[var(--ink)] shadow-[6px_6px_0_0_var(--ink)] rounded-2xl p-5 flex flex-col gap-3">
           <div className="flex items-end justify-between">
             <div className="flex flex-col">
-              <span className="text-xs uppercase tracking-wider text-zinc-400">
+              <span className="text-xs uppercase tracking-widest font-bold opacity-70">
                 Získané XP
               </span>
-              <span className="text-4xl font-bold text-[var(--accent)]">
+              <span className="text-5xl font-black tracking-tight">
                 +{awarded}
               </span>
             </div>
             {level && (
-              <div className="text-right">
-                <span className="text-xs uppercase tracking-wider text-zinc-400 block">
+              <div className="text-right bg-[#0a0a0f] text-[var(--accent)] border-[3px] border-[#0a0a0f] rounded-xl px-3 py-1.5">
+                <span className="text-[10px] uppercase tracking-widest block opacity-70 text-zinc-300">
                   Level
                 </span>
-                <span className="text-2xl font-bold">{level.level}</span>
+                <span className="text-2xl font-black">{level.level}</span>
               </div>
             )}
           </div>
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-zinc-300">
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm font-semibold">
             <span>
-              Celkovo: <strong>{state.result.globalXP}</strong> XP
+              Celkovo: <strong className="font-black">{state.result.globalXP}</strong> XP
             </span>
             {rank !== null && (
               <span>
-                Rebríček: <strong>#{rank}</strong>
+                Rebríček: <strong className="font-black">#{rank}</strong>
               </span>
             )}
             {level && level.xpToNext > 0 && (
               <span>
-                Do ďalšieho levelu: <strong>{level.xpToNext}</strong> XP
+                Do ďalšieho: <strong className="font-black">{level.xpToNext}</strong> XP
               </span>
             )}
           </div>

@@ -256,17 +256,21 @@ function Stat({
   accent?: boolean;
 }) {
   return (
-    <div className="rounded-xl border border-[var(--border)]/60 bg-[var(--surface-2)]/40 px-3 py-2">
-      <div className="text-[11px] uppercase tracking-wider text-zinc-400">
-        {label}
-      </div>
+    <div
+      className={`rounded-xl border-[3px] border-[var(--ink)] px-3 py-2 shadow-[3px_3px_0_0_var(--ink)] ${
+        accent
+          ? "bg-[var(--accent)] text-[#0a0a0f]"
+          : "bg-[var(--surface-2)]"
+      }`}
+    >
       <div
-        className={`text-lg font-semibold font-mono ${
-          accent ? "text-[var(--accent)]" : ""
+        className={`text-[10px] uppercase tracking-widest font-bold ${
+          accent ? "opacity-70" : "text-zinc-400"
         }`}
       >
-        {value}
+        {label}
       </div>
+      <div className="text-xl font-black font-mono">{value}</div>
     </div>
   );
 }

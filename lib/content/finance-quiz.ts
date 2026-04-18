@@ -128,6 +128,96 @@ export const FINANCE_QUESTIONS: QuizQuestion[] = [
     explanation:
       "Smernica EÚ garantuje minimálne 2-ročnú zodpovednosť predajcu za vady spotrebného tovaru.",
   },
+  {
+    id: "q11",
+    prompt: "Čo je PKO IKO?",
+    options: [
+      "Firemný účet pre živnostníkov",
+      "Mobilná bankingová aplikácia PKO Bank Polski",
+      "Krypto peňaženka s kartou",
+      "Typ hypotekárneho úveru",
+    ],
+    correctIndex: 1,
+    explanation:
+      "IKO je mobilná apka PKO — platby, BLIK, prevody, výbery z bankomatu QR kódom, správa účtov.",
+  },
+  {
+    id: "q12",
+    prompt: "Čo znamená IKE v poľskom dôchodkovom systéme?",
+    options: [
+      "Indywidualne Konto Emerytalne — dobrovoľný dôchodkový účet s daňovou výhodou",
+      "Individuálna krypto investícia",
+      "Spoločenský dôchodok od štátu",
+      "Typ kreditnej karty pre seniorov",
+    ],
+    correctIndex: 0,
+    explanation:
+      "IKE je 3. pilier v PL — investuješ po zdanení, pri výbere po 60 nezaplatíš kapitálovú daň 19 %. Podobný princíp: IKZE.",
+  },
+  {
+    id: "q13",
+    prompt: "Aký minimálny vek je na založenie Konto dla Młodych v PKO?",
+    options: ["10 rokov", "13 rokov", "18 rokov", "21 rokov"],
+    correctIndex: 1,
+    explanation:
+      "PKO Konto dla Młodych je pre 13–17 ročných — s IKO apkou, BLIK-om a zdarma prevodmi. Od 18 sa automaticky mení na štandardný účet.",
+  },
+  {
+    id: "q14",
+    prompt:
+      "Koľko maximálne vieš v Poľsku investovať do IKE za rok 2026?",
+    options: [
+      "1 500 zł",
+      "~15 000 zł (3-násobok priemernej mzdy)",
+      "Bez limitu",
+      "50 000 zł",
+    ],
+    correctIndex: 1,
+    explanation:
+      "IKE limit je ~3× priemerná mesačná mzda, pre 2026 to je približne 15 000 zł. IKZE má nižší limit, ale iné daňové výhody.",
+  },
+  {
+    id: "q15",
+    prompt: "Koľko % elektriny v Poľsku produkujú v roku 2025 stále uhoľné elektrárne?",
+    options: ["~15 %", "~35 %", "~55 %", "~85 %"],
+    correctIndex: 2,
+    explanation:
+      "Poľsko je v EÚ extrém — stále ~55 % elektriny z uhlia. Cieľ EÚ je postupne tento podiel znižovať, napr. cez OZE a jadro.",
+  },
+  {
+    id: "q16",
+    prompt: "Čo znamená WIBOR v hypotékach?",
+    options: [
+      "Medzibankový úrokový benchmark, na ktorom závisí sadzba",
+      "Poplatok za predčasné splatenie",
+      "Typ poistenia nehnuteľnosti",
+      "Minimálny vlastný vklad",
+    ],
+    correctIndex: 0,
+    explanation:
+      "WIBOR = Warsaw Interbank Offered Rate. Variabilná sadzba hypoték býva WIBOR 3M/6M + marža banky. Od 2025 ho nahrádza WIRON.",
+  },
+  {
+    id: "q17",
+    prompt: "Koľko reálnej úrokovej sadzby dostaneš, ak banka ponúka 5 % a inflácia je 6 %?",
+    options: ["+5 %", "+1 %", "−1 %", "−11 %"],
+    correctIndex: 2,
+    explanation:
+      "Reálna sadzba = nominálna − inflácia. 5 − 6 = −1 %. Tvoje peniaze na lokate strácajú kúpnu silu, aj keď rastú.",
+  },
+  {
+    id: "q18",
+    prompt: `Čo je „Bezpieczny Kredyt 2 %" v Poľsku?`,
+    options: [
+      "Úver pre malé firmy so štátnou dotáciou",
+      "Štátom dotovaná hypotéka pre mladých do 45 rokov",
+      "Kreditná karta pre študentov",
+      "Dlhopis vydaný ministerstvom financií",
+    ],
+    correctIndex: 1,
+    explanation:
+      "Bezpieczny Kredyt 2 % bol program dotácie prvej hypotéky — štát doplácal úrok nad 2 %. Od 2024 sa menila dostupnosť, ale princíp pomoci mladým v kúpe bývania trvá.",
+  },
 ];
 
 export const QUESTIONS_PER_ROUND = 5;

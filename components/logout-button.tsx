@@ -1,20 +1,22 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function LogoutButton() {
-  const router = useRouter();
   const [pending, setPending] = useState(false);
 
   async function onClick() {
     setPending(true);
     try {
-      await fetch("/api/auth/logout", { method: "POST" });
-      router.refresh();
-      router.push("/");
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "same-origin",
+        cache: "no-store",
+      });
     } finally {
-      setPending(false);
+      // Hard reload guarantees every server component (nav, dashboard, hub)
+      // re-runs with no session cookie.
+      window.location.href = "/";
     }
   }
 

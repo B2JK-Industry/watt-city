@@ -20,11 +20,13 @@ export function SiteNav({
 }: Props) {
   const pct = Math.round(levelProgress * 100);
   return (
-    <header className="w-full border-b border-[var(--border)]/60 backdrop-blur sticky top-0 z-20 bg-[color-mix(in_oklab,var(--background)_80%,transparent)]">
-      <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
-        <Link href="/" className="flex items-center gap-2 font-bold text-lg">
-          <span className="inline-block w-7 h-7 rounded-lg bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)]" />
-          <span>XP Arena</span>
+    <header className="w-full border-b-[3px] border-[var(--ink)] sticky top-0 z-20 bg-[var(--background)]">
+      <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+        <Link href="/" className="flex items-center gap-2.5 font-black text-lg tracking-tight">
+          <span className="inline-flex items-center justify-center w-9 h-9 bg-[var(--accent)] border-[3px] border-[var(--ink)] shadow-[3px_3px_0_0_var(--ink)] text-[var(--background)] font-black text-base">
+            XP
+          </span>
+          <span className="uppercase">Arena</span>
         </Link>
         <div className="hidden sm:flex items-center gap-5 text-sm">
           <Link href="/games" className="hover:text-[var(--accent)] transition-colors">
