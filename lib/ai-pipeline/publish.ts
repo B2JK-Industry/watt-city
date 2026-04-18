@@ -7,7 +7,7 @@ import {
   specKind,
   type AiGame,
 } from "./types";
-import { pickResearchSeed } from "./research";
+import { pickResearchSeed, type ResearchSeed } from "./research";
 import { generateGameSpec } from "./generate";
 
 const INDEX_KEY = "xp:ai-games:index"; // JSON array of active AI game ids, oldest first
@@ -73,9 +73,14 @@ type RunResult =
   | { ok: false; error: string };
 
 // Single orchestrated run — meant to be invoked by Vercel Cron once a day.
-export async function runPipeline(now = Date.now()): Promise<RunResult> {
+// Pass `seedOverride` (from admin endpoints) to force a specific theme
+// instead of today's calendar-deterministic pick.
+export async function runPipeline(
+  now = Date.now(),
+  seedOverride?: ResearchSeed,
+): Promise<RunResult> {
   // 1) Research → seed
-  const seed = pickResearchSeed(now);
+  const seed = seedOverride ?? pickResearchSeed(now);
 
   // 2) Generate game spec
   const deterministicSeed = Math.floor(now / (24 * 60 * 60 * 1000));

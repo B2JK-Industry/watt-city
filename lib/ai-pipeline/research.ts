@@ -74,3 +74,18 @@ export function pickResearchSeed(nowMs: number): ResearchSeed {
   const dayBucket = Math.floor(nowMs / (24 * 60 * 60 * 1000));
   return ROTATION_POOL[dayBucket % ROTATION_POOL.length];
 }
+
+// All available themes — useful for admin endpoints that want to force a
+// specific pool entry instead of today's calendar-deterministic pick.
+export function listResearchSeeds(): ResearchSeed[] {
+  return [...ROTATION_POOL];
+}
+
+export function pickSeedByName(theme: string): ResearchSeed | null {
+  return ROTATION_POOL.find((s) => s.theme === theme) ?? null;
+}
+
+export function pickSeedByIndex(index: number): ResearchSeed | null {
+  if (index < 0 || index >= ROTATION_POOL.length) return null;
+  return ROTATION_POOL[index];
+}
