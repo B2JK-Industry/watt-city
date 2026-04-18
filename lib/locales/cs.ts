@@ -22,7 +22,7 @@ const cs: typeof plDict = {
     titleHouse: "dům",
     titleIn: "v Katovicích.",
     body:
-      "Gamifikovaná finanční a energetická gramotnost pro Gen Z. Každý správný tap vygeneruje {watts} — a tvůj {single} v Katovicích roste od hornické chatrče v Nikiszowci po {varso} (310 m, nejvyšší v EU). 9 evergreen miniher, nová AI výzva každých 6 hodin, duel kódem.",
+      "Gamifikovaná finanční a energetická gramotnost pro Gen Z. Každý správný tap vygeneruje {watts} — a tvůj {single} v Katovicích roste od hornické chatrče v Nikiszowci po {varso} (310 m, nejvyšší v EU). 9 evergreen miniher, denní AI výzva, duel kódem.",
     bodyWatts: "Watty",
     bodySingle: "jediná budova",
     bodyVarso: "Varso Tower",
@@ -367,20 +367,20 @@ const cs: typeof plDict = {
     ideaTitle: "Myšlenka projektu",
     scienceTitle: "Věda za návykem — proč efemerní hry",
     howTitle: "Jak to funguje",
-    pipelineTitle: "AI pipeline · každých 6 h",
+    pipelineTitle: "AI pipeline · denně",
     tiersTitle: "9 tierů rostoucí budovy",
     stackTitle: "Tech stack",
     teamTitle: "Tým",
     sponsorsTitle: "Sponzoři a kategorie",
     roadmapTitle: "Roadmap",
     note: "Tato stránka je pitch verze · plný text v polštině (default).",
-    heroBody: `XP Arena je gamifikovaná platforma finanční a energetické gramotnosti pro Gen Z. Každá hra generuje Watty, které postupně „elektrifikují" tvou vlastní budovu v Katovicích — od dřevěné chatrče po Varso Tower (nejvyšší budova v EU). AI tvoří novou hru každých 6 hodin, stará po 24 hodinách zaniká, ale medaile za top 3 zůstává v profilu.`,
+    heroBody: `XP Arena je gamifikovaná platforma finanční a energetické gramotnosti pro Gen Z. Každá hra generuje Watty, které postupně „elektrifikují" tvou vlastní budovu v Katovicích — od dřevěné chatrče po Varso Tower (nejvyšší budova v EU). AI tvoří novou hru denně, až 3 hry současně aktivní, a medaile za top 3 zůstává v profilu.`,
     ideaBody1:
       "Gen Z v Polsku pošle BLIK za 2 sekundy, ale neví co je RRSO. OECD PISA 2022 ukazuje rostoucí rozdíl mezi digitální zručností mladých a jejich finanční gramotností. Slezsko zároveň prochází historickým zeleným pivotem — bez mladé generace, která rozumí účtům za energii, ten pivot nefunguje.",
     ideaBody2:
       "Naše teze: finance a energetika jsou nudné jen ve statickém formátu. Ve 30-s hře s combo ×3 jsou najednou návykové. Proto jsme začali se třemi předpoklady:",
     ideaList1: "Jeden velký cíl drží lidi dlouho. Progres = jedna rostoucí budova, ne abstraktní číslo.",
-    ideaList2: "Novota je palivo návyků. Platforma s fixní nabídkou se po týdnu ohraje. AI-generovaná hra každých 6 hodin drží dopamin.",
+    ideaList2: "Novota je palivo návyků. Platforma s fixní nabídkou se po týdnu ohraje. Denní AI-generovaná hra drží dopamin.",
     ideaList3: "Nejlepší vyhrává, ale vše zůstává. Hra zanikne po 24 h, ale medaile top 3 je permanentní — jako PR-ky ve Stravě, ale pro finance.",
     teamBody:
       "Projekt vede Daniel Babjak (SK) — engineering, AI pipeline, produkt. Tým B2JK-Industry je volné seskupení kamarádů-developerů, kteří se skládají na různých hackathonech (ETHSilesia, ETHWarsaw) a paralelně tlačí sesterský projekt Tauron Sąsiad pro kategorii AI Challenge.",

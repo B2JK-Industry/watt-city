@@ -264,7 +264,7 @@ export default async function AboutPage() {
               name="Research"
               detail={[
                 "lib/ai-pipeline/research.ts",
-                "Pick theme podľa 6h bucket (pay-day Friday, Earth Hour, inflácia, BLIK minutovka).",
+                "Pick theme podľa denného bucketu (pay-day Friday, Earth Hour, inflácia, BLIK minutovka).",
                 "V produkcii: Claude s web_search volá NBP / PKO / Tauron feedy.",
               ]}
             />

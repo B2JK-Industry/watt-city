@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { runPipeline } from "@/lib/ai-pipeline/publish";
 
-// Vercel Cron → hits this every 6 hours. Protected by a shared secret
+// Vercel Cron → hits this once a day (0 9 * * *). Protected by a shared secret
 // (set CRON_SECRET on Vercel; Vercel Cron sends Authorization: Bearer <secret>).
 // Manual trigger is allowed from the same deployment if you pass the header.
 export async function GET(request: NextRequest) {

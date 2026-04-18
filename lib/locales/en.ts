@@ -22,7 +22,7 @@ const en: typeof plDict = {
     titleHouse: "house",
     titleIn: "in Katowice.",
     body:
-      "Gamified financial & energy literacy for Gen Z. Every correct tap generates {watts} — and your {single} in Katowice grows from a miner's shed in Nikiszowiec all the way to {varso} (310 m, tallest in the EU). 9 evergreen mini-games, a new AI challenge every 6 hours, and code-based duels.",
+      "Gamified financial & energy literacy for Gen Z. Every correct tap generates {watts} — and your {single} in Katowice grows from a miner's shed in Nikiszowiec all the way to {varso} (310 m, tallest in the EU). 9 evergreen mini-games, a daily AI challenge, and code-based duels.",
     bodyWatts: "Watts",
     bodySingle: "single building",
     bodyVarso: "Varso Tower",
@@ -367,7 +367,7 @@ const en: typeof plDict = {
     ideaTitle: "Project idea",
     scienceTitle: "The science behind the habit — why ephemeral games",
     howTitle: "How it works",
-    pipelineTitle: "AI pipeline · every 6 h",
+    pipelineTitle: "AI pipeline · daily",
     tiersTitle: "9 tiers of the growing building",
     stackTitle: "Tech stack",
     teamTitle: "Team",
@@ -375,13 +375,13 @@ const en: typeof plDict = {
     roadmapTitle: "Roadmap",
     note: "This page is the pitch version · full copy in Polish (default).",
     heroBody:
-      "XP Arena is a gamified financial & energy literacy platform for Gen Z. Every game generates Watts that gradually electrify your own building in Katowice — from a wooden shed to Varso Tower (tallest in the EU). AI creates a new game every 6 hours; the old one retires after 24 hours, but the top-3 medal stays in your profile.",
+      "XP Arena is a gamified financial & energy literacy platform for Gen Z. Every game generates Watts that gradually electrify your own building in Katowice — from a wooden shed to Varso Tower (tallest in the EU). AI creates a new game daily, up to 3 games live at once, and the top-3 medal stays in your profile forever.",
     ideaBody1:
       "Gen Z in Poland sends BLIK in 2 seconds but doesn't know what APR means. OECD PISA 2022 shows a growing gap between young peoples' digital fluency and their financial literacy. Silesia is simultaneously going through a historic green pivot — without a young generation that understands energy bills, that pivot won't work.",
     ideaBody2:
       "Our thesis: finance and energy are boring only in a static format. In a 30-second game with combo ×3 they become addictive. That's why we started from three assumptions:",
     ideaList1: "One big goal keeps people around. Progress = one growing building, not an abstract number.",
-    ideaList2: "Novelty is habit fuel. A platform with fixed content dies after a week. An AI-generated game every 6 hours keeps the dopamine loop alive.",
+    ideaList2: "Novelty is habit fuel. A platform with fixed content dies after a week. A daily AI-generated game keeps the dopamine loop alive.",
     ideaList3: "The best wins, but everything else stays. A game retires after 24 h, but the top-3 medal is permanent — like Strava PRs, but for finance.",
     teamBody:
       "Project lead: Daniel Babjak (SK) — engineering, AI pipeline, product. B2JK-Industry is a loose group of developer friends who team up for various hackathons (ETHSilesia, ETHWarsaw) and simultaneously ship the sister project Tauron Sąsiad for the AI Challenge track.",

@@ -35,7 +35,7 @@ type RunResult =
   | { ok: true; game: AiGame; evicted: string | null }
   | { ok: false; error: string };
 
-// Single orchestrated run — meant to be invoked by Vercel Cron every 6h.
+// Single orchestrated run — meant to be invoked by Vercel Cron once a day.
 export async function runPipeline(now = Date.now()): Promise<RunResult> {
   // 1) Research → seed
   const seed = pickResearchSeed(now);

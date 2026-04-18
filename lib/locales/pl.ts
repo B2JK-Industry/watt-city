@@ -20,7 +20,7 @@ const pl = {
     titleHouse: "dom",
     titleIn: "w Katowicach.",
     body:
-      "Gamifikowana edukacja finansowa i energetyczna dla Gen Z. Każdy poprawny tap generuje {watts} — a twój {single} w Katowicach rośnie od górniczej chaty w Nikiszowcu do {varso} (310 m, najwyższy w UE). 9 gier evergreen, nowe wyzwanie AI co 6 godzin, pojedynek na kod.",
+      "Gamifikowana edukacja finansowa i energetyczna dla Gen Z. Każdy poprawny tap generuje {watts} — a twój {single} w Katowicach rośnie od górniczej chaty w Nikiszowcu do {varso} (310 m, najwyższy w UE). 9 gier evergreen, codzienne wyzwanie AI, pojedynek na kod.",
     bodyWatts: "Waty",
     bodySingle: "jedyny budynek",
     bodyVarso: "Varso Tower",
@@ -365,20 +365,20 @@ const pl = {
     ideaTitle: "Idea projektu",
     scienceTitle: "Nauka za nawykiem — dlaczego efemeryczne gry",
     howTitle: "Jak to działa",
-    pipelineTitle: "Pipeline AI · co 6 godzin",
+    pipelineTitle: "Pipeline AI · codziennie",
     tiersTitle: "9 tierów rosnącego budynku",
     stackTitle: "Stack technologiczny",
     teamTitle: "Zespół",
     sponsorsTitle: "Sponsorzy i kategorie",
     roadmapTitle: "Roadmap",
     note: "Ta strona jest wersją pitch · pełny tekst w języku polskim (domyślny).",
-    heroBody: `XP Arena to gamifikowana platforma edukacji finansowej i energetycznej dla Gen Z. Każda gra generuje Waty, które stopniowo „elektryfikują" twój własny budynek w Katowicach — od drewnianej chaty po Varso Tower (najwyższy budynek w UE). AI tworzy nową grę co 6 godzin, stara znika po 24 godzinach, ale medal za top 3 zostaje w profilu.`,
+    heroBody: `XP Arena to gamifikowana platforma edukacji finansowej i energetycznej dla Gen Z. Każda gra generuje Waty, które stopniowo „elektryfikują" twój własny budynek w Katowicach — od drewnianej chaty po Varso Tower (najwyższy budynek w UE). AI tworzy nową grę codziennie, do 3 gier jednocześnie aktywne, a medal za top 3 zostaje w profilu.`,
     ideaBody1:
       "Gen Z w Polsce wyśle BLIK w 2 sekundy, ale nie wie co to RRSO. OECD PISA 2022 pokazuje rosnącą lukę między cyfrową biegłością młodych a ich wiedzą finansową. Śląsk jednocześnie przechodzi historyczny zielony pivot — bez młodego pokolenia, które rozumie rachunki za energię, ten pivot nie zadziała.",
     ideaBody2:
       "Nasza teza: finanse i energetyka są nudne tylko w statycznym formacie. W 30-sekundowej grze z combo ×3 stają się uzależniające. Dlatego zaczęliśmy od trzech założeń:",
     ideaList1: "Jeden duży cel trzyma ludzi długo. Postęp = jeden rosnący budynek, nie abstrakcyjna liczba.",
-    ideaList2: "Nowość to paliwo nawyków. Platforma ze stałą ofertą nudzi się po tygodniu. AI-generowana gra co 6 godzin trzyma dopaminę.",
+    ideaList2: "Nowość to paliwo nawyków. Platforma ze stałą ofertą nudzi się po tygodniu. Codzienne AI-generowane wyzwanie trzyma dopaminę.",
     ideaList3: "Wygrywa najlepszy, ale wszystko zostaje. Gra znika po 24 h, ale medal top 3 jest trwały — jak PR-ki w Stravie, ale dla finansów.",
     teamBody:
       "Projekt prowadzi Daniel Babjak (SK) — engineering, pipeline AI, produkt. Zespół B2JK-Industry to luźne zgrupowanie kolegów-deweloperów, którzy składają się na różnych hackathonach (ETHSilesia, ETHWarsaw) i równolegle pcha siostrzany projekt Tauron Sąsiad dla kategorii AI Challenge.",
