@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export function LogoutButton() {
+export function LogoutButton({ label }: { label: string }) {
   const [pending, setPending] = useState(false);
 
   async function onClick() {
@@ -27,7 +27,7 @@ export function LogoutButton() {
       onClick={onClick}
       disabled={pending}
     >
-      {pending ? "…" : "Odhlásiť"}
+      {pending ? "…" : label}
     </button>
   );
 }

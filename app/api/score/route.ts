@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
   const session = await getSession();
   if (!session) {
     return Response.json(
-      { ok: false, error: "Musíš byť prihlásený." },
+      { ok: false, error: "Musisz być zalogowany." },
       { status: 401 },
     );
   }
@@ -28,13 +28,13 @@ export async function POST(request: NextRequest) {
     parsed = BodySchema.safeParse(json);
   } catch {
     return Response.json(
-      { ok: false, error: "Neplatná požiadavka." },
+      { ok: false, error: "Nieprawidłowe żądanie." },
       { status: 400 },
     );
   }
   if (!parsed.success) {
     return Response.json(
-      { ok: false, error: "Chýbajú povinné polia." },
+      { ok: false, error: "Nieprawidłowe dane wejściowe." },
       { status: 400 },
     );
   }
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     const ai = await getAiGame(gameId);
     if (!ai) {
       return Response.json(
-        { ok: false, error: "Neznáma hra." },
+        { ok: false, error: "Nieznana gra." },
         { status: 404 },
       );
     }
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     const game = getGame(gameId);
     if (!game) {
       return Response.json(
-        { ok: false, error: "Neznáma hra." },
+        { ok: false, error: "Nieznana gra." },
         { status: 404 },
       );
     }

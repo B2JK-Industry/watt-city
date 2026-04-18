@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import type { Dict } from "@/lib/i18n";
 
-export function DeleteAccountButton() {
+type T = Dict["dashboard"];
+
+export function DeleteAccountButton({ t }: { t: T }) {
   const [stage, setStage] = useState<"idle" | "confirm" | "deleting">("idle");
   const [error, setError] = useState<string | null>(null);
 
@@ -13,7 +16,7 @@ export function DeleteAccountButton() {
         onClick={() => setStage("confirm")}
         className="btn btn-danger text-xs"
       >
-        Zmazať účet
+        {t.deleteAccount}
       </button>
     );
   }
@@ -22,8 +25,8 @@ export function DeleteAccountButton() {
     return (
       <div className="flex flex-col gap-2">
         <p className="text-xs text-zinc-300 max-w-xs">
-          Toto vymaže tvoj účet, Watty, medaile a všetky záznamy v rebríčkoch.{" "}
-          <strong>Nedá sa vrátiť.</strong>
+          {t.deleteAccountWarn}{" "}
+          <strong>{t.deleteAccountIrreversible}</strong>
         </p>
         <div className="flex gap-2">
           <button
@@ -35,26 +38,26 @@ export function DeleteAccountButton() {
                 const res = await fetch("/api/me", { method: "DELETE" });
                 if (!res.ok) {
                   const body = await res.json().catch(() => ({}));
-                  setError(body.error ?? "Nepodarilo sa zmazať účet.");
+                  setError(body.error ?? t.deleteAccountFailed);
                   setStage("confirm");
                   return;
                 }
                 window.location.href = "/";
               } catch {
-                setError("Sieťová chyba.");
+                setError(t.deleteAccountNetworkError);
                 setStage("confirm");
               }
             }}
             className="btn btn-danger text-xs"
           >
-            Áno, zmazať
+            {t.deleteAccountConfirm}
           </button>
           <button
             type="button"
             onClick={() => setStage("idle")}
             className="btn btn-ghost text-xs"
           >
-            Zrušiť
+            {t.deleteAccountCancel}
           </button>
         </div>
         {error && <p className="text-rose-400 text-xs">{error}</p>}
@@ -62,7 +65,5 @@ export function DeleteAccountButton() {
     );
   }
 
-  return (
-    <span className="text-xs text-zinc-400">Mažem účet…</span>
-  );
+  return <span className="text-xs text-zinc-400">{t.deleteAccountDeleting}</span>;
 }

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { GAMES } from "@/lib/games";
+import { GAMES, localizedTitle } from "@/lib/games";
 import { gameLeaderboard } from "@/lib/leaderboard";
 import { getSession } from "@/lib/session";
 import {
@@ -296,7 +296,7 @@ export default async function HallOfFamePage() {
                   <span className="text-3xl">{game.emoji}</span>
                   <div>
                     <p className="font-black uppercase tracking-tight">
-                      {game.title}
+                      {localizedTitle(game, dict)}
                     </p>
                     <p className="text-[11px] text-zinc-500 font-semibold">
                       {game.building.name}

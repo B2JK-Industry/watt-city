@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { GAMES } from "@/lib/games";
+import { GAMES, localizedTitle } from "@/lib/games";
 import { getSession } from "@/lib/session";
 import { getUserStats } from "@/lib/user-stats";
 import { userStats } from "@/lib/leaderboard";
@@ -110,7 +110,7 @@ export default async function GamesHubPage() {
                     {g.meta.building.name}
                   </span>
                   <span className="text-zinc-500 truncate">
-                    — {g.meta.title}
+                    — {localizedTitle(g.meta, dict)}
                   </span>
                 </span>
                 <span className="chip text-[10px] whitespace-nowrap">

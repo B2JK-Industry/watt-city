@@ -26,12 +26,12 @@ export function DuelLobby({ username, dict }: Props) {
       });
       const json = await res.json();
       if (!res.ok || !json.ok) {
-        setError(json.error ?? "Nepodarilo sa vytvoriť duel.");
+        setError(json.error ?? t.errorCreate);
         return;
       }
       router.push(`/duel/${json.code}`);
     } catch {
-      setError("Sieťová chyba.");
+      setError(t.errorNetwork);
     } finally {
       setPending(null);
     }
@@ -42,7 +42,7 @@ export function DuelLobby({ username, dict }: Props) {
     setError(null);
     const trimmed = code.trim().toUpperCase();
     if (trimmed.length < 4) {
-      setError("Zadaj platný kód.");
+      setError(t.errorInvalidCode);
       return;
     }
     setPending("join");
@@ -54,12 +54,12 @@ export function DuelLobby({ username, dict }: Props) {
       });
       const json = await res.json();
       if (!res.ok || !json.ok) {
-        setError(json.error ?? "Pripojenie sa nepodarilo.");
+        setError(json.error ?? t.errorJoin);
         return;
       }
       router.push(`/duel/${trimmed}`);
     } catch {
-      setError("Sieťová chyba.");
+      setError(t.errorNetwork);
     } finally {
       setPending(null);
     }
@@ -72,7 +72,7 @@ export function DuelLobby({ username, dict }: Props) {
         <p className="text-sm text-zinc-400">{t.createBody}</p>
         <div className="flex flex-col gap-2">
           <span className="text-[10px] uppercase tracking-widest font-bold text-zinc-500">
-            {dict.lang.switcherLabel === "Мова" ? "Вибери гру" : dict.lang.switcherLabel === "Jazyk" ? "Vyber hru" : dict.lang.switcherLabel === "Language" ? "Pick a game" : "Wybierz grę"}
+            {t.pickGameLabel}
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {DUEL_GAMES.map((g) => (

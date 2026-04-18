@@ -34,7 +34,7 @@ export async function DELETE() {
   const session = await getSession();
   if (!session) {
     return Response.json(
-      { ok: false, error: "Nie si prihlásený." },
+      { ok: false, error: "Nie jesteś zalogowany." },
       { status: 401 },
     );
   }

@@ -258,3 +258,38 @@ export const CATEGORY_ACCENTS: Record<GameCategory, string> = {
 export function getGame(id: string): GameMeta | undefined {
   return GAMES.find((g) => g.id === id);
 }
+
+// Each evergreen game has its own dict namespace for page copy; this helper
+// resolves id → the localized title. Falls back to the hardcoded SK title
+// from GameMeta (used as a dev-time anchor) if the dict lookup misses.
+const ID_TO_DICT_KEY: Record<string, string> = {
+  "energy-dash": "energy",
+  "power-flip": "power",
+  "stock-tap": "stock",
+  "budget-balance": "budget",
+  "finance-quiz": "finance",
+  "math-sprint": "math",
+  "memory-match": "memory",
+  "currency-rush": "currency",
+  "word-scramble": "word",
+};
+
+// Dict here is structurally loose because the full Dict type mixes nested
+// objects + arrays (aboutPage.roadmap etc.); we only care about the
+// per-game sub-dicts, each of which has `headerTitle: string`.
+type DictLike = {
+  [ns: string]:
+    | undefined
+    | {
+        headerTitle?: string;
+        [k: string]: unknown;
+      }
+    | unknown;
+};
+
+export function localizedTitle(game: GameMeta, dict: DictLike): string {
+  const key = ID_TO_DICT_KEY[game.id];
+  if (!key) return game.title;
+  const ns = dict[key] as { headerTitle?: string } | undefined;
+  return ns?.headerTitle ?? game.title;
+}

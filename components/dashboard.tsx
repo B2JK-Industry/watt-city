@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { GAMES } from "@/lib/games";
+import { GAMES, localizedTitle } from "@/lib/games";
 import type { UserStats } from "@/lib/user-stats";
 import type { LevelInfo } from "@/lib/level";
 import { CITY_TIERS, tierForLevel } from "@/lib/level";
@@ -22,16 +22,16 @@ type Props = {
   aiGame?: CityAiGame;
 };
 
-function timeAgo(ts: number): string {
-  if (!ts) return "nikdy";
+function timeAgo(ts: number, d: Dict["dashboard"]): string {
+  if (!ts) return d.timeNever;
   const diff = Date.now() - ts;
   const mins = Math.floor(diff / 60_000);
-  if (mins < 1) return "práve teraz";
-  if (mins < 60) return `pred ${mins} min`;
+  if (mins < 1) return d.timeJustNow;
+  if (mins < 60) return d.timeMinutesAgo.replace("{n}", String(mins));
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `pred ${hrs} h`;
+  if (hrs < 24) return d.timeHoursAgo.replace("{n}", String(hrs));
   const days = Math.floor(hrs / 24);
-  return `pred ${days} d`;
+  return d.timeDaysAgo.replace("{n}", String(days));
 }
 
 export function Dashboard({
@@ -264,7 +264,7 @@ export function Dashboard({
               href={`/games/${recommended.id}`}
               className="text-[var(--accent)] underline"
             >
-              {recommended.title}
+              {localizedTitle(recommended, dict)}
             </Link>
             {d.continueEmpty.split("{game}")[1] ?? ""}
           </div>
@@ -283,9 +283,9 @@ export function Dashboard({
                     {game.emoji}
                   </div>
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold">{game.title}</h3>
+                    <h3 className="font-semibold">{localizedTitle(game, dict)}</h3>
                     <span className="text-xs text-zinc-400">
-                      {timeAgo(gs.lastPlayedAt)}
+                      {timeAgo(gs.lastPlayedAt, d)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
@@ -329,7 +329,7 @@ export function Dashboard({
           <Link href="/ochrana-sukromia" className="btn btn-ghost text-xs">
             {d.privacyReceipt}
           </Link>
-          <DeleteAccountButton />
+          <DeleteAccountButton t={d} />
         </div>
       </section>
     </div>

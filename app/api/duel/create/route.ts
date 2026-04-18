@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session) {
     return Response.json(
-      { ok: false, error: "Musíš byť prihlásený." },
+      { ok: false, error: "Musisz być zalogowany." },
       { status: 401 },
     );
   }

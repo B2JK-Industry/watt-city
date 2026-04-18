@@ -78,7 +78,7 @@ export function SiteNav({
                 )}
               </span>
               <LanguageSwitcher current={lang} />
-              <LogoutButton />
+              <LogoutButton label={t.logout} />
             </>
           ) : (
             <>

@@ -15,13 +15,13 @@ export async function POST(request: NextRequest) {
     parsed = BodySchema.safeParse(json);
   } catch {
     return Response.json(
-      { ok: false, error: "Neplatná požiadavka." },
+      { ok: false, error: "Nieprawidłowe żądanie." },
       { status: 400 },
     );
   }
   if (!parsed.success) {
     return Response.json(
-      { ok: false, error: "Chýba meno alebo heslo." },
+      { ok: false, error: "Podaj nazwę i hasło." },
       { status: 400 },
     );
   }

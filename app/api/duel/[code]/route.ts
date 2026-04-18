@@ -17,7 +17,7 @@ export async function GET(
   const { code } = await ctx.params;
   const duel = await getDuel(code.toUpperCase());
   if (!duel) {
-    return Response.json({ ok: false, error: "Duel neexistuje." }, { status: 404 });
+    return Response.json({ ok: false, error: "Pojedynek nie istnieje." }, { status: 404 });
   }
   const session = await getSession();
   const role = session ? assignPlayer(duel, session.username) : "spectator";
@@ -37,14 +37,14 @@ export async function POST(
   const session = await getSession();
   if (!session) {
     return Response.json(
-      { ok: false, error: "Musíš byť prihlásený." },
+      { ok: false, error: "Musisz być zalogowany." },
       { status: 401 },
     );
   }
   const { code } = await ctx.params;
   const duel = await getDuel(code.toUpperCase());
   if (!duel) {
-    return Response.json({ ok: false, error: "Duel neexistuje." }, { status: 404 });
+    return Response.json({ ok: false, error: "Pojedynek nie istnieje." }, { status: 404 });
   }
   const body = (await req.json().catch(() => ({}))) as {
     action?: "join" | "submit";
@@ -60,7 +60,7 @@ export async function POST(
     }
     if (duel.playerB) {
       return Response.json(
-        { ok: false, error: "Duel je už plný." },
+        { ok: false, error: "Pojedynek jest już pełny." },
         { status: 409 },
       );
     }
@@ -72,7 +72,7 @@ export async function POST(
   if (body.action === "submit") {
     if (!Array.isArray(body.answers)) {
       return Response.json(
-        { ok: false, error: "Chýbajú odpovede." },
+        { ok: false, error: "Brakuje odpowiedzi." },
         { status: 400 },
       );
     }
@@ -89,7 +89,7 @@ export async function POST(
       duel.finishedB = true;
     } else {
       return Response.json(
-        { ok: false, error: "Nie si účastník duelu." },
+        { ok: false, error: "Nie jesteś uczestnikiem tego pojedynku." },
         { status: 403 },
       );
     }
@@ -121,5 +121,5 @@ export async function POST(
     return Response.json({ ok: true, duel: summary });
   }
 
-  return Response.json({ ok: false, error: "Neznáma akcia." }, { status: 400 });
+  return Response.json({ ok: false, error: "Nieznana akcja." }, { status: 400 });
 }

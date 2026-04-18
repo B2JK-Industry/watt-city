@@ -16,17 +16,17 @@ export function normalizeUsername(raw: string): string {
 
 export function validateUsername(username: string): string | null {
   if (!USERNAME_RE.test(username)) {
-    return "Používateľské meno musí mať 3–24 znakov (písmená, čísla, _ . -).";
+    return "Nazwa użytkownika musi mieć 3–24 znaki (litery, cyfry, _ . -).";
   }
   return null;
 }
 
 export function validatePassword(password: string): string | null {
   if (typeof password !== "string" || password.length < 6) {
-    return "Heslo musí mať aspoň 6 znakov.";
+    return "Hasło musi mieć co najmniej 6 znaków.";
   }
   if (password.length > 200) {
-    return "Heslo je príliš dlhé.";
+    return "Hasło jest zbyt długie.";
   }
   return null;
 }
@@ -68,7 +68,7 @@ export async function registerUser(
   };
   const claimed = await kvSetNX(`${USER_PREFIX}${username}`, record);
   if (!claimed) {
-    return { ok: false, error: "Toto používateľské meno je už obsadené." };
+    return { ok: false, error: "Ta nazwa użytkownika jest już zajęta." };
   }
   return { ok: true, user: record };
 }
@@ -80,10 +80,10 @@ export async function loginUser(
   const username = normalizeUsername(rawUsername);
   const user = await getUser(username);
   if (!user) {
-    return { ok: false, error: "Nesprávne meno alebo heslo." };
+    return { ok: false, error: "Nieprawidłowa nazwa użytkownika lub hasło." };
   }
   if (!verifyPassword(rawPassword, user.passwordHash)) {
-    return { ok: false, error: "Nesprávne meno alebo heslo." };
+    return { ok: false, error: "Nieprawidłowa nazwa użytkownika lub hasło." };
   }
   return { ok: true, user };
 }

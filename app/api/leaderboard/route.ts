@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
 
   if (game) {
     if (!getGame(game)) {
-      return Response.json({ ok: false, error: "Hra neexistuje." }, { status: 404 });
+      return Response.json({ ok: false, error: "Gra nie istnieje." }, { status: 404 });
     }
     const entries = await gameLeaderboard(game, n);
     return Response.json({ ok: true, scope: "game", game, entries });
