@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { DuelSummary, DuelRound, DuelAnswer } from "@/lib/duel";
-import { DUEL_ROUND_SECONDS } from "@/lib/duel";
+import { DUEL_ROUND_SECONDS, DUEL_GAMES } from "@/lib/duel";
+import type { Dict } from "@/lib/i18n";
+import plDict from "@/lib/locales/pl";
 
 type Role = "A" | "B" | "spectator" | "full";
 
@@ -12,11 +14,19 @@ type Props = {
   self: string;
   role: Role;
   initial: DuelSummary;
+  dict?: Dict;
 };
 
 type LocalPhase = "waiting" | "playing" | "submitted";
 
-export function DuelRoom({ code, self, role: initialRole, initial }: Props) {
+export function DuelRoom({
+  code,
+  self,
+  role: initialRole,
+  initial,
+  dict = plDict,
+}: Props) {
+  const t = dict.duel;
   const [duel, setDuel] = useState<DuelSummary>(initial);
   const [role, setRole] = useState<Role>(initialRole);
   const [phase, setPhase] = useState<LocalPhase>(() => {
@@ -33,18 +43,18 @@ export function DuelRoom({ code, self, role: initialRole, initial }: Props) {
     return `${window.location.origin}/duel/${code}`;
   }, [code]);
 
-  // Poll duel state while waiting / playing so we see opponent submit
+  const gameMeta =
+    DUEL_GAMES.find((g) => g.id === duel.gameId) ?? DUEL_GAMES[0];
+
   useEffect(() => {
     let cancelled = false;
     async function tick() {
       try {
         const res = await fetch(`/api/duel/${code}`, { cache: "no-store" });
         const json = await res.json();
-        if (!cancelled && json.ok) {
-          setDuel(json.duel);
-        }
+        if (!cancelled && json.ok) setDuel(json.duel);
       } catch {
-        /* swallow transient errors */
+        /* swallow */
       }
     }
     const id = window.setInterval(tick, 3500);
@@ -64,13 +74,13 @@ export function DuelRoom({ code, self, role: initialRole, initial }: Props) {
       });
       const json = await res.json();
       if (!res.ok || !json.ok) {
-        setError(json.error ?? "Pripojenie zlyhalo.");
+        setError(json.error ?? t.full);
         return;
       }
       setRole(json.role);
       setDuel(json.duel);
     } catch {
-      setError("Sieťová chyba.");
+      setError(dict.auth.errorNetwork);
     }
   }
 
@@ -84,13 +94,13 @@ export function DuelRoom({ code, self, role: initialRole, initial }: Props) {
       });
       const json = await res.json();
       if (!res.ok || !json.ok) {
-        setError(json.error ?? "Odovzdanie zlyhalo.");
+        setError(json.error ?? dict.auth.errorGeneric);
         return;
       }
       setDuel(json.duel);
       setPhase("submitted");
     } catch {
-      setError("Sieťová chyba.");
+      setError(dict.auth.errorNetwork);
     }
   }
 
@@ -111,47 +121,49 @@ export function DuelRoom({ code, self, role: initialRole, initial }: Props) {
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div className="flex flex-col gap-1">
           <Link href="/duel" className="text-sm text-zinc-400 hover:underline">
-            ← Späť na lobby
+            {t.back}
           </Link>
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="brutal-heading text-3xl sm:text-4xl">Duel</h1>
-            <span className="brutal-tag" style={{ background: "var(--neo-yellow)", color: "#0a0a0f" }}>
-              kód: {code}
+            <h1 className="brutal-heading text-3xl sm:text-4xl">{t.title}</h1>
+            <span
+              className="brutal-tag"
+              style={{ background: "var(--neo-yellow)", color: "#0a0a0f" }}
+            >
+              {t.codeTag.replace("{code}", code)}
             </span>
-            <span className="brutal-tag" style={{ background: "var(--neo-cyan)", color: "#0a0a0f" }}>
-              Kurzový šprint · 6 kôl
+            <span
+              className="brutal-tag"
+              style={{ background: "var(--neo-cyan)", color: "#0a0a0f" }}
+            >
+              {gameMeta.emoji} {gameMeta.title}
             </span>
           </div>
         </div>
         {role === "A" && !hasOpponent && (
-          <button
-            type="button"
-            onClick={shareCopy}
-            className="btn btn-pink"
-          >
-            {copied ? "Skopírované ✓" : "Skopírovať link"}
+          <button type="button" onClick={shareCopy} className="btn btn-pink">
+            {copied ? t.shareCopied : t.shareCopy}
           </button>
         )}
       </header>
 
-      <PlayersBanner duel={duel} self={self} role={role} />
+      <PlayersBanner duel={duel} self={self} role={role} t={t} />
 
       {error && <p className="text-rose-400 text-sm">{error}</p>}
 
       {role === "full" && (
-        <div className="card p-6 text-zinc-300">
-          Duel je plný. Môžeš ho sledovať v reálnom čase, ale nehráš.
-        </div>
+        <div className="card p-6 text-zinc-300">{t.full}</div>
       )}
 
       {role === "spectator" && (
         <div className="card p-6 flex flex-col gap-3">
-          <p className="text-zinc-300">
-            Nie si súčasťou duelu. Ak máš pozvánku, pripoj sa ako hráč B.
-          </p>
+          <p className="text-zinc-300">{t.notPart}</p>
           {!hasOpponent && (
-            <button type="button" onClick={join} className="btn btn-primary w-fit">
-              Pripojiť sa ako hráč B
+            <button
+              type="button"
+              onClick={join}
+              className="btn btn-primary w-fit"
+            >
+              {t.joinAsB}
             </button>
           )}
         </div>
@@ -166,6 +178,7 @@ export function DuelRoom({ code, self, role: initialRole, initial }: Props) {
           }}
           onStart={() => setPhase("playing")}
           phase={phase}
+          t={t}
         />
       )}
 
@@ -173,8 +186,8 @@ export function DuelRoom({ code, self, role: initialRole, initial }: Props) {
         <ResultPanel
           duel={duel}
           bothDone={bothDone}
-          self={self}
           mySide={role === "A" ? "A" : role === "B" ? "B" : null}
+          t={t}
         />
       )}
     </div>
@@ -185,29 +198,33 @@ function PlayersBanner({
   duel,
   self,
   role,
+  t,
 }: {
   duel: DuelSummary;
   self: string;
   role: Role;
+  t: Dict["duel"];
 }) {
   return (
     <div className="grid grid-cols-2 gap-4">
       <PlayerCard
-        label="Hráč A"
+        label={t.playerA}
         name={duel.playerA}
         isSelf={duel.playerA === self}
         finished={duel.finishedA}
         wins={duel.winsA}
         color="var(--neo-yellow)"
+        t={t}
       />
       <PlayerCard
-        label="Hráč B"
+        label={t.playerB}
         name={duel.playerB}
         isSelf={duel.playerB === self}
         finished={duel.finishedB}
         wins={duel.winsB}
         color="var(--neo-pink)"
-        placeholderHint={role === "A" ? "Čakáš na pripojenie…" : null}
+        placeholderHint={role === "A" ? t.waitingJoin : null}
+        t={t}
       />
     </div>
   );
@@ -221,6 +238,7 @@ function PlayerCard({
   wins,
   color,
   placeholderHint,
+  t,
 }: {
   label: string;
   name: string | null;
@@ -229,6 +247,7 @@ function PlayerCard({
   wins: number;
   color: string;
   placeholderHint?: string | null;
+  t: Dict["duel"];
 }) {
   return (
     <div
@@ -237,18 +256,18 @@ function PlayerCard({
     >
       <div>
         <p className="text-[10px] uppercase tracking-widest font-bold opacity-70">
-          {label} {isSelf ? "· ty" : ""}
+          {label} {isSelf ? t.youSuffix : ""}
         </p>
         <p className="text-2xl font-black truncate max-w-[10ch]">
           {name ?? "—"}
         </p>
         <p className="text-xs font-semibold opacity-80">
-          {finished ? "odohrané" : placeholderHint ?? "ešte nehral"}
+          {finished ? t.finished : placeholderHint ?? t.notPlayed}
         </p>
       </div>
       <div className="text-right">
         <p className="text-[10px] uppercase tracking-widest font-bold opacity-70">
-          Výhry
+          {t.wins}
         </p>
         <p className="text-4xl font-mono font-black">{wins}</p>
       </div>
@@ -261,11 +280,13 @@ function DuelPlay({
   onSubmit,
   onStart,
   phase,
+  t,
 }: {
   rounds: DuelRound[];
   onSubmit: (a: DuelAnswer[]) => void;
   onStart: () => void;
   phase: LocalPhase;
+  t: Dict["duel"];
 }) {
   const [index, setIndex] = useState(0);
   const [value, setValue] = useState("");
@@ -274,12 +295,9 @@ function DuelPlay({
   const roundStartedAtRef = useRef<number>(Date.now());
   const valueRef = useRef(value);
   valueRef.current = value;
-
-  // Refs keep the tick closure stable regardless of re-renders so a keystroke
-  // no longer remounts the interval (prev bug: timer slowed / stalled while
-  // the user was typing because the effect re-ran on every value change).
-  const submitAll = useRef(onSubmit);
-  submitAll.current = onSubmit;
+  const submitRef = useRef(onSubmit);
+  submitRef.current = onSubmit;
+  const answersStateRef = useRef<DuelAnswer[]>([]);
 
   const advance = useCallback(
     (raw: string, auto: boolean) => {
@@ -289,32 +307,22 @@ function DuelPlay({
         value: Number.isFinite(parsed) ? parsed : Number.NaN,
         elapsedMs: auto ? DUEL_ROUND_SECONDS * 1000 : elapsed,
       };
-      setIndex((prevIdx) => {
-        const nextIdx = prevIdx + 1;
-        // Use functional state capture so we always append to the latest list.
-        // Snapshot current answers via the functional setter trick:
-        answersStateRef.current = [...answersStateRef.current, answer];
-        if (answersStateRef.current.length >= rounds.length) {
-          submitAll.current(answersStateRef.current);
-          return prevIdx; // stay; parent will switch phase
-        }
+      answersStateRef.current = [...answersStateRef.current, answer];
+      if (answersStateRef.current.length >= rounds.length) {
+        submitRef.current(answersStateRef.current);
+      } else {
+        setIndex((i) => i + 1);
         setValue("");
         setSecondsLeft(DUEL_ROUND_SECONDS);
         roundStartedAtRef.current = Date.now();
-        return nextIdx;
-      });
+      }
     },
     [rounds.length],
   );
 
-  // Backing store for answers kept outside of React state so a rapid auto-
-  // submit from the timer can't lose entries in an async state batch.
-  const answersStateRef = useRef<DuelAnswer[]>([]);
-
   const advanceRef = useRef(advance);
   advanceRef.current = advance;
 
-  // Tick timer while playing — stable deps, no remount on keystroke.
   useEffect(() => {
     if (phase !== "playing") return;
     const id = window.setInterval(() => {
@@ -329,21 +337,16 @@ function DuelPlay({
     return () => window.clearInterval(id);
   }, [phase]);
 
-  // focus after round advances
   useEffect(() => {
-    if (phase === "playing") {
-      inputRef.current?.focus();
-    }
+    if (phase === "playing") inputRef.current?.focus();
   }, [index, phase]);
 
   if (phase === "waiting") {
     return (
       <div className="card p-6 flex flex-col items-start gap-3">
-        <h2 className="text-xl font-black uppercase">Pripravený?</h2>
+        <h2 className="text-xl font-black uppercase">{t.ready}</h2>
         <p className="text-zinc-300 max-w-prose">
-          6 kôl. Každé má {DUEL_ROUND_SECONDS} sekúnd. Odpoveď Enter.
-          Desatinné miesta bodkou alebo čiarkou. Nemusíš trafiť presne — vyhráva
-          kto je bližšie k správnemu výsledku.
+          {t.rules.replace("{secs}", String(DUEL_ROUND_SECONDS))}
         </p>
         <button
           type="button"
@@ -355,7 +358,7 @@ function DuelPlay({
             onStart();
           }}
         >
-          Štart ⚔️
+          {t.start}
         </button>
       </div>
     );
@@ -366,10 +369,13 @@ function DuelPlay({
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
         <span className="chip">
-          Kolo <strong>{index + 1}/{rounds.length}</strong>
+          {t.round}{" "}
+          <strong>
+            {index + 1}/{rounds.length}
+          </strong>
         </span>
         <span className="chip">
-          <span className="opacity-70">Čas</span>
+          <span className="opacity-70">{t.time}</span>
           <strong>{secondsLeft}s</strong>
         </span>
       </div>
@@ -391,16 +397,14 @@ function DuelPlay({
           <span className="text-xs uppercase tracking-widest text-zinc-400">
             {round.problem.kind === "currency"
               ? `${round.problem.from} → ${round.problem.to}`
-              : "Matematika"}
+              : "Math"}
           </span>
           <div className="text-center text-4xl sm:text-5xl font-mono font-black">
             {round.problem.kind === "currency"
               ? `${round.problem.amount} ${round.problem.from} → ? ${round.problem.to}`
               : `${round.problem.a} ${round.problem.op} ${round.problem.b} = ?`}
           </div>
-          <span className="text-xs text-zinc-500">
-            vyhráva kto má menší rozdiel od presnej hodnoty
-          </span>
+          <span className="text-xs text-zinc-500">{t.closer}</span>
         </div>
         <input
           ref={inputRef}
@@ -415,7 +419,7 @@ function DuelPlay({
           autoComplete="off"
         />
         <button type="submit" className="btn btn-primary">
-          Potvrdiť (Enter)
+          {t.confirm}
         </button>
       </form>
     </div>
@@ -425,13 +429,13 @@ function DuelPlay({
 function ResultPanel({
   duel,
   bothDone,
-  self,
   mySide,
+  t,
 }: {
   duel: DuelSummary;
   bothDone: boolean;
-  self: string;
   mySide: "A" | "B" | null;
+  t: Dict["duel"];
 }) {
   const myWins = mySide === "A" ? duel.winsA : duel.winsB;
   const oppWins = mySide === "A" ? duel.winsB : duel.winsA;
@@ -442,17 +446,15 @@ function ResultPanel({
         <h2 className="brutal-heading text-2xl">
           {bothDone
             ? myWins > oppWins
-              ? "Vyhral si 🏆"
+              ? t.resultWin
               : myWins < oppWins
-              ? "Kamoš vyhral 😅"
-              : "Remíza"
-            : "Odovzdané, čaká sa na súpera"}
+              ? t.resultLose
+              : t.resultTie
+            : t.resultSubmitted}
         </h2>
         {!bothDone && (
           <p className="text-sm text-zinc-400">
-            Stránka sa sama obnoví každé 3,5 sekundy. Pošli kamarátovi kód{" "}
-            <strong className="text-[var(--accent)]">{duel.code}</strong>, ak
-            ešte nevie.
+            {t.waitingOpponent.replace("{code}", duel.code)}
           </p>
         )}
       </div>
@@ -470,16 +472,10 @@ function ResultPanel({
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs uppercase tracking-widest text-zinc-400 font-bold">
-                  Kolo {i + 1}
+                  {t.round} {i + 1}
                 </span>
                 <span
-                  className={`brutal-tag ${
-                    winner === "tie"
-                      ? ""
-                      : winner === mySide
-                      ? ""
-                      : ""
-                  }`}
+                  className="brutal-tag"
                   style={{
                     background:
                       winner === "A"
@@ -487,11 +483,14 @@ function ResultPanel({
                         : winner === "B"
                         ? "var(--neo-pink)"
                         : "var(--surface-2)",
-                    color:
-                      winner === "tie" ? "var(--foreground)" : "#0a0a0f",
+                    color: winner === "tie" ? "var(--foreground)" : "#0a0a0f",
                   }}
                 >
-                  {winner === "A" ? duel.playerA : winner === "B" ? duel.playerB ?? "B" : "remíza"}
+                  {winner === "A"
+                    ? duel.playerA
+                    : winner === "B"
+                    ? duel.playerB ?? "B"
+                    : t.resultTie}
                 </span>
               </div>
               <p className="text-sm">

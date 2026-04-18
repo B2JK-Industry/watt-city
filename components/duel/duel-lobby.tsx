@@ -3,10 +3,12 @@
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { DUEL_GAMES, type DuelGameId } from "@/lib/duel";
+import type { Dict } from "@/lib/i18n";
 
-type Props = { username: string };
+type Props = { username: string; dict: Dict };
 
-export function DuelLobby({ username }: Props) {
+export function DuelLobby({ username, dict }: Props) {
+  const t = dict.duel;
   const router = useRouter();
   const [code, setCode] = useState("");
   const [gameId, setGameId] = useState<DuelGameId>("currency-rush-duel");
@@ -66,14 +68,11 @@ export function DuelLobby({ username }: Props) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
       <div className="card p-6 flex flex-col gap-4">
-        <h3 className="brutal-heading text-lg">Vytvoriť duel</h3>
-        <p className="text-sm text-zinc-400">
-          Staneš sa hráč A. Dostaneš kód a pošleš ho kamarátovi. Môžeš zahrať
-          hneď — kamarát zahrá keď bude môcť.
-        </p>
+        <h3 className="brutal-heading text-lg">{t.createTitle}</h3>
+        <p className="text-sm text-zinc-400">{t.createBody}</p>
         <div className="flex flex-col gap-2">
           <span className="text-[10px] uppercase tracking-widest font-bold text-zinc-500">
-            Vyber hru
+            {dict.lang.switcherLabel === "Мова" ? "Вибери гру" : dict.lang.switcherLabel === "Jazyk" ? "Vyber hru" : dict.lang.switcherLabel === "Language" ? "Pick a game" : "Wybierz grę"}
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {DUEL_GAMES.map((g) => (
@@ -106,15 +105,13 @@ export function DuelLobby({ username }: Props) {
           disabled={pending !== null}
           className="btn btn-primary w-fit"
         >
-          {pending === "create" ? "Vytváram…" : "Vytvoriť nový duel"}
+          {pending === "create" ? t.creating : t.createButton}
         </button>
       </div>
 
       <form onSubmit={join} className="card p-6 flex flex-col gap-4">
-        <h3 className="brutal-heading text-lg">Pripojiť sa</h3>
-        <p className="text-sm text-zinc-400">
-          Máš od kamaráta kód? Zadaj ho a pripoj sa ako hráč B.
-        </p>
+        <h3 className="brutal-heading text-lg">{t.joinTitle}</h3>
+        <p className="text-sm text-zinc-400">{t.joinBody}</p>
         <input
           className="input text-center uppercase tracking-[0.4em] font-mono text-xl"
           placeholder="K7WXM3"
@@ -129,7 +126,7 @@ export function DuelLobby({ username }: Props) {
           disabled={pending !== null}
           className="btn btn-pink w-fit"
         >
-          {pending === "join" ? "Pripájam…" : "Pripojiť sa"}
+          {pending === "join" ? t.joining : t.joinButton}
         </button>
       </form>
 
@@ -137,7 +134,7 @@ export function DuelLobby({ username }: Props) {
         <p className="md:col-span-2 text-rose-400 text-sm">{error}</p>
       )}
       <p className="md:col-span-2 text-xs text-zinc-500">
-        Prihlásený ako <strong className="text-zinc-300">{username}</strong>.
+        {t.loggedInAs.replace("{name}", "")} <strong className="text-zinc-300">{username}</strong>.
       </p>
     </div>
   );
