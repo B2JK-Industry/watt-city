@@ -3,7 +3,7 @@ import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
 export const metadata = {
-  title: "Ochrona prywatności · XP Arena",
+  title: "Ochrona prywatności · Watt City",
 };
 
 export default async function PrivacyPage() {

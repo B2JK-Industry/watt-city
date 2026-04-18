@@ -407,7 +407,7 @@ const en: typeof plDict = {
     roadmapTitle: "Roadmap",
     note: "This page is the pitch version · full copy in Polish (default).",
     heroBody:
-      "XP Arena is a gamified financial & energy literacy platform for Gen Z. Every game generates Watts that gradually electrify your own building in Katowice — from a wooden shed to Varso Tower (tallest in the EU). AI creates a new game daily, up to 3 games live at once, and the top-3 medal stays in your profile forever.",
+      "Watt City is a gamified financial & energy literacy platform for Gen Z. Every game generates Watts that gradually electrify your own building in Katowice — from a wooden shed to Varso Tower (tallest in the EU). AI creates a new game daily, up to 3 games live at once, and the top-3 medal stays in your profile forever.",
     ideaBody1:
       "Gen Z in Poland sends BLIK in 2 seconds but doesn't know what APR means. OECD PISA 2022 shows a growing gap between young peoples' digital fluency and their financial literacy. Silesia is simultaneously going through a historic green pivot — without a young generation that understands energy bills, that pivot won't work.",
     ideaBody2:
@@ -418,7 +418,7 @@ const en: typeof plDict = {
     teamBody:
       "Project lead: Daniel Babjak (SK) — engineering, AI pipeline, product. B2JK-Industry is a loose group of developer friends who team up for various hackathons (ETHSilesia, ETHWarsaw) and simultaneously ship the sister project Tauron Sąsiad for the AI Challenge track.",
     sponsorsBody:
-      "XP Arena explicitly targets the PKO XP: Gaming category (PKO Bank Polski, 10,000 PLN) — gamified financial & energy literacy for a young audience. The content is packed with PKO references: IKO app, Konto dla Młodych (ages 13–17), IKE limit 2026, BLIK, Bezpieczny Kredyt 2 %, real interest rate, the WIBOR → WIRON transition, and PKO Tower in Katowice as the emotional peak of progress.",
+      "Watt City explicitly targets the PKO XP: Gaming category (PKO Bank Polski, 10,000 PLN) — gamified financial & energy literacy for a young audience. The content is packed with PKO references: IKO app, Konto dla Młodych (ages 13–17), IKE limit 2026, BLIK, Bezpieczny Kredyt 2 %, real interest rate, the WIBOR → WIRON transition, and PKO Tower in Katowice as the emotional peak of progress.",
     sponsorsStack:
       "We also stack the Legal from Day One category — the platform has a privacy receipt, account-deletion endpoint, and GDPR-shaped UI from the first commit.",
     roadmap: [
@@ -513,7 +513,7 @@ const en: typeof plDict = {
     minorsBody:
       "The platform targets Gen Z (15–20). For users under 16 (the PL GDPR consent threshold) we recommend parental consent. We don't collect any personal data that would identify a child outside the game.",
     disclaimerBody:
-      "XP Arena was built during ETHSilesia 2026 (April 17–19, 2026) in Katowice. It's a prototype — financial advice in the games does NOT constitute investment advice under MiFID II. Game content is for educational purposes and verified against publicly available sources, but doesn't replace a conversation with a bank, advisor, or KNF (Polish Financial Supervision Authority).",
+      "Watt City was built during ETHSilesia 2026 (April 17–19, 2026) in Katowice. It's a prototype — financial advice in the games does NOT constitute investment advice under MiFID II. Game content is for educational purposes and verified against publicly available sources, but doesn't replace a conversation with a bank, advisor, or KNF (Polish Financial Supervision Authority).",
     version: "Version 1.0 · 2026-04-18 ·",
     backHome: "Back to home",
     dataFields: {

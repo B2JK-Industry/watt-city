@@ -229,6 +229,170 @@ export default async function MiastoPage() {
           dict,
         }}
       />
+      <ComingSoonSection lang={lang} />
     </div>
+  );
+}
+
+// Phase 1.6 — static coming-soon roadmap surface. Teaches players what's on
+// the horizon without any live logic. Each tile one line; all four langs.
+const COMING_SOON_TILES: Array<{
+  emoji: string;
+  key: "leasing" | "obrotowy" | "konsumencki" | "inwestycyjny" | "parent" | "class" | "trade" | "pko";
+  labels: Record<Lang, string>;
+  teasers: Record<Lang, string>;
+}> = [
+  {
+    emoji: "🚚",
+    key: "leasing",
+    labels: { pl: "Leasing", uk: "Лізинг", cs: "Leasing", en: "Leasing" },
+    teasers: {
+      pl: "Wynajmij wyższy budynek na 6 miesięcy, potem zostaw lub zwróć.",
+      uk: "Орендуй вищу будівлю на 6 міс., потім залиш або поверни.",
+      cs: "Pronajmi si vyšší budovu na 6 měsíců, pak nech nebo vrať.",
+      en: "Rent a higher-tier building for 6 months, then keep or return.",
+    },
+  },
+  {
+    emoji: "💳",
+    key: "obrotowy",
+    labels: { pl: "Kredyt obrotowy", uk: "Обіговий кредит", cs: "Revolvingový úvěr", en: "Revolving credit" },
+    teasers: {
+      pl: "Krótkoterminowa pożyczka pod przyszłe wyniki — 7 dni na spłatę.",
+      uk: "Короткострокова позика під майбутні результати — 7 днів на виплату.",
+      cs: "Krátkodobá půjčka proti budoucím skóre — 7 dní na splacení.",
+      en: "Short-term loan against pending scores — 7 days to repay.",
+    },
+  },
+  {
+    emoji: "⚠️",
+    key: "konsumencki",
+    labels: {
+      pl: "Kredyt konsumencki",
+      uk: "Споживчий кредит",
+      cs: "Spotřebitelský úvěr",
+      en: "Consumer credit",
+    },
+    teasers: {
+      pl: "Szybka gotówka, RRSO 20% — lekcja ostrzegawcza.",
+      uk: "Швидкі гроші, RRSO 20% — навчання застереженню.",
+      cs: "Rychlá hotovost, RRSO 20% — varovná lekce.",
+      en: "Instant cash, 20% RRSO — cautionary tale.",
+    },
+  },
+  {
+    emoji: "📈",
+    key: "inwestycyjny",
+    labels: {
+      pl: "Kredyt inwestycyjny",
+      uk: "Інвест. кредит",
+      cs: "Investiční úvěr",
+      en: "Investment loan",
+    },
+    teasers: {
+      pl: "Pożycz, by odkupić budynek innego gracza. Tier 7+.",
+      uk: "Позич, щоб купити будівлю іншого гравця. Tier 7+.",
+      cs: "Půjč si na koupi budovy jiného hráče. Tier 7+.",
+      en: "Borrow to buy another player's building. Tier 7+.",
+    },
+  },
+  {
+    emoji: "👨‍👩‍👧",
+    key: "parent",
+    labels: {
+      pl: "Panel rodzica",
+      uk: "Панель батьків",
+      cs: "Panel rodiče",
+      en: "Parent dashboard",
+    },
+    teasers: {
+      pl: "Rodzic widzi postępy dziecka i koncepcje, których się uczy.",
+      uk: "Батьки бачать прогрес дитини та вивчені концепти.",
+      cs: "Rodič vidí pokrok dítěte a koncepty, které se učí.",
+      en: "Parents see their kid's progress and learned concepts.",
+    },
+  },
+  {
+    emoji: "🏫",
+    key: "class",
+    labels: {
+      pl: "Tryb klasy",
+      uk: "Режим класу",
+      cs: "Režim třídy",
+      en: "Class mode",
+    },
+    teasers: {
+      pl: "Nauczyciel zakłada klasę, rozsyła 30 kodów dostępu.",
+      uk: "Вчитель створює клас, роздає 30 кодів доступу.",
+      cs: "Učitel založí třídu, rozešle 30 přístupových kódů.",
+      en: "Teacher creates a class, distributes 30 join codes.",
+    },
+  },
+  {
+    emoji: "🤝",
+    key: "trade",
+    labels: {
+      pl: "Handel między graczami",
+      uk: "Торгівля між гравцями",
+      cs: "Obchod mezi hráči",
+      en: "Player-to-player trade",
+    },
+    teasers: {
+      pl: "Odsprzedaj budynek innemu graczowi. Wymaga T7.",
+      uk: "Продай будівлю іншому гравцеві. Потрібен T7.",
+      cs: "Prodej budovu jinému hráči. Vyžaduje T7.",
+      en: "Sell a building to another player. Requires T7.",
+    },
+  },
+  {
+    emoji: "🏦",
+    key: "pko",
+    labels: {
+      pl: "Mirror do PKO Junior",
+      uk: "Mirror у PKO Junior",
+      cs: "Mirror do PKO Junior",
+      en: "Mirror to PKO Junior",
+    },
+    teasers: {
+      pl: "Przenieś zaoszczędzone w grze kwoty na realne konto PKO Junior.",
+      uk: "Переведи заощаджені в грі суми на реальний рахунок PKO Junior.",
+      cs: "Přenes naspořené částky do reálného účtu PKO Junior.",
+      en: "Mirror your in-game savings onto a real PKO Junior account.",
+    },
+  },
+];
+
+function ComingSoonSection({ lang }: { lang: Lang }) {
+  const heading = {
+    pl: "Wkrótce — faza 2 i dalej",
+    uk: "Скоро — фаза 2 і далі",
+    cs: "Brzy — fáze 2 a dál",
+    en: "Coming soon — phase 2 and beyond",
+  }[lang];
+  return (
+    <section className="card p-4 flex flex-col gap-3">
+      <h2 className="text-lg font-black uppercase">{heading}</h2>
+      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-sm">
+        {COMING_SOON_TILES.map((t) => (
+          <li
+            key={t.key}
+            className="border-2 border-[var(--ink)]/30 bg-[var(--surface)]/40 rounded p-3 flex flex-col gap-1 opacity-70"
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-xl" aria-hidden>
+                {t.emoji}
+              </span>
+              <strong className="uppercase text-xs tracking-wider">
+                {t.labels[lang]}
+              </strong>
+              <span className="ml-auto text-[10px]">🔒</span>
+            </div>
+            <p className="text-xs leading-snug text-zinc-400">
+              {t.teasers[lang]}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }

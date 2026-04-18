@@ -44,9 +44,9 @@ export function SiteNav({
       <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-2.5 font-black text-lg tracking-tight">
           <span className="inline-flex items-center justify-center w-9 h-9 bg-[var(--accent)] border-[3px] border-[var(--ink)] shadow-[3px_3px_0_0_var(--ink)] text-[var(--background)] font-black text-base">
-            XP
+            WC
           </span>
-          <span className="uppercase">Arena</span>
+          <span className="uppercase">Watt City</span>
         </Link>
         <div className="hidden sm:flex items-center gap-5 text-sm">
           {navLinks.map((l) => (

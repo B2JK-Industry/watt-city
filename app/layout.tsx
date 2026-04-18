@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteNav } from "@/components/site-nav";
+import { NewGameToast } from "@/components/new-game-toast";
 import { getSession } from "@/lib/session";
 import { userStats } from "@/lib/leaderboard";
 import { levelFromXP, tierForLevel } from "@/lib/level";
@@ -22,9 +23,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "XP Arena · ETHSilesia 2026 · Katowice",
+  title: "Watt City · Edukacja finansowa dla dzieci · Katowice",
   description:
-    "Gamifikowana edukacja finansowa i energetyczna z Katowic. Minigry o finansach, energetyce i ekonomii. Wpis do kategorii PKO XP: Gaming na ETHSilesia 2026.",
+    "Watt City — gra edukacyjna ucząca dzieci finansów osobistych. Graj w minigry → zarabiaj zasoby → buduj miasto → zaciągaj kredyt → spłacaj. SKO 2.0 prototype. Pitched to PKO BP at ETHSilesia 2026.",
 };
 
 export default async function RootLayout({
@@ -69,15 +70,29 @@ export default async function RootLayout({
         <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8">
           {children}
         </main>
+        {session && (
+          <NewGameToast
+            newChallengeLabel={
+              {
+                pl: "🤖 Nowe wyzwanie AI",
+                uk: "🤖 Новий AI-виклик",
+                cs: "🤖 Nová AI výzva",
+                en: "🤖 New AI challenge",
+              }[lang]
+            }
+            dismissLabel={{ pl: "Zamknij", uk: "Закрити", cs: "Zavřít", en: "Dismiss" }[lang]}
+            playLabel={{ pl: "Graj", uk: "Грати", cs: "Hrát", en: "Play" }[lang]}
+          />
+        )}
         <footer className="w-full border-t-[3px] border-[var(--ink)] mt-12 bg-[var(--surface)]">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
                   <span className="inline-flex items-center justify-center w-9 h-9 bg-[var(--accent)] border-[3px] border-[var(--ink)] shadow-[3px_3px_0_0_var(--ink)] text-[#0a0a0f] font-black text-sm">
-                    XP
+                    WC
                   </span>
-                  <span className="font-black uppercase">Arena</span>
+                  <span className="font-black uppercase">Watt City</span>
                 </div>
                 <p className="text-sm text-zinc-400 max-w-md">
                   {dict.footer.body
@@ -113,7 +128,15 @@ export default async function RootLayout({
                 </span>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs text-zinc-500 border-t-2 border-[var(--ink)]/30 pt-4">
+            <div className="border-t-2 border-[var(--ink)]/30 pt-4 pb-1">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-amber-400">
+                ⚠️ GRA EDUKACYJNA — to nie są prawdziwe pieniądze. Budynki,
+                kredyty i W-dolary istnieją tylko w grze. (Educational game —
+                not real money. Buildings, loans and W-dollars exist in-game
+                only.)
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs text-zinc-500 pt-2">
               <span>{dict.footer.sponsors}</span>
               <span className="flex flex-wrap gap-3">
                 <a href="/o-platforme" className="hover:text-[var(--accent)]">

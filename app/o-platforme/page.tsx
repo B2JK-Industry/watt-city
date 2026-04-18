@@ -4,9 +4,9 @@ import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
 export const metadata = {
-  title: "O platformie · XP Arena",
+  title: "O platformie · Watt City",
   description:
-    "Wizja, architektura i AI pipeline XP Areny — gamifikowana edukacja finansowa i energetyczna dla Gen Z, zbudowana na ETHSilesia 2026 dla kategorii PKO XP: Gaming.",
+    "Wizja, architektura i AI pipeline Watt City — gra edukacyjna ucząca dzieci finansów osobistych, zbudowana na ETHSilesia 2026.",
 };
 
 export default async function AboutPage() {
@@ -141,7 +141,7 @@ export default async function AboutPage() {
             </li>
             <li>
               <strong>Nir Eyal — Hooked (2014).</strong> Variabilné odmeny +
-              investícia (buildup) = habit loop. XP Arena kombinuje oba: AI
+              investícia (buildup) = habit loop. Watt City kombinuje oba: AI
               variabilita + rastúca budova ako investícia v čase.{" "}
               <a
                 href="https://www.nirandfar.com/hooked/"
