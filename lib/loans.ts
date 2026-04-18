@@ -24,6 +24,7 @@ import {
 import { getCatalogEntry, yieldAtLevel } from "@/lib/building-catalog";
 import type { Resources } from "@/lib/resources";
 import { pushNotification } from "@/lib/notifications";
+import { recordEvent } from "@/lib/analytics";
 
 export const MORTGAGE_STANDARD_APR = 0.08;
 export const MORTGAGE_PREFERRED_APR = 0.05; // requires Bank lokalny (Phase 2)
@@ -267,6 +268,11 @@ export async function takeMortgage(
     { loanId: id, apr: quote.apr, termMonths: input.termMonths },
   );
   await savePlayerState(state);
+  await recordEvent({
+    kind: "mortgage_taken",
+    user: state.username,
+    meta: { loanId: id, apr: quote.apr, principal: input.principal, termMonths: input.termMonths },
+  });
   return { ok: true, state, loan };
 }
 
@@ -345,6 +351,11 @@ export async function processLoanPayments(
           state.creditScore = clampScore(
             state.creditScore + SCORE_DELTA_PAID_OFF_BONUS,
           );
+          await recordEvent({
+            kind: "mortgage_paid_off",
+            user: state.username,
+            meta: { loanId: loan.id, termMonths: loan.termMonths },
+          });
           break;
         }
       } else {
@@ -373,6 +384,11 @@ export async function processLoanPayments(
             state.creditScore + SCORE_DELTA_DEFAULT,
           );
           defaulted.push(loan.id);
+          await recordEvent({
+            kind: "mortgage_defaulted",
+            user: state.username,
+            meta: { loanId: loan.id },
+          });
           break;
         }
       }
