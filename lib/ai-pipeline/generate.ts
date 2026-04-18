@@ -98,12 +98,23 @@ function buildPlSystemPrompt(kind: SeedKind): string {
 }
 
 function buildPlUserPrompt(seed: ResearchSeed, deterministicSeed: number): string {
+  const today = new Date(deterministicSeed * 24 * 60 * 60 * 1000);
+  const todayIso = today.toISOString().slice(0, 10);
+  const difficultyRule: Record<NonNullable<ResearchSeed["difficulty"]>, string> = {
+    easy: "EASY: use round numbers, basic vocabulary, one concept per item. Beginners should succeed 3/5.",
+    medium: "MEDIUM: realistic Polish 2025–2026 scenarios, require 1-step reasoning, avoid trivia.",
+    hard: "HARD: multi-step reasoning, nuanced distinctions, edge cases. Expect bench-players to miss 2/5.",
+  };
   return [
+    `DATE: ${todayIso} (produce content fresh for this date — if relevant, reference current rates, limits, news).`,
     `THEME: ${seed.theme}`,
     `KIND: ${seed.kind}`,
+    `DIFFICULTY: ${seed.difficulty ?? "medium"} — ${difficultyRule[seed.difficulty ?? "medium"]}`,
     `RESEARCH NOTES: ${seed.notes}`,
     `SOURCE HINT: ${seed.source}`,
-    `DETERMINISTIC SEED: ${deterministicSeed} (pick variations stable across retries in the same 24h window).`,
+    `DETERMINISTIC SEED: ${deterministicSeed} (used to keep retries within the same UTC day converge).`,
+    "",
+    "IMPORTANT: Produce content that differs materially from a generic textbook — focus on the specific angle, today's numbers, concrete Polish context. Do not repeat canonical examples. No two plays should feel the same.",
     "",
     `Produce a ${seed.kind} spec in Polish.`,
   ].join("\n");
