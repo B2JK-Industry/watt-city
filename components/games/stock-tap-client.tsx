@@ -27,7 +27,8 @@ function randomWalk(prev: number, center: number): number {
   return Math.max(40, Math.min(220, Number(next.toFixed(2))));
 }
 
-export function StockTapClient() {
+export function StockTapClient({ dict }: { dict: Dict }) {
+  const t = dict.stock;
   const [phase, setPhase] = useState<Phase>("idle");
   const [secondsLeft, setSecondsLeft] = useState(DURATION_SECONDS);
   const [series, setSeries] = useState<number[]>(() => Array(HISTORY).fill(100));
@@ -83,9 +84,9 @@ export function StockTapClient() {
     setSubmitError(null);
     const res = await submitScore(GAME_ID, finalXp);
     if (res.ok) setResult(res);
-    else setSubmitError(res.error ?? "Nepodarilo sa zapísať skóre.");
+    else setSubmitError(res.error ?? dict.auth.errorGeneric);
     setSubmitting(false);
-  }, []);
+  }, [dict.auth.errorGeneric]);
 
   useEffect(() => {
     if (phase === "done") submit(Math.min(xp, XP_CAP));
@@ -106,7 +107,7 @@ export function StockTapClient() {
     setFlash("buy");
     window.setTimeout(() => setFlash(null), 250);
     const p = clickPct(e);
-    spawnFx({ x: p.x, y: p.y, text: `BUY @ ${price.toFixed(1)}`, tone: "ok" });
+    spawnFx({ x: p.x, y: p.y, text: `${t.buy} @ ${price.toFixed(1)}`, tone: "ok" });
   }
 
   function onSell(e: React.MouseEvent<HTMLButtonElement>) {
@@ -167,14 +168,10 @@ export function StockTapClient() {
   if (phase === "idle") {
     return (
       <div className="card p-8 flex flex-col gap-4 items-start">
-        <h2 className="text-xl font-semibold">Pripravený?</h2>
-        <p className="text-zinc-400 max-w-prose">
-          Cieľ: kúp nízko, predaj vysoko. Môžeš držať max 1 pozíciu naraz. Každý
-          ziskový obchod v rade = combo bonus (×1.5 → ×3).{" "}
-          <strong>Pozor:</strong> stratové obchody resetujú combo.
-        </p>
+        <h2 className="text-xl font-semibold">{t.ready}</h2>
+        <p className="text-zinc-400 max-w-prose">{t.readyBody}</p>
         <button type="button" className="btn btn-primary" onClick={start}>
-          Spustiť Stock Tap
+          {t.startShort}
         </button>
       </div>
     );
@@ -183,14 +180,15 @@ export function StockTapClient() {
   if (phase === "done") {
     return (
       <RoundResult
+        dict={dict}
         state={{ submitting, error: submitError, result }}
         gameHref="/games/stock-tap"
-        retryLabel="Znova"
+        retryLabel={t.retry}
         lines={[
-          { label: "Trades", value: String(trades) },
-          { label: "Zisk zł", value: cash.toFixed(1) },
-          { label: "Best combo", value: String(bestCombo) },
-          { label: "Skóre", value: String(Math.min(xp, XP_CAP)) },
+          { label: t.trades, value: String(trades) },
+          { label: t.profitZl, value: cash.toFixed(1) },
+          { label: t.bestCombo, value: String(bestCombo) },
+          { label: t.score, value: String(Math.min(xp, XP_CAP)) },
         ]}
       />
     );
@@ -218,7 +216,7 @@ export function StockTapClient() {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-2 flex-wrap text-sm">
         <span className="chip">
-          <span className="opacity-70">Čas</span>
+          <span className="opacity-70">{t.time}</span>
           <strong>{secondsLeft}s</strong>
         </span>
         <ComboBadge combo={combo} multiplier={comboMultiplier(combo)} />
@@ -227,7 +225,7 @@ export function StockTapClient() {
           <strong className="text-[var(--accent)]">{Math.min(xp, XP_CAP)}</strong>
         </span>
         <span className="chip">
-          <span className="opacity-70">zisk</span>
+          <span className="opacity-70">{t.profit}</span>
           <strong className={cash >= 0 ? "text-emerald-300" : "text-rose-300"}>
             {cash.toFixed(1)} zł
           </strong>
@@ -247,7 +245,7 @@ export function StockTapClient() {
         <div className="flex items-end justify-between">
           <div className="flex flex-col">
             <span className="text-xs uppercase tracking-wider text-zinc-500">
-              Cena
+              {t.price}
             </span>
             <span className="font-mono text-3xl sm:text-4xl font-bold">
               {price.toFixed(2)} zł
@@ -256,7 +254,7 @@ export function StockTapClient() {
           {position !== null && (
             <div className="flex flex-col items-end text-sm">
               <span className="text-xs uppercase tracking-wider text-zinc-500">
-                Otvorená pozícia
+                {t.openPos}
               </span>
               <span className="font-mono">
                 @ {position.toFixed(2)} zł
@@ -315,7 +313,7 @@ export function StockTapClient() {
                 : "bg-emerald-500 text-black hover:bg-emerald-400"
             } ${flash === "buy" ? "animate-[tile-flash-ok_320ms]" : ""}`}
           >
-            BUY @ {price.toFixed(1)}
+            {t.buy} @ {price.toFixed(1)}
           </button>
           <button
             type="button"
@@ -333,13 +331,10 @@ export function StockTapClient() {
                 : ""
             }`}
           >
-            SELL @ {price.toFixed(1)}
+            {t.sell} @ {price.toFixed(1)}
           </button>
         </div>
-        <p className="text-xs text-zinc-500">
-          💡 Kúp nízko, predaj vysoko. V reálnej burze sa pridávajú poplatky a
-          dane — preto je častý day-trading rizikový.
-        </p>
+        <p className="text-xs text-zinc-500">{t.tip}</p>
       </div>
     </div>
   );

@@ -49,7 +49,8 @@ function pickFrom<T>(arr: T[]): T {
 
 type Phase = "idle" | "running" | "done";
 
-export function EnergyDashClient() {
+export function EnergyDashClient({ dict }: { dict: Dict }) {
+  const t = dict.energy;
   const [phase, setPhase] = useState<Phase>("idle");
   const [secondsLeft, setSecondsLeft] = useState(DURATION_SECONDS);
   const [tiles, setTiles] = useState<Tile[]>([]);
@@ -132,9 +133,9 @@ export function EnergyDashClient() {
     setSubmitError(null);
     const res = await submitScore(GAME_ID, finalXp);
     if (res.ok) setResult(res);
-    else setSubmitError(res.error ?? "Nepodarilo sa zapísať skóre.");
+    else setSubmitError(res.error ?? dict.auth.errorGeneric);
     setSubmitting(false);
-  }, []);
+  }, [dict.auth.errorGeneric]);
 
   useEffect(() => {
     if (phase === "done") submit(Math.min(xp, XP_CAP));
@@ -189,15 +190,12 @@ export function EnergyDashClient() {
       <div className="card p-8 flex flex-col gap-4">
         <div className="flex flex-wrap gap-4">
           <div className="flex-1 min-w-[220px]">
-            <h2 className="text-xl font-semibold">Pripravený?</h2>
-            <p className="text-zinc-400 mt-2">
-              Zelené = obnoviteľné zdroje (OZE). Čierne = fosílne. Tap zelené,
-              vyhni sa čiernym. Seba-kŕmiaca sa hra — rýchlosť rastie v čase.
-            </p>
+            <h2 className="text-xl font-semibold">{t.ready}</h2>
+            <p className="text-zinc-400 mt-2">{t.readyBody}</p>
           </div>
           <div className="flex-1 min-w-[220px] flex flex-col gap-2 text-sm text-zinc-300">
             <span className="text-xs uppercase tracking-wider text-zinc-500">
-              Combo bonus
+              {t.comboBonus}
             </span>
             <div className="grid grid-cols-3 gap-2 text-center">
               <div className="rounded-lg bg-[var(--surface-2)] px-2 py-1 border border-[var(--border)]">
@@ -213,7 +211,7 @@ export function EnergyDashClient() {
           </div>
         </div>
         <button type="button" className="btn btn-primary w-fit" onClick={start}>
-          Spustiť Energy Dash
+          {t.startShort}
         </button>
       </div>
     );
@@ -222,14 +220,15 @@ export function EnergyDashClient() {
   if (phase === "done") {
     return (
       <RoundResult
+        dict={dict}
         state={{ submitting, error: submitError, result }}
         gameHref="/games/energy-dash"
-        retryLabel="Znova"
+        retryLabel={t.retry}
         lines={[
-          { label: "Tapy OZE", value: String(hits) },
-          { label: "Chyby", value: String(misses) },
-          { label: "Best combo", value: String(bestCombo) },
-          { label: "Skóre", value: String(Math.min(xp, XP_CAP)) },
+          { label: t.tapsOze, value: String(hits) },
+          { label: t.mistakes, value: String(misses) },
+          { label: t.bestCombo, value: String(bestCombo) },
+          { label: t.score, value: String(Math.min(xp, XP_CAP)) },
         ]}
       />
     );
@@ -239,7 +238,7 @@ export function EnergyDashClient() {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-2 flex-wrap text-sm">
         <span className="chip">
-          <span className="opacity-70">Čas</span>
+          <span className="opacity-70">{t.time}</span>
           <strong>{secondsLeft}s</strong>
         </span>
         <ComboBadge combo={combo} multiplier={comboMultiplier(combo)} />
@@ -284,9 +283,7 @@ export function EnergyDashClient() {
         })}
         <FloatingFxLayer items={fxItems} />
       </div>
-      <p className="text-xs text-zinc-500">
-        💡 OZE = obnoviteľné zdroje energie. Ich podiel v EU rastie — cieľ 45 % do 2030.
-      </p>
+      <p className="text-xs text-zinc-500">{t.footNote}</p>
     </div>
   );
 }

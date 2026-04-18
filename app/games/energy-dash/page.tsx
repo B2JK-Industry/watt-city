@@ -22,7 +22,7 @@ export default async function EnergyDashPage() {
         <h1 className="text-3xl font-bold">{t.headerTitle}</h1>
         <p className="text-zinc-400">{t.headerBody}</p>
       </header>
-      <EnergyDashClient />
+      <EnergyDashClient dict={dict} />
     </div>
   );
 }
