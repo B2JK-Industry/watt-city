@@ -1,5 +1,49 @@
 @import "tailwindcss";
 
+/* ---------- Accessibility (Phase 6.4) ---------- */
+
+/* Visible keyboard focus ring. 2px outline + 2px offset gives WCAG 2.4.7
+ * compliance against our dark background (contrast > 3:1). The :focus rule
+ * below Tailwind's reset picks up all buttons, links, inputs. */
+:focus-visible {
+  outline: 3px solid var(--neo-yellow);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Skip-to-content link — visually hidden until focused. */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 8px;
+  z-index: 100;
+  background: var(--neo-yellow);
+  color: #0a0a0f;
+  padding: 0.5rem 0.9rem;
+  border: 2px solid #0a0a0f;
+  border-radius: 6px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: top 120ms ease;
+}
+.skip-to-content:focus-visible {
+  top: 8px;
+  outline: 3px solid #0a0a0f;
+}
+
+/* Respect user's reduced-motion preference (WCAG 2.3.3). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
 :root {
   --background: #0a0a0f;
   --foreground: #f8fafc;

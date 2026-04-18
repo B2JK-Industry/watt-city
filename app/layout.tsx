@@ -62,6 +62,9 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <a href="#main-content" className="skip-to-content">
+          {{ pl: "Przejdź do treści", uk: "До контенту", cs: "Přejít na obsah", en: "Skip to content" }[lang]}
+        </a>
         <CsrfBootstrap />
         <CookieConsent lang={lang} />
         <SiteNav
@@ -75,7 +78,11 @@ export default async function RootLayout({
           dict={dict}
           resources={player?.resources ?? null}
         />
-        <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8">
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8"
+        >
           {children}
         </main>
         {session && (
