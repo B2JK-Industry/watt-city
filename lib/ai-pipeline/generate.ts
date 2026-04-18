@@ -152,8 +152,9 @@ function buildTranslationSystemPrompt(targetLang: Exclude<Lang, "pl">): string {
     "",
     "HARD RULES:",
     "- Preserve JSON structure EXACTLY: same `kind`, same item count, identical numeric fields (correctIndex, truth, tolerancePct, xpPerCorrect, xpPerWord).",
-    "- Translate only user-facing strings: prompts, options, explanations, hints, units when they have a localized equivalent (% stays %, zł stays zł — Polish złoty is a proper currency name).",
-    "- Keep Polish-specific proper nouns untranslated: BLIK, PKO, NBP, Tauron, IKE, IKZE, RRSO, WIBOR, WIRON, Katowice, Warszawa, Śląsk, Nikiszowiec, Varso Tower. For these, use the Polish name.",
+    "- The game is about the POLISH financial + energy context. DO NOT localize currencies or convert prices. Keep zł / PLN in prompts AND in the `unit` field, even for EN/UK/CS speakers — users are told they're playing a Polish-context game.",
+    "- Keep these Polish proper nouns untranslated: BLIK, PKO, NBP, Tauron, IKE, IKZE, RRSO, WIBOR, WIRON, Katowice, Warszawa, Śląsk, Nikiszowiec, Varso Tower.",
+    "- Translate only user-facing text (prompts, options, explanations, hints). Units (zł, kWh, %, Wh, zł/kWh…) stay as written.",
     "- Scramble words: produce a natural UPPERCASE target-language word that matches the concept in the hint. The word must be 4–20 letters. It is OK for the target word to differ from Polish (e.g. PL 'INFLACJA' → CS 'INFLACE' / EN 'INFLATION' / UK 'ІНФЛЯЦІЯ').",
     "- Options for quiz: keep the same order. correctIndex must not change.",
     "- Tone: same register as source (neutral, educational, Gen Z friendly).",
@@ -246,7 +247,7 @@ function mergeStructure(pl: GameSpec, translated: GameSpec): GameSpec {
         return {
           prompt: t.prompt ?? plItem.prompt,
           truth: plItem.truth,
-          unit: t.unit ?? plItem.unit,
+          unit: plItem.unit, // lock unit — translator isn't allowed to re-denominate
           tolerancePct: plItem.tolerancePct,
         };
       }),
