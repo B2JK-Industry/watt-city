@@ -2,7 +2,8 @@
   "crons": [
     {
       "path": "/api/cron/daily-game",
-      "schedule": "0 */6 * * *"
+      "schedule": "0 9 * * *"
     }
   ]
 }
+
