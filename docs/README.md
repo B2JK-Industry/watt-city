@@ -1,0 +1,56 @@
+# Watt City — documentation
+
+> Watt City = the Phase-1+ pivot from XP Arena. SKO 2.0 = pitch context for PKO partnership.
+> See [`BRANCHING.md`](./BRANCHING.md) for what's on `main` (XP Arena, frozen) vs `watt-city` (active).
+
+## Read in this order
+
+| # | Doc | Audience | What's inside |
+|---|---|---|---|
+| 1 | [`SKO-VISION.md`](./SKO-VISION.md) | Everyone | Why this exists, audience, core loop, MVP scope |
+| 2 | [`SKO-BACKLOG.md`](./SKO-BACKLOG.md) | Tech lead, PM | All work items across 11 phases (~300 items) |
+| 3 | [`SKO-GAMES.md`](./SKO-GAMES.md) | Game designer | Per-kind catalog, 30-theme target, resource matrix |
+| 4 | [`ECONOMY.md`](./ECONOMY.md) | Engineer, balance designer | Every formula, every number, balance sheets |
+| 5 | [`ARCHITECTURE.md`](./ARCHITECTURE.md) | Engineer | Schemas, API contracts, data flows, Redis keys, state machines |
+| 6 | [`GAMES-DETAIL.md`](./GAMES-DETAIL.md) | Engineer adding a new kind | Full per-kind spec: zod, prompts, scoring, edge cases |
+| 7 | [`SECURITY-AND-COMPLIANCE.md`](./SECURITY-AND-COMPLIANCE.md) | Engineer, lawyer | Threat model, GDPR, GDPR-K, KNF, content moderation |
+| 8 | [`OPERATIONS.md`](./OPERATIONS.md) | DevOps, on-call | Deploy, monitor, incident playbooks, cost |
+| 9 | [`BRANCHING.md`](./BRANCHING.md) | Engineer | Why two branches, how to switch |
+| 10 | [`TARGET-BOUNTIES.md`](./TARGET-BOUNTIES.md) | PM, founder | ETHSilesia 2026 hackathon prize tracks we target |
+
+## Decisions resolved (so far)
+
+| # | Question | Decision |
+|---|---|---|
+| **D1** | Public branding | Watt City (rename now); SKO 2.0 = pitch context only |
+| **D2** | Cron infrastructure | Lazy-only + free external pinger; no Vercel Pro yet |
+| **D4** | Starter buildings | Only Domek; everything else earned by playing games |
+| **D5** | Mortgage params | 6% APR std / 5% preferred, 12/24/36 mo, 12× monthly cashflow cap |
+
+## Decisions still open
+
+| # | Question |
+|---|---|
+| D3 | Currency display: 💵 zł / 💰 W$ / 🪙 W-coin |
+| D6 | Cron at night (00:00–06:00): full / pause / /3h |
+| D7 | Mascot: keep Żyrafa / new Silesian dwarf / none |
+| D8 | Visual brand: full PKO blue pivot / keep neo-brutalist + skin |
+| D9 | Resource decay |
+| D10 | Marketplace launch policy |
+| D11 | School pricing |
+| D12 | Web3 layer (yes/no/opt-in) |
+
+## Open questions for technical decision
+
+See `ARCHITECTURE.md` § 17 for architecture-level open questions.
+
+## How to contribute (if team grows)
+
+1. Read this file
+2. Pick a backlog item
+3. Read relevant detail doc
+4. Branch from `watt-city`
+5. Implement
+6. Test (unit + manual smoke)
+7. PR to `watt-city`
+8. After merge, update CHANGELOG + relevant doc if behaviour changed
