@@ -53,10 +53,58 @@ export const PriceGuessSpecSchema = z.object({
   xpPerCorrect: z.number().int().min(5).max(30),
 });
 
+/* ---------- True / False sprint ---------- */
+
+export const TrueFalseItemSchema = z.object({
+  statement: z.string().min(8).max(200),
+  isTrue: z.boolean(),
+  explanation: z.string().min(10).max(300),
+});
+
+export const TrueFalseSpecSchema = z.object({
+  kind: z.literal("true-false"),
+  items: z.array(TrueFalseItemSchema).min(6).max(12),
+  xpPerCorrect: z.number().int().min(5).max(20),
+});
+
+/* ---------- Match-pairs (concept ↔ definition / pair) ---------- */
+
+export const MatchPairSchema = z.object({
+  left: z.string().min(2).max(60),
+  right: z.string().min(2).max(140),
+});
+
+export const MatchPairsSpecSchema = z.object({
+  kind: z.literal("match-pairs"),
+  pairs: z.array(MatchPairSchema).min(4).max(8),
+  xpPerMatch: z.number().int().min(5).max(30),
+  leftLabel: z.string().min(1).max(40), // e.g. "Pojęcie"
+  rightLabel: z.string().min(1).max(40), // e.g. "Definicja"
+});
+
+/* ---------- Order / Timeline (sort items chronologically or by value) ---------- */
+
+export const OrderItemSchema = z.object({
+  label: z.string().min(2).max(80),
+  rank: z.number().int().min(1).max(20), // 1 = first / smallest, N = last / largest
+  hint: z.string().max(160).optional(),
+});
+
+export const OrderSpecSchema = z.object({
+  kind: z.literal("order"),
+  prompt: z.string().min(8).max(200), // e.g. "Sort PL macro events by date (oldest first)"
+  direction: z.enum(["ascending", "descending"]),
+  items: z.array(OrderItemSchema).min(4).max(7),
+  xpPerCorrect: z.number().int().min(10).max(40), // bonus for full sequence
+});
+
 export const GameSpecSchema = z.discriminatedUnion("kind", [
   QuizSpecSchema,
   ScrambleSpecSchema,
   PriceGuessSpecSchema,
+  TrueFalseSpecSchema,
+  MatchPairsSpecSchema,
+  OrderSpecSchema,
 ]);
 export type GameSpec = z.infer<typeof GameSpecSchema>;
 
@@ -115,13 +163,17 @@ export type AiGame = z.infer<typeof AiGameSchema>;
 export function xpCapForSpec(spec: GameSpec): number {
   if (spec.kind === "quiz") return spec.items.length * spec.xpPerCorrect;
   if (spec.kind === "scramble") return spec.words.length * spec.xpPerWord;
-  return spec.items.length * spec.xpPerCorrect;
+  if (spec.kind === "price-guess") return spec.items.length * spec.xpPerCorrect;
+  if (spec.kind === "true-false") return spec.items.length * spec.xpPerCorrect;
+  if (spec.kind === "match-pairs") return spec.pairs.length * spec.xpPerMatch;
+  if (spec.kind === "order") return spec.items.length * spec.xpPerCorrect;
+  return 100;
 }
 
+export type SpecKind = GameSpec["kind"];
+
 // Primary "kind" — all four langs share it by construction. Use PL as canonical.
-export function specKind(
-  spec: SpecField,
-): "quiz" | "scramble" | "price-guess" {
+export function specKind(spec: SpecField): SpecKind {
   return isLocalizedSpec(spec) ? spec.pl.kind : spec.kind;
 }
 

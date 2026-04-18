@@ -21,7 +21,7 @@ export type ArchivedAiGame = {
   title: string;
   theme: string;
   model: string;
-  kind: "quiz" | "scramble" | "price-guess";
+  kind: import("./types").SpecKind;
   generatedAt: number;
   validUntil: number;
 };

@@ -4,6 +4,9 @@ import {
   QuizSpecSchema,
   ScrambleSpecSchema,
   PriceGuessSpecSchema,
+  TrueFalseSpecSchema,
+  MatchPairsSpecSchema,
+  OrderSpecSchema,
   LocalizedSpecSchema,
   type GameSpec,
   type LocalizedSpec,
@@ -15,9 +18,14 @@ import type { ResearchSeed, SeedKind } from "./research";
 // $defs (which zod generates for discriminated unions). We know the kind
 // from the research seed, so we can narrow to one concrete schema per call.
 function schemaForKind(kind: SeedKind) {
-  if (kind === "quiz") return QuizSpecSchema;
-  if (kind === "scramble") return ScrambleSpecSchema;
-  return PriceGuessSpecSchema;
+  switch (kind) {
+    case "quiz": return QuizSpecSchema;
+    case "scramble": return ScrambleSpecSchema;
+    case "price-guess": return PriceGuessSpecSchema;
+    case "true-false": return TrueFalseSpecSchema;
+    case "match-pairs": return MatchPairsSpecSchema;
+    case "order": return OrderSpecSchema;
+  }
 }
 
 /* Two-stage game-spec generator.
@@ -79,6 +87,29 @@ function buildPlSystemPrompt(kind: SeedKind): string {
       "- truth must be unambiguous and grounded in 2025–2026 PL reality (NBP rates, Tauron tariffs, BLIK fees, etc.).",
       "- tolerancePct should reward ballpark reasoning (0.10–0.25 typical).",
       "- unit: short symbol (zł, kWh, %, zł/kWh, zł/mies).",
+    ],
+    "true-false": [
+      "You are producing a TRUE-FALSE sprint — quick yes/no statements.",
+      "Schema: {kind:'true-false', xpPerCorrect:int 5–20, items:[{statement, isTrue:boolean, explanation}] × 6–12}.",
+      "- statement: declarative sentence (8–25 words). Half should be true, half false (mix order).",
+      "- A claim is TRUE only if a Polish regulator/source (NBP, KNF, GUS, MF, Tauron, PKO) would confirm in 2025–2026.",
+      "- explanation: 1 short sentence, in Polish, citing the rule that decides truth.",
+    ],
+    "match-pairs": [
+      "You are producing a MATCH-PAIRS spec — pair concepts with definitions.",
+      "Schema: {kind:'match-pairs', xpPerMatch:int 5–30, leftLabel, rightLabel, pairs:[{left, right}] × 4–8}.",
+      "- left: concept/term (2–4 words, often Polish-specific term like RRSO, IKE, BLIK, WIBOR).",
+      "- right: short definition (8–20 words, Polish).",
+      "- leftLabel and rightLabel: Polish category names (e.g. 'Pojęcie' / 'Definicja' or 'Skrót' / 'Pełna nazwa').",
+      "- Every left ↔ right is unique; no two terms share the same definition.",
+    ],
+    order: [
+      "You are producing an ORDER/TIMELINE spec — sort items in correct sequence.",
+      "Schema: {kind:'order', prompt, direction:'ascending'|'descending', items:[{label, rank:int 1..N, hint?}] × 4–7, xpPerCorrect:int 10–40}.",
+      "- prompt: instruction (e.g. 'Uporządkuj wydarzenia chronologicznie, najstarsze pierwsze').",
+      "- rank: integer 1..N, unique per item, where 1 is first per direction.",
+      "- direction: 'ascending' = lower rank shown first; 'descending' = higher rank first.",
+      "- label: 2–8 words; hint: optional clue (e.g. year, value).",
     ],
   };
 
@@ -162,12 +193,16 @@ function buildTranslationSystemPrompt(targetLang: Exclude<Lang, "pl">): string {
     `You are a financial / energy literacy translator. Translate a Polish game spec into ${label}.`,
     "",
     "HARD RULES:",
-    "- Preserve JSON structure EXACTLY: same `kind`, same item count, identical numeric fields (correctIndex, truth, tolerancePct, xpPerCorrect, xpPerWord).",
+    "- Preserve JSON structure EXACTLY: same `kind`, same item count, identical numeric fields (correctIndex, truth, tolerancePct, xpPerCorrect, xpPerWord, isTrue, rank, direction, leftLabel/rightLabel pairing order).",
     "- The game is about the POLISH financial + energy context. DO NOT localize currencies or convert prices. Keep zł / PLN in prompts AND in the `unit` field, even for EN/UK/CS speakers — users are told they're playing a Polish-context game.",
+    "- DO NOT change country/region references. If the source says 'polskie gospodarstwo', keep it as 'Polish household' / 'польське домогосподарство' / 'polská domácnost' — never substitute with 'česká' / 'ukrainian' / 'english' household.",
     "- Keep these Polish proper nouns untranslated: BLIK, PKO, NBP, Tauron, IKE, IKZE, RRSO, WIBOR, WIRON, Katowice, Warszawa, Śląsk, Nikiszowiec, Varso Tower.",
-    "- Translate only user-facing text (prompts, options, explanations, hints). Units (zł, kWh, %, Wh, zł/kWh…) stay as written.",
+    "- Translate only user-facing text (prompts, options, explanations, hints, statements, definitions, labels). Units (zł, kWh, %, Wh, zł/kWh…) stay as written.",
     "- Scramble words: produce a natural UPPERCASE target-language word that matches the concept in the hint. The word must be 4–20 letters. It is OK for the target word to differ from Polish (e.g. PL 'INFLACJA' → CS 'INFLACE' / EN 'INFLATION' / UK 'ІНФЛЯЦІЯ').",
     "- Options for quiz: keep the same order. correctIndex must not change.",
+    "- True-false: isTrue is boolean, must NOT change. Translate the statement and explanation only.",
+    "- Match-pairs: keep `pairs` order; left[i] ↔ right[i] mapping is binding. leftLabel/rightLabel are translated category names.",
+    "- Order/timeline: keep `rank` integers and `direction` exactly. Translate `prompt`, `label`, and optional `hint`.",
     "- Tone: same register as source (neutral, educational, Gen Z friendly).",
     "- Do NOT add, remove, or reorder items.",
     "",
@@ -260,6 +295,51 @@ function mergeStructure(pl: GameSpec, translated: GameSpec): GameSpec {
           truth: plItem.truth,
           unit: plItem.unit, // lock unit — translator isn't allowed to re-denominate
           tolerancePct: plItem.tolerancePct,
+        };
+      }),
+    };
+  }
+  if (pl.kind === "true-false" && translated.kind === "true-false") {
+    return {
+      kind: "true-false",
+      xpPerCorrect: pl.xpPerCorrect,
+      items: pl.items.map((plItem, i) => {
+        const t = translated.items[i] ?? plItem;
+        return {
+          statement: t.statement ?? plItem.statement,
+          isTrue: plItem.isTrue, // boolean truth — locked from PL
+          explanation: t.explanation ?? plItem.explanation,
+        };
+      }),
+    };
+  }
+  if (pl.kind === "match-pairs" && translated.kind === "match-pairs") {
+    return {
+      kind: "match-pairs",
+      xpPerMatch: pl.xpPerMatch,
+      leftLabel: translated.leftLabel ?? pl.leftLabel,
+      rightLabel: translated.rightLabel ?? pl.rightLabel,
+      pairs: pl.pairs.map((plPair, i) => {
+        const t = translated.pairs[i] ?? plPair;
+        return {
+          left: t.left ?? plPair.left,
+          right: t.right ?? plPair.right,
+        };
+      }),
+    };
+  }
+  if (pl.kind === "order" && translated.kind === "order") {
+    return {
+      kind: "order",
+      xpPerCorrect: pl.xpPerCorrect,
+      direction: pl.direction,
+      prompt: translated.prompt ?? pl.prompt,
+      items: pl.items.map((plItem, i) => {
+        const t = translated.items[i] ?? plItem;
+        return {
+          label: t.label ?? plItem.label,
+          rank: plItem.rank, // ordering integer — locked from PL
+          hint: t.hint ?? plItem.hint,
         };
       }),
     };

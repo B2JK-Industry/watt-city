@@ -12,7 +12,13 @@
  * produce fresh scenarios, and the result feels like a new game.
  */
 
-export type SeedKind = "quiz" | "scramble" | "price-guess";
+export type SeedKind =
+  | "quiz"
+  | "scramble"
+  | "price-guess"
+  | "true-false"
+  | "match-pairs"
+  | "order";
 export type SeedDifficulty = "easy" | "medium" | "hard";
 
 export type ResearchSeed = {
@@ -299,6 +305,74 @@ const ROTATION_POOL: Omit<ResearchSeed, "difficulty">[] = [
       "dotacja Mój Elektryk 2026 — maksymalna kwota",
       "szybkie ładowanie 150 kW DC — koszt 100 km",
       "zasięg auta 60 kWh zimą vs latem — procentowa różnica",
+    ],
+  },
+  {
+    theme: "Mity finansowe — prawda czy fałsz",
+    kind: "true-false",
+    buildingName: "Fakt-Mit Hub",
+    buildingGlyph: "✅",
+    buildingRoof: "bg-emerald-400",
+    buildingBody: "bg-emerald-700",
+    source: "PKO edukacja + Komisja Nadzoru Finansowego",
+    notes:
+      "Szybka seria 8–10 stwierdzeń o finansach: prawda czy fałsz. Każde z krótkim wyjaśnieniem.",
+    angles: [
+      "popularne mity o lokatach, kredytach i RRSO",
+      "mity emerytalne — IKE, IKZE, ZUS",
+      "mity giełdowe — short selling, dywidendy, splity",
+      "mity podatkowe — Belka, IKE, ulga na dziecko",
+    ],
+  },
+  {
+    theme: "Pojęcie ↔ definicja — terminy bankowe",
+    kind: "match-pairs",
+    buildingName: "Słownik Bank",
+    buildingGlyph: "🔗",
+    buildingRoof: "bg-violet-400",
+    buildingBody: "bg-violet-700",
+    source: "Słownik KNF + IKO PKO",
+    notes:
+      "Spáruj 5–6 pojęć finansowych z ich krótkimi definicjami.",
+    angles: [
+      "kredyty: RRSO, oprocentowanie nominalne, prowizja, ubezpieczenie",
+      "inwestycje: ETF, dywidenda, kapitalizacja, free float",
+      "konta: IKE, IKZE, lokata, konto oszczędnościowe",
+      "energetyka: kWh, kW, taryfa G11/G12, taryfa nocna",
+    ],
+  },
+  {
+    theme: "Chronologia wydarzeń PL gospodarki",
+    kind: "order",
+    buildingName: "Linia Czasu",
+    buildingGlyph: "📅",
+    buildingRoof: "bg-orange-400",
+    buildingBody: "bg-orange-700",
+    source: "NBP + GUS + KNF",
+    notes:
+      "Zoradiť 5–6 udalostí PL gospodarki podľa dátumu (najstarší prvý).",
+    angles: [
+      "kluczowe daty PL transformacji (1989, 2004 EU, 2008 kryzys, 2014 SEPA, 2024 IKE limit)",
+      "wprowadzenie produktów PKO (Konto, IKO, BLIK, IKE, Bezpieczny Kredyt 2 %)",
+      "polityka NBP — stopy procentowe i CPI w czasie",
+      "Tauron i transformacja energetyczna PL (węgiel → atom → OZE)",
+    ],
+  },
+  {
+    theme: "Ranking kosztów codziennych",
+    kind: "order",
+    buildingName: "Cennik Hub",
+    buildingGlyph: "🛒",
+    buildingRoof: "bg-rose-400",
+    buildingBody: "bg-rose-700",
+    source: "GUS koszyk + Tauron tariffs",
+    notes:
+      "Zoradiť 5–6 produktów/usług od najtańszego do najdroższego (PL ceny 2026).",
+    angles: [
+      "ceny żywności w sklepie (mleko, chleb, cukier, mąka, ryż, masło)",
+      "rachunki domowe (gaz, prąd, woda, internet, abonament TV)",
+      "transport publiczny (ZTM Katowice, PKP Intercity, samolot Wizz)",
+      "subskrypcje (Spotify, Netflix, Disney+, Apple TV, HBO Max)",
     ],
   },
 ];

@@ -8,6 +8,9 @@ import { getLang } from "@/lib/i18n-server";
 import { AiQuizClient } from "@/components/games/ai-quiz-client";
 import { AiScrambleClient } from "@/components/games/ai-scramble-client";
 import { AiPriceGuessClient } from "@/components/games/ai-price-guess-client";
+import { AiTrueFalseClient } from "@/components/games/ai-truefalse-client";
+import { AiMatchPairsClient } from "@/components/games/ai-matchpairs-client";
+import { AiOrderClient } from "@/components/games/ai-order-client";
 
 export const dynamic = "force-dynamic";
 
@@ -64,6 +67,15 @@ export default async function AiGamePage({
       )}
       {spec.kind === "price-guess" && (
         <AiPriceGuessClient gameId={game.id} spec={spec} dict={dict} />
+      )}
+      {spec.kind === "true-false" && (
+        <AiTrueFalseClient gameId={game.id} spec={spec} dict={dict} />
+      )}
+      {spec.kind === "match-pairs" && (
+        <AiMatchPairsClient gameId={game.id} spec={spec} dict={dict} />
+      )}
+      {spec.kind === "order" && (
+        <AiOrderClient gameId={game.id} spec={spec} dict={dict} />
       )}
     </div>
   );
