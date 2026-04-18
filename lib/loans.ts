@@ -23,6 +23,7 @@ import {
 } from "@/lib/player";
 import { getCatalogEntry, yieldAtLevel } from "@/lib/building-catalog";
 import type { Resources } from "@/lib/resources";
+import { pushNotification } from "@/lib/notifications";
 
 export const MORTGAGE_STANDARD_APR = 0.08;
 export const MORTGAGE_PREFERRED_APR = 0.05; // requires Bank lokalny (Phase 2)
@@ -359,6 +360,13 @@ export async function processLoanPayments(
           sourceId,
           { loanId: loan.id, month: dueMonth, missed: true },
         );
+        await pushNotification(state.username, {
+          kind: "mortgage-missed",
+          title: `Nieopłacona rata kredytu ${loan.id.slice(0, 8)}`,
+          body: `Masz ${loan.missedConsecutive}/3 nieopłaconych rat. Scoring spadł o 5.`,
+          href: "/miasto",
+          meta: { loanId: loan.id, missed: loan.missedConsecutive },
+        });
         if (loan.missedConsecutive >= 3) {
           loan.status = "defaulted";
           state.creditScore = clampScore(

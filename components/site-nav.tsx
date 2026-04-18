@@ -2,6 +2,7 @@ import Link from "next/link";
 import { LogoutButton } from "@/components/logout-button";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ResourceBar } from "@/components/resource-bar";
+import { NotificationBell } from "@/components/notification-bell";
 import type { Lang, Dict } from "@/lib/i18n";
 import type { Resources } from "@/lib/resources";
 
@@ -83,6 +84,14 @@ export function SiteNav({
                   </span>
                 )}
               </span>
+              <NotificationBell
+                labels={{
+                  bell: { pl: "Powiadomienia", uk: "Сповіщення", cs: "Upozornění", en: "Notifications" }[lang]!,
+                  empty: { pl: "Brak powiadomień.", uk: "Порожньо.", cs: "Žádná upozornění.", en: "No notifications." }[lang]!,
+                  markSeen: { pl: "Oznacz jako przeczytane", uk: "Позначити прочитаним", cs: "Označit jako přečtené", en: "Mark as seen" }[lang]!,
+                  quietActive: { pl: "Cisza nocna — push wstrzymany", uk: "Тиша — push призупинено", cs: "Noční klid — push pozastaven", en: "Quiet hours — push held" }[lang]!,
+                }}
+              />
               <LanguageSwitcher current={lang} />
               <LogoutButton label={t.logout} />
             </>
