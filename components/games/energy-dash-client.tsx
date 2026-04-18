@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
 import { RoundResult } from "@/components/games/round-result";
+import type { Dict } from "@/lib/i18n";
 import {
   ComboBadge,
   FloatingFxLayer,

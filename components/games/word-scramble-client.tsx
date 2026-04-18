@@ -12,6 +12,7 @@ import type { ScrambleWord } from "@/lib/content/word-scramble";
 import { XP_PER_WORD } from "@/lib/content/word-scramble";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
 import { RoundResult } from "@/components/games/round-result";
+import type { Dict } from "@/lib/i18n";
 
 const GAME_ID = "word-scramble";
 const XP_CAP = 120;

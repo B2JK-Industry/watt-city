@@ -1,36 +1,38 @@
 import Link from "next/link";
+import { dictFor } from "@/lib/i18n";
+import { getLang } from "@/lib/i18n-server";
 
 export const metadata = {
   title: "Ochrana súkromia · XP Arena",
 };
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const lang = await getLang();
+  const dict = dictFor(lang);
+  const t = dict.privacyPage;
   return (
     <div className="flex flex-col gap-6 animate-slide-up max-w-3xl">
       <header className="flex flex-col gap-2">
+        {lang !== "pl" && lang !== "cs" && lang !== "uk" && (
+          <p className="text-xs text-zinc-500 italic">
+            Full legal copy kept in Polish as the authoritative text for PL
+            jurisdiction. Key headings are localized below.
+          </p>
+        )}
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="brutal-heading text-3xl sm:text-4xl">
-            Ochrana súkromia
-          </h1>
+          <h1 className="brutal-heading text-3xl sm:text-4xl">{t.title}</h1>
           <span
             className="brutal-tag"
             style={{ background: "var(--neo-lime)", color: "#0a0a0f" }}
           >
-            Legal from Day One
+            {t.tag}
           </span>
         </div>
-        <p className="text-zinc-400">
-          Túto stránku píšeme{" "}
-          <strong className="text-[var(--foreground)]">pred</strong> tým, než
-          prvý hráč stlačí „Registrácia". Je to privacy receipt — nie hmlistý
-          právnický text, ale konkrétny zoznam toho, čo uchovávame, kde, prečo
-          a ako si to vieš vyžiadať späť. Podľa pravidla <em>ETHLegal from Day
-          One</em>: právo nie je bariéra, je súčasť produktu.
-        </p>
+        <p className="text-zinc-400">{t.note}</p>
       </header>
 
       <section className="card p-5 flex flex-col gap-3">
-        <h2 className="brutal-heading text-lg">1 · Kto spravuje tvoje dáta</h2>
+        <h2 className="brutal-heading text-lg">1 · {t.whoTitle}</h2>
         <p className="text-sm text-zinc-300">
           Prevádzkovateľom a správcom údajov v zmysle GDPR čl. 4 ods. 7 je tím{" "}
           <strong>B2JK-Industry</strong> (hackathonový tím ETHSilesia 2026,
@@ -46,7 +48,7 @@ export default function PrivacyPage() {
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
-        <h2 className="brutal-heading text-lg">2 · Čo presne ukladáme</h2>
+        <h2 className="brutal-heading text-lg">2 · {t.whatTitle}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
           <DataRow
             field="Používateľské meno"
@@ -95,7 +97,7 @@ export default function PrivacyPage() {
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
-        <h2 className="brutal-heading text-lg">3 · Kde to fyzicky leží</h2>
+        <h2 className="brutal-heading text-lg">3 · {t.whereTitle}</h2>
         <ul className="text-sm text-zinc-300 space-y-1.5 list-disc pl-5">
           <li>
             <strong>Redis databáza:</strong> Upstash, EU (Frankfurt). Sorted
@@ -113,9 +115,7 @@ export default function PrivacyPage() {
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
-        <h2 className="brutal-heading text-lg">
-          4 · Tvoje práva podľa GDPR
-        </h2>
+        <h2 className="brutal-heading text-lg">4 · {t.rightsTitle}</h2>
         <ul className="text-sm text-zinc-300 space-y-2 list-disc pl-5">
           <li>
             <strong>Čl. 15 — prístup:</strong> celá tvoja dátová stopa je
@@ -149,7 +149,7 @@ export default function PrivacyPage() {
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
-        <h2 className="brutal-heading text-lg">5 · AI a dáta</h2>
+        <h2 className="brutal-heading text-lg">5 · {t.aiTitle}</h2>
         <p className="text-sm text-zinc-300">
           Keď pustíme „AI výzvu dňa" (v roadmape):
         </p>
@@ -176,7 +176,7 @@ export default function PrivacyPage() {
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
-        <h2 className="brutal-heading text-lg">6 · Bezpečnosť</h2>
+        <h2 className="brutal-heading text-lg">6 · {t.securityTitle}</h2>
         <ul className="text-sm text-zinc-300 space-y-1.5 list-disc pl-5">
           <li>
             Heslá: <strong>scrypt</strong> s náhodnou 16-bajtovou soľou
@@ -198,7 +198,7 @@ export default function PrivacyPage() {
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
-        <h2 className="brutal-heading text-lg">7 · Deti a mládež</h2>
+        <h2 className="brutal-heading text-lg">7 · {t.minorsTitle}</h2>
         <p className="text-sm text-zinc-300">
           Platforma cieli na Gen Z (15–20 rokov). Pre osoby mladšie ako 16{" "}
           (v PL hranica GDPR pre súhlas) odporúčame súhlas rodiča. Nezbierame
@@ -208,7 +208,7 @@ export default function PrivacyPage() {
       </section>
 
       <section className="card p-5 flex flex-col gap-3 border-[var(--accent)]">
-        <h2 className="brutal-heading text-lg">8 · Hackathon disclaimer</h2>
+        <h2 className="brutal-heading text-lg">8 · {t.disclaimerTitle}</h2>
         <p className="text-sm text-zinc-300">
           XP Arena bola postavená{" "}
           <strong>počas ETHSilesia 2026</strong> (17.–19. apríl 2026) v

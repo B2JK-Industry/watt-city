@@ -5,6 +5,8 @@ import type { ScoreResponse } from "@/lib/client-api";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Confetti } from "@/components/confetti";
+import type { Dict } from "@/lib/i18n";
+import plDict from "@/lib/locales/pl";
 
 export type RoundResultState = {
   submitting: boolean;
@@ -19,14 +21,18 @@ type Props = {
   gameHref: string;
   retryLabel?: string;
   lines: StatLine[];
+  dict?: Dict;
 };
 
 export function RoundResult({
   state,
   gameHref,
-  retryLabel = "Hrať znova",
+  retryLabel,
   lines,
+  dict = plDict,
 }: Props) {
+  const t = dict.roundResult;
+  const retry = retryLabel ?? t.retry;
   const router = useRouter();
   const awarded =
     state.result && state.result.ok ? state.result.awarded : null;
@@ -48,10 +54,10 @@ export function RoundResult({
     <div className="relative card p-8 flex flex-col gap-6 overflow-hidden">
       {isNewBest && <Confetti count={36} />}
       <div className="relative flex flex-col gap-2">
-        <h2 className="text-3xl font-bold">Koniec kola</h2>
+        <h2 className="text-3xl font-bold">{t.endTitle}</h2>
         {isNewBest && (
           <span className="self-start chip border-[var(--accent)] text-[var(--accent)] animate-xp-pop">
-            Nový osobný rekord ✨
+            {t.newRecord}
           </span>
         )}
       </div>
@@ -68,7 +74,7 @@ export function RoundResult({
       </div>
 
       {state.submitting && (
-        <p className="text-zinc-400 text-sm">Elektrifikujem tvoje mesto…</p>
+        <p className="text-zinc-400 text-sm">{t.writing}</p>
       )}
       {state.error && <p className="text-rose-400 text-sm">{state.error}</p>}
 
@@ -87,9 +93,7 @@ export function RoundResult({
                   isNewBest ? "opacity-70" : "text-zinc-400"
                 }`}
               >
-                {isNewBest
-                  ? "Nový rekord · pridané do mesta"
-                  : "Skóre tohto kola"}
+                {isNewBest ? t.newRecordHeader : t.currentScoreHeader}
               </span>
               <span
                 className={`text-5xl font-black tracking-tight ${
@@ -100,22 +104,43 @@ export function RoundResult({
               </span>
               {isNewBest && state.result.delta > 0 && (
                 <span className="text-sm font-bold">
-                  +{state.result.delta} W nad tvoj predošlý rekord
+                  {t.plusOver.replace(
+                    "{delta}",
+                    String(state.result.delta),
+                  )}
                   {state.result.previousBest > 0
-                    ? ` (${state.result.previousBest} W)`
+                    ? ` ${t.prevParen.replace(
+                        "{prev}",
+                        String(state.result.previousBest),
+                      )}`
                     : ""}
                 </span>
               )}
-              {!isNewBest && (
-                <span className="text-sm font-semibold text-zinc-400">
-                  Tvoj rekord v tejto hre zostáva{" "}
-                  <strong className="text-[var(--accent)]">
-                    {state.result.gameXP} W
-                  </strong>
-                  . Opakovaním hry skóre nepridávaš — musíš ho{" "}
-                  <strong>prekonať</strong>.
-                </span>
-              )}
+              {!isNewBest &&
+                (() => {
+                  const parts = t.recordStays
+                    .replace("{score}", "§SCORE§")
+                    .replace("{beat}", "§BEAT§")
+                    .split(/(§SCORE§|§BEAT§)/g);
+                  return (
+                    <span className="text-sm font-semibold text-zinc-400">
+                      {parts.map((p, i) => {
+                        if (p === "§SCORE§")
+                          return (
+                            <strong
+                              key={i}
+                              className="text-[var(--accent)]"
+                            >
+                              {state.result?.ok ? state.result.gameXP : 0} W
+                            </strong>
+                          );
+                        if (p === "§BEAT§")
+                          return <strong key={i}>{t.beat}</strong>;
+                        return <span key={i}>{p}</span>;
+                      })}
+                    </span>
+                  );
+                })()}
             </div>
             {level && (
               <div
@@ -126,7 +151,7 @@ export function RoundResult({
                 }`}
               >
                 <span className="text-[10px] uppercase tracking-widest block opacity-70 text-zinc-300">
-                  Tier
+                  {t.tierLabel}
                 </span>
                 <span className="text-2xl font-black">{level.level}</span>
               </div>
@@ -134,20 +159,21 @@ export function RoundResult({
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm font-semibold">
             <span>
-              Tvoje mesto:{" "}
+              {t.yourCity}:{" "}
               <strong className="font-black">
-                {state.result.globalXP.toLocaleString("sk-SK")}
+                {state.result.globalXP.toLocaleString("pl-PL")}
               </strong>{" "}
               W
             </span>
             {rank !== null && (
               <span>
-                Sliezska liga: <strong className="font-black">#{rank}</strong>
+                {t.leagueRank}:{" "}
+                <strong className="font-black">#{rank}</strong>
               </span>
             )}
             {level && level.xpToNext > 0 && (
               <span>
-                Do ďalšieho tiera:{" "}
+                {t.toNextTier}:{" "}
                 <strong className="font-black">{level.xpToNext}</strong> W
               </span>
             )}
@@ -168,13 +194,13 @@ export function RoundResult({
           }}
           className="btn btn-primary"
         >
-          {retryLabel}
+          {retry}
         </button>
         <Link href="/leaderboard" className="btn btn-ghost">
-          Rebríček
+          {t.leaderboard}
         </Link>
         <Link href="/games" className="btn btn-ghost">
-          Iná hra
+          {t.otherGame}
         </Link>
       </div>
     </div>

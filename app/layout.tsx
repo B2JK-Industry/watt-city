@@ -64,13 +64,25 @@ export default async function RootLayout({
                   <span className="font-black uppercase">Arena</span>
                 </div>
                 <p className="text-sm text-zinc-400 max-w-md">
-                  Každý Watt vybuduje kúsok tvojho sliezskeho mesta —{" "}
-                  od uhoľnej osady po Europejska Stolica 2.0. Postavené
-                  v Katowiciach počas{" "}
-                  <strong className="text-[var(--foreground)]">ETHSilesia 2026</strong>{" "}
-                  (17–19. apríl) pre kategóriu{" "}
-                  <strong className="text-[var(--accent)]">PKO XP: Gaming</strong> —
-                  gamifikácia finančnej a energetickej edukácie pre Gen Z.
+                  {dict.footer.body
+                    .replace("{event}", "§EVENT§")
+                    .replace("{track}", "§TRACK§")
+                    .split(/(§EVENT§|§TRACK§)/g)
+                    .map((p, i) => {
+                      if (p === "§EVENT§")
+                        return (
+                          <strong key={i} className="text-[var(--foreground)]">
+                            {dict.footer.event}
+                          </strong>
+                        );
+                      if (p === "§TRACK§")
+                        return (
+                          <strong key={i} className="text-[var(--accent)]">
+                            {dict.footer.track}
+                          </strong>
+                        );
+                      return <span key={i}>{p}</span>;
+                    })}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2 items-center">
@@ -86,21 +98,19 @@ export default async function RootLayout({
               </div>
             </div>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs text-zinc-500 border-t-2 border-[var(--ink)]/30 pt-4">
-              <span>
-                Sponzori: PKO Bank Polski · Tauron · ETHWarsaw · AKMF · Katowicki.Hub
-              </span>
+              <span>{dict.footer.sponsors}</span>
               <span className="flex flex-wrap gap-3">
                 <a href="/o-platforme" className="hover:text-[var(--accent)]">
-                  O platforme
+                  {dict.nav.about}
                 </a>
                 <a
                   href="/ochrana-sukromia"
                   className="hover:text-[var(--accent)]"
                 >
-                  Ochrana súkromia
+                  {dict.nav.privacy}
                 </a>
                 <a href="/sin-slavy" className="hover:text-[var(--accent)]">
-                  Sieň slávy
+                  {dict.nav.hall}
                 </a>
                 <a
                   href="https://github.com/B2JK-Industry/xp-arena-ETHSilesia2026"
@@ -108,7 +118,7 @@ export default async function RootLayout({
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Zdrojový kód →
+                  {dict.footer.sourceLink}
                 </a>
               </span>
             </div>

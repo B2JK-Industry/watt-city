@@ -10,6 +10,7 @@ import {
 } from "@/lib/content/power-flip";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
 import { RoundResult } from "@/components/games/round-result";
+import type { Dict } from "@/lib/i18n";
 import {
   ComboBadge,
   FloatingFxLayer,

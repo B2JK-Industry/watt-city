@@ -9,6 +9,7 @@ import {
 } from "react";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
 import { RoundResult } from "@/components/games/round-result";
+import type { Dict } from "@/lib/i18n";
 
 const GAME_ID = "currency-rush";
 const DURATION_SECONDS = 45;

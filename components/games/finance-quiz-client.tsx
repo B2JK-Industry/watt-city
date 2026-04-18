@@ -5,6 +5,7 @@ import type { QuizQuestion } from "@/lib/content/finance-quiz";
 import { XP_PER_CORRECT } from "@/lib/content/finance-quiz";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
 import { RoundResult } from "@/components/games/round-result";
+import type { Dict } from "@/lib/i18n";
 
 type Props = { questions: QuizQuestion[] };
 type Phase = "playing" | "reveal" | "done";

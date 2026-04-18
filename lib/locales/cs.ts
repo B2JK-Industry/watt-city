@@ -341,6 +341,42 @@ const cs: typeof plDict = {
     back: "← Zpět",
     loading: "Načítám…",
   },
+  aboutPage: {
+    title: "O platformě",
+    ideaTitle: "Myšlenka projektu",
+    scienceTitle: "Věda za návykem — proč efemerní hry",
+    howTitle: "Jak to funguje",
+    pipelineTitle: "AI pipeline · každých 6 h",
+    tiersTitle: "9 tierů rostoucí budovy",
+    stackTitle: "Tech stack",
+    teamTitle: "Tým",
+    sponsorsTitle: "Sponzoři a kategorie",
+    roadmapTitle: "Roadmap",
+    note: "Tato stránka je pitch verze · plný text v polštině (default).",
+  },
+  privacyPage: {
+    title: "Ochrana soukromí",
+    tag: "Legal from Day One",
+    note:
+      "Tuto stránku píšeme předtím, než první hráč klikne Registrace. Je to privacy receipt, ne mlhavý právní text. V souladu s GDPR.",
+    whoTitle: "Kdo spravuje tvá data",
+    whatTitle: "Co přesně ukládáme",
+    whereTitle: "Kde to fyzicky leží",
+    rightsTitle: "Tvá práva podle GDPR",
+    aiTitle: "AI a data",
+    securityTitle: "Bezpečnost",
+    minorsTitle: "Děti a mládež",
+    disclaimerTitle: "Hackathon disclaimer",
+  },
+  footer: {
+    body:
+      "Každý Watt postaví kousek tvého slezského domu — od hornické chatrče po Varso Tower. Postaveno v Katovicích během {event} (17.–19. dubna) pro kategorii {track} — gamifikace finanční a energetické gramotnosti pro Gen Z.",
+    track: "PKO XP: Gaming",
+    event: "ETHSilesia 2026",
+    sponsors:
+      "Sponzoři: PKO Bank Polski · Tauron · ETHWarsaw · AKMF · Katowicki.Hub",
+    sourceLink: "Zdrojový kód →",
+  },
 };
 
 export default cs;

@@ -11,6 +11,7 @@ import {
 import type { MemoryPair } from "@/lib/content/memory-pairs";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
 import { RoundResult } from "@/components/games/round-result";
+import type { Dict } from "@/lib/i18n";
 import { shuffle } from "@/lib/shuffle";
 
 type Card = {

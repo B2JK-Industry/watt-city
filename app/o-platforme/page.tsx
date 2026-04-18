@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { CITY_TIERS } from "@/lib/level";
+import { dictFor } from "@/lib/i18n";
+import { getLang } from "@/lib/i18n-server";
 
 export const metadata = {
   title: "O platforme · XP Arena",
@@ -7,13 +9,19 @@ export const metadata = {
     "Vision, architektúra, AI pipeline a myšlienka XP Arena — gamifikovaná finančná a energetická gramotnosť pre Gen Z, postavená na ETHSilesia 2026 pre kategóriu PKO XP: Gaming.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const lang = await getLang();
+  const dict = dictFor(lang);
+  const t = dict.aboutPage;
   return (
     <div className="flex flex-col gap-10 animate-slide-up max-w-4xl">
       <header className="flex flex-col gap-3">
+        {lang !== "pl" && (
+          <p className="text-xs text-zinc-500 italic">{t.note}</p>
+        )}
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="brutal-heading text-3xl sm:text-5xl">
-            O platforme
+            {t.title}
           </h1>
           <span
             className="brutal-tag"
@@ -47,7 +55,7 @@ export default function AboutPage() {
 
       {/* -------- Myšlienka -------- */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">Myšlienka projektu</h2>
+        <h2 className="brutal-heading text-2xl">{t.ideaTitle}</h2>
         <div className="card p-6 flex flex-col gap-3 text-zinc-300">
           <p>
             Gen Z v Poľsku pošle BLIK za 2 sekundy, ale nevie čo je{" "}
@@ -90,9 +98,7 @@ export default function AboutPage() {
 
       {/* -------- Veda za dizajnom -------- */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">
-          Veda za návykom — prečo ephemerálne hry
-        </h2>
+        <h2 className="brutal-heading text-2xl">{t.scienceTitle}</h2>
         <div className="card p-6 flex flex-col gap-4 text-zinc-300">
           <p>
             Dnešný užívateľ prichádza unavený z celého dňa a hľadá{" "}
@@ -211,7 +217,7 @@ export default function AboutPage() {
 
       {/* -------- Ako to funguje -------- */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">Ako to funguje</h2>
+        <h2 className="brutal-heading text-2xl">{t.howTitle}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <StepCard
             n={1}
@@ -233,7 +239,7 @@ export default function AboutPage() {
 
       {/* -------- AI pipeline -------- */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">AI pipeline · každých 6 h</h2>
+        <h2 className="brutal-heading text-2xl">{t.pipelineTitle}</h2>
         <div className="card p-6 flex flex-col gap-5 text-zinc-300">
           <p>
             Kostra pipelinu je v commite už teraz — produkčný spúšťač čaká
@@ -369,7 +375,7 @@ export default function AboutPage() {
 
       {/* -------- Progression -------- */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">9 tierov rastúcej budovy</h2>
+        <h2 className="brutal-heading text-2xl">{t.tiersTitle}</h2>
         <div className="grid grid-cols-3 sm:grid-cols-9 gap-2">
           {CITY_TIERS.map((t) => (
             <div
@@ -393,7 +399,7 @@ export default function AboutPage() {
 
       {/* -------- Tech stack -------- */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">Tech stack</h2>
+        <h2 className="brutal-heading text-2xl">{t.stackTitle}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <TechItem name="Next.js 16" note="App Router, RSC, Turbopack." />
           <TechItem name="React 19.2" note="Server components + client islands." />
@@ -410,7 +416,7 @@ export default function AboutPage() {
 
       {/* -------- Tím -------- */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">Tím</h2>
+        <h2 className="brutal-heading text-2xl">{t.teamTitle}</h2>
         <div className="card p-6 flex flex-col gap-3 text-zinc-300">
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-3xl">🛠️</span>
@@ -447,7 +453,7 @@ export default function AboutPage() {
 
       {/* -------- Sponzori / thanks -------- */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">Sponzori a kategórie</h2>
+        <h2 className="brutal-heading text-2xl">{t.sponsorsTitle}</h2>
         <div className="card p-6 flex flex-col gap-3 text-sm text-zinc-300">
           <p>
             XP Arena explicitne cieli na kategóriu{" "}
@@ -485,7 +491,7 @@ export default function AboutPage() {
 
       {/* -------- Roadmap -------- */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">Roadmap</h2>
+        <h2 className="brutal-heading text-2xl">{t.roadmapTitle}</h2>
         <ul className="list-disc pl-6 space-y-2 text-sm text-zinc-300">
           <li>
             <strong>Q2 2026:</strong> Live ANTHROPIC_API_KEY → Claude 4.6

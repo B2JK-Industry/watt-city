@@ -339,6 +339,42 @@ const pl = {
     back: "← Wstecz",
     loading: "Ładowanie…",
   },
+  aboutPage: {
+    title: "O platformie",
+    ideaTitle: "Idea projektu",
+    scienceTitle: "Nauka za nawykiem — dlaczego efemeryczne gry",
+    howTitle: "Jak to działa",
+    pipelineTitle: "Pipeline AI · co 6 godzin",
+    tiersTitle: "9 tierów rosnącego budynku",
+    stackTitle: "Stack technologiczny",
+    teamTitle: "Zespół",
+    sponsorsTitle: "Sponsorzy i kategorie",
+    roadmapTitle: "Roadmap",
+    note: "Ta strona jest wersją pitch · pełny tekst w języku polskim (domyślny).",
+  },
+  privacyPage: {
+    title: "Ochrona prywatności",
+    tag: "Legal from Day One",
+    note:
+      "Tę stronę piszemy przed tym, zanim pierwszy gracz naciśnie Rejestracja. To privacy receipt, nie mglisty tekst prawny. Zgodne z GDPR.",
+    whoTitle: "Kto zarządza twoimi danymi",
+    whatTitle: "Co dokładnie przechowujemy",
+    whereTitle: "Gdzie to fizycznie leży",
+    rightsTitle: "Twoje prawa według GDPR",
+    aiTitle: "AI i dane",
+    securityTitle: "Bezpieczeństwo",
+    minorsTitle: "Dzieci i młodzież",
+    disclaimerTitle: "Hackathon disclaimer",
+  },
+  footer: {
+    body:
+      "Każdy Wat zbuduje kawałek twojego śląskiego domu — od kopalnianej chaty do Varso Tower. Zbudowane w Katowicach podczas {event} (17–19 kwietnia) dla kategorii {track} — gamifikacja edukacji finansowej i energetycznej dla Gen Z.",
+    track: "PKO XP: Gaming",
+    event: "ETHSilesia 2026",
+    sponsors:
+      "Sponsorzy: PKO Bank Polski · Tauron · ETHWarsaw · AKMF · Katowicki.Hub",
+    sourceLink: "Kod źródłowy →",
+  },
 };
 
 export default pl;

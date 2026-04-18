@@ -341,6 +341,42 @@ const en: typeof plDict = {
     back: "← Back",
     loading: "Loading…",
   },
+  aboutPage: {
+    title: "About",
+    ideaTitle: "Project idea",
+    scienceTitle: "The science behind the habit — why ephemeral games",
+    howTitle: "How it works",
+    pipelineTitle: "AI pipeline · every 6 h",
+    tiersTitle: "9 tiers of the growing building",
+    stackTitle: "Tech stack",
+    teamTitle: "Team",
+    sponsorsTitle: "Sponsors & categories",
+    roadmapTitle: "Roadmap",
+    note: "This page is the pitch version · full copy in Polish (default).",
+  },
+  privacyPage: {
+    title: "Privacy",
+    tag: "Legal from Day One",
+    note:
+      "We wrote this page before any player hit Sign Up. It's a privacy receipt, not a vague legal blob. GDPR-aligned.",
+    whoTitle: "Who manages your data",
+    whatTitle: "What exactly we store",
+    whereTitle: "Where it physically lives",
+    rightsTitle: "Your GDPR rights",
+    aiTitle: "AI and data",
+    securityTitle: "Security",
+    minorsTitle: "Minors",
+    disclaimerTitle: "Hackathon disclaimer",
+  },
+  footer: {
+    body:
+      "Every Watt builds a piece of your Silesian house — from the miner's shed to Varso Tower. Built in Katowice during {event} (April 17–19) for the {track} category — gamified financial & energy literacy for Gen Z.",
+    track: "PKO XP: Gaming",
+    event: "ETHSilesia 2026",
+    sponsors:
+      "Sponsors: PKO Bank Polski · Tauron · ETHWarsaw · AKMF · Katowicki.Hub",
+    sourceLink: "Source code →",
+  },
 };
 
 export default en;

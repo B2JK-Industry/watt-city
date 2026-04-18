@@ -1,11 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, FormEvent } from "react";
+import type { Dict } from "@/lib/i18n";
 
-type Props = { mode: "login" | "register" };
+type Props = { mode: "login" | "register"; dict: Dict };
 
-export function AuthForm({ mode }: Props) {
+export function AuthForm({ mode, dict }: Props) {
+  const t = dict.auth;
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -24,13 +27,13 @@ export function AuthForm({ mode }: Props) {
       });
       const json = await res.json();
       if (!res.ok || !json.ok) {
-        setError(json.error ?? "Niečo sa nepodarilo.");
+        setError(json.error ?? t.errorGeneric);
         return;
       }
       router.refresh();
       router.push("/games");
     } catch {
-      setError("Sieťová chyba. Skús znova.");
+      setError(t.errorNetwork);
     } finally {
       setPending(false);
     }
@@ -39,21 +42,21 @@ export function AuthForm({ mode }: Props) {
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
       <label className="flex flex-col gap-1.5 text-sm">
-        <span className="text-zinc-300">Používateľské meno</span>
+        <span className="text-zinc-300">{t.usernameLabel}</span>
         <input
           className="input"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          autoComplete={mode === "login" ? "username" : "username"}
+          autoComplete="username"
           required
           minLength={3}
           maxLength={24}
           pattern="[a-zA-Z0-9_.\-]{3,24}"
-          title="3–24 znakov: písmená, čísla, _ . -"
+          title={t.usernameTitle}
         />
       </label>
       <label className="flex flex-col gap-1.5 text-sm">
-        <span className="text-zinc-300">Heslo</span>
+        <span className="text-zinc-300">{t.passwordLabel}</span>
         <input
           type="password"
           className="input"
@@ -71,24 +74,18 @@ export function AuthForm({ mode }: Props) {
         </div>
       )}
       <button type="submit" className="btn btn-primary" disabled={pending}>
-        {pending
-          ? "…"
-          : mode === "login"
-          ? "Prihlásiť sa"
-          : "Vytvoriť účet"}
+        {pending ? "…" : mode === "login" ? t.submitLogin : t.submitRegister}
       </button>
       {mode === "register" && (
         <p className="text-[11px] text-zinc-500 leading-snug">
-          Registráciou súhlasíš so spracovaním mena, hash-u hesla a herných
-          skóre podľa{" "}
-          <a
+          {t.consent}{" "}
+          <Link
             href="/ochrana-sukromia"
             className="underline text-[var(--accent)]"
           >
-            Ochrany súkromia
-          </a>
-          . Žiadny e-mail, žiadne analytiky, žiadni inzerenti. Účet vieš
-          kedykoľvek zmazať jedným klikom.
+            {dict.nav.privacy}
+          </Link>
+          .
         </p>
       )}
     </form>

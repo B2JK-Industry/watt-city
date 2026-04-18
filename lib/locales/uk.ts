@@ -341,6 +341,42 @@ const uk: typeof plDict = {
     back: "← Назад",
     loading: "Завантаження…",
   },
+  aboutPage: {
+    title: "Про платформу",
+    ideaTitle: "Ідея проєкту",
+    scienceTitle: "Наука за звичкою — чому ефемерні ігри",
+    howTitle: "Як це працює",
+    pipelineTitle: "Pipeline AI · щ 6 годин",
+    tiersTitle: "9 тірів зростаючого будинку",
+    stackTitle: "Тех стек",
+    teamTitle: "Команда",
+    sponsorsTitle: "Спонсори і категорії",
+    roadmapTitle: "Roadmap",
+    note: "Ця сторінка — пітч версія · повний текст польською (типово).",
+  },
+  privacyPage: {
+    title: "Приватність",
+    tag: "Legal from Day One",
+    note:
+      "Цю сторінку пишемо перед тим, як перший гравець натисне Реєстрація. Це privacy receipt, а не розмитий юридичний текст. Згідно з GDPR.",
+    whoTitle: "Хто керує твоїми даними",
+    whatTitle: "Що саме зберігаємо",
+    whereTitle: "Де це фізично лежить",
+    rightsTitle: "Твої права за GDPR",
+    aiTitle: "AI і дані",
+    securityTitle: "Безпека",
+    minorsTitle: "Діти і молодь",
+    disclaimerTitle: "Хакатон disclaimer",
+  },
+  footer: {
+    body:
+      "Кожен Ват збудує шматок твого сілезького дому — від шахтарської хатинки до Varso Tower. Збудовано в Катовіцах під час {event} (17–19 квітня) для категорії {track} — геймифікація фінансової та енергетичної освіти для Gen Z.",
+    track: "PKO XP: Gaming",
+    event: "ETHSilesia 2026",
+    sponsors:
+      "Спонсори: PKO Bank Polski · Tauron · ETHWarsaw · AKMF · Katowicki.Hub",
+    sourceLink: "Сирцевий код →",
+  },
 };
 
 export default uk;

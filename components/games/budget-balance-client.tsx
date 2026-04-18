@@ -5,6 +5,7 @@ import type { BudgetScenario, BudgetTarget } from "@/lib/content/budget-balance"
 import { XP_CAP } from "@/lib/content/budget-balance";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
 import { RoundResult } from "@/components/games/round-result";
+import type { Dict } from "@/lib/i18n";
 
 const GAME_ID = "budget-balance";
 
