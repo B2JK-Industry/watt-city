@@ -7,6 +7,7 @@ import type { LeaderboardEntry } from "@/lib/redis";
 import { CityScene, type CityGameState } from "@/components/city-scene";
 import { PlayerBuilding } from "@/components/player-building";
 import { DeleteAccountButton } from "@/components/delete-account-button";
+import type { Dict, Lang } from "@/lib/i18n";
 
 type Props = {
   username: string;
@@ -16,6 +17,8 @@ type Props = {
   title: string;
   stats: UserStats;
   top: LeaderboardEntry[];
+  dict: Dict;
+  lang: Lang;
 };
 
 function timeAgo(ts: number): string {
@@ -35,10 +38,13 @@ export function Dashboard({
   xp,
   rank,
   level,
-  title,
   stats,
   top,
+  dict,
+  lang,
 }: Props) {
+  const d = dict.dashboard;
+  const locale = lang === "pl" ? "pl-PL" : lang === "cs" ? "cs-CZ" : lang === "uk" ? "uk-UA" : "en-US";
   const playedIds = Object.keys(stats.games);
   const unplayed = GAMES.filter((g) => !playedIds.includes(g.id));
   const recent = [...playedIds]
@@ -69,7 +75,7 @@ export function Dashboard({
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="text-sm uppercase tracking-wider text-zinc-400">
-                Elektrická starostka / starosta
+                {d.welcome}
               </p>
               <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight">
                 {username}
@@ -77,7 +83,7 @@ export function Dashboard({
               <p className="text-zinc-300 mt-1 text-sm">
                 <span className="text-xl">{currentTier.emoji}</span>{" "}
                 <strong className="text-[var(--accent)]">{currentTier.full}</strong>{" "}
-                <span className="opacity-70">· Tier {level.level}</span>
+                <span className="opacity-70">· {d.level} {level.level}</span>
               </p>
             </div>
             <div className="relative">
@@ -117,15 +123,15 @@ export function Dashboard({
             </div>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <Stat label="Celkové Watty" value={`${xp.toLocaleString("sk-SK")} W`} accent />
+            <Stat label={d.totalWatts} value={`${xp.toLocaleString(locale)} W`} accent />
             <Stat
-              label="Pozícia"
+              label={d.rank}
               value={rank !== null ? `#${rank}` : "—"}
             />
-            <Stat label="Odohraných kôl" value={String(stats.totalPlays)} />
+            <Stat label={d.plays} value={String(stats.totalPlays)} />
             <Stat
-              label="Do ďalšieho tiera"
-              value={level.xpToNext > 0 ? `${level.xpToNext} W` : "max"}
+              label={d.toNext}
+              value={level.xpToNext > 0 ? `${level.xpToNext} W` : d.max}
             />
           </div>
           <div className="flex flex-wrap gap-3">
@@ -133,25 +139,23 @@ export function Dashboard({
               href={`/games/${recommended.id}`}
               className="btn btn-primary"
             >
-              {playedIds.length === 0 ? "Zahrať prvú hru" : "Vyskúšať novú hru"}
+              {playedIds.length === 0 ? d.ctaFirstGame : d.ctaTryNew}
             </Link>
             <Link href="/games" className="btn btn-ghost">
-              Všetky hry
+              {d.ctaAllGames}
             </Link>
             <Link href="/leaderboard" className="btn btn-ghost">
-              Rebríček
+              {d.ctaLeague}
             </Link>
           </div>
         </div>
 
         <div className="card p-6 flex flex-col gap-3">
           <h2 className="text-sm uppercase tracking-widest font-black text-[var(--accent)]">
-            Sliezska Watt liga · TOP 5
+            {d.topSilesia}
           </h2>
           {top.length === 0 ? (
-            <p className="text-zinc-400 text-sm">
-              Ešte tu nikto nie je. Začni a si prvý!
-            </p>
+            <p className="text-zinc-400 text-sm">{d.topEmpty}</p>
           ) : (
             <ol className="flex flex-col gap-1">
               {top.map((e) => (
@@ -167,7 +171,7 @@ export function Dashboard({
                     </span>
                     <span>{e.username}</span>
                   </span>
-                  <span className="font-mono font-semibold">{e.xp.toLocaleString("sk-SK")} W</span>
+                  <span className="font-mono font-semibold">{e.xp.toLocaleString(locale)} W</span>
                 </li>
               ))}
             </ol>
@@ -176,7 +180,7 @@ export function Dashboard({
       </section>
 
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-xl sm:text-2xl">Tvoja budova</h2>
+        <h2 className="brutal-heading text-xl sm:text-2xl">{d.yourBuildingTitle}</h2>
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-5">
           <PlayerBuilding level={level.level} progress={level.progress} />
           <div className="card p-5 flex flex-col gap-4">
@@ -184,7 +188,7 @@ export function Dashboard({
               <span className="text-4xl">{currentTier.emoji}</span>
               <div>
                 <p className="text-[10px] uppercase tracking-widest font-black text-[var(--accent)]">
-                  Tier {level.level}
+                  {d.level} {level.level}
                 </p>
                 <p className="text-xl font-black uppercase tracking-tight">
                   {currentTier.full}
@@ -197,18 +201,18 @@ export function Dashboard({
             {nextTier && (
               <div className="flex flex-col gap-1 rounded-xl border-[3px] border-[var(--ink)] bg-[var(--surface-2)] p-3">
                 <p className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold">
-                  Ďalej
+                  {d.nextLabel}
                 </p>
                 <p className="font-semibold">
                   {nextTier.emoji} {nextTier.full}
                 </p>
                 <p className="text-xs text-zinc-400">
-                  Odomkne:{" "}
+                  {d.unlocksLabel}{" "}
                   <strong className="text-zinc-200">{nextTier.unlocks}</strong>
                 </p>
                 {level.xpToNext > 0 && (
                   <p className="text-xs">
-                    Ešte{" "}
+                    {d.stillLabel}{" "}
                     <strong className="text-[var(--accent)]">
                       {level.xpToNext} W
                     </strong>
@@ -235,10 +239,7 @@ export function Dashboard({
               })}
             </div>
             <p className="text-[11px] text-zinc-500 leading-snug">
-              Cesta: Drevená búda → Nikiszowiec → Rodinný dom → Kamenica →
-              Solárna činžovka → Kancelária → Mrakodrap → Altus Tower →{" "}
-              <strong className="text-zinc-300">Varso Tower 310 m</strong>{" "}
-              (najvyššia v EÚ).
+              {d.pathCaption}
             </p>
           </div>
         </div>
@@ -246,24 +247,24 @@ export function Dashboard({
 
       <section className="flex flex-col gap-4">
         <div className="flex items-end justify-between">
-          <h2 className="text-2xl font-bold">Pokračovať v hre</h2>
+          <h2 className="text-2xl font-bold">{d.continueTitle}</h2>
           <Link
             href="/games"
             className="text-sm text-[var(--accent)] hover:underline"
           >
-            Všetky hry →
+            {d.ctaAllGames} →
           </Link>
         </div>
         {recent.length === 0 ? (
           <div className="card p-8 text-center text-zinc-400">
-            Ešte si nehral. Spusti si{" "}
+            {d.continueEmpty.split("{game}")[0]}
             <Link
               href={`/games/${recommended.id}`}
               className="text-[var(--accent)] underline"
             >
               {recommended.title}
-            </Link>{" "}
-            a vygeneruj prvé Watty.
+            </Link>
+            {d.continueEmpty.split("{game}")[1] ?? ""}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -286,7 +287,7 @@ export function Dashboard({
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-zinc-400">Rekord</span>
+                    <span className="text-zinc-400">{d.record}</span>
                     <span className="font-mono text-[var(--accent)] font-semibold">
                       {gs.bestScore}/{game.xpCap}
                     </span>
@@ -300,12 +301,12 @@ export function Dashboard({
 
       <section className="flex flex-col gap-4">
         <div className="flex items-end justify-between">
-          <h2 className="brutal-heading text-2xl">Noc nad Katowicami</h2>
+          <h2 className="brutal-heading text-2xl">{d.cityNightTitle}</h2>
           <Link
             href="/games"
             className="text-sm text-[var(--accent)] hover:underline"
           >
-            Otvoriť mestečko →
+            {d.cityNightOpen} →
           </Link>
         </div>
         <CityScene games={cityGames} loggedIn compact />
@@ -313,7 +314,7 @@ export function Dashboard({
 
       <section className="flex flex-col gap-3 card p-5">
         <div className="flex flex-wrap items-center gap-2">
-          <h2 className="brutal-heading text-lg">Moje údaje a práva</h2>
+          <h2 className="brutal-heading text-lg">{d.dataRightsTitle}</h2>
           <span
             className="brutal-tag"
             style={{ background: "var(--neo-lime)", color: "#0a0a0f" }}
@@ -321,18 +322,10 @@ export function Dashboard({
             GDPR
           </span>
         </div>
-        <p className="text-sm text-zinc-400">
-          Ukladáme iba tvoje meno, hash hesla (scrypt) a herné skóre — žiadny
-          e-mail, žiadne telefónne číslo, žiadne tretie strany. Dáta v Upstash
-          Redis (EU) + Vercel (EU). Viac v{" "}
-          <Link href="/ochrana-sukromia" className="underline text-[var(--accent)]">
-            Ochrane súkromia
-          </Link>
-          .
-        </p>
+        <p className="text-sm text-zinc-400">{d.dataRightsBody}</p>
         <div className="flex flex-wrap items-center gap-3">
           <Link href="/ochrana-sukromia" className="btn btn-ghost text-xs">
-            Privacy receipt
+            {d.privacyReceipt}
           </Link>
           <DeleteAccountButton />
         </div>

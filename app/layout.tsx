@@ -5,6 +5,8 @@ import { SiteNav } from "@/components/site-nav";
 import { getSession } from "@/lib/session";
 import { userStats } from "@/lib/leaderboard";
 import { levelFromXP, tierForLevel } from "@/lib/level";
+import { dictFor, LANG_HTML } from "@/lib/i18n";
+import { getLang } from "@/lib/i18n-server";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,13 +29,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getSession();
+  const [session, lang] = await Promise.all([getSession(), getLang()]);
+  const dict = dictFor(lang);
   const stats = session ? await userStats(session.username) : null;
   const xp = stats?.globalXP ?? 0;
   const level = levelFromXP(xp);
   return (
     <html
-      lang="sk"
+      lang={LANG_HTML[lang]}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
@@ -44,6 +47,8 @@ export default async function RootLayout({
           level={level.level}
           levelProgress={level.progress}
           title={session ? `${tierForLevel(level.level).emoji} ${tierForLevel(level.level).name}` : null}
+          lang={lang}
+          dict={dict}
         />
         <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8">
           {children}

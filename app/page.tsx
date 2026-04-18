@@ -7,11 +7,14 @@ import { userStats as leaderboardStats } from "@/lib/leaderboard";
 import { levelFromXP, titleForLevel } from "@/lib/level";
 import { Dashboard } from "@/components/dashboard";
 import { CityScene } from "@/components/city-scene";
+import { dictFor } from "@/lib/i18n";
+import { getLang } from "@/lib/i18n-server";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const session = await getSession();
+  const [session, lang] = await Promise.all([getSession(), getLang()]);
+  const dict = dictFor(lang);
 
   if (session) {
     const [board, stats, top] = await Promise.all([
@@ -29,56 +32,73 @@ export default async function Home() {
         title={titleForLevel(level.level)}
         stats={stats}
         top={top}
+        dict={dict}
+        lang={lang}
       />
     );
   }
 
   const entries = await globalLeaderboard(5);
+  const t = dict.hero;
+  const bodyParts = t.body
+    .replace("{watts}", "§WATTS§")
+    .replace("{single}", "§SINGLE§")
+    .replace("{varso}", "§VARSO§")
+    .split(/(§WATTS§|§SINGLE§|§VARSO§)/g);
   return (
     <div className="flex flex-col gap-12 animate-slide-up">
       <section className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-8 items-center">
         <div className="flex flex-col gap-6">
           <div className="flex flex-wrap gap-2">
             <span className="brutal-tag" style={{ background: "var(--neo-cyan)", color: "#0a0a0f" }}>
-              PKO XP · Gaming
+              {t.tagTrack}
             </span>
             <span className="brutal-tag" style={{ background: "var(--neo-pink)", color: "#0a0a0f" }}>
-              ETHSilesia 2026
+              {t.tagEvent}
             </span>
             <span className="brutal-tag" style={{ background: "var(--neo-lime)", color: "#0a0a0f" }}>
-              Katowice
+              {t.tagPlace}
             </span>
           </div>
           <h1 className="text-4xl sm:text-6xl font-black leading-[0.95] uppercase tracking-tight">
-            Vygeneruj{" "}
+            {t.titleGenerate}{" "}
             <span className="inline-block bg-[var(--accent)] text-[#0a0a0f] px-3 py-1 border-[3px] border-[var(--ink)] shadow-[6px_6px_0_0_var(--ink)] my-1">
-              Watty
+              {t.titleWatts}
             </span>
-            . Postav si{" "}
+            . {t.titleBuild}{" "}
             <span className="inline-block bg-[var(--neo-cyan)] text-[#0a0a0f] px-3 py-1 border-[3px] border-[var(--ink)] shadow-[6px_6px_0_0_var(--ink)] my-1">
-              dom
-            </span>
-            v Katowiciach.
+              {t.titleHouse}
+            </span>{" "}
+            {t.titleIn}
           </h1>
           <p className="text-lg text-zinc-300 max-w-xl">
-            Gamifikovaná finančná a energetická gramotnosť pre Gen Z. Každý
-            správny tap ti vygeneruje{" "}
-            <strong className="text-[var(--accent)]">Watty</strong> — a tvoja
-            <strong> jediná budova</strong> v Katowiciach rastie z baníckej
-            búdy v Nikiszowci až k{" "}
-            <strong className="text-[var(--neo-cyan)]">Varso Tower</strong>{" "}
-            (310 m, najvyššia v EÚ). 9 evergreen minihier, nová AI výzva každých
-            6 hodín, duel kódom s kamošom.
+            {bodyParts.map((part, i) => {
+              if (part === "§WATTS§")
+                return (
+                  <strong key={i} className="text-[var(--accent)]">
+                    {t.bodyWatts}
+                  </strong>
+                );
+              if (part === "§SINGLE§")
+                return <strong key={i}>{t.bodySingle}</strong>;
+              if (part === "§VARSO§")
+                return (
+                  <strong key={i} className="text-[var(--neo-cyan)]">
+                    {t.bodyVarso}
+                  </strong>
+                );
+              return <span key={i}>{part}</span>;
+            })}
           </p>
           <div className="flex flex-wrap gap-3">
             <Link href="/register" className="btn btn-primary">
-              Vytvoriť účet
+              {t.ctaRegister}
             </Link>
             <Link href="/o-platforme" className="btn btn-cyan">
-              Ako to funguje
+              {t.ctaAbout}
             </Link>
             <Link href="/games" className="btn btn-ghost">
-              Prehľad hier
+              {t.ctaGames}
             </Link>
           </div>
           <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
@@ -96,12 +116,10 @@ export default async function Home() {
         </div>
         <div className="card p-6">
           <h2 className="text-sm uppercase tracking-wider text-zinc-400 mb-3">
-            Top 5 globálne
+            {t.topTitle}
           </h2>
           {entries.length === 0 ? (
-            <p className="text-zinc-400 text-sm">
-              Ešte nikto neskóroval. Buď prvý!
-            </p>
+            <p className="text-zinc-400 text-sm">{t.topEmpty}</p>
           ) : (
             <ol className="flex flex-col gap-2">
               {entries.map((e) => (
@@ -116,7 +134,7 @@ export default async function Home() {
                     <span>{e.username}</span>
                   </span>
                   <span className="font-mono font-semibold text-[var(--accent)]">
-                    {e.xp.toLocaleString("sk-SK")} W
+                    {e.xp.toLocaleString("pl-PL")} W
                   </span>
                 </li>
               ))}
@@ -126,14 +144,10 @@ export default async function Home() {
       </section>
 
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">Noc nad Katowicami</h2>
-        <p className="text-zinc-400 max-w-xl -mt-2">
-          9 budov = 9 minihier. Kým niektorú nezahráš, budova stojí v tme.
-          Po registrácii si rozsvieť celé mesto.
-        </p>
+        <h2 className="brutal-heading text-2xl">{t.scenesTitle}</h2>
+        <p className="text-zinc-400 max-w-xl -mt-2">{t.scenesBody}</p>
         <CityScene interactive={false} compact />
       </section>
-
     </div>
   );
 }
