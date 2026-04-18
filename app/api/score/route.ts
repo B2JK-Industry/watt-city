@@ -12,10 +12,12 @@ import {
   resourceDeltaFromYield,
   capDailyYield,
   RESOURCE_KEYS,
+  type ResourceKey,
 } from "@/lib/resources";
 import { creditResources, getPlayerState } from "@/lib/player";
 import { readEconomy, dailyYieldKey, dayBucket } from "@/lib/economy";
 import { kvGet, kvSet } from "@/lib/redis";
+import { scoreMultiplier } from "@/lib/multipliers";
 
 const BodySchema = z.object({
   gameId: z.string().min(1).max(64),
@@ -88,7 +90,14 @@ export async function POST(request: NextRequest) {
     const y = yieldForGame(gameId, aiKind);
     if (y) {
       const state = await getPlayerState(session.username);
-      const raw = resourceDeltaFromYield(xpResult.delta, y);
+      // Apply score-time kind multipliers (Biblioteka/Gimnazjum/Centrum/Spodek).
+      // Delta is in xp terms; multiplier scales resource yield on top.
+      const mult = scoreMultiplier(state.buildings, aiKind ?? gameId);
+      const rawBase = resourceDeltaFromYield(xpResult.delta, y);
+      const raw: Partial<Record<ResourceKey, number>> = {};
+      for (const [k, v] of Object.entries(rawBase) as [ResourceKey, number][]) {
+        raw[k] = Math.ceil(v * mult);
+      }
       const cfg = await readEconomy();
       const day = dayBucket();
 
