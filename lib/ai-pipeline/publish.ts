@@ -1,9 +1,10 @@
 import { kvGet, kvSet, kvDel } from "@/lib/redis";
 import {
   AiGameSchema,
-  GameSpecSchema,
+  LocalizedSpecSchema,
   MAX_ACTIVE_AI_GAMES,
   AI_GAME_TTL_SECONDS,
+  specKind,
   type AiGame,
 } from "./types";
 import { pickResearchSeed } from "./research";
@@ -85,8 +86,8 @@ export async function runPipeline(now = Date.now()): Promise<RunResult> {
     return { ok: false, error: `generate: ${(e as Error).message}` };
   }
 
-  // 3) Validate strictly
-  const specParse = GameSpecSchema.safeParse(generated.spec);
+  // 3) Validate strictly (localized: pl/uk/cs/en all present)
+  const specParse = LocalizedSpecSchema.safeParse(generated.spec);
   if (!specParse.success) {
     return {
       ok: false,
@@ -152,7 +153,7 @@ export async function runPipeline(now = Date.now()): Promise<RunResult> {
     title: envParse.data.title,
     theme: envParse.data.theme,
     model: envParse.data.model,
-    kind: envParse.data.spec.kind,
+    kind: specKind(envParse.data.spec),
     generatedAt: envParse.data.generatedAt,
     validUntil: envParse.data.validUntil,
   });

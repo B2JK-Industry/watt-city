@@ -1,13 +1,15 @@
 import { z } from "zod";
+import { LANGS, type Lang } from "@/lib/i18n";
 
 /* ==========================================================================
  * AI Game of the day — deterministic game-spec schema.
  *
- * Claude produces a JSON matching GameSpec, which the renderer (not in this
- * file) turns into a playable round. Keeping the shape strict means:
- *  - we can validate (zod) before publishing, rejecting bad output
- *  - we can version the schema and migrate
- *  - the same spec can be re-rendered offline for audit / reporting
+ * Claude produces a LocalizedSpec (one GameSpec per UI language), the
+ * renderer picks the current user's lang (falling back to PL). Keeping the
+ * shape strict means:
+ *  - we validate (zod) before publishing, rejecting bad output
+ *  - structure (correctIndex, truth, tolerancePct, xpPer*) is authoritative
+ *    in the PL spec; translations copy these by construction
  * ========================================================================== */
 
 export const QuizItemSchema = z.object({
@@ -24,8 +26,11 @@ export const QuizSpecSchema = z.object({
   xpPerCorrect: z.number().int().min(5).max(40),
 });
 
+// Dropped the PL-only regex — words are UPPERCASE in whichever language
+// the spec is for; each lang brings its own alphabet (CS has ÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ,
+// UK uses Cyrillic A-Я/Є/І/Ї/Ґ, etc.). Length + non-space-only is enforced.
 export const ScrambleItemSchema = z.object({
-  word: z.string().regex(/^[A-ZĄĆĘŁŃÓŚŹŻ]{4,20}$/),
+  word: z.string().min(4).max(20),
   hint: z.string().min(6).max(200),
 });
 
@@ -55,6 +60,35 @@ export const GameSpecSchema = z.discriminatedUnion("kind", [
 ]);
 export type GameSpec = z.infer<typeof GameSpecSchema>;
 
+/* ---------- Localized spec ---------- */
+
+export const LocalizedSpecSchema = z.object({
+  pl: GameSpecSchema,
+  uk: GameSpecSchema,
+  cs: GameSpecSchema,
+  en: GameSpecSchema,
+});
+export type LocalizedSpec = z.infer<typeof LocalizedSpecSchema>;
+
+// Accept EITHER shape at read-time: old records (pre-multi-lang) stored a
+// bare GameSpec; new records store LocalizedSpec. On publish we always
+// write the new shape; the union here keeps already-live legacy games
+// playable until their 48h TTL elapses.
+export const SpecFieldSchema = z.union([
+  LocalizedSpecSchema,
+  GameSpecSchema,
+]);
+export type SpecField = z.infer<typeof SpecFieldSchema>;
+
+export function isLocalizedSpec(s: SpecField): s is LocalizedSpec {
+  return !("kind" in s);
+}
+
+export function resolveSpecForLang(s: SpecField, lang: Lang): GameSpec {
+  if (!isLocalizedSpec(s)) return s;
+  return s[lang] ?? s.pl;
+}
+
 /* ---------- Outer envelope stored in Redis ---------- */
 
 export const AiGameSchema = z.object({
@@ -62,27 +96,42 @@ export const AiGameSchema = z.object({
   title: z.string().min(3).max(60),
   tagline: z.string().max(140),
   description: z.string().max(600),
-  theme: z.string().max(80),          // e.g. "Earth Hour · úspora energie"
-  source: z.string().max(200).optional(), // URL or "research: <topic>"
-  buildingName: z.string().max(60),   // rendered on the city slot sign
-  buildingGlyph: z.string().max(4),   // single emoji
-  buildingRoof: z.string().max(60),   // tailwind bg-*
-  buildingBody: z.string().max(60),   // tailwind bg-*
-  spec: GameSpecSchema,
-  generatedAt: z.number().int(),      // epoch ms
-  validUntil: z.number().int(),       // epoch ms — when the game retires
-  model: z.string().max(60),          // e.g. "claude-sonnet-4-6"
-  seed: z.number().int(),             // for deterministic duel variants
+  theme: z.string().max(80),
+  source: z.string().max(200).optional(),
+  buildingName: z.string().max(60),
+  buildingGlyph: z.string().max(4),
+  buildingRoof: z.string().max(60),
+  buildingBody: z.string().max(60),
+  spec: SpecFieldSchema,
+  generatedAt: z.number().int(),
+  validUntil: z.number().int(),
+  model: z.string().max(60),
+  seed: z.number().int(),
 });
 export type AiGame = z.infer<typeof AiGameSchema>;
 
-/* ---------- XP cap derived from spec ---------- */
+/* ---------- Helpers ---------- */
 
 export function xpCapForSpec(spec: GameSpec): number {
   if (spec.kind === "quiz") return spec.items.length * spec.xpPerCorrect;
   if (spec.kind === "scramble") return spec.words.length * spec.xpPerWord;
   return spec.items.length * spec.xpPerCorrect;
 }
+
+// Primary "kind" — all four langs share it by construction. Use PL as canonical.
+export function specKind(
+  spec: SpecField,
+): "quiz" | "scramble" | "price-guess" {
+  return isLocalizedSpec(spec) ? spec.pl.kind : spec.kind;
+}
+
+// Any-lang cap: XP thresholds are identical across langs by construction.
+export function xpCapForAnyLang(spec: SpecField): number {
+  return xpCapForSpec(isLocalizedSpec(spec) ? spec.pl : spec);
+}
+
+export { LANGS };
+export type { Lang };
 
 /* ---------- Rotation policy ---------- */
 

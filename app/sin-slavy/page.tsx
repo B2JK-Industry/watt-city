@@ -6,6 +6,7 @@ import {
   listActiveAiGames,
   listArchivedAiGames,
 } from "@/lib/ai-pipeline/publish";
+import { specKind } from "@/lib/ai-pipeline/types";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
@@ -86,7 +87,7 @@ export default async function HallOfFamePage() {
                   </div>
                   <p className="text-xs text-zinc-400">{g.theme}</p>
                   <p className="text-xs text-zinc-500">
-                    {g.model} · {g.spec.kind}
+                    {g.model} · {specKind(g.spec)}
                   </p>
                 </Link>
               );

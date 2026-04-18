@@ -4,7 +4,7 @@ import { getSession } from "@/lib/session";
 import { awardXP } from "@/lib/leaderboard";
 import { getGame } from "@/lib/games";
 import { getAiGame } from "@/lib/ai-pipeline/publish";
-import { xpCapForSpec } from "@/lib/ai-pipeline/types";
+import { xpCapForAnyLang } from "@/lib/ai-pipeline/types";
 import { recordRound } from "@/lib/user-stats";
 import { levelFromXP } from "@/lib/level";
 
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
         { status: 404 },
       );
     }
-    resolvedCap = xpCapForSpec(ai.spec);
+    resolvedCap = xpCapForAnyLang(ai.spec);
   } else {
     const game = getGame(gameId);
     if (!game) {

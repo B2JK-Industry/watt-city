@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { getAiGame } from "@/lib/ai-pipeline/publish";
+import { resolveSpecForLang } from "@/lib/ai-pipeline/types";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 import { AiQuizClient } from "@/components/games/ai-quiz-client";
@@ -23,6 +24,7 @@ export default async function AiGamePage({
 
   const lang = await getLang();
   const dict = dictFor(lang);
+  const spec = resolveSpecForLang(game.spec, lang);
 
   const hoursLeft = Math.max(
     0,
@@ -54,14 +56,14 @@ export default async function AiGamePage({
         <p className="text-sm text-zinc-500">{game.description}</p>
       </header>
 
-      {game.spec.kind === "quiz" && (
-        <AiQuizClient gameId={game.id} spec={game.spec} dict={dict} />
+      {spec.kind === "quiz" && (
+        <AiQuizClient gameId={game.id} spec={spec} dict={dict} />
       )}
-      {game.spec.kind === "scramble" && (
-        <AiScrambleClient gameId={game.id} spec={game.spec} dict={dict} />
+      {spec.kind === "scramble" && (
+        <AiScrambleClient gameId={game.id} spec={spec} dict={dict} />
       )}
-      {game.spec.kind === "price-guess" && (
-        <AiPriceGuessClient gameId={game.id} spec={game.spec} dict={dict} />
+      {spec.kind === "price-guess" && (
+        <AiPriceGuessClient gameId={game.id} spec={spec} dict={dict} />
       )}
     </div>
   );
