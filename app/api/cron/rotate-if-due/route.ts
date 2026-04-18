@@ -1,5 +1,8 @@
 import { NextRequest } from "next/server";
 import { rotateIfDue } from "@/lib/ai-pipeline/publish";
+import { sendAlert } from "@/lib/ops-alerts";
+import { kvSet } from "@/lib/redis";
+import { recordEvent } from "@/lib/analytics";
 
 // Pipeline budget: Sonnet PL gen (~10–20s) + 3× Haiku translate (~10–20s parallel).
 // Cron + external pinger both hit this — single-flight lock in rotateIfDue
@@ -41,6 +44,13 @@ export async function POST(request: NextRequest) {
         contended: Boolean(result.contended),
       }),
     );
+    if (!result.contended) {
+      // Fire-and-forget: sendAlert dedupes to avoid channel-spam.
+      sendAlert(
+        "rotation-failed",
+        `🚨 Watt City rotation.failed: ${result.error} (${durationMs}ms)`,
+      ).catch(() => {});
+    }
     return Response.json(result, { status });
   }
 
@@ -59,6 +69,14 @@ export async function POST(request: NextRequest) {
       reason: result.reason,
     }),
   );
+  if (result.published) {
+    // Only record/cache on real publishes — no-op skips don't shift stale-check.
+    await kvSet("xp:ops:last-rotation-fired-at", started);
+    await recordEvent({
+      kind: "rotation_fired",
+      meta: { published: result.published, theme: result.theme, durationMs },
+    });
+  }
 
   return Response.json({ ...result, durationMs });
 }
