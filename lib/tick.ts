@@ -24,6 +24,7 @@ import {
   type BuildingInstance,
 } from "@/lib/player";
 import { getCatalogEntry, yieldAtLevel } from "@/lib/building-catalog";
+import { processLoanPayments } from "@/lib/loans";
 import { kvSetNX, kvGet, kvDel } from "@/lib/redis";
 import type { Resources } from "@/lib/resources";
 
@@ -146,6 +147,12 @@ export async function tickPlayer(
       }
     }
     state.lastTickAt = now;
+
+    // Loan payments due in this window. Runs AFTER cashflow credit so the
+    // player's fresh coins/cash can cover the payment rather than triggering
+    // a false "missed".
+    await processLoanPayments(state, now);
+
     await savePlayerState(state);
 
     return {

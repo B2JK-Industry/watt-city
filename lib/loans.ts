@@ -1,0 +1,339 @@
+/* Watt City loan engine — Phase 1.5.
+ *
+ * This file owns the math behind mortgages and future loan products. All
+ * numbers echo `docs/ECONOMY.md §5` — when the balance designer changes
+ * rates / caps / penalties, this is the single surface to edit.
+ *
+ * Invariants
+ *  - All money flows through the ledger (creditResources) so every payment
+ *    is auditable + idempotent.
+ *  - We never let `resources.cashZl` go negative. A missed payment is
+ *    represented by a "loan_payment" ledger delta of `0` + a
+ *    `missedConsecutive` increment on the Loan record.
+ *  - Each `loan.id` is unique per player and is used as the sourceId prefix
+ *    for dedupe (e.g. `loan_payment:${loan.id}:${monthsPaid}`).
+ */
+
+import {
+  getPlayerState,
+  savePlayerState,
+  creditResources,
+  type Loan,
+  type PlayerState,
+} from "@/lib/player";
+import { getCatalogEntry, yieldAtLevel } from "@/lib/building-catalog";
+import type { Resources } from "@/lib/resources";
+
+export const MORTGAGE_STANDARD_APR = 0.08;
+export const MORTGAGE_PREFERRED_APR = 0.05; // requires Bank lokalny (Phase 2)
+export const ALLOWED_TERMS_MONTHS = [12, 24, 36] as const;
+export const MAX_PRINCIPAL_CAP = 50_000; // hard ceiling regardless of cashflow
+export const DAYS_PER_MONTH = 30;
+export const MONTH_MS = DAYS_PER_MONTH * 24 * 60 * 60 * 1000;
+
+// Credit-score constants (ECONOMY.md §5).
+export const CREDIT_SCORE_START = 50;
+export const CREDIT_SCORE_MAX = 100;
+export const CREDIT_SCORE_MIN = 0;
+export const SCORE_DELTA_ON_TIME = 1;
+export const SCORE_DELTA_MISSED = -5;
+export const SCORE_DELTA_DEFAULT = -20;
+export const SCORE_DELTA_PAID_OFF_BONUS = 10;
+export const SCORE_DELTA_EARLY_REPAYMENT = 3;
+
+// ---------------------------------------------------------------------------
+// Amortization math
+// ---------------------------------------------------------------------------
+
+/** Monthly payment for a standard amortizing loan.
+ *  M = P × r / (1 − (1+r)^−n). For r=0 returns P/n. Rounded to cents (2dp). */
+export function monthlyPayment(
+  principal: number,
+  apr: number,
+  termMonths: number,
+): number {
+  if (termMonths <= 0) return 0;
+  const r = apr / 12;
+  if (r === 0) return round2(principal / termMonths);
+  const numerator = principal * r;
+  const denom = 1 - Math.pow(1 + r, -termMonths);
+  return round2(numerator / denom);
+}
+
+/** Total interest paid over the life of a loan. */
+export function totalInterest(
+  principal: number,
+  apr: number,
+  termMonths: number,
+): number {
+  const m = monthlyPayment(principal, apr, termMonths);
+  return round2(m * termMonths - principal);
+}
+
+/** Crude RRSO approximation — for MVP we return APR itself (simplified).
+ *  Real RRSO would incorporate fees; no fees in Watt City MVP, so RRSO = APR.
+ *  Kept as a separate function so we can evolve the formula later without
+ *  touching call sites. */
+export function rrso(apr: number /* , fees: number = 0 */): number {
+  // TODO Phase 2: incorporate fees once we introduce origination/processing.
+  return apr;
+}
+
+function round2(n: number): number {
+  return Math.round(n * 100) / 100;
+}
+
+// ---------------------------------------------------------------------------
+// Eligibility
+// ---------------------------------------------------------------------------
+
+// Monthly cashflow estimate: sum of per-building hourly cashZl yield × 730
+// (~hours per month). Matches ECONOMY.md §5 eligibility formula.
+export function monthlyCashflow(state: PlayerState): number {
+  let sum = 0;
+  for (const b of state.buildings) {
+    const entry = getCatalogEntry(b.catalogId);
+    if (!entry) continue;
+    const hourly = yieldAtLevel(entry.baseYieldPerHour, b.level);
+    // Cash-like resources count: cashZl directly, and coins at a 1:1 sink
+    // rate (kids understand "monety = mała gotówka"). This is a balance
+    // knob — revisit when the mortgage funnel matures.
+    sum += (hourly.cashZl ?? 0) + (hourly.coins ?? 0);
+  }
+  return sum * 730;
+}
+
+export function hasBankLokalny(state: PlayerState): boolean {
+  return state.buildings.some((b) => b.catalogId === "bank-lokalny");
+}
+
+export type QuoteInput = {
+  principal: number;
+  termMonths: number;
+};
+
+export type Quote = {
+  ok: boolean;
+  apr: number;
+  principal: number;
+  termMonths: number;
+  monthlyPayment: number;
+  totalInterest: number;
+  rrso: number;
+  maxPrincipal: number;
+  preferred: boolean;
+  eligibility: {
+    ok: boolean;
+    missing: string[];
+  };
+};
+
+export function quoteMortgage(state: PlayerState, input: QuoteInput): Quote {
+  const preferred = hasBankLokalny(state);
+  const apr = preferred ? MORTGAGE_PREFERRED_APR : MORTGAGE_STANDARD_APR;
+  const cf = monthlyCashflow(state);
+  const maxPrincipal = Math.min(Math.floor(cf * 12), MAX_PRINCIPAL_CAP);
+
+  const missing: string[] = [];
+  if (!ALLOWED_TERMS_MONTHS.includes(input.termMonths as 12 | 24 | 36)) {
+    missing.push("invalid-term");
+  }
+  if (input.principal <= 0) {
+    missing.push("zero-principal");
+  }
+  if (input.principal > maxPrincipal) {
+    missing.push(`principal-exceeds-cap:${maxPrincipal}`);
+  }
+  const payment = monthlyPayment(input.principal, apr, input.termMonths);
+  const interest = totalInterest(input.principal, apr, input.termMonths);
+
+  return {
+    ok: missing.length === 0,
+    apr,
+    principal: input.principal,
+    termMonths: input.termMonths,
+    monthlyPayment: payment,
+    totalInterest: interest,
+    rrso: rrso(apr),
+    maxPrincipal,
+    preferred,
+    eligibility: { ok: missing.length === 0, missing },
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Take / repay / tick
+// ---------------------------------------------------------------------------
+
+function randomLoanId(): string {
+  return `L-${Math.random().toString(36).slice(2, 8)}-${Date.now().toString(36)}`;
+}
+
+export type TakeResult =
+  | { ok: true; state: PlayerState; loan: Loan }
+  | { ok: false; error: string };
+
+export async function takeMortgage(
+  state: PlayerState,
+  input: QuoteInput,
+): Promise<TakeResult> {
+  const quote = quoteMortgage(state, input);
+  if (!quote.ok) {
+    return { ok: false, error: quote.eligibility.missing.join(",") };
+  }
+  const id = randomLoanId();
+  const now = Date.now();
+  const loan: Loan = {
+    id,
+    type: "mortgage",
+    principal: input.principal,
+    outstanding: input.principal,
+    monthlyPayment: quote.monthlyPayment,
+    rrso: quote.rrso,
+    apr: quote.apr,
+    termMonths: input.termMonths,
+    takenAt: now,
+    nextPaymentDueAt: now + MONTH_MS,
+    monthsPaid: 0,
+    missedConsecutive: 0,
+    status: "active",
+  };
+  state.loans.push(loan);
+  // Credit the principal as cash.
+  await creditResources(
+    state,
+    "loan_disburse",
+    { cashZl: Math.floor(input.principal) },
+    `mortgage disbursed: ${input.principal} W$ @ ${(quote.apr * 100).toFixed(1)}%`,
+    `loan_disburse:${id}`,
+    { loanId: id, apr: quote.apr, termMonths: input.termMonths },
+  );
+  await savePlayerState(state);
+  return { ok: true, state, loan };
+}
+
+export type RepayExtraResult =
+  | { ok: true; state: PlayerState; loan: Loan; newOutstanding: number }
+  | { ok: false; error: string };
+
+// Lump-sum principal reduction. Keeps monthlyPayment (simpler for kids);
+// term implicitly shortens because outstanding amortizes faster.
+export async function repayExtra(
+  state: PlayerState,
+  loanId: string,
+  amount: number,
+): Promise<RepayExtraResult> {
+  const loan = state.loans.find((l) => l.id === loanId);
+  if (!loan) return { ok: false, error: "unknown-loan" };
+  if (loan.status !== "active") return { ok: false, error: "loan-not-active" };
+  if (amount <= 0) return { ok: false, error: "bad-amount" };
+  if ((state.resources.cashZl ?? 0) < amount) {
+    return { ok: false, error: "not-enough-cash" };
+  }
+  const applied = Math.min(Math.floor(amount), loan.outstanding);
+  await creditResources(
+    state,
+    "loan_payment",
+    { cashZl: -applied },
+    `early repayment: ${applied} W$ on loan ${loan.id}`,
+    `repay_extra:${loan.id}:${Date.now()}`,
+    { loanId: loan.id, applied },
+  );
+  loan.outstanding = Math.max(0, loan.outstanding - applied);
+  state.creditScore = clampScore(state.creditScore + SCORE_DELTA_EARLY_REPAYMENT);
+  if (loan.outstanding === 0) {
+    loan.status = "paid_off";
+    state.creditScore = clampScore(state.creditScore + SCORE_DELTA_PAID_OFF_BONUS);
+  }
+  await savePlayerState(state);
+  return {
+    ok: true,
+    state,
+    loan,
+    newOutstanding: loan.outstanding,
+  };
+}
+
+// Called from tick.ts (Phase 2: wire up). Walks every active loan, pays
+// whatever's due, marks misses, triggers default on 3 consecutive miss.
+export async function processLoanPayments(
+  state: PlayerState,
+  now = Date.now(),
+): Promise<{ processed: number; defaulted: string[] }> {
+  let processed = 0;
+  const defaulted: string[] = [];
+  for (const loan of state.loans) {
+    if (loan.status !== "active") continue;
+    while (loan.nextPaymentDueAt <= now && loan.status === "active") {
+      const dueMonth = loan.monthsPaid + 1;
+      const sourceId = `loan_payment:${loan.id}:${dueMonth}`;
+      const payment = Math.min(loan.monthlyPayment, loan.outstanding);
+      if ((state.resources.cashZl ?? 0) >= payment) {
+        await creditResources(
+          state,
+          "loan_payment",
+          { cashZl: -Math.ceil(payment) },
+          `mortgage payment ${dueMonth}/${loan.termMonths} on ${loan.id}`,
+          sourceId,
+          { loanId: loan.id, month: dueMonth },
+        );
+        loan.outstanding = Math.max(0, loan.outstanding - payment);
+        loan.monthsPaid += 1;
+        loan.missedConsecutive = 0;
+        loan.nextPaymentDueAt += MONTH_MS;
+        state.creditScore = clampScore(state.creditScore + SCORE_DELTA_ON_TIME);
+        if (loan.outstanding === 0) {
+          loan.status = "paid_off";
+          state.creditScore = clampScore(
+            state.creditScore + SCORE_DELTA_PAID_OFF_BONUS,
+          );
+          break;
+        }
+      } else {
+        // Missed payment — advance clock but don't credit/debit anything.
+        loan.missedConsecutive += 1;
+        loan.nextPaymentDueAt += MONTH_MS;
+        state.creditScore = clampScore(state.creditScore + SCORE_DELTA_MISSED);
+        await creditResources(
+          state,
+          "loan_payment",
+          {},
+          `MISSED payment ${dueMonth}/${loan.termMonths} on ${loan.id}`,
+          sourceId,
+          { loanId: loan.id, month: dueMonth, missed: true },
+        );
+        if (loan.missedConsecutive >= 3) {
+          loan.status = "defaulted";
+          state.creditScore = clampScore(
+            state.creditScore + SCORE_DELTA_DEFAULT,
+          );
+          defaulted.push(loan.id);
+          break;
+        }
+      }
+      processed += 1;
+    }
+  }
+  if (processed > 0 || defaulted.length > 0) {
+    await savePlayerState(state);
+  }
+  return { processed, defaulted };
+}
+
+function clampScore(n: number): number {
+  return Math.max(CREDIT_SCORE_MIN, Math.min(CREDIT_SCORE_MAX, Math.round(n)));
+}
+
+export async function listLoans(state: PlayerState): Promise<Loan[]> {
+  return state.loans;
+}
+
+// Convenience for the API — reload state first so we don't mutate stale
+// snapshots. Returns fresh state + the loan record.
+export async function takeMortgageForUser(
+  username: string,
+  input: QuoteInput,
+): Promise<TakeResult> {
+  const state = await getPlayerState(username);
+  return await takeMortgage(state, input);
+}
