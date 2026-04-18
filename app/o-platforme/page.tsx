@@ -4,9 +4,9 @@ import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
 export const metadata = {
-  title: "O platforme · XP Arena",
+  title: "O platformie · XP Arena",
   description:
-    "Vision, architektúra, AI pipeline a myšlienka XP Arena — gamifikovaná finančná a energetická gramotnosť pre Gen Z, postavená na ETHSilesia 2026 pre kategóriu PKO XP: Gaming.",
+    "Wizja, architektura i AI pipeline XP Areny — gamifikowana edukacja finansowa i energetyczna dla Gen Z, zbudowana na ETHSilesia 2026 dla kategorii PKO XP: Gaming.",
 };
 
 export default async function AboutPage() {
@@ -264,51 +264,52 @@ export default async function AboutPage() {
               name="Research"
               detail={[
                 "lib/ai-pipeline/research.ts",
-                "Pick theme podľa denného bucketu (pay-day Friday, Earth Hour, inflácia, BLIK minutovka).",
-                "V produkcii: Claude s web_search volá NBP / PKO / Tauron feedy.",
+                "16 tém × 4 konkrétnych uhlov × 3 obtiažnosti — daily bucket vyberie (téma, angle, difficulty).",
+                "Každá téma je viazaná na 1 kind (quiz / scramble / price-guess).",
               ]}
             />
             <PipelineStep
               n="2"
-              name="Generate"
+              name="Generate (Sonnet PL)"
               detail={[
                 "lib/ai-pipeline/generate.ts",
-                "Claude Sonnet 4.6 s JSON response_format a GameSpec schemou (quiz / scramble / price-guess).",
-                "Fallback: hand-coded sample spec keď API key chýba — nikdy sa tvári že je to AI.",
+                "Claude Sonnet 4.6 produkuje PL spec podľa kind-specific schémy (anyOf/$defs sa vyhýbame).",
+                "Prompt caching na systémovom prompte; user prompt má date + theme + angle + difficulty.",
               ]}
             />
             <PipelineStep
               n="3"
-              name="Validate"
+              name="Translate (Haiku ×3)"
               detail={[
-                "zod schémy: QuizItem, ScrambleItem, PriceGuessItem, AiGame envelope.",
-                "Odmietneme invalid JSON, regex na poľské slová pre scramble, rozsahy xp-per-correct.",
+                "Claude Haiku 4.5 preloží PL spec paralelne do UK / CS / EN.",
+                "Numerické invarianty (correctIndex, truth, tolerancePct, xpPer*, unit) sú lock-ed z PL — translator nesmie meniť.",
+                "PL-native termíny (zł, BLIK, NBP, RRSO, IKE/IKZE) sú chránené v prompte.",
               ]}
             />
             <PipelineStep
               n="4"
-              name="Portfolio gate"
+              name="Validate"
               detail={[
-                "Čítame index aktívnych AI hier.",
-                "Ak nová hra má rovnakú tému ako živá — odmietneme (diverzita).",
+                "zod schémy: QuizItem / ScrambleItem / PriceGuessItem / LocalizedSpec (pl/uk/cs/en) / AiGame envelope.",
+                "Portfolio diversity gate: ak hra s rovnakou témou už je live, odmietneme.",
               ]}
             />
             <PipelineStep
               n="5"
-              name="Publish"
+              name="Publish + archive"
               detail={[
-                "Upstash set `xp:ai-games:<id>` s TTL 12 h (evict je logický po 6 h).",
-                "Atómicky aktualizujeme `xp:ai-games:index` JSON arrayou.",
-                "Najstaršiu hru nad strop 3 automaticky mažeme.",
+                "Envelope `xp:ai-games:<id>` — trvalé (bez TTL), hra ostáva playable naveky.",
+                "Index `xp:ai-games:index` capnutý na 3 aktívne hry; pretečené sa iba odstránia z indexu, ale stále sa dajú hrať cez /games/ai/<id>.",
+                "Archive record `xp:ai-games:archive:<id>` — minimálna kópia pre Hall of Fame.",
               ]}
             />
             <PipelineStep
               n="6"
               name="UI rollout"
               detail={[
-                "Stavenisko v CityScene sa stáva hrateľnou budovou.",
-                "Po 6 h prechádza ďalšia generácia, táto hra sa vráti na stavenisko (alebo ide do archívu).",
-                "Medaile za top 3 zostávajú permanentne v Sieni slávy.",
+                "CityScene: unikátny SVG vizuál hashnutý z game id (768 kombinácií) + WattMeter.",
+                "Renderer `/games/ai/[id]` vyberie spec podľa užívateľovho lang cookie (fallback na PL).",
+                "Medaile za top 3 ostávajú permanentne (leaderboard ZSET bez TTL).",
               ]}
             />
           </div>
@@ -387,8 +388,8 @@ export default async function AboutPage() {
           <TechItem name="Upstash Redis" note="Sorted sets pre leaderboardy, JSON pre účty a duely, EU región." />
           <TechItem name="zod" note="Vstupná + AI-output validácia." />
           <TechItem name="scrypt + HMAC" note="Heslá + HTTP-only signed session cookie." />
-          <TechItem name="Vercel Cron" note="AI pipeline trigger každých 6 h." />
-          <TechItem name="Anthropic SDK" note="Claude Sonnet 4.6, JSON response mode." />
+          <TechItem name="Vercel Cron" note="AI pipeline trigger denne o 09:00 UTC." />
+          <TechItem name="Anthropic SDK" note="Claude Sonnet 4.6 (PL gen) + Haiku 4.5 (3× preklad), JSON structured output." />
           <TechItem name="SVG, žiadne PNG/JPG" note="Celé mestečko + budova sú vektor, ostrý na 4K." />
         </div>
       </section>

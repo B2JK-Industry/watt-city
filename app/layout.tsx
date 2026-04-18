@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "XP Arena · ETHSilesia 2026 · Katowice",
   description:
-    "Gamifikovaná edukačná platforma z Katowíc. Minihry o financiách, energetike a ekonómii. Vstup do kategórie PKO XP: Gaming na ETHSilesia 2026.",
+    "Gamifikowana edukacja finansowa i energetyczna z Katowic. Minigry o finansach, energetyce i ekonomii. Wpis do kategorii PKO XP: Gaming na ETHSilesia 2026.",
 };
 
 export default async function RootLayout({
