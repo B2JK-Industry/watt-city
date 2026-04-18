@@ -6,6 +6,7 @@ import { userStats } from "@/lib/leaderboard";
 import { levelFromXP, tierForLevel } from "@/lib/level";
 import { CityScene, type CityGameState } from "@/components/city-scene";
 import { listActiveAiGames } from "@/lib/ai-pipeline/publish";
+import { xpCapForAnyLang } from "@/lib/ai-pipeline/types";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
@@ -35,6 +36,8 @@ export default async function GamesHubPage() {
         title: liveAi.title,
         validUntil: liveAi.validUntil,
         glyph: liveAi.buildingGlyph,
+        cap: xpCapForAnyLang(liveAi.spec),
+        bestScore: stats?.games[liveAi.id]?.bestScore ?? 0,
       }
     : undefined;
 

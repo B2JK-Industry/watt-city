@@ -8,6 +8,7 @@ import { levelFromXP, titleForLevel } from "@/lib/level";
 import { Dashboard } from "@/components/dashboard";
 import { CityScene } from "@/components/city-scene";
 import { listActiveAiGames } from "@/lib/ai-pipeline/publish";
+import { xpCapForAnyLang } from "@/lib/ai-pipeline/types";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
@@ -32,6 +33,8 @@ export default async function Home() {
           title: liveAi.title,
           validUntil: liveAi.validUntil,
           glyph: liveAi.buildingGlyph,
+          cap: xpCapForAnyLang(liveAi.spec),
+          bestScore: stats.games[liveAi.id]?.bestScore ?? 0,
         }
       : undefined;
     return (
@@ -55,12 +58,16 @@ export default async function Home() {
     listActiveAiGames(),
   ]);
   const liveAi = aiGames[aiGames.length - 1];
+  // Anonymous landing — no user session, so no personal best. Pass cap so
+  // the meter chrome renders (empty fill), consistent with evergreen previews.
   const cityAi = liveAi
     ? {
         id: liveAi.id,
         title: liveAi.title,
         validUntil: liveAi.validUntil,
         glyph: liveAi.buildingGlyph,
+        cap: xpCapForAnyLang(liveAi.spec),
+        bestScore: 0,
       }
     : undefined;
   const t = dict.hero;

@@ -36,12 +36,16 @@ export default async function HallOfFamePage() {
   );
   const liveIds = new Set(aiGames.map((g) => g.id));
   const pastAi = archive.filter((r) => !liveIds.has(r.id));
-  const pastAiWithTop = await Promise.all(
+  const pastAiWithTopRaw = await Promise.all(
     pastAi.map(async (r) => ({
       record: r,
       top: await gameLeaderboard(r.id, 3),
     })),
   );
+  // Only surface archive entries that actually earned someone a medal —
+  // hides the duplicate empty records that accumulate when the cron / admin
+  // endpoint rotates the same-theme slot multiple times in a single day.
+  const pastAiWithTop = pastAiWithTopRaw.filter((r) => r.top.length > 0);
 
   return (
     <div className="flex flex-col gap-8 animate-slide-up">

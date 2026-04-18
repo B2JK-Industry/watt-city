@@ -19,6 +19,8 @@ export type CityAiGame = {
   title: string;
   validUntil: number;
   glyph?: string;
+  bestScore?: number; // current user's best on this AI game
+  cap?: number;       // XP cap of this game's spec
 };
 
 type Props = {
@@ -1153,10 +1155,21 @@ function LiveAiBuilding({
         </text>
       </g>
 
+      {/* WattMeter — user's best score on this AI game */}
+      {aiGame.cap && aiGame.cap > 0 && (
+        <WattMeter
+          x={x}
+          y={GROUND + 8}
+          w={w}
+          value={aiGame.bestScore ?? 0}
+          cap={aiGame.cap}
+        />
+      )}
+
       {/* street sign */}
       <rect
         x={x}
-        y={GROUND + 4}
+        y={GROUND + 22}
         width={w}
         height={16}
         fill="#0a0a0f"
@@ -1166,7 +1179,7 @@ function LiveAiBuilding({
       />
       <text
         x={x + w / 2}
-        y={GROUND + 15}
+        y={GROUND + 33}
         textAnchor="middle"
         fontSize={8}
         fontWeight={900}
