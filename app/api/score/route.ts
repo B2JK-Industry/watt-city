@@ -18,6 +18,7 @@ import { creditResources, getPlayerState } from "@/lib/player";
 import { readEconomy, dailyYieldKey, dayBucket } from "@/lib/economy";
 import { kvGet, kvSet } from "@/lib/redis";
 import { scoreMultiplier } from "@/lib/multipliers";
+import { sweepAchievements } from "@/lib/achievements";
 
 const BodySchema = z.object({
   gameId: z.string().min(1).max(64),
@@ -146,6 +147,9 @@ export async function POST(request: NextRequest) {
   }
 
   const level = levelFromXP(xpResult.globalXP);
+  // Fire-and-forget-ish: sweep achievements in the request scope so players
+  // see the award on the next /api/me/achievements poll.
+  await sweepAchievements(session.username);
 
   // xpResult already carries the authoritative isNewBest / delta /
   // previousBest derived from the per-game leaderboard ZSET. user-stats
