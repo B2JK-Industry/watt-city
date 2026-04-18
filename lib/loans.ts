@@ -31,6 +31,63 @@ export const MAX_PRINCIPAL_CAP = 50_000; // hard ceiling regardless of cashflow
 export const DAYS_PER_MONTH = 30;
 export const MONTH_MS = DAYS_PER_MONTH * 24 * 60 * 60 * 1000;
 
+/* Phase 2.6 — extra loan products. All numbers match ECONOMY.md §5 and the
+ * cautionary-tale design in SKO-VISION §loans.
+ *
+ * Term semantics:
+ *   mortgage         — 12/24/36 months, amortized, max 12× monthly cashflow
+ *   kredyt-obrotowy  — 1 month "lump-sum + one payment", max 3× monthly cashflow
+ *                      (designed to feel like a short-term line against pending scores)
+ *   kredyt-konsumencki — 6/12/24 months, amortized, RRSO 20% (educational warning)
+ *   leasing          — monthly rent for 6 months (no principal repayment), then
+ *                      option to buy out; modeled as a loan with final balloon.
+ */
+
+// Loan types supported as products; kredyt_inwestycyjny is declared on the
+// Loan union but not yet buildable (Phase 3 P2P dep).
+export type ProductLoanType = "mortgage" | "kredyt_obrotowy" | "kredyt_konsumencki" | "leasing";
+
+export type LoanConfig = {
+  apr: number;
+  allowedTermsMonths: readonly number[];
+  principalCap: number;
+  /** cashflow multiplier for maxPrincipal: maxPrincipal = monthlyCashflow × cashflowMult (capped at principalCap). */
+  cashflowMult: number;
+  /** UI caution flag — shows KNF disclaimer + red accent on the loan card. */
+  caution: boolean;
+};
+
+export const LOAN_CONFIGS: Record<ProductLoanType, LoanConfig> = {
+  mortgage: {
+    apr: MORTGAGE_STANDARD_APR,
+    allowedTermsMonths: ALLOWED_TERMS_MONTHS,
+    principalCap: MAX_PRINCIPAL_CAP,
+    cashflowMult: 12,
+    caution: false,
+  },
+  kredyt_obrotowy: {
+    apr: 0.12,
+    allowedTermsMonths: [1] as const,
+    principalCap: 10_000,
+    cashflowMult: 3,
+    caution: false,
+  },
+  kredyt_konsumencki: {
+    apr: 0.2, // 20% RRSO — the "cautionary tale"
+    allowedTermsMonths: [6, 12, 24] as const,
+    principalCap: 15_000,
+    cashflowMult: 6,
+    caution: true,
+  },
+  leasing: {
+    apr: 0.1,
+    allowedTermsMonths: [6] as const,
+    principalCap: 30_000,
+    cashflowMult: 8,
+    caution: false,
+  },
+};
+
 // Credit-score constants (ECONOMY.md §5).
 export const CREDIT_SCORE_START = 50;
 export const CREDIT_SCORE_MAX = 100;
@@ -336,4 +393,143 @@ export async function takeMortgageForUser(
 ): Promise<TakeResult> {
   const state = await getPlayerState(username);
   return await takeMortgage(state, input);
+}
+
+// ---------------------------------------------------------------------------
+// Phase 2.6 — generic loan product + bankructwo reset
+// ---------------------------------------------------------------------------
+
+export type GenericLoanInput = {
+  type: ProductLoanType;
+  principal: number;
+  termMonths: number;
+};
+
+export function quoteLoan(
+  state: PlayerState,
+  input: GenericLoanInput,
+): Quote {
+  const cfg = LOAN_CONFIGS[input.type];
+  // mortgage keeps its separate quoteMortgage path for Preferred flag.
+  if (input.type === "mortgage") {
+    return quoteMortgage(state, { principal: input.principal, termMonths: input.termMonths });
+  }
+  const cf = monthlyCashflow(state);
+  const maxPrincipal = Math.min(Math.floor(cf * cfg.cashflowMult), cfg.principalCap);
+  const missing: string[] = [];
+  if (!cfg.allowedTermsMonths.includes(input.termMonths)) {
+    missing.push(`invalid-term:${input.termMonths}`);
+  }
+  if (input.principal <= 0) missing.push("zero-principal");
+  if (input.principal > maxPrincipal)
+    missing.push(`principal-exceeds-cap:${maxPrincipal}`);
+  const payment = monthlyPayment(input.principal, cfg.apr, input.termMonths);
+  const interest = totalInterest(input.principal, cfg.apr, input.termMonths);
+  return {
+    ok: missing.length === 0,
+    apr: cfg.apr,
+    principal: input.principal,
+    termMonths: input.termMonths,
+    monthlyPayment: payment,
+    totalInterest: interest,
+    rrso: rrso(cfg.apr),
+    maxPrincipal,
+    preferred: false,
+    eligibility: { ok: missing.length === 0, missing },
+  };
+}
+
+export async function takeLoan(
+  state: PlayerState,
+  input: GenericLoanInput,
+): Promise<TakeResult> {
+  if (input.type === "mortgage") {
+    return takeMortgage(state, { principal: input.principal, termMonths: input.termMonths });
+  }
+  const q = quoteLoan(state, input);
+  if (!q.ok) return { ok: false, error: q.eligibility.missing.join(",") };
+  const cfg = LOAN_CONFIGS[input.type];
+  const id = `${input.type.slice(0, 3).toUpperCase()}-${Math.random()
+    .toString(36)
+    .slice(2, 8)}-${Date.now().toString(36)}`;
+  const now = Date.now();
+  const loan: Loan = {
+    id,
+    type: input.type,
+    principal: input.principal,
+    outstanding: input.principal,
+    monthlyPayment: q.monthlyPayment,
+    rrso: q.rrso,
+    apr: cfg.apr,
+    termMonths: input.termMonths,
+    takenAt: now,
+    nextPaymentDueAt: now + MONTH_MS,
+    monthsPaid: 0,
+    missedConsecutive: 0,
+    status: "active",
+  };
+  state.loans.push(loan);
+  await creditResources(
+    state,
+    "loan_disburse",
+    { cashZl: Math.floor(input.principal) },
+    `${input.type} disbursed: ${input.principal} W$ @ ${(cfg.apr * 100).toFixed(1)}%`,
+    `loan_disburse:${id}`,
+    { loanId: id, type: input.type, apr: cfg.apr, termMonths: input.termMonths },
+  );
+  await savePlayerState(state);
+  return { ok: true, state, loan };
+}
+
+/** Bankructwo (ECONOMY.md §5 default-handling final branch).
+ *
+ *  Triggered manually when every loan is defaulted AND no non-Domek building
+ *  remains to seize. Effect:
+ *   - All non-Domek buildings are removed from the slot map
+ *   - All loans marked "paid_off_via_seizure"
+ *   - Credit score drops to the floor
+ *   - A single "bankructwo" ledger entry records the event
+ *  The player keeps Domek (slot 10) per D4 — the "kid keeps home" rule.
+ */
+export async function bankructwoReset(
+  state: PlayerState,
+): Promise<{ state: PlayerState; demolished: number }> {
+  const toKeep = state.buildings.filter((b) => b.catalogId === "domek");
+  const removedCount = state.buildings.length - toKeep.length;
+  state.buildings = toKeep;
+  for (const loan of state.loans) {
+    if (loan.status === "active" || loan.status === "defaulted") {
+      loan.outstanding = 0;
+      loan.status = "paid_off_via_seizure";
+    }
+  }
+  state.creditScore = 0; // wipe trust; must rebuild
+  await creditResources(
+    state,
+    "loan_default",
+    {},
+    `BANKRUCTWO — wszystkie budynki (poza Domkiem) zajęte, wszystkie kredyty zamknięte`,
+    `bankructwo:${state.username}:${Date.now()}`,
+    { demolished: removedCount },
+  );
+  await savePlayerState(state);
+  return { state, demolished: removedCount };
+}
+
+/** Returns true when the player is eligible for voluntary bankructwo.
+ *
+ *  Triggers when ≥1 loan already defaulted OR when all active loans have a
+ *  combined monthly demand that the current cashflow can't meet — either
+ *  signal means the player is in a death spiral and deserves the reset
+ *  button. UI still walls this behind a modal confirmation so a casual
+ *  click can't wipe the city. */
+export function eligibleForBankructwo(state: PlayerState): boolean {
+  const defaulted = state.loans.some((l) => l.status === "defaulted");
+  if (defaulted) return true;
+  const activeMonthly = state.loans
+    .filter((l) => l.status === "active")
+    .reduce((sum, l) => sum + l.monthlyPayment, 0);
+  if (activeMonthly === 0) return false;
+  const cf = monthlyCashflow(state);
+  return cf < activeMonthly;
 }

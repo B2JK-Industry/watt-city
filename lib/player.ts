@@ -71,9 +71,16 @@ export type LoanStatus =
   | "defaulted"
   | "paid_off_via_seizure";
 
+export type LoanType =
+  | "mortgage"
+  | "leasing"
+  | "kredyt_obrotowy"
+  | "kredyt_konsumencki"
+  | "kredyt_inwestycyjny";
+
 export type Loan = {
   id: string;
-  type: "mortgage" | "leasing" | "kredyt_obrotowy" | "kredyt_konsumencki" | "kredyt_inwestycyjny";
+  type: LoanType;
   principal: number;
   outstanding: number;
   monthlyPayment: number;
