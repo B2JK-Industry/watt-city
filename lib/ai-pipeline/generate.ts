@@ -1,13 +1,24 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import {
-  GameSpecSchema,
+  QuizSpecSchema,
+  ScrambleSpecSchema,
+  PriceGuessSpecSchema,
   LocalizedSpecSchema,
   type GameSpec,
   type LocalizedSpec,
 } from "./types";
 import type { Lang } from "@/lib/i18n";
-import type { ResearchSeed } from "./research";
+import type { ResearchSeed, SeedKind } from "./research";
+
+// Kind-specific schemas — Anthropic's structured outputs reject anyOf with
+// $defs (which zod generates for discriminated unions). We know the kind
+// from the research seed, so we can narrow to one concrete schema per call.
+function schemaForKind(kind: SeedKind) {
+  if (kind === "quiz") return QuizSpecSchema;
+  if (kind === "scramble") return ScrambleSpecSchema;
+  return PriceGuessSpecSchema;
+}
 
 /* Two-stage game-spec generator.
  *
@@ -47,56 +58,66 @@ function client(): Anthropic {
 
 /* ---------------- Stage 1: Sonnet → Polish spec ---------------- */
 
-function buildPlSystemPrompt(): string {
+function buildPlSystemPrompt(kind: SeedKind): string {
+  const kindRules: Record<SeedKind, string[]> = {
+    quiz: [
+      "You are producing a QUIZ spec — multiple-choice questions.",
+      "Schema: {kind:'quiz', xpPerCorrect:int 5–40, items:[{prompt, options:[4 strings], correctIndex:0–3, explanation}] × 5–8}.",
+      "- Options must be parallel in structure, no 'all of the above', no joke answers.",
+      "- explanation: 20–60 words, one concrete takeaway, in Polish.",
+    ],
+    scramble: [
+      "You are producing a SCRAMBLE spec — word-unscramble puzzles.",
+      "Schema: {kind:'scramble', xpPerWord:int 5–30, words:[{word (UPPERCASE 4–20 letters), hint}] × 5–10}.",
+      "- Polish diacritics OK: ĄĆĘŁŃÓŚŹŻ.",
+      "- Avoid proper nouns whose scrambled form could accidentally have only one solution.",
+      "- hint: 6–200 chars, a short Polish clue pointing at the concept.",
+    ],
+    "price-guess": [
+      "You are producing a PRICE-GUESS spec — numeric estimation items.",
+      "Schema: {kind:'price-guess', xpPerCorrect:int 5–30, items:[{prompt, truth:number, unit:string, tolerancePct:0.01–0.5}] × 5–10}.",
+      "- truth must be unambiguous and grounded in 2025–2026 PL reality (NBP rates, Tauron tariffs, BLIK fees, etc.).",
+      "- tolerancePct should reward ballpark reasoning (0.10–0.25 typical).",
+      "- unit: short symbol (zł, kWh, %, zł/kWh, zł/mies).",
+    ],
+  };
+
   return [
     "You are the content designer for XP Arena, a Polish financial + energy literacy game aimed at Gen Z in Katowice (Silesia region).",
     "",
-    "Your job: produce ONE game spec matching the requested theme. The spec will be auto-rendered into a 24-hour rotating challenge.",
+    "Your job: produce ONE game spec for the requested theme. It will be auto-rendered into a 24-hour rotating challenge.",
     "",
-    "OUTPUT DISCRIMINATED UNION — pick exactly one kind:",
-    "• kind='quiz' — 5–8 multiple-choice questions, 4 options each, one correct, each with a short teaching explanation. xpPerCorrect 5–40.",
-    "• kind='scramble' — 5–10 UPPERCASE words (4–20 letters, Polish diacritics OK: ĄĆĘŁŃÓŚŹŻ), each with a hint. xpPerWord 5–30.",
-    "• kind='price-guess' — 5–10 numeric-estimation items (prompt, true value, unit string, tolerancePct 0.01–0.5). xpPerCorrect 5–30.",
+    ...kindRules[kind],
     "",
     "CONTENT RULES:",
     "- Write ALL user-facing strings in natural Polish.",
     "- Keep the Polish authentic: zł, NBP, KNF, BLIK, WIBOR/WIRON, IKE/IKZE, RRSO — use real local terms, not translated equivalents.",
-    "- Questions must be verifiable and teach something specific. No opinions, no vague claims.",
-    "- Explanations should deepen the lesson (why this is right, what the rule is), not just restate the answer.",
-    "- Scramble words: economy/finance/energy vocabulary. NO proper nouns that have only one correct unscrambling accidentally.",
-    "- Price-guess: pick values with an unambiguous 'truth' grounded in 2025–2026 PL reality. tolerancePct should be wide enough to reward ballpark reasoning (0.10–0.25 typical).",
-    "",
-    "STYLE:",
     "- Prompts: concrete and short (8–30 words).",
-    "- Options: parallel structure, no 'all of the above', no joke answers.",
-    "- Explanations: 20–60 words, plain Polish, one takeaway per item.",
-    "",
-    "EXAMPLES (format only — DO NOT copy content):",
-    '• quiz item: {"prompt":"Ile wynosi RRSO?","options":["roczna stopa bez opłat","roczna rzeczywista stopa oprocentowania","prowizja za spłatę","minimalna rata"],"correctIndex":1,"explanation":"RRSO zawiera odsetki i wszystkie opłaty — to prawdziwy koszt kredytu."}',
-    '• scramble item: {"word":"INFLACJA","hint":"Wzrost cen w czasie"}',
-    '• price-guess item: {"prompt":"Cena 1 kWh w taryfie G11 (2026)","truth":0.92,"unit":"zł","tolerancePct":0.15}',
+    "- Questions must be verifiable and teach something specific. No opinions, no vague claims.",
   ].join("\n");
 }
 
 function buildPlUserPrompt(seed: ResearchSeed, deterministicSeed: number): string {
   return [
     `THEME: ${seed.theme}`,
+    `KIND: ${seed.kind}`,
     `RESEARCH NOTES: ${seed.notes}`,
     `SOURCE HINT: ${seed.source}`,
-    `DETERMINISTIC SEED: ${deterministicSeed} (use this to keep variation stable across retries within the same 24h window — same seed = same spec).`,
+    `DETERMINISTIC SEED: ${deterministicSeed} (pick variations stable across retries in the same 24h window).`,
     "",
-    "Pick the kind (quiz / scramble / price-guess) that best fits this theme and produce the spec in Polish.",
+    `Produce a ${seed.kind} spec in Polish.`,
   ].join("\n");
 }
 
 async function generatePolishSpec(ctx: GenerateContext): Promise<GameSpec> {
+  const schema = schemaForKind(ctx.seed.kind);
   const response = await client().messages.parse({
     model: PRIMARY_MODEL,
     max_tokens: 4000,
     system: [
       {
         type: "text",
-        text: buildPlSystemPrompt(),
+        text: buildPlSystemPrompt(ctx.seed.kind),
         cache_control: { type: "ephemeral" },
       },
     ],
@@ -106,14 +127,14 @@ async function generatePolishSpec(ctx: GenerateContext): Promise<GameSpec> {
         content: buildPlUserPrompt(ctx.seed, ctx.deterministicSeed),
       },
     ],
-    output_config: { format: zodOutputFormat(GameSpecSchema) },
+    output_config: { format: zodOutputFormat(schema) },
   });
   if (!response.parsed_output) {
     throw new Error(
       `Sonnet returned no parseable PL spec (stop_reason=${response.stop_reason})`,
     );
   }
-  return response.parsed_output;
+  return response.parsed_output as GameSpec;
 }
 
 /* ---------------- Stage 2: Haiku → translations ---------------- */
@@ -146,6 +167,7 @@ async function translateSpec(
   plSpec: GameSpec,
   targetLang: Exclude<Lang, "pl">,
 ): Promise<GameSpec> {
+  const schema = schemaForKind(plSpec.kind);
   const response = await client().messages.parse({
     model: TRANSLATION_MODEL,
     max_tokens: 4000,
@@ -165,20 +187,18 @@ async function translateSpec(
           JSON.stringify(plSpec, null, 2),
           "```",
           "",
-          `Translate to ${TARGET_LANG_LABEL[targetLang]}. Return the same schema.`,
+          `Translate to ${TARGET_LANG_LABEL[targetLang]}. Return the same schema (kind='${plSpec.kind}').`,
         ].join("\n"),
       },
     ],
-    output_config: { format: zodOutputFormat(GameSpecSchema) },
+    output_config: { format: zodOutputFormat(schema) },
   });
   if (!response.parsed_output) {
     throw new Error(
       `Haiku returned no parseable ${targetLang} spec (stop_reason=${response.stop_reason})`,
     );
   }
-  // Enforce structural invariants — if the translator drifted on a numeric
-  // field (model mistake), restore from PL. Content-only translation.
-  return mergeStructure(plSpec, response.parsed_output);
+  return mergeStructure(plSpec, response.parsed_output as GameSpec);
 }
 
 function mergeStructure(pl: GameSpec, translated: GameSpec): GameSpec {

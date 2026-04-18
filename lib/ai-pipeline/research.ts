@@ -8,8 +8,11 @@
  * rotating pool so judges can watch a cron cycle without API keys.
  */
 
+export type SeedKind = "quiz" | "scramble" | "price-guess";
+
 export type ResearchSeed = {
   theme: string;
+  kind: SeedKind;
   buildingName: string;
   buildingGlyph: string;
   buildingRoof: string;
@@ -21,6 +24,7 @@ export type ResearchSeed = {
 const ROTATION_POOL: ResearchSeed[] = [
   {
     theme: "Inflácia v Poľsku — aký je reálny úrok",
+    kind: "quiz",
     buildingName: "NBP Watch",
     buildingGlyph: "📉",
     buildingRoof: "bg-[var(--neo-pink)]",
@@ -31,6 +35,7 @@ const ROTATION_POOL: ResearchSeed[] = [
   },
   {
     theme: "Earth Hour — energia vypnutá na hodinu",
+    kind: "price-guess",
     buildingName: "Eco Hour",
     buildingGlyph: "🌍",
     buildingRoof: "bg-emerald-400",
@@ -41,6 +46,7 @@ const ROTATION_POOL: ResearchSeed[] = [
   },
   {
     theme: "Pay-day Friday — 50/30/20",
+    kind: "price-guess",
     buildingName: "Payday Post",
     buildingGlyph: "💶",
     buildingRoof: "bg-[var(--neo-yellow)]",
@@ -51,6 +57,7 @@ const ROTATION_POOL: ResearchSeed[] = [
   },
   {
     theme: "BLIK minutovka",
+    kind: "scramble",
     buildingName: "BLIK Kiosk",
     buildingGlyph: "⚡",
     buildingRoof: "bg-[var(--neo-cyan)]",
