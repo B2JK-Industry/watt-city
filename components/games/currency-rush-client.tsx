@@ -173,7 +173,7 @@ export function CurrencyRushClient() {
           <strong>{secondsLeft}s</strong>
         </span>
         <span className="chip">
-          <span className="opacity-70">XP</span>
+          <span className="opacity-70">W</span>
           <strong className="text-[var(--accent)]">{Math.min(xp, XP_CAP)}</strong>
         </span>
         <span className="chip">

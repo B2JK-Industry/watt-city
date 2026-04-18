@@ -164,7 +164,7 @@ export function MathSprintClient() {
           <strong>{secondsLeft}s</strong>
         </span>
         <span className="chip">
-          <span className="opacity-70">XP</span>
+          <span className="opacity-70">W</span>
           <strong className="text-[var(--accent)]">{cappedXp}</strong>
         </span>
         <span className="chip">

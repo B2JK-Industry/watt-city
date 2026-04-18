@@ -25,7 +25,7 @@ export default async function MemoryMatchPage() {
         <h1 className="text-3xl font-bold">Pamäťové páry</h1>
         <p className="text-zinc-400">
           Spáruj finančný pojem s jeho definíciou. Otoč dve karty naraz.
-          Čím rýchlejšie a s menším počtom chýb, tým viac XP (strop 160).
+          Čím rýchlejšie a s menším počtom chýb, tým viac Wattov (max 160 W).
         </p>
       </header>
       <MemoryMatchClient pairs={pickRound()} />

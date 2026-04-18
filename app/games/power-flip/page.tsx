@@ -34,7 +34,7 @@ export default async function PowerFlipPage() {
         <h1 className="text-3xl font-bold">Power Flip</h1>
         <p className="text-zinc-400">
           Ktorá voľba je energeticky úspornejšia? Klikni rýchlo — 30 sekúnd,
-          combo bonusy, ku každej otázke krátke vysvetlenie. Strop 180 XP.
+          combo bonusy, ku každej otázke krátke vysvetlenie. Max 180 W.
         </p>
       </header>
       <PowerFlipClient rounds={pickRound()} />

@@ -18,8 +18,8 @@ export default async function MathSprintPage() {
         </Link>
         <h1 className="text-3xl font-bold">Matematický šprint</h1>
         <p className="text-zinc-400">
-          60 sekúnd. Počítaj čo najrýchlejšie. Správna odpoveď: +10 XP. Nesprávna:
-          −5 XP (minimum 0). Max 200 XP za kolo.
+          60 sekúnd. Počítaj čo najrýchlejšie. Správna odpoveď: +10 W. Nesprávna:
+          −5 W (minimum 0). Max 200 W za kolo.
         </p>
       </header>
       <MathSprintClient />

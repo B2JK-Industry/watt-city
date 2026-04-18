@@ -4,7 +4,7 @@ import "./globals.css";
 import { SiteNav } from "@/components/site-nav";
 import { getSession } from "@/lib/session";
 import { userStats } from "@/lib/leaderboard";
-import { levelFromXP, titleForLevel } from "@/lib/level";
+import { levelFromXP, tierForLevel } from "@/lib/level";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,7 +43,7 @@ export default async function RootLayout({
           rank={stats?.globalRank ?? null}
           level={level.level}
           levelProgress={level.progress}
-          title={session ? titleForLevel(level.level) : null}
+          title={session ? `${tierForLevel(level.level).emoji} ${tierForLevel(level.level).name}` : null}
         />
         <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8">
           {children}
@@ -59,9 +59,11 @@ export default async function RootLayout({
                   <span className="font-black uppercase">Arena</span>
                 </div>
                 <p className="text-sm text-zinc-400 max-w-md">
-                  Postavené v Katowiciach počas hackathonu{" "}
+                  Každý Watt vybuduje kúsok tvojho sliezskeho mesta —{" "}
+                  od uhoľnej osady po Europejska Stolica 2.0. Postavené
+                  v Katowiciach počas{" "}
                   <strong className="text-[var(--foreground)]">ETHSilesia 2026</strong>{" "}
-                  (17–19. apríl 2026) pre kategóriu{" "}
+                  (17–19. apríl) pre kategóriu{" "}
                   <strong className="text-[var(--accent)]">PKO XP: Gaming</strong> —
                   gamifikácia finančnej a energetickej edukácie pre Gen Z.
                 </p>

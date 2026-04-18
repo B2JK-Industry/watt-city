@@ -127,7 +127,7 @@ export function StockTapClient() {
       spawnFx({
         x: p.x,
         y: p.y,
-        text: `+${gained} XP (+${profit.toFixed(1)} zł)`,
+        text: `+${gained} W (+${profit.toFixed(1)} zł)`,
         tone: mult > 1 ? "combo" : "ok",
       });
     } else {
@@ -222,7 +222,7 @@ export function StockTapClient() {
         </span>
         <ComboBadge combo={combo} multiplier={comboMultiplier(combo)} />
         <span className="chip">
-          <span className="opacity-70">XP</span>
+          <span className="opacity-70">W</span>
           <strong className="text-[var(--accent)]">{Math.min(xp, XP_CAP)}</strong>
         </span>
         <span className="chip">

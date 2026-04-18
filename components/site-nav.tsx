@@ -50,15 +50,18 @@ export function SiteNav({
                 <span>{level}</span>
               </span>
               <span className="chip">
-                <span className="opacity-70">XP</span>
-                <strong>{xp}</strong>
+                <strong>{xp.toLocaleString("sk-SK")} W</strong>
                 {rank !== null && (
                   <span className="opacity-70">· #{rank}</span>
                 )}
               </span>
               <span className="hidden md:flex flex-col leading-tight">
-                <span className="font-semibold">{username}</span>
-                {title && <span className="text-[11px] text-zinc-400">{title}</span>}
+                <span className="font-bold uppercase tracking-tight">{username}</span>
+                {title && (
+                  <span className="text-[11px] font-semibold text-[var(--accent)]">
+                    {title}
+                  </span>
+                )}
               </span>
               <LogoutButton />
             </>

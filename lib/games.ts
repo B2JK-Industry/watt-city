@@ -27,7 +27,7 @@ export const GAMES: GameMeta[] = [
     title: "Energy Dash",
     tagline: "Tap OZE, vyhni sa fosílom. Combo ×3.",
     description:
-      "30 s reakčná hra na 4×4 mriežke. Klikaj iba obnoviteľné zdroje (slnko, vietor, voda, biomasa). Čiernych sa nedotkni. Rýchlosť rastie, combo dáva ×1.5/×2/×3. Strop 220 XP.",
+      "30 s reakčná hra na 4×4 mriežke. Klikaj iba obnoviteľné zdroje (slnko, vietor, voda, biomasa). Čiernych sa nedotkni. Rýchlosť rastie, combo dáva ×1.5/×2/×3. Max 220 W.",
     category: "energy",
     xpCap: 220,
     durationLabel: "30 s",
@@ -56,7 +56,7 @@ export const GAMES: GameMeta[] = [
     title: "Stock Tap",
     tagline: "Kúp nízko, predaj vysoko. Live chart.",
     description:
-      "45 sekúnd, živý graf ceny. Klik BUY, drž pozíciu, klik SELL v najvyššom bode. Ziskové obchody v rade = combo bonus. Stratové resetujú combo. Strop 220 XP.",
+      "45 sekúnd, živý graf ceny. Klik BUY, drž pozíciu, klik SELL v najvyššom bode. Ziskové obchody v rade = combo bonus. Stratové resetujú combo. Max 220 W.",
     category: "finance",
     xpCap: 220,
     durationLabel: "45 s",
@@ -71,7 +71,7 @@ export const GAMES: GameMeta[] = [
     title: "Budget Balance",
     tagline: "Pravidlo 50/30/20 na živých scenároch.",
     description:
-      "Dostaneš mesačný príjem (student / prvá práca / rodina) a 4 kategórie. Rozdeľ 100 % tak, aby si trafil odporúčané pásma. Čím lepšie, tým viac XP (strop 160).",
+      "Dostaneš mesačný príjem (student / prvá práca / rodina) a 4 kategórie. Rozdeľ 100 % tak, aby si trafil odporúčané pásma. Čím lepšie, tým viac Wattov (max 160 W).",
     category: "finance",
     xpCap: 160,
     durationLabel: "bez časovača",
@@ -85,7 +85,7 @@ export const GAMES: GameMeta[] = [
     title: "Finančný kvíz",
     tagline: "5 otázok z osobných financií.",
     description:
-      "Otestuj svoje vedomosti o úveroch, úsporách, ETF, inflácii a BLIK. Za každú správnu odpoveď +20 XP a vysvetlenie, prečo je správna.",
+      "Otestuj svoje vedomosti o úveroch, úsporách, ETF, inflácii a BLIK. Za každú správnu odpoveď +20 W a vysvetlenie, prečo je správna.",
     category: "knowledge",
     xpCap: 100,
     durationLabel: "~2 min",
@@ -97,7 +97,7 @@ export const GAMES: GameMeta[] = [
     title: "Matematický šprint",
     tagline: "60 s rýchlych počtov.",
     description:
-      "Sčítanie, odčítanie, násobenie. Enter = odoslať. Správne +10, zle −5. Otestuj svoju mentálnu matematiku — strop 200 XP.",
+      "Sčítanie, odčítanie, násobenie. Enter = odoslať. Správne +10, zle −5. Otestuj svoju mentálnu matematiku — max 200 W.",
     category: "math",
     xpCap: 200,
     durationLabel: "60 s",
@@ -109,7 +109,7 @@ export const GAMES: GameMeta[] = [
     title: "Pamäťové páry",
     tagline: "Spáruj pojem s definíciou.",
     description:
-      "8 párov finančných pojmov a ich definícií. Otoč dve karty, ak sa zhodujú, ostanú odkryté. Rýchlejšie → vyššie XP.",
+      "8 párov finančných pojmov a ich definícií. Otoč dve karty, ak sa zhodujú, ostanú odkryté. Rýchlejšie → vyššie skóre.",
     category: "memory",
     xpCap: 160,
     durationLabel: "~90 s",
@@ -133,7 +133,7 @@ export const GAMES: GameMeta[] = [
     title: "Premiešané slová",
     tagline: "Odkódoj finančný pojem.",
     description:
-      "Písmená sú premiešané — odhaľ pôvodné poľské slovo z oblasti financií a ekonómie. 8 slov za kolo, každá správna +15 XP.",
+      "Písmená sú premiešané — odhaľ pôvodné poľské slovo z oblasti financií a ekonómie. 8 slov za kolo, každá správna +15 W.",
     category: "knowledge",
     xpCap: 120,
     durationLabel: "~2 min",

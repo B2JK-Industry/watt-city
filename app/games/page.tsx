@@ -24,7 +24,7 @@ export default async function GamesHubPage() {
       <header className="flex flex-col gap-2">
         <h1 className="text-3xl sm:text-4xl font-bold">Hry</h1>
         <p className="text-zinc-400 max-w-2xl">
-          Vyber si minihru. Každá dáva XP do globálneho rebríčka a má svoj vlastný rebríček. Nováčikom odporúčame začať finančným kvízom.
+          Vyber si minihru. Každá vygeneruje Watty pre tvoje sliezske mesto. Nováčikom odporúčame začať Finančným kvízom.
         </p>
       </header>
       <GamesHub games={personalized} loggedIn={Boolean(session)} />

@@ -18,7 +18,7 @@ export default async function EnergyDashPage() {
         <p className="text-zinc-400">
           30 sekúnd. Klikaj iba zelené — obnoviteľné zdroje (slnko, vietor, voda,
           biomasa). Vyhni sa čiernym — fosílne palivá. Combo × multiplikátor
-          láka na rekordy. Strop 220 XP.
+          láka na rekordy. Max 220 W.
         </p>
       </header>
       <EnergyDashClient />

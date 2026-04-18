@@ -19,7 +19,7 @@ export default async function BudgetBalancePage() {
         <h1 className="text-3xl font-bold">Budget Balance</h1>
         <p className="text-zinc-400">
           Rozdeľ mesačný príjem medzi 4 kategórie. Čím bližšie k odporúčanému
-          pásmu, tým viac XP. Učíš sa pravidlo 50/30/20 na živých scenároch.
+          pásmu, tým viac Wattov. Učíš sa pravidlo 50/30/20 na živých scenároch.
         </p>
       </header>
       <BudgetBalanceClient scenario={pick} />

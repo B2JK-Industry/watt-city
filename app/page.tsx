@@ -49,22 +49,23 @@ export default async function Home() {
             </span>
           </div>
           <h1 className="text-4xl sm:text-6xl font-black leading-[0.95] uppercase tracking-tight">
-            Učiť sa <br />
+            Vygeneruj{" "}
             <span className="inline-block bg-[var(--accent)] text-[#0a0a0f] px-3 py-1 border-[3px] border-[var(--ink)] shadow-[6px_6px_0_0_var(--ink)] my-1">
-              financie
-            </span>{" "}
-            &{" "}
+              Watty
+            </span>
+            . Postav{" "}
             <span className="inline-block bg-[var(--neo-cyan)] text-[#0a0a0f] px-3 py-1 border-[3px] border-[var(--ink)] shadow-[6px_6px_0_0_var(--ink)] my-1">
-              energetiku
-            </span>{" "}
-            ako hra.
+              Katowice
+            </span>
+            .
           </h1>
           <p className="text-lg text-zinc-300 max-w-xl">
             Arkáda minihier o tom, čo Gen Z naozaj potrebuje vedieť: BLIK, ETF,
-            RRSO, účet za energiu, inflácia, kurzy. 30 sekúnd. Combo ×3.
-            Rebríček. Postavené pre{" "}
-            <strong className="text-[var(--foreground)]">PKO XP: Gaming</strong>{" "}
-            na ETHSilesia 2026 v Katowiciach.
+            RRSO, energetika, inflácia, kurzy. Každý správny tap vygeneruje{" "}
+            <strong className="text-[var(--accent)]">Watty</strong>, ktoré
+            posúvajú tvoje sliezske mesto z baníckej osady až k{" "}
+            <strong className="text-[var(--neo-cyan)]">Europejska Stolica 2.0</strong>.
+            9 tierov. 9 hier. 1 liga.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link href="/register" className="btn btn-primary">
@@ -112,7 +113,7 @@ export default async function Home() {
                     <span>{e.username}</span>
                   </span>
                   <span className="font-mono font-semibold text-[var(--accent)]">
-                    {e.xp} XP
+                    {e.xp.toLocaleString("sk-SK")} W
                   </span>
                 </li>
               ))}

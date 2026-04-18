@@ -11,7 +11,7 @@ export default async function RegisterPage() {
       <div>
         <h1 className="text-2xl font-bold">Registrácia</h1>
         <p className="text-sm text-zinc-400 mt-1">
-          Vytvor si meno — od prvej hry začneš zbierať XP.
+          Založ si mesto — od prvej hry začneš generovať Watty.
         </p>
       </div>
       <AuthForm mode="register" />

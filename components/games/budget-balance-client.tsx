@@ -221,7 +221,7 @@ export function BudgetBalanceClient({
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="text-sm text-zinc-400">
-          Projekcia XP:{" "}
+          Projekcia:{" "}
           <strong className="text-[var(--accent)] font-mono">
             {projectedXp}/{XP_CAP}
           </strong>

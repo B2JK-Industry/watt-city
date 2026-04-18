@@ -130,14 +130,14 @@ function GameCard({ game, loggedIn }: { game: HubGame; loggedIn: boolean }) {
       <p className="text-sm text-zinc-400 flex-1">{game.tagline}</p>
       <div className="flex items-center justify-between text-xs text-zinc-400">
         <span>⏱ {game.durationLabel}</span>
-        <span>strop {game.xpCap} XP</span>
+        <span>max {game.xpCap} W</span>
       </div>
       {loggedIn && game.plays > 0 ? (
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between text-xs">
             <span className="text-zinc-400">Tvoj rekord</span>
             <span className="font-mono font-semibold text-[var(--accent)]">
-              {game.bestScore}/{game.xpCap}
+              {game.bestScore}/{game.xpCap} W
             </span>
           </div>
           <div className="h-1.5 rounded-full bg-[var(--surface-2)] overflow-hidden">

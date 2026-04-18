@@ -11,7 +11,7 @@ export default async function LoginPage() {
       <div>
         <h1 className="text-2xl font-bold">Prihlásenie</h1>
         <p className="text-sm text-zinc-400 mt-1">
-          Vráť sa späť k XP, ktoré si si vybojoval.
+          Vráť sa k Wattom, ktoré svieti tvoje mesto.
         </p>
       </div>
       <AuthForm mode="login" />

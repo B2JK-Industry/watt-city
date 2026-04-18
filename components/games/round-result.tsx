@@ -68,7 +68,7 @@ export function RoundResult({
       </div>
 
       {state.submitting && (
-        <p className="text-zinc-400 text-sm">Zapisujem XP…</p>
+        <p className="text-zinc-400 text-sm">Elektrifikujem tvoje mesto…</p>
       )}
       {state.error && <p className="text-rose-400 text-sm">{state.error}</p>}
 
@@ -77,16 +77,16 @@ export function RoundResult({
           <div className="flex items-end justify-between">
             <div className="flex flex-col">
               <span className="text-xs uppercase tracking-widest font-bold opacity-70">
-                Získané XP
+                Vygeneroval si
               </span>
               <span className="text-5xl font-black tracking-tight">
-                +{awarded}
+                +{awarded} W
               </span>
             </div>
             {level && (
               <div className="text-right bg-[#0a0a0f] text-[var(--accent)] border-[3px] border-[#0a0a0f] rounded-xl px-3 py-1.5">
                 <span className="text-[10px] uppercase tracking-widest block opacity-70 text-zinc-300">
-                  Level
+                  Tier
                 </span>
                 <span className="text-2xl font-black">{level.level}</span>
               </div>
@@ -94,16 +94,18 @@ export function RoundResult({
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm font-semibold">
             <span>
-              Celkovo: <strong className="font-black">{state.result.globalXP}</strong> XP
+              Tvoje mesto:{" "}
+              <strong className="font-black">{state.result.globalXP}</strong> W
             </span>
             {rank !== null && (
               <span>
-                Rebríček: <strong className="font-black">#{rank}</strong>
+                Sliezska liga: <strong className="font-black">#{rank}</strong>
               </span>
             )}
             {level && level.xpToNext > 0 && (
               <span>
-                Do ďalšieho: <strong className="font-black">{level.xpToNext}</strong> XP
+                Do ďalšieho tiera:{" "}
+                <strong className="font-black">{level.xpToNext}</strong> W
               </span>
             )}
           </div>

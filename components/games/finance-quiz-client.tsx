@@ -147,7 +147,7 @@ export function FinanceQuizClient({ questions }: Props) {
               className="btn btn-primary self-end"
               onClick={nextStep}
             >
-              {index + 1 < total ? "Ďalej" : "Ukončiť a zapísať XP"}
+              {index + 1 < total ? "Ďalej" : "Ukončiť a uložiť Watty"}
             </button>
           </div>
         )}

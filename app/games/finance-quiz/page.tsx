@@ -37,7 +37,7 @@ export default async function FinanceQuizPage() {
         <h1 className="text-3xl font-bold">Finančný kvíz</h1>
         <p className="text-zinc-400">
           {QUESTIONS_PER_ROUND} otázok z osobných financií. Za každú správnu
-          odpoveď získavaš 20 XP. Po každej otázke ti vysvetlíme, prečo je
+          odpoveď získavaš 20 W. Po každej otázke ti vysvetlíme, prečo je
           odpoveď správna.
         </p>
       </header>

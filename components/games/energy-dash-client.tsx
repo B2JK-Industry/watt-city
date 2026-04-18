@@ -243,7 +243,7 @@ export function EnergyDashClient() {
         </span>
         <ComboBadge combo={combo} multiplier={comboMultiplier(combo)} />
         <span className="chip">
-          <span className="opacity-70">XP</span>
+          <span className="opacity-70">W</span>
           <strong className="text-[var(--accent)]">{Math.min(xp, XP_CAP)}</strong>
         </span>
       </div>

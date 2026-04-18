@@ -18,7 +18,7 @@ export default async function StockTapPage() {
         <p className="text-zinc-400">
           Graf sa kreslí naživo. Klikni <strong>BUY</strong>, keď si myslíš, že
           cena je nízko, a <strong>SELL</strong>, keď vysoko. Zisk každého
-          obchodu ide do XP. 45 sekúnd, strop 220 XP.
+          obchodu ide do Wattov. 45 sekúnd, max 220 W.
         </p>
       </header>
       <StockTapClient />

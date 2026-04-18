@@ -33,11 +33,21 @@ export default async function LeaderboardPage({ searchParams }: Props) {
   return (
     <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex flex-col gap-2">
-        <h1 className="text-3xl sm:text-4xl font-bold">Rebríček</h1>
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight">
+            Sliezska Watt liga
+          </h1>
+          <span
+            className="brutal-tag"
+            style={{ background: "var(--neo-yellow)", color: "#0a0a0f" }}
+          >
+            Katowice · PL
+          </span>
+        </div>
         <p className="text-zinc-400">
           {game
-            ? `Najlepší hráči v hre ${game.title}.`
-            : "Najlepší hráči naprieč všetkými hrami."}
+            ? `Koľko wattov v hre ${game.title} vyrobili hráči v Sliezsku.`
+            : "Každý vygenerovaný Watt elektrifikuje tvoje mesto. Kto má najviac energie?"}
         </p>
       </header>
 
@@ -96,8 +106,8 @@ export default async function LeaderboardPage({ searchParams }: Props) {
             <thead className="bg-[var(--surface-2)]/60 text-xs uppercase tracking-wider text-zinc-400">
               <tr>
                 <th className="text-left px-4 py-3 w-16">Pozícia</th>
-                <th className="text-left px-4 py-3">Hráč</th>
-                <th className="text-right px-4 py-3">XP</th>
+                <th className="text-left px-4 py-3">Hráč / mesto</th>
+                <th className="text-right px-4 py-3">Watty</th>
               </tr>
             </thead>
             <tbody>
@@ -131,13 +141,11 @@ export default async function LeaderboardPage({ searchParams }: Props) {
                       </span>
                     </td>
                     <td
-                      className={`px-4 py-3 text-right font-mono ${
-                        isMe
-                          ? "text-[var(--accent)] font-semibold"
-                          : "text-[var(--accent)]"
+                      className={`px-4 py-3 text-right font-mono font-bold ${
+                        isMe ? "text-[var(--accent)]" : "text-[var(--accent)]"
                       }`}
                     >
-                      {e.xp}
+                      {e.xp.toLocaleString("sk-SK")} W
                     </td>
                   </tr>
                 );
@@ -182,7 +190,7 @@ function PodiumCard({
           )}
         </div>
         <div className="text-xs font-mono font-black text-[var(--ink)]">
-          {entry.xp} XP
+          {entry.xp.toLocaleString("sk-SK")} W
         </div>
       </div>
     </div>

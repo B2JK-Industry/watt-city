@@ -28,8 +28,8 @@ export default async function WordScramblePage() {
         <h1 className="text-3xl font-bold">Premiešané slová</h1>
         <p className="text-zinc-400">
           Odhaľ poľské slovo z oblasti financií a ekonómie. Písmená sú
-          premiešané. Máš k dispozícii nápovedu. Za každé správne slovo +15 XP
-          (strop 120).
+          premiešané. Máš k dispozícii nápovedu. Za každé správne slovo +15 W
+          (max 120 W).
         </p>
       </header>
       <WordScrambleClient words={pickRound()} />

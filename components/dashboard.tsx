@@ -2,6 +2,7 @@ import Link from "next/link";
 import { GAMES } from "@/lib/games";
 import type { UserStats } from "@/lib/user-stats";
 import type { LevelInfo } from "@/lib/level";
+import { CITY_TIERS, tierForLevel } from "@/lib/level";
 import type { LeaderboardEntry } from "@/lib/redis";
 
 type Props = {
@@ -49,6 +50,9 @@ export function Dashboard({
   const progressPct = Math.round(level.progress * 100);
   const circumference = 2 * Math.PI * 52;
   const dashOffset = circumference * (1 - level.progress);
+  const currentTier = tierForLevel(level.level);
+  const nextTier =
+    level.level < CITY_TIERS.length ? tierForLevel(level.level + 1) : null;
 
   return (
     <div className="flex flex-col gap-10 animate-slide-up">
@@ -57,11 +61,15 @@ export function Dashboard({
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="text-sm uppercase tracking-wider text-zinc-400">
-                Vitaj späť
+                Elektrická starostka / starosta
               </p>
-              <h1 className="text-3xl sm:text-4xl font-bold">{username}</h1>
-              <p className="text-zinc-400 mt-1">
-                {title} · Level {level.level}
+              <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight">
+                {username}
+              </h1>
+              <p className="text-zinc-300 mt-1 text-sm">
+                <span className="text-xl">{currentTier.emoji}</span>{" "}
+                <strong className="text-[var(--accent)]">{currentTier.full}</strong>{" "}
+                <span className="opacity-70">· Tier {level.level}</span>
               </p>
             </div>
             <div className="relative">
@@ -94,24 +102,22 @@ export function Dashboard({
                 </defs>
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-[10px] uppercase tracking-wider text-zinc-400">
-                  Level
-                </span>
-                <span className="text-3xl font-bold">{level.level}</span>
-                <span className="text-[11px] text-zinc-400">{progressPct}%</span>
+                <span className="text-2xl">{currentTier.emoji}</span>
+                <span className="text-2xl font-black leading-none">{level.level}</span>
+                <span className="text-[10px] text-zinc-400">{progressPct}%</span>
               </div>
             </div>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <Stat label="Celkové XP" value={String(xp)} accent />
+            <Stat label="Celkové Watty" value={`${xp.toLocaleString("sk-SK")} W`} accent />
             <Stat
               label="Pozícia"
               value={rank !== null ? `#${rank}` : "—"}
             />
             <Stat label="Odohraných kôl" value={String(stats.totalPlays)} />
             <Stat
-              label="Do ďalšieho"
-              value={level.xpToNext > 0 ? `${level.xpToNext} XP` : "max"}
+              label="Do ďalšieho tiera"
+              value={level.xpToNext > 0 ? `${level.xpToNext} W` : "max"}
             />
           </div>
           <div className="flex flex-wrap gap-3">
@@ -131,8 +137,8 @@ export function Dashboard({
         </div>
 
         <div className="card p-6 flex flex-col gap-3">
-          <h2 className="text-sm uppercase tracking-wider text-zinc-400">
-            Top 5 globálne
+          <h2 className="text-sm uppercase tracking-widest font-black text-[var(--accent)]">
+            Sliezska Watt liga · TOP 5
           </h2>
           {top.length === 0 ? (
             <p className="text-zinc-400 text-sm">
@@ -153,11 +159,82 @@ export function Dashboard({
                     </span>
                     <span>{e.username}</span>
                   </span>
-                  <span className="font-mono font-semibold">{e.xp} XP</span>
+                  <span className="font-mono font-semibold">{e.xp.toLocaleString("sk-SK")} W</span>
                 </li>
               ))}
             </ol>
           )}
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="brutal-heading text-xl sm:text-2xl">Tvoje mesto</h2>
+        <div className="card p-5 sm:p-6 flex flex-col gap-4">
+          <p className="text-zinc-300 text-sm">
+            <span className="text-xl">{currentTier.emoji}</span>{" "}
+            {currentTier.story}
+          </p>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between text-xs uppercase tracking-widest">
+              <span className="text-zinc-400">
+                Tier {level.level}: {currentTier.name}
+              </span>
+              {nextTier && (
+                <span className="text-zinc-400">
+                  Ďalej → {nextTier.emoji} {nextTier.name}
+                </span>
+              )}
+            </div>
+            <div className="h-3 rounded-full bg-[var(--surface-2)] border-2 border-[var(--ink)] overflow-hidden">
+              <div
+                className="h-full bg-[var(--accent)]"
+                style={{ width: `${progressPct}%` }}
+              />
+            </div>
+            {nextTier && level.xpToNext > 0 && (
+              <p className="text-xs text-zinc-400">
+                Ešte <strong className="text-[var(--accent)]">{level.xpToNext} W</strong> a odomkne sa ti{" "}
+                <strong className="text-[var(--foreground)]">{nextTier.unlocks}</strong>.
+              </p>
+            )}
+          </div>
+          <div className="grid grid-cols-3 sm:grid-cols-9 gap-2">
+            {CITY_TIERS.map((t) => {
+              const unlocked = level.level >= t.level;
+              const current = level.level === t.level;
+              return (
+                <div
+                  key={t.level}
+                  title={`Tier ${t.level} · ${t.name} — ${t.unlocks}`}
+                  className={`aspect-square rounded-lg border-[3px] border-[var(--ink)] flex flex-col items-center justify-center text-center transition-all ${
+                    unlocked
+                      ? `${t.accent} shadow-[3px_3px_0_0_var(--ink)]`
+                      : "bg-[var(--surface-2)] opacity-40"
+                  } ${
+                    current
+                      ? "scale-[1.06] shadow-[5px_5px_0_0_var(--ink)] ring-2 ring-[var(--neo-pink)] ring-offset-2 ring-offset-[var(--background)]"
+                      : ""
+                  }`}
+                >
+                  <span className="text-xl sm:text-2xl leading-none">
+                    {unlocked ? t.emoji : "🔒"}
+                  </span>
+                  <span
+                    className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${
+                      unlocked ? "text-[#0a0a0f]" : "text-zinc-500"
+                    }`}
+                  >
+                    T{t.level}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-xs text-zinc-500">
+            Každý tier odomkne novú zónu mesta. Cesta: Osada → Robotnícka štvrť
+            → Mestská časť → Katowice → Smart City → Silesia Hub → Green
+            Metropolis → Finance District → Europejska Stolica 2.0.
+          </p>
         </div>
       </section>
 
@@ -180,7 +257,7 @@ export function Dashboard({
             >
               {recommended.title}
             </Link>{" "}
-            a zbieraj prvé XP.
+            a vygeneruj prvé Watty.
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

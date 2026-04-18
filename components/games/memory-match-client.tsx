@@ -101,7 +101,7 @@ export function MemoryMatchClient({ pairs }: { pairs: MemoryPair[] }) {
         if (res.ok) setResult(res);
         else setSubmitError(res.error ?? "Nepodarilo sa zapísať skóre.");
       })
-      .catch(() => setSubmitError("Sieťová chyba. XP sa nezapísali."))
+      .catch(() => setSubmitError("Sieťová chyba. Watty sa nezapísali."))
       .finally(() => setSubmitting(false));
   }, [completed, startedAt, mismatches]);
 
