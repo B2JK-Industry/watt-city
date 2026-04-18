@@ -4,7 +4,7 @@ import type { UserStats } from "@/lib/user-stats";
 import type { LevelInfo } from "@/lib/level";
 import { CITY_TIERS, tierForLevel } from "@/lib/level";
 import type { LeaderboardEntry } from "@/lib/redis";
-import { CityScene, type CityGameState } from "@/components/city-scene";
+import { CityScene, type CityGameState, type CityAiGame } from "@/components/city-scene";
 import { PlayerBuilding } from "@/components/player-building";
 import { DeleteAccountButton } from "@/components/delete-account-button";
 import type { Dict, Lang } from "@/lib/i18n";
@@ -19,6 +19,7 @@ type Props = {
   top: LeaderboardEntry[];
   dict: Dict;
   lang: Lang;
+  aiGame?: CityAiGame;
 };
 
 function timeAgo(ts: number): string {
@@ -42,6 +43,7 @@ export function Dashboard({
   top,
   dict,
   lang,
+  aiGame,
 }: Props) {
   const d = dict.dashboard;
   const locale = lang === "pl" ? "pl-PL" : lang === "cs" ? "cs-CZ" : lang === "uk" ? "uk-UA" : "en-US";
@@ -309,7 +311,7 @@ export function Dashboard({
             {d.cityNightOpen} →
           </Link>
         </div>
-        <CityScene games={cityGames} loggedIn compact />
+        <CityScene games={cityGames} loggedIn compact aiGame={aiGame} />
       </section>
 
       <section className="flex flex-col gap-3 card p-5">

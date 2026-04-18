@@ -7,6 +7,7 @@ import { userStats as leaderboardStats } from "@/lib/leaderboard";
 import { levelFromXP, titleForLevel } from "@/lib/level";
 import { Dashboard } from "@/components/dashboard";
 import { CityScene } from "@/components/city-scene";
+import { listActiveAiGames } from "@/lib/ai-pipeline/publish";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
@@ -17,12 +18,22 @@ export default async function Home() {
   const dict = dictFor(lang);
 
   if (session) {
-    const [board, stats, top] = await Promise.all([
+    const [board, stats, top, aiGames] = await Promise.all([
       leaderboardStats(session.username),
       getUserStats(session.username),
       globalLeaderboard(5),
+      listActiveAiGames(),
     ]);
     const level = levelFromXP(board.globalXP);
+    const liveAi = aiGames[aiGames.length - 1];
+    const cityAi = liveAi
+      ? {
+          id: liveAi.id,
+          title: liveAi.title,
+          validUntil: liveAi.validUntil,
+          glyph: liveAi.buildingGlyph,
+        }
+      : undefined;
     return (
       <Dashboard
         username={session.username}
@@ -34,11 +45,24 @@ export default async function Home() {
         top={top}
         dict={dict}
         lang={lang}
+        aiGame={cityAi}
       />
     );
   }
 
-  const entries = await globalLeaderboard(5);
+  const [entries, aiGames] = await Promise.all([
+    globalLeaderboard(5),
+    listActiveAiGames(),
+  ]);
+  const liveAi = aiGames[aiGames.length - 1];
+  const cityAi = liveAi
+    ? {
+        id: liveAi.id,
+        title: liveAi.title,
+        validUntil: liveAi.validUntil,
+        glyph: liveAi.buildingGlyph,
+      }
+    : undefined;
   const t = dict.hero;
   const bodyParts = t.body
     .replace("{watts}", "§WATTS§")
@@ -146,7 +170,7 @@ export default async function Home() {
       <section className="flex flex-col gap-4">
         <h2 className="brutal-heading text-2xl">{t.scenesTitle}</h2>
         <p className="text-zinc-400 max-w-xl -mt-2">{t.scenesBody}</p>
-        <CityScene interactive={false} compact />
+        <CityScene interactive={false} compact aiGame={cityAi} />
       </section>
     </div>
   );
