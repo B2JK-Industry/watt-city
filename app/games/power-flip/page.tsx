@@ -4,12 +4,13 @@ import { getSession } from "@/lib/session";
 import { PowerFlipClient } from "@/components/games/power-flip-client";
 import { POWER_ROUNDS, type PowerRound } from "@/lib/content/power-flip";
 import { shuffle } from "@/lib/shuffle";
+import { dictFor } from "@/lib/i18n";
+import { getLang } from "@/lib/i18n-server";
 
 export const dynamic = "force-dynamic";
 
 function pickRound(): PowerRound[] {
   return shuffle(POWER_ROUNDS).map((r) => {
-    // Randomly flip sides so the correct answer isn't always on the same one.
     if (Math.random() < 0.5) {
       return {
         ...r,
@@ -25,17 +26,17 @@ function pickRound(): PowerRound[] {
 export default async function PowerFlipPage() {
   const session = await getSession();
   if (!session) redirect("/login?next=/games/power-flip");
+  const lang = await getLang();
+  const dict = dictFor(lang);
+  const t = dict.power;
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
         <Link href="/games" className="text-sm text-zinc-400 hover:underline">
-          ← Späť na hry
+          {dict.games.back}
         </Link>
-        <h1 className="text-3xl font-bold">Power Flip</h1>
-        <p className="text-zinc-400">
-          Ktorá voľba je energeticky úspornejšia? Klikni rýchlo — 30 sekúnd,
-          combo bonusy, ku každej otázke krátke vysvetlenie. Max 180 W.
-        </p>
+        <h1 className="text-3xl font-bold">{t.headerTitle}</h1>
+        <p className="text-zinc-400">{t.headerBody}</p>
       </header>
       <PowerFlipClient rounds={pickRound()} />
     </div>

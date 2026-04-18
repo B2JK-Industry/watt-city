@@ -8,6 +8,8 @@ import {
   type QuizQuestion,
 } from "@/lib/content/finance-quiz";
 import { shuffle } from "@/lib/shuffle";
+import { dictFor } from "@/lib/i18n";
+import { getLang } from "@/lib/i18n-server";
 
 function pickRound(): QuizQuestion[] {
   return shuffle(FINANCE_QUESTIONS)
@@ -24,21 +26,20 @@ export const dynamic = "force-dynamic";
 
 export default async function FinanceQuizPage() {
   const session = await getSession();
-  if (!session) {
-    redirect("/login?next=/games/finance-quiz");
-  }
+  if (!session) redirect("/login?next=/games/finance-quiz");
+  const lang = await getLang();
+  const dict = dictFor(lang);
+  const t = dict.finance;
   const round = pickRound();
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
         <Link href="/games" className="text-sm text-zinc-400 hover:underline">
-          ← Späť na hry
+          {dict.games.back}
         </Link>
-        <h1 className="text-3xl font-bold">Finančný kvíz</h1>
+        <h1 className="text-3xl font-bold">{t.headerTitle}</h1>
         <p className="text-zinc-400">
-          {QUESTIONS_PER_ROUND} otázok z osobných financií. Za každú správnu
-          odpoveď získavaš 20 W. Po každej otázke ti vysvetlíme, prečo je
-          odpoveď správna.
+          {t.headerBody.replace("{n}", String(QUESTIONS_PER_ROUND))}
         </p>
       </header>
       <FinanceQuizClient questions={round} />

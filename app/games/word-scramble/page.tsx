@@ -7,6 +7,8 @@ import {
   WORDS_PER_ROUND,
 } from "@/lib/content/word-scramble";
 import { sample } from "@/lib/shuffle";
+import { dictFor } from "@/lib/i18n";
+import { getLang } from "@/lib/i18n-server";
 
 export const dynamic = "force-dynamic";
 
@@ -16,21 +18,18 @@ function pickRound() {
 
 export default async function WordScramblePage() {
   const session = await getSession();
-  if (!session) {
-    redirect("/login?next=/games/word-scramble");
-  }
+  if (!session) redirect("/login?next=/games/word-scramble");
+  const lang = await getLang();
+  const dict = dictFor(lang);
+  const t = dict.word;
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
         <Link href="/games" className="text-sm text-zinc-400 hover:underline">
-          ← Späť na hry
+          {dict.games.back}
         </Link>
-        <h1 className="text-3xl font-bold">Premiešané slová</h1>
-        <p className="text-zinc-400">
-          Odhaľ poľské slovo z oblasti financií a ekonómie. Písmená sú
-          premiešané. Máš k dispozícii nápovedu. Za každé správne slovo +15 W
-          (max 120 W).
-        </p>
+        <h1 className="text-3xl font-bold">{t.headerTitle}</h1>
+        <p className="text-zinc-400">{t.headerBody}</p>
       </header>
       <WordScrambleClient words={pickRound()} />
     </div>

@@ -3,6 +3,8 @@ import { gameLeaderboard, globalLeaderboard } from "@/lib/leaderboard";
 import { GAMES, getGame } from "@/lib/games";
 import { LeaderboardEntry } from "@/lib/redis";
 import { getSession } from "@/lib/session";
+import { dictFor } from "@/lib/i18n";
+import { getLang } from "@/lib/i18n-server";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +24,10 @@ export default async function LeaderboardPage({ searchParams }: Props) {
   const gameId = sp.game;
   const game = gameId ? getGame(gameId) : undefined;
   const session = await getSession();
+  const lang = await getLang();
+  const dict = dictFor(lang);
+  const t = dict.leaderboard;
+  const locale = lang === "pl" ? "pl-PL" : lang === "cs" ? "cs-CZ" : lang === "uk" ? "uk-UA" : "en-US";
 
   const entries: LeaderboardEntry[] = game
     ? await gameLeaderboard(game.id, 50)
@@ -35,19 +41,19 @@ export default async function LeaderboardPage({ searchParams }: Props) {
       <header className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight">
-            Sliezska Watt liga
+            {t.title}
           </h1>
           <span
             className="brutal-tag"
             style={{ background: "var(--neo-yellow)", color: "#0a0a0f" }}
           >
-            Katowice · PL
+            {t.tag}
           </span>
         </div>
         <p className="text-zinc-400">
           {game
-            ? `Koľko wattov v hre ${game.title} vyrobili hráči v Sliezsku.`
-            : "Každý vygenerovaný Watt elektrifikuje tvoje mesto. Kto má najviac energie?"}
+            ? t.gameBody.replace("{title}", game.title)
+            : t.globalBody}
         </p>
       </header>
 
@@ -56,7 +62,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
           href="/leaderboard"
           className={`chip ${!game ? "border-[var(--accent)] text-[var(--accent)]" : ""}`}
         >
-          Globálne
+          {t.global}
         </Link>
         {GAMES.map((g) => (
           <Link
@@ -98,16 +104,18 @@ export default async function LeaderboardPage({ searchParams }: Props) {
 
       {entries.length === 0 ? (
         <div className="card p-10 text-center text-zinc-400">
-          Ešte nikto neskóroval{game ? ` v hre ${game.title}` : ""}. Buď prvý!
+          {game
+            ? t.emptyGame.replace("{title}", game.title)
+            : t.empty}
         </div>
       ) : (
         <div className="card overflow-hidden">
           <table className="w-full">
             <thead className="bg-[var(--surface-2)]/60 text-xs uppercase tracking-wider text-zinc-400">
               <tr>
-                <th className="text-left px-4 py-3 w-16">Pozícia</th>
-                <th className="text-left px-4 py-3">Hráč / mesto</th>
-                <th className="text-right px-4 py-3">Watty</th>
+                <th className="text-left px-4 py-3 w-16">{t.position}</th>
+                <th className="text-left px-4 py-3">{t.player}</th>
+                <th className="text-right px-4 py-3">{t.watts}</th>
               </tr>
             </thead>
             <tbody>
@@ -135,7 +143,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
                         {e.username}
                         {isMe && (
                           <span className="chip text-[10px] border-[var(--accent)] text-[var(--accent)]">
-                            Ty
+                            {t.meTag}
                           </span>
                         )}
                       </span>
@@ -145,7 +153,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
                         isMe ? "text-[var(--accent)]" : "text-[var(--accent)]"
                       }`}
                     >
-                      {e.xp.toLocaleString("sk-SK")} W
+                      {e.xp.toLocaleString(locale)} W
                     </td>
                   </tr>
                 );
@@ -190,7 +198,7 @@ function PodiumCard({
           )}
         </div>
         <div className="text-xs font-mono font-black text-[var(--ink)]">
-          {entry.xp.toLocaleString("sk-SK")} W
+          {entry.xp.toLocaleString("pl-PL")} W
         </div>
       </div>
     </div>

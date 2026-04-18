@@ -5,6 +5,8 @@ import { getUserStats } from "@/lib/user-stats";
 import { userStats } from "@/lib/leaderboard";
 import { levelFromXP, tierForLevel } from "@/lib/level";
 import { CityScene, type CityGameState } from "@/components/city-scene";
+import { dictFor } from "@/lib/i18n";
+import { getLang } from "@/lib/i18n-server";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +16,9 @@ export default async function GamesHubPage() {
   const lb = session ? await userStats(session.username) : null;
   const level = lb ? levelFromXP(lb.globalXP) : null;
   const tier = level ? tierForLevel(level.level) : null;
+  const lang = await getLang();
+  const dict = dictFor(lang);
+  const t = dict.games;
 
   const cityGames: CityGameState[] = GAMES.map((g) => ({
     meta: g,
@@ -21,12 +26,17 @@ export default async function GamesHubPage() {
     bestScore: stats?.games[g.id]?.bestScore ?? 0,
   }));
 
+  const bodyParts = t.gamesHubBody
+    .replace("{light}", "§LIGHT§")
+    .replace("{duelLink}", "§DUEL§")
+    .split(/(§LIGHT§|§DUEL§)/g);
+
   return (
     <div className="flex flex-col gap-8 animate-slide-up">
       <header className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="brutal-heading text-3xl sm:text-4xl">
-            Tvoje Katowice
+            {t.gamesHubTitle}
           </h1>
           {tier && (
             <span
@@ -36,23 +46,38 @@ export default async function GamesHubPage() {
               {tier.emoji} {tier.name}
             </span>
           )}
-          <span className="brutal-tag" style={{ background: "var(--neo-cyan)", color: "#0a0a0f" }}>
-            🌙 Noc · 22:14
+          <span
+            className="brutal-tag"
+            style={{ background: "var(--neo-cyan)", color: "#0a0a0f" }}
+          >
+            {t.gamesHubTime}
           </span>
         </div>
         <p className="text-zinc-400 max-w-2xl">
-          9 budov = 9 minihier. Kým nejakú nezahráš, budova stojí v tme.
-          Po skóre sa jej{" "}
-          <strong className="text-[var(--accent)]">rozsvietia okná</strong>{" "}
-          a neónová tabuľa.{" "}
-          <Link href="/duel" className="underline hover:text-[var(--accent)]">
-            Chceš si zmerať sily s kamarátom?
-          </Link>
+          {bodyParts.map((p, i) => {
+            if (p === "§LIGHT§")
+              return (
+                <strong key={i} className="text-[var(--accent)]">
+                  {t.gamesHubBodyLight}
+                </strong>
+              );
+            if (p === "§DUEL§")
+              return (
+                <Link
+                  key={i}
+                  href="/duel"
+                  className="underline hover:text-[var(--accent)]"
+                >
+                  {t.gamesHubDuelLink}
+                </Link>
+              );
+            return <span key={i}>{p}</span>;
+          })}
         </p>
       </header>
       <CityScene games={cityGames} loggedIn={Boolean(session)} />
       <aside className="card p-5 flex flex-col gap-3 text-sm text-zinc-300">
-        <h2 className="brutal-heading text-lg">Mapa budov</h2>
+        <h2 className="brutal-heading text-lg">{t.buildingsMap}</h2>
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-1.5">
           {cityGames.map((g) => (
             <li key={g.meta.id}>
