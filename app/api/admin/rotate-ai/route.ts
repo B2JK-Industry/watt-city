@@ -2,6 +2,10 @@ import { NextRequest } from "next/server";
 import { kvGet, kvSet, kvDel } from "@/lib/redis";
 import { runPipeline } from "@/lib/ai-pipeline/publish";
 
+// Sonnet PL gen (~10–20s) + 3 × Haiku translations in parallel (~10–20s) —
+// the pipeline routinely runs 25–45s, past Vercel Hobby's 10s default cap.
+export const maxDuration = 60;
+
 // Force-rotate the live AI game slot: wipe live envelopes + index, then run
 // the pipeline once. Leaderboards (xp:leaderboard:game:ai-*) and archive
 // (xp:ai-games:archive:*) are NOT touched — medals persist.

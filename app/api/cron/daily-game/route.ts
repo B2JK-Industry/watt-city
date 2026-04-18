@@ -1,6 +1,10 @@
 import { NextRequest } from "next/server";
 import { runPipeline } from "@/lib/ai-pipeline/publish";
 
+// Same rationale as /api/admin/rotate-ai — generate+translate can take up
+// to ~45s when the real Claude pipeline is active.
+export const maxDuration = 60;
+
 // Vercel Cron → hits this once a day (0 9 * * *). Protected by a shared secret
 // (set CRON_SECRET on Vercel; Vercel Cron sends Authorization: Bearer <secret>).
 // Manual trigger is allowed from the same deployment if you pass the header.
