@@ -1,10 +1,38 @@
-# XP Arena
+# Watt City
 
-Gamified financial + energy-literacy platform for Gen Z in Katowice. Play
-minigames, earn Watts (XP), and gradually electrify your personal building —
-from a miner's shed in Nikiszowiec to Varso Tower (tallest in the EU).
+Gamified financial education for kids (ages 9–14). Play minigames to earn
+resources, build your city, take a mortgage, learn about RRSO/APR without
+touching real money. Pitched to PKO BP as an SKO 2.0 partnership prototype.
 
-ETHSilesia 2026 entry — **PKO XP: Gaming** track.
+ETHSilesia 2026 entry. Watt City lives on the `watt-city` branch; the
+original XP Arena demo (9 evergreen games + AI rotation) lives on `main`
+and is frozen. See `docs/BRANCHING.md` for the rationale.
+
+## Phase-1 MVP — what's in (2026-04-18)
+
+- **Hourly AI rotation**: fresh Sonnet/Haiku game every hour, single-flight
+  lock, idempotent `rotate-if-due` endpoint; three converging triggers
+  (external pinger + Vercel Cron safety net + on-render lazy backstop).
+  See ADR `docs/decisions/001-hourly-rotation-on-hobby.md`.
+- **Resource ledger**: 7 resources (⚡ 🪙 🧱 🪟 🔩 💾 💵), append-only ledger
+  with SADD-backed idempotency, backfill endpoint for legacy XP Arena
+  users, nav ResourceBar honouring MVP-vs-coming-soon state.
+- **20-slot city map** at `/miasto`: signup-gifted Domek, earn-to-unlock
+  gating (50 ⚡ for Mała elektrownia, 50 🪙 for Sklepik), place/upgrade/
+  demolish (50% refund, Domek-protected), slot category restrictions,
+  rate-limited 5 ops/min.
+- **Hourly cashflow tick** with 30-day offline catch-up cap, citywide-
+  landmark multiplier, fires on every authenticated render behind a
+  30-second single-flight lock.
+- **Mortgage engine**: amortized monthly payment (8% standard / 5%
+  preferred), 12/24/36-month terms, cap = min(12 × monthly cashflow,
+  50 000 W$), credit score 0–100 (+1 on-time / −5 miss / −20 default
+  after 3 consecutive misses), early repayment bonus.
+- **Coming-soon tiles** for leasing / kredyt obrotowy / kredyt konsumencki
+  / kredyt inwestycyjny / parent dashboard / class mode / p2p trade /
+  PKO Junior mirror.
+- **New-game toast**: 30s client polling + `router.refresh` on new id.
+- **4 langs** (PL default · UK · CS · EN).
 
 ## Stack
 
@@ -90,5 +118,29 @@ one, then play it at `/games/ai/<id>`.
 - `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` — persistent storage
 - `SESSION_SECRET` — HMAC key for cookie sessions (production: required, ≥16 chars)
 - `ANTHROPIC_API_KEY` — enables the real AI-game generator (omit to stay on mocks)
-- `CRON_SECRET` — shared secret Vercel Cron sends in `Authorization: Bearer`;
-  omit during dev to allow any caller
+- `CRON_SECRET` — shared secret Vercel Cron / external pinger send in
+  `Authorization: Bearer`; omit during dev to allow any caller
+- `ADMIN_SECRET` — required by `/api/admin/*` in production
+
+## Smoke test
+
+`docs/SMOKE-TEST.md` is the end-to-end runbook. Takes ≤ 10 min covering
+auth, game → resource, build/upgrade/demolish, cashflow tick, mortgage,
+rotation, language switch, mobile.
+
+## Tests
+
+`pnpm test` runs the vitest suite (49+ unit tests as of this writing
+covering research bucket, rotation idempotency, resource yield math,
+ledger dedupe, building place/upgrade/demolish, tick catch-up with 30-day
+cap, amortization formula, default after 3 misses).
+
+## Docs
+
+`docs/README.md` is the index. Highlights:
+- `docs/SKO-BACKLOG.md` — 11-phase backlog, ~300 items
+- `docs/ECONOMY.md` — every number, every formula
+- `docs/ARCHITECTURE.md` — schemas, API contracts, Redis keys
+- `docs/OPERATIONS.md` — deploy, monitor, recover
+- `docs/decisions/` — ADRs
+- `docs/progress/<date>.md` — agent session logs

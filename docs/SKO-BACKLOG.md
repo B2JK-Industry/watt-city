@@ -61,6 +61,13 @@ Each item lists: ID · title · effort · acceptance criteria · dependencies ·
 
 **Goal:** demoable end-to-end city builder with hourly AI rotation + 3 buildings + mortgage.
 
+> **STATUS 2026-04-18 — Phase 1 MVP: ~95% DONE** (70/74 items; 4 deferred
+> items require human/browser intervention). See
+> [`progress/SESSION-SUMMARY.md`](./progress/SESSION-SUMMARY.md) for the
+> per-section breakdown. Net commits on `watt-city`:
+> `af21c67..c7a8bbd` (10 commits). All `pnpm test` green (49 tests);
+> `pnpm build` green.
+
 ### 1.1 Hourly rotation cron + lazy fallback
 
 | ID | Item | Effort | Acceptance | Dependencies |
