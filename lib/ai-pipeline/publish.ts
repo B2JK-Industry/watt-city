@@ -3,7 +3,7 @@ import {
   AiGameSchema,
   LocalizedSpecSchema,
   MAX_ACTIVE_AI_GAMES,
-  AI_GAME_TTL_SECONDS,
+  ROTATION_HOURS,
   specKind,
   type AiGame,
 } from "./types";
@@ -82,8 +82,11 @@ export async function runPipeline(
   // 1) Research → seed
   const seed = seedOverride ?? pickResearchSeed(now);
 
-  // 2) Generate game spec
-  const deterministicSeed = Math.floor(now / (24 * 60 * 60 * 1000));
+  // 2) Generate game spec.
+  // Hourly rotation (Watt City): seed is the hour-bucket so two publishes in the
+  // same hour feed Claude the same deterministicSeed (harmless — it's only used
+  // by the generator to seed its per-call temperature jitter).
+  const deterministicSeed = Math.floor(now / (ROTATION_HOURS * 60 * 60 * 1000));
   let generated;
   try {
     generated = await generateGameSpec({ seed, deterministicSeed });
@@ -115,7 +118,7 @@ export async function runPipeline(
     id,
     title: seed.theme.split(" — ")[0],
     tagline: seed.notes.slice(0, 120),
-    description: `${seed.theme}. AI-generated denná výzva. Top 3 hráči dostanú permanentnú medailu.`,
+    description: `${seed.theme}. AI-generowane wyzwanie co godzinę. Top 3 graczy dostanie permanentny medal.`,
     theme: seed.theme,
     source: seed.source,
     buildingName: seed.buildingName,
@@ -124,7 +127,7 @@ export async function runPipeline(
     buildingBody: seed.buildingBody,
     spec: specParse.data,
     generatedAt: now,
-    validUntil: now + 24 * 60 * 60 * 1000,
+    validUntil: now + ROTATION_HOURS * 60 * 60 * 1000,
     model: generated.model,
     seed: deterministicSeed,
   };

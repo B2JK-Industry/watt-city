@@ -187,6 +187,12 @@ export type { Lang };
 
 /* ---------- Rotation policy ---------- */
 
-export const ROTATION_HOURS = 24;
+// Watt City: hourly rotation. Live games retire at `validUntil` (now + 1h on publish);
+// after retirement the envelope is preserved forever so past AI games remain playable
+// at /games/ai/<id>, and leaderboards/medals stick. MAX_ACTIVE_AI_GAMES caps the live
+// index (see publish.ts step 6).
+export const ROTATION_HOURS = 1;
 export const MAX_ACTIVE_AI_GAMES = 3;
+// Unused — envelopes persist without TTL (publish.ts step 6). Kept for backward compat
+// with any external consumer that imports this constant.
 export const AI_GAME_TTL_SECONDS = ROTATION_HOURS * 60 * 60 * 2;

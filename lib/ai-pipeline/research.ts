@@ -385,21 +385,20 @@ function hashString(s: string): number {
   return Math.abs(h);
 }
 
-// Deterministic pick: same UTC-day bucket → same theme + angle + difficulty,
-// so retries within the day converge. Across days, the pool cycles through
-// 16 themes; within each theme we rotate 4 angles; difficulty cycles easy →
-// medium → hard across 3-day blocks. That yields ~192 distinct (theme,
-// angle, difficulty) combinations before any repetition.
+// Deterministic pick: same hour-bucket → same theme + angle + difficulty,
+// so two publishes inside the same hour converge (idempotent retries). Across
+// hours, the pool cycles through ~20 themes; within each theme 4 angles rotate
+// (incrementing once per full pool pass ≈ every 20 h); difficulty hashes
+// theme + bucket so consecutive hours don't always share a level. Yields
+// ~240 distinct (theme, angle, difficulty) combinations before repetition.
 export function pickResearchSeed(nowMs: number): ResearchSeed {
-  const dayBucket = Math.floor(nowMs / (24 * 60 * 60 * 1000));
-  const base = ROTATION_POOL[dayBucket % ROTATION_POOL.length];
+  const hourBucket = Math.floor(nowMs / (60 * 60 * 1000));
+  const base = ROTATION_POOL[hourBucket % ROTATION_POOL.length];
   const angleIndex =
-    Math.floor(dayBucket / ROTATION_POOL.length) % base.angles.length;
+    Math.floor(hourBucket / ROTATION_POOL.length) % base.angles.length;
   const difficulties: SeedDifficulty[] = ["easy", "medium", "hard"];
-  // Derive difficulty from theme + day so two consecutive days don't always
-  // share a level (hashing keeps it non-monotonic but deterministic).
   const difficulty =
-    difficulties[(hashString(base.theme) + dayBucket) % difficulties.length];
+    difficulties[(hashString(base.theme) + hourBucket) % difficulties.length];
   return {
     ...base,
     notes: `${base.notes}\nAngle: ${base.angles[angleIndex]}\nDifficulty: ${difficulty}`,
