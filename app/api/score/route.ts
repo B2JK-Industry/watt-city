@@ -4,9 +4,11 @@ import { getSession } from "@/lib/session";
 import { awardXP } from "@/lib/leaderboard";
 import { getGame } from "@/lib/games";
 import { getAiGame } from "@/lib/ai-pipeline/publish";
-import { xpCapForAnyLang } from "@/lib/ai-pipeline/types";
+import { specKind, xpCapForAnyLang } from "@/lib/ai-pipeline/types";
 import { recordRound } from "@/lib/user-stats";
 import { levelFromXP } from "@/lib/level";
+import { yieldForGame, resourceDeltaFromYield } from "@/lib/resources";
+import { creditResources, getPlayerState } from "@/lib/player";
 
 const BodySchema = z.object({
   gameId: z.string().min(1).max(64),
@@ -41,6 +43,7 @@ export async function POST(request: NextRequest) {
 
   const gameId = parsed.data.gameId;
   let resolvedCap: number;
+  let aiKind: string | undefined;
   if (gameId.startsWith("ai-")) {
     const ai = await getAiGame(gameId);
     if (!ai) {
@@ -50,6 +53,7 @@ export async function POST(request: NextRequest) {
       );
     }
     resolvedCap = xpCapForAnyLang(ai.spec);
+    aiKind = specKind(ai.spec);
   } else {
     const game = getGame(gameId);
     if (!game) {
@@ -67,6 +71,29 @@ export async function POST(request: NextRequest) {
     recordRound(session.username, gameId, xp),
   ]);
 
+  // Credit resources ONLY on new personal best (xpResult.delta), to honour
+  // the anti-grind rule: replays that don't beat the prior best yield 0.
+  // Ledger dedupe key: `score:${gameId}:${previousBest}->${newBest}` — that
+  // exact transition can happen at most once per player.
+  let resources = null as Awaited<ReturnType<typeof getPlayerState>>["resources"] | null;
+  if (xpResult.delta > 0) {
+    const y = yieldForGame(gameId, aiKind);
+    if (y) {
+      const state = await getPlayerState(session.username);
+      const deltaResources = resourceDeltaFromYield(xpResult.delta, y);
+      const sourceId = `${gameId}:${xpResult.previousBest}->${xpResult.gameXP}`;
+      const credit = await creditResources(
+        state,
+        "score",
+        deltaResources,
+        `score ${gameId} +${xpResult.delta}`,
+        sourceId,
+        { gameId, aiKind, xp, previousBest: xpResult.previousBest },
+      );
+      resources = credit.resources;
+    }
+  }
+
   const level = levelFromXP(xpResult.globalXP);
 
   // xpResult already carries the authoritative isNewBest / delta /
@@ -79,5 +106,6 @@ export async function POST(request: NextRequest) {
     ...xpResult,
     level,
     gameStats: recorded.gameStats,
+    resources,
   });
 }

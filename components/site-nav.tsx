@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { LogoutButton } from "@/components/logout-button";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { ResourceBar } from "@/components/resource-bar";
 import type { Lang, Dict } from "@/lib/i18n";
+import type { Resources } from "@/lib/resources";
 
 type Props = {
   username: string | null;
@@ -12,6 +14,8 @@ type Props = {
   title: string | null;
   lang: Lang;
   dict: Dict;
+  /** Server-fetched wallet. Null when anonymous. */
+  resources: Resources | null;
 };
 
 export function SiteNav({
@@ -23,6 +27,7 @@ export function SiteNav({
   title,
   lang,
   dict,
+  resources,
 }: Props) {
   const pct = Math.round(levelProgress * 100);
   const t = dict.nav;
@@ -109,6 +114,13 @@ export function SiteNav({
           </ul>
         </div>
       </div>
+      {username && resources && (
+        <div className="border-t border-[var(--ink)]/30 bg-[var(--background)]">
+          <div className="max-w-6xl mx-auto px-3 sm:px-6 py-2 overflow-x-auto">
+            <ResourceBar resources={resources} lang={lang} />
+          </div>
+        </div>
+      )}
     </header>
   );
 }

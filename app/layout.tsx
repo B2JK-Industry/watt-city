@@ -7,6 +7,7 @@ import { userStats } from "@/lib/leaderboard";
 import { levelFromXP, tierForLevel } from "@/lib/level";
 import { dictFor, LANG_HTML } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
+import { getPlayerState } from "@/lib/player";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +32,10 @@ export default async function RootLayout({
 }>) {
   const [session, lang] = await Promise.all([getSession(), getLang()]);
   const dict = dictFor(lang);
-  const stats = session ? await userStats(session.username) : null;
+  const [stats, player] = await Promise.all([
+    session ? userStats(session.username) : Promise.resolve(null),
+    session ? getPlayerState(session.username) : Promise.resolve(null),
+  ]);
   const xp = stats?.globalXP ?? 0;
   const level = levelFromXP(xp);
   return (
@@ -49,6 +53,7 @@ export default async function RootLayout({
           title={session ? `${tierForLevel(level.level).emoji} ${tierForLevel(level.level).name}` : null}
           lang={lang}
           dict={dict}
+          resources={player?.resources ?? null}
         />
         <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8">
           {children}
