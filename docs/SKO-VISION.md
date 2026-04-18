@@ -128,15 +128,37 @@ A casual player (3 plays/day) reaches mid-tier (5) buildings in ~2 weeks. Hardco
 
 This is the differentiating educational layer. The loan system mirrors real-world consumer finance, simplified.
 
-### MVP loan: hipoteka
+### Visibility vs eligibility
 
-Player can borrow against their building portfolio cashflow.
+The mortgage button is **always visible** in the UI from day one — kid sees the path forward — but **not always usable**. Clicking shows a "wymagania" panel with a progress bar of what's missing:
 
 ```
-Available loan = 12 × monthly cashflow (i.e. 1 year of income)
-Interest rate = 6% APR (configurable)
-Term = 12 / 24 / 36 months
-Repayment = monthly auto-deduct from cashflow
+🏦 Hipoteka — wymagania
+━━━━━━━━━━━━━━━━━━━━━━
+✓ Aktywne konto                          ✓
+✗ 2 budynki produkcyjne (masz: 1)        ░░ 50%
+✗ Cashflow ≥ 30 coins/godz (masz: 5)     ░░ 17%
+✗ Bank lokalny (opcjonalne, lepsze RRSO) — niedostępne
+```
+
+This teaches the real-world lesson: *banks don't lend to people without income or collateral*.
+
+### Two paths to mortgage
+
+| Path | Prerequisites | APR | Reasoning |
+|---|---|---|---|
+| **Standard** | ≥ 2 producer buildings + cashflow ≥ 30/h | **8 % APR** | Bank takes risk on unestablished borrower |
+| **Preferred** | Standard + Bank lokalny T3 already built | **5 % APR** | Built relationship with bank — better terms |
+
+Educational moment: kid sees concrete benefit of Bank lokalny — not just a building, but a way to borrow cheaper. Mirrors real life ("banks reward existing customers").
+
+### Mortgage params
+
+```
+Available loan = 12 × monthly cashflow (1 year of income)
+Interest rate    = 8 % APR (standard) | 5 % APR (preferred)
+Term            = 12 / 24 / 36 months
+Repayment        = monthly auto-deduct from cashflow
 ```
 
 **On-time repayment** → credit score +1 each month
