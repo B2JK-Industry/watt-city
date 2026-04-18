@@ -915,13 +915,37 @@ const FALLBACK_SPECS: Record<string, () => LocalizedSpec> = {
   }),
 };
 
+// Loose lookup: mock keys predate the current research pool (some keys are
+// still Slovak, themes renamed to Polish, etc.). Fall back to a prefix match
+// on the text before " — " so `"Inflacja w Polsce — realna stopa"` can resolve
+// the `"Inflácia v Poľsku — …"` mock if kinds match. Last resort: any mock
+// whose seed kind matches. Keeps dev-without-key usable across renames.
+function resolveFallback(
+  theme: string,
+  kind: string,
+): (() => LocalizedSpec) | null {
+  const exact = FALLBACK_SPECS[theme];
+  if (exact) return exact;
+  const headKey = theme.split(" — ")[0].trim().toLowerCase();
+  const byHead = Object.entries(FALLBACK_SPECS).find(
+    ([k]) => k.split(" — ")[0].trim().toLowerCase() === headKey,
+  );
+  if (byHead) return byHead[1];
+  // Last-ditch: pick any mock whose kind matches the requested seed kind.
+  for (const [, builder] of Object.entries(FALLBACK_SPECS)) {
+    const spec = builder();
+    if (spec.pl.kind === kind) return builder;
+  }
+  return null;
+}
+
 export async function generateGameSpec(
   ctx: GenerateContext,
 ): Promise<GenerateResult> {
   if (process.env.ANTHROPIC_API_KEY) {
     return generateWithClaude(ctx);
   }
-  const builder = FALLBACK_SPECS[ctx.seed.theme];
+  const builder = resolveFallback(ctx.seed.theme, ctx.seed.kind);
   if (!builder) {
     throw new Error(`No fallback spec for theme: ${ctx.seed.theme}`);
   }

@@ -56,13 +56,27 @@ export async function kvSet(
   memory.kv.set(key, JSON.stringify(value));
 }
 
-export async function kvSetNX(key: string, value: unknown): Promise<boolean> {
+export async function kvSetNX(
+  key: string,
+  value: unknown,
+  opts?: { ex?: number },
+): Promise<boolean> {
   if (upstash) {
-    const result = await upstash.set(key, value, { nx: true });
+    // SET NX EX: atomic single-flight with TTL — prevents a crashed holder from
+    // permanently blocking future attempts.
+    const result = opts?.ex
+      ? await upstash.set(key, value, { nx: true, ex: opts.ex })
+      : await upstash.set(key, value, { nx: true });
     return result === "OK";
   }
   if (memory.kv.has(key)) return false;
   memory.kv.set(key, JSON.stringify(value));
+  if (opts?.ex) {
+    setTimeout(() => {
+      // best-effort release in dev in-memory store
+      memory.kv.delete(key);
+    }, opts.ex * 1000).unref?.();
+  }
   return true;
 }
 

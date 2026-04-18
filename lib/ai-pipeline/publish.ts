@@ -1,4 +1,4 @@
-import { kvGet, kvSet, kvDel } from "@/lib/redis";
+import { kvGet, kvSet, kvDel, kvSetNX } from "@/lib/redis";
 import {
   AiGameSchema,
   LocalizedSpecSchema,
@@ -13,6 +13,8 @@ import { generateGameSpec } from "./generate";
 const INDEX_KEY = "xp:ai-games:index"; // JSON array of active AI game ids, oldest first
 const ARCHIVE_INDEX_KEY = "xp:ai-games:archive-index"; // never expires — newest first
 const ARCHIVE_KEY = (id: string) => `xp:ai-games:archive:${id}`;
+const ROTATION_LOCK_KEY = "xp:rotation-lock"; // single-flight guard for rotate-if-due
+const LAST_ROTATION_BUCKET_KEY = "xp:ai-games:last-rotation-bucket"; // last hour-bucket a publish ran
 
 // Slim record persisted forever so Hall of Fame can surface past winners
 // after the live envelope's 48h TTL elapses.
@@ -168,4 +170,132 @@ export async function runPipeline(
   });
 
   return { ok: true, game: envParse.data, evicted };
+}
+
+/* ==========================================================================
+ * archiveOnExpire + rotateIfDue
+ * ==========================================================================
+ * Separated from runPipeline so the rotation loop can prune the live index
+ * without having to generate a new game (cheap heartbeat call) and so admins
+ * can force-archive without re-running the Claude pipeline.
+ * ========================================================================== */
+
+// Remove `id` from the live index. The envelope + archive record stay — past
+// games remain playable at /games/ai/<id> and their leaderboard ZSET persists.
+// Idempotent: if `id` is not in the index, this is a no-op.
+export async function archiveOnExpire(id: string): Promise<{ removed: boolean }> {
+  const index = await readIndex();
+  if (!index.includes(id)) return { removed: false };
+  const next = index.filter((x) => x !== id);
+  await writeIndex(next);
+  // Ensure an archive record exists (runPipeline writes one on publish, but
+  // older legacy envelopes predating that write may be missing it).
+  const existingArchive = await kvGet<ArchivedAiGame>(ARCHIVE_KEY(id));
+  if (!existingArchive) {
+    const envelope = await kvGet<AiGame>(`xp:ai-games:${id}`);
+    if (envelope) {
+      await appendToArchive({
+        id,
+        title: envelope.title,
+        theme: envelope.theme,
+        model: envelope.model,
+        kind: specKind(envelope.spec),
+        generatedAt: envelope.generatedAt,
+        validUntil: envelope.validUntil,
+      });
+    }
+  }
+  return { removed: true };
+}
+
+export type RotateIfDueResult =
+  | {
+      ok: true;
+      rotated: string[]; // ids archived off the live index
+      published: string | null; // id of newly published game (null if none)
+      theme?: string;
+      skipped: boolean; // true when we held the lock but decided not to publish
+      reason?: string;
+    }
+  | { ok: false; error: string; contended?: boolean };
+
+// Idempotent rotation: intended to be poked by Vercel Cron or an external pinger
+// every ~5 minutes. Guarded by a single-flight Redis lock (60s TTL) and a
+// per-hour-bucket sentinel so concurrent calls collapse to one publish.
+//
+//  1. Try SET NX EX 60 on `xp:rotation-lock` — contended → return {skipped:true}
+//  2. Walk the live index, archive anything past validUntil
+//  3. If the current hour bucket already rotated, skip publish
+//  4. Otherwise call runPipeline() and record the hour bucket on success
+//  5. Release lock in `finally`
+export async function rotateIfDue(
+  now = Date.now(),
+): Promise<RotateIfDueResult> {
+  const lockValue = `${now}-${Math.random().toString(36).slice(2, 8)}`;
+  const acquired = await kvSetNX(ROTATION_LOCK_KEY, lockValue, { ex: 60 });
+  if (!acquired) {
+    return { ok: false, error: "lock-contended", contended: true };
+  }
+  try {
+    // Prune expired games from the live index
+    const index = await readIndex();
+    const rotated: string[] = [];
+    for (const id of index) {
+      const envelope = await kvGet<AiGame>(`xp:ai-games:${id}`);
+      if (!envelope) {
+        // orphaned id in index; drop it
+        rotated.push(id);
+        continue;
+      }
+      if (envelope.validUntil <= now) {
+        await archiveOnExpire(id);
+        rotated.push(id);
+      }
+    }
+
+    // Skip publish if this hour bucket already rotated (idempotent across the hour)
+    const currentBucket = Math.floor(now / (ROTATION_HOURS * 60 * 60 * 1000));
+    const lastBucket = (await kvGet<number>(LAST_ROTATION_BUCKET_KEY)) ?? -1;
+    if (lastBucket === currentBucket) {
+      return {
+        ok: true,
+        rotated,
+        published: null,
+        skipped: true,
+        reason: "already-rotated-this-hour",
+      };
+    }
+
+    const result = await runPipeline(now);
+    if (!result.ok) {
+      // "portfolio: theme already live" is a benign collision — this hour's
+      // theme pick matched an existing LIVE game (can happen if the index
+      // wasn't fully pruned). Treat as a soft skip rather than an error.
+      if (result.error.startsWith("portfolio:")) {
+        return {
+          ok: true,
+          rotated,
+          published: null,
+          skipped: true,
+          reason: result.error,
+        };
+      }
+      return { ok: false, error: result.error };
+    }
+    await kvSet(LAST_ROTATION_BUCKET_KEY, currentBucket);
+    return {
+      ok: true,
+      rotated,
+      published: result.game.id,
+      theme: result.game.theme,
+      skipped: false,
+    };
+  } finally {
+    // Only release the lock if we still hold it (defensive; a 60s TTL expiry
+    // could let another caller take over mid-flight).
+    const current = await kvGet<string>(ROTATION_LOCK_KEY);
+    if (current === lockValue) {
+      await kvDel(ROTATION_LOCK_KEY);
+    }
+  }
 }
