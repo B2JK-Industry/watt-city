@@ -26,6 +26,13 @@ export function SiteNav({
 }: Props) {
   const pct = Math.round(levelProgress * 100);
   const t = dict.nav;
+  const navLinks: Array<{ href: string; label: string }> = [
+    { href: "/games", label: t.city },
+    { href: "/duel", label: t.duel },
+    { href: "/leaderboard", label: t.league },
+    { href: "/sin-slavy", label: t.hall },
+    { href: "/o-platforme", label: t.about },
+  ];
   return (
     <header className="w-full border-b-[3px] border-[var(--ink)] sticky top-0 z-20 bg-[var(--background)]">
       <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
@@ -36,30 +43,15 @@ export function SiteNav({
           <span className="uppercase">Arena</span>
         </Link>
         <div className="hidden sm:flex items-center gap-5 text-sm">
-          <Link href="/games" className="hover:text-[var(--accent)] transition-colors">
-            {t.city}
-          </Link>
-          <Link href="/duel" className="hover:text-[var(--accent)] transition-colors">
-            {t.duel}
-          </Link>
-          <Link
-            href="/leaderboard"
-            className="hover:text-[var(--accent)] transition-colors"
-          >
-            {t.league}
-          </Link>
-          <Link
-            href="/sin-slavy"
-            className="hover:text-[var(--accent)] transition-colors"
-          >
-            {t.hall}
-          </Link>
-          <Link
-            href="/o-platforme"
-            className="hover:text-[var(--accent)] transition-colors"
-          >
-            {t.about}
-          </Link>
+          {navLinks.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className="hover:text-[var(--accent)] transition-colors"
+            >
+              {l.label}
+            </Link>
+          ))}
         </div>
         <div className="flex items-center gap-3 text-sm">
           {username ? (
@@ -101,6 +93,22 @@ export function SiteNav({
           )}
         </div>
       </nav>
+      <div className="sm:hidden border-t border-[var(--ink)]/30 bg-[var(--surface)]">
+        <div className="max-w-6xl mx-auto px-3 py-1.5 overflow-x-auto">
+          <ul className="flex items-center gap-3 text-xs font-semibold whitespace-nowrap">
+            {navLinks.map((l) => (
+              <li key={l.href}>
+                <Link
+                  href={l.href}
+                  className="px-2 py-1 rounded hover:text-[var(--accent)]"
+                >
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </header>
   );
 }
