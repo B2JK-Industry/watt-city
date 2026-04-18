@@ -14,11 +14,17 @@ export type CityGameState = {
   bestScore: number;
 };
 
+export type CityAiGame = {
+  id: string;
+  title: string;
+};
+
 type Props = {
   games?: CityGameState[];
   loggedIn?: boolean;
   interactive?: boolean; // true for the /games hub, false for previews
   compact?: boolean;     // smaller height
+  aiGame?: CityAiGame;   // if set, construction site links to /games/ai/[id]
 };
 
 export function CityScene({
@@ -26,6 +32,7 @@ export function CityScene({
   loggedIn = false,
   interactive = true,
   compact = false,
+  aiGame,
 }: Props) {
   const map = new Map(games?.map((g) => [g.meta.id, g]) ?? []);
   const get = (id: string) => map.get(id);
@@ -139,7 +146,11 @@ export function CityScene({
         ))}
 
         {/* Construction site for the "AI game of the day" slot */}
-        <ConstructionSlot plan={CONSTRUCTION} interactive={interactive} />
+        <ConstructionSlot
+          plan={CONSTRUCTION}
+          interactive={interactive}
+          aiGame={aiGame}
+        />
 
         {/* Buildings — wrapped in SVG-native <a> so click zones sit in the
             exact same coordinate space as the art (no HTML-overlay drift). */}
@@ -901,24 +912,34 @@ function ConstructionSite({ x, w, h, name }: DrawProps) {
 function ConstructionSlot({
   plan,
   interactive,
+  aiGame,
 }: {
   plan: Plan;
   interactive: boolean;
+  aiGame?: CityAiGame;
 }) {
+  const live = Boolean(aiGame);
   const slot = plan.draw({
     x: plan.x,
     w: plan.w,
     h: plan.h,
-    powered: false,
+    powered: live,
     bestScore: 0,
     cap: 0,
-    name: plan.buildingName,
+    name: aiGame?.title ?? plan.buildingName,
   });
   if (!interactive) return <g>{slot}</g>;
+  const href = aiGame ? `/games/ai/${aiGame.id}` : "/sin-slavy";
+  const label = aiGame
+    ? `AI výzva dňa — ${aiGame.title}`
+    : "AI výzva dňa — coming soon";
+  const title = aiGame
+    ? `AI výzva dňa · hrateľná — ${aiGame.title}`
+    : "AI výzva dňa · zatiaľ vo výstavbe";
   return (
-    <Link href="/sin-slavy" aria-label="AI výzva dňa — coming soon">
-      <g className="building-link">
-        <title>AI výzva dňa · zatiaľ vo výstavbe</title>
+    <Link href={href} aria-label={label}>
+      <g className="building-link" data-powered={live}>
+        <title>{title}</title>
         <rect
           x={plan.x - 6}
           y={GROUND - plan.h - 30}

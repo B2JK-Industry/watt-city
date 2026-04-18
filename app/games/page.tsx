@@ -5,6 +5,7 @@ import { getUserStats } from "@/lib/user-stats";
 import { userStats } from "@/lib/leaderboard";
 import { levelFromXP, tierForLevel } from "@/lib/level";
 import { CityScene, type CityGameState } from "@/components/city-scene";
+import { listActiveAiGames } from "@/lib/ai-pipeline/publish";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
@@ -25,6 +26,10 @@ export default async function GamesHubPage() {
     plays: stats?.games[g.id]?.plays ?? 0,
     bestScore: stats?.games[g.id]?.bestScore ?? 0,
   }));
+
+  const aiGames = await listActiveAiGames();
+  const liveAi = aiGames[aiGames.length - 1];
+  const cityAi = liveAi ? { id: liveAi.id, title: liveAi.title } : undefined;
 
   const bodyParts = t.gamesHubBody
     .replace("{light}", "§LIGHT§")
@@ -75,7 +80,7 @@ export default async function GamesHubPage() {
           })}
         </p>
       </header>
-      <CityScene games={cityGames} loggedIn={Boolean(session)} />
+      <CityScene games={cityGames} loggedIn={Boolean(session)} aiGame={cityAi} />
       <aside className="card p-5 flex flex-col gap-3 text-sm text-zinc-300">
         <h2 className="brutal-heading text-lg">{t.buildingsMap}</h2>
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-1.5">
