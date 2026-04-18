@@ -136,17 +136,18 @@ export async function runPipeline(
     };
   }
 
-  // 6) Persist with TTL; update index, evict oldest if over cap
-  await kvSet(`xp:ai-games:${id}`, envParse.data, {
-    ex: AI_GAME_TTL_SECONDS,
-  });
+  // 6) Persist forever (no TTL) and cap the LIVE index at MAX_ACTIVE_AI_GAMES.
+  // Evicted games stay in Redis and remain playable via /games/ai/[id] — their
+  // leaderboard ZSET is already permanent, so users can still score on old AI
+  // games and earn medals that stick. The live index only controls which game
+  // the city scene / "LIVE" card surface.
+  await kvSet(`xp:ai-games:${id}`, envParse.data);
   const nextIndex = [...index, id];
   let evicted: string | null = null;
   while (nextIndex.length > MAX_ACTIVE_AI_GAMES) {
     const oldest = nextIndex.shift();
     if (!oldest) break;
-    await kvDel(`xp:ai-games:${oldest}`);
-    evicted = oldest;
+    evicted = oldest; // envelope NOT deleted — game stays playable
   }
   await writeIndex(nextIndex);
 

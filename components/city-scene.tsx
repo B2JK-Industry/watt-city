@@ -967,6 +967,183 @@ function ConstructionSlot({
   );
 }
 
+// Hash the game id into a deterministic visual recipe so every published AI
+// game looks materially different — different roof color, body color, roof
+// silhouette, and window pattern. Same id → same building, always.
+const AI_ROOF_PALETTE = [
+  "#ec4899", "#22d3ee", "#fde047", "#a3e635",
+  "#f97316", "#8b5cf6", "#14b8a6", "#f43f5e",
+];
+const AI_BODY_PALETTE = [
+  "#1e1b4b", "#064e3b", "#831843", "#78350f",
+  "#164e63", "#581c87", "#0f172a", "#7c2d12",
+];
+const AI_WINDOW_PRIMARY = [
+  "#fde047", "#22d3ee", "#a3e635", "#f97316", "#ec4899", "#8b5cf6",
+];
+const AI_WINDOW_SECONDARY = [
+  "#22d3ee", "#fde047", "#ec4899", "#a3e635", "#f97316", "#fb7185",
+];
+
+type AiRoofShape = "flat" | "pitched" | "stepped" | "crenellated";
+const AI_ROOF_SHAPES: AiRoofShape[] = ["flat", "pitched", "stepped", "crenellated"];
+type AiWindowPattern = "grid" | "stacked" | "offset";
+const AI_WINDOW_PATTERNS: AiWindowPattern[] = ["grid", "stacked", "offset"];
+
+function hashId(id: string): number {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) {
+    h = (h * 131 + id.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h);
+}
+
+function recipeFor(id: string) {
+  const h = hashId(id);
+  return {
+    roofColor: AI_ROOF_PALETTE[h % AI_ROOF_PALETTE.length],
+    bodyColor: AI_BODY_PALETTE[(h >> 3) % AI_BODY_PALETTE.length],
+    windowA: AI_WINDOW_PRIMARY[(h >> 6) % AI_WINDOW_PRIMARY.length],
+    windowB: AI_WINDOW_SECONDARY[(h >> 9) % AI_WINDOW_SECONDARY.length],
+    roofShape: AI_ROOF_SHAPES[(h >> 12) % AI_ROOF_SHAPES.length],
+    windowPattern: AI_WINDOW_PATTERNS[(h >> 15) % AI_WINDOW_PATTERNS.length],
+  };
+}
+
+function RoofShape({
+  x,
+  w,
+  top,
+  shape,
+  color,
+}: {
+  x: number;
+  w: number;
+  top: number;
+  shape: AiRoofShape;
+  color: string;
+}) {
+  if (shape === "flat") {
+    return (
+      <>
+        <rect x={x - 5} y={top - 6} width={w + 10} height={10} fill="#0a0a0f" />
+        <rect x={x - 2} y={top - 4} width={w + 4} height={6} fill={color} />
+      </>
+    );
+  }
+  if (shape === "pitched") {
+    const peak = top - 22;
+    return (
+      <>
+        <polygon
+          points={`${x - 6},${top} ${x + w / 2},${peak} ${x + w + 6},${top}`}
+          fill={color}
+          stroke="#0a0a0f"
+          strokeWidth={3}
+        />
+      </>
+    );
+  }
+  if (shape === "stepped") {
+    return (
+      <>
+        <rect x={x - 4} y={top - 16} width={w + 8} height={8} fill={color} stroke="#0a0a0f" strokeWidth={2} />
+        <rect x={x + 6} y={top - 24} width={w - 12} height={10} fill={color} stroke="#0a0a0f" strokeWidth={2} />
+        <rect x={x + w / 2 - 6} y={top - 32} width={12} height={10} fill={color} stroke="#0a0a0f" strokeWidth={2} />
+      </>
+    );
+  }
+  // crenellated
+  const merlons = 5;
+  const step = w / merlons;
+  return (
+    <g>
+      <rect x={x - 4} y={top - 10} width={w + 8} height={10} fill={color} stroke="#0a0a0f" strokeWidth={2} />
+      {Array.from({ length: merlons }).map((_, i) => {
+        if (i % 2 === 0) return null;
+        return (
+          <rect
+            key={i}
+            x={x + i * step}
+            y={top - 18}
+            width={step - 1}
+            height={10}
+            fill={color}
+            stroke="#0a0a0f"
+            strokeWidth={2}
+          />
+        );
+      })}
+    </g>
+  );
+}
+
+function AiWindows({
+  x,
+  w,
+  top,
+  h,
+  pattern,
+  colorA,
+  colorB,
+}: {
+  x: number;
+  w: number;
+  top: number;
+  h: number;
+  pattern: AiWindowPattern;
+  colorA: string;
+  colorB: string;
+}) {
+  const rows = 9;
+  const rowH = (h - 40) / rows;
+  const items: React.ReactNode[] = [];
+  for (let row = 0; row < rows; row++) {
+    const wy = top + 14 + row * rowH;
+    if (pattern === "grid") {
+      items.push(
+        <g key={row}>
+          <rect x={x + 8} y={wy} width={w / 2 - 12} height={7} fill={colorA} stroke="#0a0a0f" strokeWidth={1} />
+          <rect x={x + w / 2 + 4} y={wy} width={w / 2 - 12} height={7} fill={colorB} stroke="#0a0a0f" strokeWidth={1} />
+        </g>,
+      );
+    } else if (pattern === "stacked") {
+      items.push(
+        <rect
+          key={row}
+          x={x + 8}
+          y={wy}
+          width={w - 16}
+          height={7}
+          fill={row % 2 === 0 ? colorA : colorB}
+          stroke="#0a0a0f"
+          strokeWidth={1}
+        />,
+      );
+    } else {
+      // offset — staggered triptych
+      const cols = 3;
+      const cellW = (w - 16) / cols;
+      const stagger = (row % 2) * (cellW / 2);
+      for (let c = 0; c < cols; c++) {
+        items.push(
+          <rect
+            key={`${row}-${c}`}
+            x={x + 8 + c * cellW + stagger}
+            y={wy}
+            width={cellW - 2}
+            height={7}
+            fill={c % 2 === 0 ? colorA : colorB}
+            stroke="#0a0a0f"
+            strokeWidth={1}
+          />,
+        );
+      }
+    }
+  }
+  return <>{items}</>;
+}
+
 function LiveAiBuilding({
   x,
   w,
@@ -983,126 +1160,58 @@ function LiveAiBuilding({
     0,
     Math.round((aiGame.validUntil - Date.now()) / (60 * 60 * 1000)),
   );
-  const short = aiGame.title.length > 10
-    ? aiGame.title.slice(0, 10) + "…"
-    : aiGame.title;
-  const rows = 9;
+  const short =
+    aiGame.title.length > 10 ? aiGame.title.slice(0, 10) + "…" : aiGame.title;
+  const r = recipeFor(aiGame.id);
   return (
     <g>
       {/* hours-left chip above roof */}
-      <g transform={`translate(${x + w / 2 - 22}, ${top - 44})`}>
+      <g transform={`translate(${x + w / 2 - 22}, ${top - 52})`}>
         <rect
           x={0}
           y={0}
           width={44}
           height={14}
           fill="#0a0a0f"
-          stroke="#ec4899"
+          stroke={r.roofColor}
           strokeWidth={1.5}
           rx={2}
         />
-        <text
-          x={22}
-          y={10}
-          textAnchor="middle"
-          fontSize={8}
-          fontWeight={900}
-          fill="#ec4899"
-        >
+        <text x={22} y={10} textAnchor="middle" fontSize={8} fontWeight={900} fill={r.roofColor}>
           ⏱ {hoursLeft}h
         </text>
       </g>
 
       {/* banner with title */}
-      <g transform={`translate(${x + w / 2 - 44}, ${top - 26})`}>
-        <rect
-          x={0}
-          y={0}
-          width={88}
-          height={18}
-          fill="#fde047"
-          stroke="#0a0a0f"
-          strokeWidth={2}
-          rx={2}
-        />
-        <text
-          x={44}
-          y={12}
-          textAnchor="middle"
-          fontSize={8}
-          fontWeight={900}
-          fill="#0a0a0f"
-        >
+      <g transform={`translate(${x + w / 2 - 44}, ${top - 34})`}>
+        <rect x={0} y={0} width={88} height={18} fill="#fde047" stroke="#0a0a0f" strokeWidth={2} rx={2} />
+        <text x={44} y={12} textAnchor="middle" fontSize={8} fontWeight={900} fill="#0a0a0f">
           🤖 {short.toUpperCase()}
         </text>
       </g>
 
       {/* antenna */}
-      <line
-        x1={x + w / 2}
-        y1={top - 4}
-        x2={x + w / 2}
-        y2={top - 22}
-        stroke="#0a0a0f"
-        strokeWidth={3}
-      />
-      <circle cx={x + w / 2} cy={top - 24} r={4} fill="#ec4899" />
+      <line x1={x + w / 2} y1={top - 10} x2={x + w / 2} y2={top - 28} stroke="#0a0a0f" strokeWidth={3} />
+      <circle cx={x + w / 2} cy={top - 30} r={4} fill={r.roofColor} />
 
-      {/* roof strip — pink accent */}
-      <rect
-        x={x - 5}
-        y={top - 6}
-        width={w + 10}
-        height={10}
-        fill="#0a0a0f"
-      />
-      <rect
-        x={x - 2}
-        y={top - 4}
-        width={w + 4}
-        height={6}
-        fill="#ec4899"
-      />
+      {/* roof (per-id silhouette) */}
+      <RoofShape x={x} w={w} top={top} shape={r.roofShape} color={r.roofColor} />
 
-      {/* body — deep violet so it stands out against other buildings */}
-      <rect
+      {/* body */}
+      <rect x={x} y={top} width={w} height={h} fill={r.bodyColor} stroke="#0a0a0f" strokeWidth={3} />
+
+      {/* windows (per-id pattern) */}
+      <AiWindows
         x={x}
-        y={top}
-        width={w}
-        height={h}
-        fill="#1e1b4b"
-        stroke="#0a0a0f"
-        strokeWidth={3}
+        w={w}
+        top={top}
+        h={h}
+        pattern={r.windowPattern}
+        colorA={r.windowA}
+        colorB={r.windowB}
       />
 
-      {/* glowing windows */}
-      {Array.from({ length: rows }).map((_, row) => {
-        const wy = top + 14 + row * ((h - 40) / rows);
-        return (
-          <g key={row}>
-            <rect
-              x={x + 8}
-              y={wy}
-              width={w / 2 - 12}
-              height={7}
-              fill="#fde047"
-              stroke="#0a0a0f"
-              strokeWidth={1}
-            />
-            <rect
-              x={x + w / 2 + 4}
-              y={wy}
-              width={w / 2 - 12}
-              height={7}
-              fill="#22d3ee"
-              stroke="#0a0a0f"
-              strokeWidth={1}
-            />
-          </g>
-        );
-      })}
-
-      {/* glyph centered on façade */}
+      {/* glyph centered */}
       {aiGame.glyph && (
         <text
           x={x + w / 2}
@@ -1116,75 +1225,25 @@ function LiveAiBuilding({
       )}
 
       {/* door */}
-      <rect
-        x={x + w / 2 - 10}
-        y={GROUND - 22}
-        width={20}
-        height={22}
-        fill="#111"
-        stroke="#0a0a0f"
-        strokeWidth={2}
-      />
-      <rect
-        x={x + w / 2 - 7}
-        y={GROUND - 19}
-        width={14}
-        height={18}
-        fill="#fde047"
-      />
+      <rect x={x + w / 2 - 10} y={GROUND - 22} width={20} height={22} fill="#111" stroke="#0a0a0f" strokeWidth={2} />
+      <rect x={x + w / 2 - 7} y={GROUND - 19} width={14} height={18} fill="#fde047" />
 
       {/* LIVE badge bottom */}
       <g transform={`translate(${x + w / 2 - 18}, ${GROUND - 50})`}>
-        <rect
-          width={36}
-          height={20}
-          fill="#ec4899"
-          stroke="#0a0a0f"
-          strokeWidth={2}
-          rx={2}
-        />
-        <text
-          x={18}
-          y={14}
-          textAnchor="middle"
-          fontSize={9}
-          fontWeight={900}
-          fill="#0a0a0f"
-        >
+        <rect width={36} height={20} fill={r.roofColor} stroke="#0a0a0f" strokeWidth={2} rx={2} />
+        <text x={18} y={14} textAnchor="middle" fontSize={9} fontWeight={900} fill="#0a0a0f">
           LIVE
         </text>
       </g>
 
-      {/* WattMeter — user's best score on this AI game */}
+      {/* WattMeter */}
       {aiGame.cap && aiGame.cap > 0 && (
-        <WattMeter
-          x={x}
-          y={GROUND + 8}
-          w={w}
-          value={aiGame.bestScore ?? 0}
-          cap={aiGame.cap}
-        />
+        <WattMeter x={x} y={GROUND + 8} w={w} value={aiGame.bestScore ?? 0} cap={aiGame.cap} />
       )}
 
       {/* street sign */}
-      <rect
-        x={x}
-        y={GROUND + 22}
-        width={w}
-        height={16}
-        fill="#0a0a0f"
-        stroke="#0a0a0f"
-        strokeWidth={2}
-        rx={2}
-      />
-      <text
-        x={x + w / 2}
-        y={GROUND + 33}
-        textAnchor="middle"
-        fontSize={8}
-        fontWeight={900}
-        fill="#ec4899"
-      >
+      <rect x={x} y={GROUND + 22} width={w} height={16} fill="#0a0a0f" stroke="#0a0a0f" strokeWidth={2} rx={2} />
+      <text x={x + w / 2} y={GROUND + 33} textAnchor="middle" fontSize={8} fontWeight={900} fill={r.roofColor}>
         AI · {aiGame.id.replace("ai-", "").toUpperCase()}
       </text>
     </g>

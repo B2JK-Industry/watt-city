@@ -42,10 +42,20 @@ export default async function HallOfFamePage() {
       top: await gameLeaderboard(r.id, 3),
     })),
   );
-  // Only surface archive entries that actually earned someone a medal —
-  // hides the duplicate empty records that accumulate when the cron / admin
-  // endpoint rotates the same-theme slot multiple times in a single day.
-  const pastAiWithTop = pastAiWithTopRaw.filter((r) => r.top.length > 0);
+  // Filter out empty archive entries (no medals) and dedupe by theme —
+  // keeping the newest medal-bearing record per theme. This collapses
+  // same-day force-rotations (e.g. three 'Earth Hour' cards) into one.
+  const byTheme = new Map<string, typeof pastAiWithTopRaw[number]>();
+  for (const entry of pastAiWithTopRaw) {
+    if (entry.top.length === 0) continue;
+    const prior = byTheme.get(entry.record.theme);
+    if (!prior || entry.record.generatedAt > prior.record.generatedAt) {
+      byTheme.set(entry.record.theme, entry);
+    }
+  }
+  const pastAiWithTop = [...byTheme.values()].sort(
+    (a, b) => b.record.generatedAt - a.record.generatedAt,
+  );
 
   return (
     <div className="flex flex-col gap-8 animate-slide-up">
