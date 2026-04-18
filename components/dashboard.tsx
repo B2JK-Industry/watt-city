@@ -19,7 +19,7 @@ type Props = {
   top: LeaderboardEntry[];
   dict: Dict;
   lang: Lang;
-  aiGame?: CityAiGame;
+  aiGames?: CityAiGame[];
 };
 
 function timeAgo(ts: number, d: Dict["dashboard"]): string {
@@ -43,7 +43,7 @@ export function Dashboard({
   top,
   dict,
   lang,
-  aiGame,
+  aiGames,
 }: Props) {
   const d = dict.dashboard;
   const locale = lang === "pl" ? "pl-PL" : lang === "cs" ? "cs-CZ" : lang === "uk" ? "uk-UA" : "en-US";
@@ -311,7 +311,7 @@ export function Dashboard({
             {d.cityNightOpen} →
           </Link>
         </div>
-        <CityScene games={cityGames} loggedIn compact aiGame={aiGame} />
+        <CityScene games={cityGames} loggedIn compact aiGames={aiGames} />
       </section>
 
       <section className="flex flex-col gap-3 card p-5">

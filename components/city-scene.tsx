@@ -4,7 +4,11 @@ import { type GameMeta } from "@/lib/games";
 // Night panorama of Katowice — SVG viewBox is `VB_W x VB_H`. Buildings are
 // placed on a ground line at `GROUND`. Each game gets a unique silhouette.
 
-const VB_W = 1500;
+// Layout note: 1500 wide held 9 evergreen buildings + 1 AI slot. Widening
+// to 1800 makes room for 3 side-by-side AI slots on the right — one per
+// active AI game (MAX_ACTIVE_AI_GAMES = 3), so every live AI challenge has
+// its own clickable building in the city.
+const VB_W = 1800;
 const VB_H = 460;
 const GROUND = 400;
 
@@ -28,7 +32,8 @@ type Props = {
   loggedIn?: boolean;
   interactive?: boolean; // true for the /games hub, false for previews
   compact?: boolean;     // smaller height
-  aiGame?: CityAiGame;   // if set, construction site links to /games/ai/[id]
+  aiGame?: CityAiGame;   // deprecated: single-AI-game path — pass aiGames instead
+  aiGames?: CityAiGame[]; // one entry per active AI game (newest first); up to 3 slots
 };
 
 export function CityScene({
@@ -37,7 +42,9 @@ export function CityScene({
   interactive = true,
   compact = false,
   aiGame,
+  aiGames,
 }: Props) {
+  const activeAi: CityAiGame[] = aiGames ?? (aiGame ? [aiGame] : []);
   const map = new Map(games?.map((g) => [g.meta.id, g]) ?? []);
   const get = (id: string) => map.get(id);
 
@@ -149,12 +156,28 @@ export function CityScene({
           </g>
         ))}
 
-        {/* Construction site for the "AI game of the day" slot */}
-        <ConstructionSlot
-          plan={CONSTRUCTION}
-          interactive={interactive}
-          aiGame={aiGame}
-        />
+        {/* AI buildings — one per active AI game. When there are no active
+            games (only after a fresh Redis wipe), we show a single
+            "construction site" placeholder so the city doesn't feel empty. */}
+        {activeAi.length === 0 ? (
+          <ConstructionSlot
+            plan={CONSTRUCTION}
+            interactive={interactive}
+            aiGame={undefined}
+          />
+        ) : (
+          activeAi.slice(0, 3).map((game, i) => {
+            const plan = aiPlanFor(i, activeAi.length);
+            return (
+              <ConstructionSlot
+                key={game.id}
+                plan={plan}
+                interactive={interactive}
+                aiGame={game}
+              />
+            );
+          })
+        )}
 
         {/* Buildings — wrapped in SVG-native <a> so click zones sit in the
             exact same coordinate space as the art (no HTML-overlay drift). */}
@@ -317,12 +340,42 @@ const BUILDING_PLAN: Plan[] = [
   },
 ];
 
+// AI buildings live on the right-hand side of the city, starting at
+// AI_ZONE_X. Positions are computed at render time based on how many AI
+// games are currently active — 1 → center slot, 2 → side-by-side, 3 →
+// three in a row. When no game is active, a single construction-site
+// placeholder fills the zone.
+const AI_ZONE_X = 1380;
+const AI_ZONE_W = 420;
+const AI_SLOT_W = 72;
+const AI_SLOT_HEIGHTS = [220, 195, 240]; // per-position varying heights
+
+function aiPlanFor(index: number, total: number): Plan {
+  const count = Math.max(1, Math.min(3, total));
+  const zoneStart = AI_ZONE_X;
+  // Evenly distribute `count` slots within AI_ZONE_W
+  const gap = (AI_ZONE_W - count * AI_SLOT_W) / (count + 1);
+  const x = zoneStart + gap + index * (AI_SLOT_W + gap);
+  return {
+    gameId: `__ai-slot-${index}__`,
+    title: "AI výzva",
+    buildingName: "Stavenisko",
+    x,
+    w: AI_SLOT_W,
+    h: AI_SLOT_HEIGHTS[index % AI_SLOT_HEIGHTS.length],
+    cap: 0,
+    draw: ConstructionSite,
+  };
+}
+
+// Fallback placeholder when no AI games are active yet (empty construction
+// site so the city has something in that zone instead of a void).
 const CONSTRUCTION: Plan = {
   gameId: "__coming-soon__",
   title: "AI výzva dňa",
   buildingName: "Stavenisko",
-  x: 1370,
-  w: 70,
+  x: AI_ZONE_X + (AI_ZONE_W - AI_SLOT_W) / 2,
+  w: AI_SLOT_W,
   h: 220,
   cap: 0,
   draw: ConstructionSite,

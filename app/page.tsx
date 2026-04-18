@@ -26,17 +26,15 @@ export default async function Home() {
       listActiveAiGames(),
     ]);
     const level = levelFromXP(board.globalXP);
-    const liveAi = aiGames[aiGames.length - 1];
-    const cityAi = liveAi
-      ? {
-          id: liveAi.id,
-          title: liveAi.title,
-          validUntil: liveAi.validUntil,
-          glyph: liveAi.buildingGlyph,
-          cap: xpCapForAnyLang(liveAi.spec),
-          bestScore: stats.games[liveAi.id]?.bestScore ?? 0,
-        }
-      : undefined;
+    // Newest AI game first — city renders each as its own clickable building.
+    const cityAiGames = [...aiGames].reverse().map((g) => ({
+      id: g.id,
+      title: g.title,
+      validUntil: g.validUntil,
+      glyph: g.buildingGlyph,
+      cap: xpCapForAnyLang(g.spec),
+      bestScore: stats.games[g.id]?.bestScore ?? 0,
+    }));
     return (
       <Dashboard
         username={session.username}
@@ -48,7 +46,7 @@ export default async function Home() {
         top={top}
         dict={dict}
         lang={lang}
-        aiGame={cityAi}
+        aiGames={cityAiGames}
       />
     );
   }
@@ -57,19 +55,16 @@ export default async function Home() {
     globalLeaderboard(5),
     listActiveAiGames(),
   ]);
-  const liveAi = aiGames[aiGames.length - 1];
-  // Anonymous landing — no user session, so no personal best. Pass cap so
-  // the meter chrome renders (empty fill), consistent with evergreen previews.
-  const cityAi = liveAi
-    ? {
-        id: liveAi.id,
-        title: liveAi.title,
-        validUntil: liveAi.validUntil,
-        glyph: liveAi.buildingGlyph,
-        cap: xpCapForAnyLang(liveAi.spec),
-        bestScore: 0,
-      }
-    : undefined;
+  // Anonymous landing — no personal best. Still surface every live AI
+  // building so visitors can see what's on offer before signing up.
+  const cityAiGames = [...aiGames].reverse().map((g) => ({
+    id: g.id,
+    title: g.title,
+    validUntil: g.validUntil,
+    glyph: g.buildingGlyph,
+    cap: xpCapForAnyLang(g.spec),
+    bestScore: 0,
+  }));
   const t = dict.hero;
   const bodyParts = t.body
     .replace("{watts}", "§WATTS§")
@@ -177,7 +172,7 @@ export default async function Home() {
       <section className="flex flex-col gap-4">
         <h2 className="brutal-heading text-2xl">{t.scenesTitle}</h2>
         <p className="text-zinc-400 max-w-xl -mt-2">{t.scenesBody}</p>
-        <CityScene interactive={false} compact aiGame={cityAi} />
+        <CityScene interactive={false} compact aiGames={cityAiGames} />
       </section>
     </div>
   );

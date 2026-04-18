@@ -29,17 +29,15 @@ export default async function GamesHubPage() {
   }));
 
   const aiGames = await listActiveAiGames();
-  const liveAi = aiGames[aiGames.length - 1];
-  const cityAi = liveAi
-    ? {
-        id: liveAi.id,
-        title: liveAi.title,
-        validUntil: liveAi.validUntil,
-        glyph: liveAi.buildingGlyph,
-        cap: xpCapForAnyLang(liveAi.spec),
-        bestScore: stats?.games[liveAi.id]?.bestScore ?? 0,
-      }
-    : undefined;
+  // Newest first — slot 0 = most recent AI game.
+  const cityAiGames = [...aiGames].reverse().map((g) => ({
+    id: g.id,
+    title: g.title,
+    validUntil: g.validUntil,
+    glyph: g.buildingGlyph,
+    cap: xpCapForAnyLang(g.spec),
+    bestScore: stats?.games[g.id]?.bestScore ?? 0,
+  }));
 
   const bodyParts = t.gamesHubBody
     .replace("{light}", "§LIGHT§")
@@ -90,7 +88,7 @@ export default async function GamesHubPage() {
           })}
         </p>
       </header>
-      <CityScene games={cityGames} loggedIn={Boolean(session)} aiGame={cityAi} />
+      <CityScene games={cityGames} loggedIn={Boolean(session)} aiGames={cityAiGames} />
       <aside className="card p-5 flex flex-col gap-3 text-sm text-zinc-300">
         <h2 className="brutal-heading text-lg">{t.buildingsMap}</h2>
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-1.5">
