@@ -45,7 +45,8 @@ function nextProblem(): Problem {
 
 type Phase = "idle" | "running" | "done";
 
-export function MathSprintClient() {
+export function MathSprintClient({ dict }: { dict: Dict }) {
+  const t = dict.math;
   const [phase, setPhase] = useState<Phase>("idle");
   const [secondsLeft, setSecondsLeft] = useState(DURATION_SECONDS);
   const [problem, setProblem] = useState<Problem>(() => nextProblem());
@@ -66,9 +67,9 @@ export function MathSprintClient() {
     setSubmitError(null);
     const res = await submitScore(GAME_ID, finalXp);
     if (res.ok) setResult(res);
-    else setSubmitError(res.error ?? "Nepodarilo sa zapísať skóre.");
+    else setSubmitError(res.error ?? dict.auth.errorGeneric);
     setSubmitting(false);
-  }, []);
+  }, [dict.auth.errorGeneric]);
 
   useEffect(() => {
     if (phase !== "running") return;
@@ -131,12 +132,10 @@ export function MathSprintClient() {
   if (phase === "idle") {
     return (
       <div className="card p-8 flex flex-col gap-4 items-start">
-        <h2 className="text-xl font-semibold">Pripravený?</h2>
-        <p className="text-zinc-400">
-          Po spustení máš 60 sekúnd. Odpoveď zadaj a stlač Enter.
-        </p>
+        <h2 className="text-xl font-semibold">{t.ready}</h2>
+        <p className="text-zinc-400">{t.readyBody}</p>
         <button type="button" className="btn btn-primary" onClick={start}>
-          Spustiť šprint
+          {t.startShort}
         </button>
       </div>
     );
@@ -145,13 +144,14 @@ export function MathSprintClient() {
   if (phase === "done") {
     return (
       <RoundResult
+        dict={dict}
         state={{ submitting, error: submitError, result }}
         gameHref="/games/math-sprint"
-        retryLabel="Znova"
+        retryLabel={t.retry}
         lines={[
-          { label: "Správne", value: String(correct) },
-          { label: "Zlé", value: String(wrong) },
-          { label: "Skóre", value: String(cappedXp) },
+          { label: t.correct, value: String(correct) },
+          { label: t.wrong, value: String(wrong) },
+          { label: t.score, value: String(cappedXp) },
         ]}
       />
     );
@@ -161,7 +161,7 @@ export function MathSprintClient() {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between text-sm">
         <span className="chip">
-          <span className="opacity-70">Čas</span>
+          <span className="opacity-70">{t.time}</span>
           <strong>{secondsLeft}s</strong>
         </span>
         <span className="chip">
@@ -203,7 +203,7 @@ export function MathSprintClient() {
           autoComplete="off"
         />
         <button type="submit" className="btn btn-primary">
-          Odoslať (Enter)
+          {t.submit}
         </button>
       </form>
     </div>

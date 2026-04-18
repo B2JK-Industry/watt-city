@@ -327,7 +327,7 @@ const uk: typeof plDict = {
     headerTitle: "Budget Balance",
     headerBody:
       "Розподіли місячний дохід між 4 категоріями. Чим ближче до рекомендованого діапазону, тим більше Ват. Вчишся правила 50/30/20 на реальних сценаріях.",
-    incomeMonthly: "zł / місяць",
+    incomeMonthly: "/ місяць",
     distribution: "Розподіл",
     total: "Разом",
     recommendation: "Рекомендація {min}–{max}%",

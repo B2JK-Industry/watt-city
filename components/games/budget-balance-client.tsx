@@ -12,7 +12,6 @@ const GAME_ID = "budget-balance";
 type Allocation = Record<BudgetTarget["id"], number>;
 
 function defaultAlloc(scenario: BudgetScenario): Allocation {
-  // start at midpoint of target bands, then normalize to 100
   const raw = Object.fromEntries(
     scenario.targets.map((t) => [t.id, Math.round((t.min + t.max) / 2)]),
   ) as Allocation;
@@ -23,21 +22,20 @@ function defaultAlloc(scenario: BudgetScenario): Allocation {
 }
 
 function fitScore(pct: number, target: BudgetTarget): number {
-  // 0..1 how well this allocation fits the recommended band
   if (pct >= target.min && pct <= target.max) return 1;
   const dist = pct < target.min ? target.min - pct : pct - target.max;
-  // 20 percentage-points outside band → 0; inside band → 1; linear falloff
   return Math.max(0, 1 - dist / 20);
 }
 
 export function BudgetBalanceClient({
   scenario,
+  dict,
 }: {
   scenario: BudgetScenario;
+  dict: Dict;
 }) {
-  const [alloc, setAlloc] = useState<Allocation>(() =>
-    defaultAlloc(scenario),
-  );
+  const t = dict.budget;
+  const [alloc, setAlloc] = useState<Allocation>(() => defaultAlloc(scenario));
   const [locked, setLocked] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -70,9 +68,9 @@ export function BudgetBalanceClient({
     setSubmitError(null);
     const res = await submitScore(GAME_ID, xp);
     if (res.ok) setResult(res);
-    else setSubmitError(res.error ?? "Nepodarilo sa zapísať skóre.");
+    else setSubmitError(res.error ?? dict.auth.errorGeneric);
     setSubmitting(false);
-  }, []);
+  }, [dict.auth.errorGeneric]);
 
   useEffect(() => {
     if (locked) submit(projectedXp);
@@ -85,7 +83,6 @@ export function BudgetBalanceClient({
     setAlloc((cur) => {
       const others = scenario.targets.filter((t) => t.id !== id);
       const othersSum = others.reduce((s, t) => s + cur[t.id], 0);
-      // distribute the remainder across other categories proportionally
       const remaining = 100 - clamped;
       const scaled: Allocation = { ...cur, [id]: clamped };
       if (othersSum === 0) {
@@ -107,25 +104,26 @@ export function BudgetBalanceClient({
     });
   }
 
+  const formatMoney = (n: number) =>
+    `${n.toLocaleString(scenario.localeTag)} ${scenario.currency}`;
+
   if (locked && result) {
-    const lines = scenario.targets.map((t) => ({
-      label: t.label,
-      value: `${alloc[t.id]}%`,
+    const lines = scenario.targets.map((tgt) => ({
+      label: tgt.label,
+      value: `${alloc[tgt.id]}%`,
     }));
     return (
       <div className="flex flex-col gap-4">
         <div className="card p-5 bg-gradient-to-br from-[var(--surface)] to-[var(--surface-2)]">
-          <p className="text-sm text-zinc-400 mb-1">Takeaway</p>
+          <p className="text-sm text-zinc-400 mb-1">{t.takeaway}</p>
           <p className="text-base">💡 {scenario.takeaway}</p>
         </div>
         <RoundResult
+          dict={dict}
           state={{ submitting, error: submitError, result }}
           gameHref="/games/budget-balance"
-          retryLabel="Nový scenár"
-          lines={[
-            ...lines,
-            { label: "Skóre", value: String(projectedXp) },
-          ]}
+          retryLabel={t.retry}
+          lines={[...lines, { label: dict.finance.statsScore, value: String(projectedXp) }]}
         />
       </div>
     );
@@ -137,13 +135,13 @@ export function BudgetBalanceClient({
         <span className="chip w-fit">{scenario.title}</span>
         <p className="text-sm text-zinc-300">{scenario.persona}</p>
         <p className="font-mono text-xl font-bold">
-          {scenario.income.toLocaleString("pl-PL")} zł / mesiac
+          {formatMoney(scenario.income)} {t.incomeMonthly}
         </p>
       </div>
 
       <div className="card p-5 flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-zinc-400">Rozdelenie</span>
+          <span className="text-sm text-zinc-400">{t.distribution}</span>
           <span
             className={`chip ${
               isValid
@@ -151,11 +149,11 @@ export function BudgetBalanceClient({
                 : "border-rose-400 text-rose-300"
             }`}
           >
-            Spolu <strong>{total}%</strong>
+            {t.total} <strong>{total}%</strong>
           </span>
         </div>
         <div className="h-3 rounded-full bg-[var(--surface-2)] overflow-hidden flex">
-          {scenario.targets.map((t, i) => {
+          {scenario.targets.map((tgt, i) => {
             const colors = [
               "from-sky-400 to-sky-500",
               "from-emerald-400 to-emerald-500",
@@ -164,33 +162,33 @@ export function BudgetBalanceClient({
             ];
             return (
               <div
-                key={t.id}
+                key={tgt.id}
                 className={`h-full bg-gradient-to-r ${colors[i % colors.length]}`}
-                style={{ width: `${alloc[t.id]}%` }}
+                style={{ width: `${alloc[tgt.id]}%` }}
               />
             );
           })}
         </div>
 
         <div className="flex flex-col gap-3">
-          {scenario.targets.map((t) => {
-            const pct = alloc[t.id];
+          {scenario.targets.map((tgt) => {
+            const pct = alloc[tgt.id];
             const amount = Math.round((scenario.income * pct) / 100);
-            const inBand = pct >= t.min && pct <= t.max;
+            const inBand = pct >= tgt.min && pct <= tgt.max;
             return (
-              <div key={t.id} className="flex flex-col gap-1">
+              <div key={tgt.id} className="flex flex-col gap-1">
                 <div className="flex items-center justify-between text-sm">
                   <span className="flex items-center gap-2">
-                    <span>{t.emoji}</span>
-                    <strong>{t.label}</strong>
-                    <span className="text-zinc-500 text-xs">· {t.hint}</span>
+                    <span>{tgt.emoji}</span>
+                    <strong>{tgt.label}</strong>
+                    <span className="text-zinc-500 text-xs">· {tgt.hint}</span>
                   </span>
                   <span
                     className={`font-mono ${
                       inBand ? "text-emerald-300" : "text-zinc-300"
                     }`}
                   >
-                    {pct}% · {amount} zł
+                    {pct}% · {formatMoney(amount)}
                   </span>
                 </div>
                 <div className="relative">
@@ -200,19 +198,21 @@ export function BudgetBalanceClient({
                     max={100}
                     value={pct}
                     disabled={locked}
-                    onChange={(e) => change(t.id, Number(e.target.value))}
+                    onChange={(e) => change(tgt.id, Number(e.target.value))}
                     className="w-full accent-[var(--accent)]"
                   />
                   <div
                     className="absolute top-1/2 -translate-y-1/2 h-1.5 pointer-events-none bg-emerald-400/30 rounded-full"
                     style={{
-                      left: `${t.min}%`,
-                      width: `${t.max - t.min}%`,
+                      left: `${tgt.min}%`,
+                      width: `${tgt.max - tgt.min}%`,
                     }}
                   />
                 </div>
                 <div className="text-[11px] text-zinc-500">
-                  Odporúčanie {t.min}–{t.max}%
+                  {t.recommendation
+                    .replace("{min}", String(tgt.min))
+                    .replace("{max}", String(tgt.max))}
                 </div>
               </div>
             );
@@ -222,7 +222,7 @@ export function BudgetBalanceClient({
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="text-sm text-zinc-400">
-          Projekcia:{" "}
+          {t.projection}{" "}
           <strong className="text-[var(--accent)] font-mono">
             {projectedXp}/{XP_CAP}
           </strong>
@@ -233,7 +233,7 @@ export function BudgetBalanceClient({
           onClick={() => setLocked(true)}
           disabled={!isValid || locked}
         >
-          {locked ? "Zapisujem…" : "Odoslať rozpočet"}
+          {locked ? t.submitting : t.submit}
         </button>
       </div>
     </div>

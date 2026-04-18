@@ -325,7 +325,7 @@ const pl = {
     headerTitle: "Budget Balance",
     headerBody:
       "Podziel miesięczny dochód na 4 kategorie. Im bliżej zalecanego przedziału, tym więcej Watów. Uczysz się zasady 50/30/20 na realnych scenariuszach.",
-    incomeMonthly: "zł / miesiąc",
+    incomeMonthly: "/ miesiąc",
     distribution: "Podział",
     total: "Razem",
     recommendation: "Zalecenie {min}–{max}%",

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {
   useCallback,
   useEffect,
@@ -56,7 +55,8 @@ function scoreFor(seconds: number, mismatches: number): number {
   return Math.max(20, Math.min(XP_CAP, Math.round(raw)));
 }
 
-export function MemoryMatchClient({ pairs }: { pairs: MemoryPair[] }) {
+export function MemoryMatchClient({ pairs, dict }: { pairs: MemoryPair[]; dict: Dict }) {
+  const t = dict.memory;
   const [deck, setDeck] = useState<Card[]>(() => buildDeck(pairs));
   const [selected, setSelected] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -101,9 +101,9 @@ export function MemoryMatchClient({ pairs }: { pairs: MemoryPair[] }) {
     submitScore(GAME_ID, xp)
       .then((res) => {
         if (res.ok) setResult(res);
-        else setSubmitError(res.error ?? "Nepodarilo sa zapísať skóre.");
+        else setSubmitError(res.error ?? dict.auth.errorGeneric);
       })
-      .catch(() => setSubmitError("Sieťová chyba. Watty sa nezapísali."))
+      .catch(() => setSubmitError(dict.auth.errorNetwork))
       .finally(() => setSubmitting(false));
   }, [completed, startedAt, mismatches]);
 
@@ -169,13 +169,14 @@ export function MemoryMatchClient({ pairs }: { pairs: MemoryPair[] }) {
   if (completed) {
     return (
       <RoundResult
+        dict={dict}
         state={{ submitting, error: submitError, result }}
         gameHref="/games/memory-match"
-        retryLabel="Nové párovanie"
+        retryLabel={t.retry}
         lines={[
-          { label: "Čas", value: `${elapsed}s` },
-          { label: "Chyby", value: String(mismatches) },
-          { label: "Páry", value: `${totalPairs}/${totalPairs}` },
+          { label: t.time, value: `${elapsed}s` },
+          { label: t.mistakes, value: String(mismatches) },
+          { label: t.pairs, value: `${totalPairs}/${totalPairs}` },
         ]}
       />
     );
@@ -185,15 +186,15 @@ export function MemoryMatchClient({ pairs }: { pairs: MemoryPair[] }) {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between text-sm">
         <span className="chip">
-          <span className="opacity-70">Čas</span>
+          <span className="opacity-70">{t.time}</span>
           <strong>{elapsed}s</strong>
         </span>
         <span className="chip">
-          <span className="opacity-70">Chyby</span>
+          <span className="opacity-70">{t.mistakes}</span>
           <strong>{mismatches}</strong>
         </span>
         <span className="chip">
-          <span className="opacity-70">Spárované</span>
+          <span className="opacity-70">{t.matched}</span>
           <strong>
             {matchedCount / 2}/{totalPairs}
           </strong>
@@ -201,14 +202,14 @@ export function MemoryMatchClient({ pairs }: { pairs: MemoryPair[] }) {
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {deck.map((card) => (
-          <MemoryCard key={card.id} card={card} onClick={() => flip(card.id)} />
+          <MemoryCard key={card.id} card={card} onClick={() => flip(card.id)} hiddenLabel={t.hidden} />
         ))}
       </div>
     </div>
   );
 }
 
-function MemoryCard({ card, onClick }: { card: Card; onClick: () => void }) {
+function MemoryCard({ card, onClick, hiddenLabel }: { card: Card; onClick: () => void; hiddenLabel: string }) {
   const faceUp = card.revealed || card.matched;
   const isDefinition = card.side === "definition";
 
@@ -217,7 +218,7 @@ function MemoryCard({ card, onClick }: { card: Card; onClick: () => void }) {
       type="button"
       onClick={onClick}
       disabled={card.matched || card.revealed}
-      aria-label={faceUp ? card.text : "Skrytá karta"}
+      aria-label={faceUp ? card.text : hiddenLabel}
       className={`relative aspect-[5/4] rounded-2xl border-[3px] border-[var(--ink)] transition-all overflow-hidden shadow-[4px_4px_0_0_var(--ink)] ${
         card.matched
           ? "opacity-95 ring-4 ring-emerald-400"

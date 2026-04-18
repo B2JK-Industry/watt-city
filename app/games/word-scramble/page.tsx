@@ -3,17 +3,17 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { WordScrambleClient } from "@/components/games/word-scramble-client";
 import {
-  SCRAMBLE_WORDS,
+  scrambleWordsFor,
   WORDS_PER_ROUND,
 } from "@/lib/content/word-scramble";
 import { sample } from "@/lib/shuffle";
-import { dictFor } from "@/lib/i18n";
+import { dictFor, type Lang } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
 export const dynamic = "force-dynamic";
 
-function pickRound() {
-  return sample(SCRAMBLE_WORDS, WORDS_PER_ROUND);
+function pickRound(lang: Lang) {
+  return sample(scrambleWordsFor(lang), WORDS_PER_ROUND);
 }
 
 export default async function WordScramblePage() {
@@ -31,7 +31,7 @@ export default async function WordScramblePage() {
         <h1 className="text-3xl font-bold">{t.headerTitle}</h1>
         <p className="text-zinc-400">{t.headerBody}</p>
       </header>
-      <WordScrambleClient words={pickRound()} />
+      <WordScrambleClient words={pickRound(lang)} dict={dict} />
     </div>
   );
 }

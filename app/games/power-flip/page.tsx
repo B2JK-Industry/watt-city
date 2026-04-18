@@ -2,15 +2,15 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { PowerFlipClient } from "@/components/games/power-flip-client";
-import { POWER_ROUNDS, type PowerRound } from "@/lib/content/power-flip";
+import { powerRoundsFor, type PowerRound } from "@/lib/content/power-flip";
 import { shuffle } from "@/lib/shuffle";
-import { dictFor } from "@/lib/i18n";
+import { dictFor, type Lang } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
 export const dynamic = "force-dynamic";
 
-function pickRound(): PowerRound[] {
-  return shuffle(POWER_ROUNDS).map((r) => {
+function pickRound(lang: Lang): PowerRound[] {
+  return shuffle(powerRoundsFor(lang)).map((r) => {
     if (Math.random() < 0.5) {
       return {
         ...r,
@@ -38,7 +38,7 @@ export default async function PowerFlipPage() {
         <h1 className="text-3xl font-bold">{t.headerTitle}</h1>
         <p className="text-zinc-400">{t.headerBody}</p>
       </header>
-      <PowerFlipClient rounds={pickRound()} />
+      <PowerFlipClient rounds={pickRound(lang)} dict={dict} />
     </div>
   );
 }

@@ -54,7 +54,8 @@ function nextProblem(): Problem {
 
 type Phase = "idle" | "running" | "done";
 
-export function CurrencyRushClient() {
+export function CurrencyRushClient({ dict }: { dict: Dict }) {
+  const t = dict.currency;
   const [phase, setPhase] = useState<Phase>("idle");
   const [secondsLeft, setSecondsLeft] = useState(DURATION_SECONDS);
   const [problem, setProblem] = useState<Problem>(() => nextProblem());
@@ -74,9 +75,9 @@ export function CurrencyRushClient() {
     setSubmitError(null);
     const res = await submitScore(GAME_ID, finalXp);
     if (res.ok) setResult(res);
-    else setSubmitError(res.error ?? "Nepodarilo sa zapísať skóre.");
+    else setSubmitError(res.error ?? dict.auth.errorGeneric);
     setSubmitting(false);
-  }, []);
+  }, [dict.auth.errorGeneric]);
 
   useEffect(() => {
     if (phase !== "running") return;
@@ -146,13 +147,10 @@ export function CurrencyRushClient() {
   if (phase === "idle") {
     return (
       <div className="card p-8 flex flex-col items-start gap-4">
-        <h2 className="text-xl font-semibold">Pripravený?</h2>
-        <p className="text-zinc-400">
-          Výsledok píš v cieľovej mene (desatinné miesta oddeľuj bodkou alebo
-          čiarkou). Kurzy nájdeš vľavo počas hry.
-        </p>
+        <h2 className="text-xl font-semibold">{t.ready}</h2>
+        <p className="text-zinc-400">{t.readyBody}</p>
         <button type="button" className="btn btn-primary" onClick={start}>
-          Spustiť šprint
+          {t.startShort}
         </button>
       </div>
     );
@@ -161,13 +159,14 @@ export function CurrencyRushClient() {
   if (phase === "done") {
     return (
       <RoundResult
+        dict={dict}
         state={{ submitting, error: submitError, result }}
         gameHref="/games/currency-rush"
-        retryLabel="Nový šprint"
+        retryLabel={t.retry}
         lines={[
-          { label: "Správne", value: String(correct) },
-          { label: "Zlé", value: String(wrong) },
-          { label: "Skóre", value: String(Math.min(xp, XP_CAP)) },
+          { label: t.correct, value: String(correct) },
+          { label: t.wrong, value: String(wrong) },
+          { label: t.score, value: String(Math.min(xp, XP_CAP)) },
         ]}
       />
     );

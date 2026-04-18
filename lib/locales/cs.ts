@@ -327,7 +327,7 @@ const cs: typeof plDict = {
     headerTitle: "Budget Balance",
     headerBody:
       "Rozděl měsíční příjem mezi 4 kategorie. Čím blíž doporučenému pásmu, tím víc Wattů. Učíš se pravidlo 50/30/20 na reálných scénářích.",
-    incomeMonthly: "zł / měsíc",
+    incomeMonthly: "/ měsíc",
     distribution: "Rozdělení",
     total: "Celkem",
     recommendation: "Doporučení {min}–{max}%",

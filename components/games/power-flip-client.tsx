@@ -22,7 +22,8 @@ const GAME_ID = "power-flip";
 
 type Phase = "idle" | "running" | "done";
 
-export function PowerFlipClient({ rounds }: { rounds: PowerRound[] }) {
+export function PowerFlipClient({ rounds, dict }: { rounds: PowerRound[]; dict: Dict }) {
+  const t = dict.power;
   const [phase, setPhase] = useState<Phase>("idle");
   const [secondsLeft, setSecondsLeft] = useState(DURATION_SECONDS);
   const [index, setIndex] = useState(0);
@@ -61,9 +62,9 @@ export function PowerFlipClient({ rounds }: { rounds: PowerRound[] }) {
     setSubmitError(null);
     const res = await submitScore(GAME_ID, finalXp);
     if (res.ok) setResult(res);
-    else setSubmitError(res.error ?? "Nepodarilo sa zapísať skóre.");
+    else setSubmitError(res.error ?? dict.auth.errorGeneric);
     setSubmitting(false);
-  }, []);
+  }, [dict.auth.errorGeneric]);
 
   useEffect(() => {
     if (phase === "done") submit(Math.min(xp, XP_CAP));
@@ -125,13 +126,10 @@ export function PowerFlipClient({ rounds }: { rounds: PowerRound[] }) {
   if (phase === "idle") {
     return (
       <div className="card p-8 flex flex-col gap-4 items-start">
-        <h2 className="text-xl font-semibold">Pripravený?</h2>
-        <p className="text-zinc-400">
-          Dve možnosti vedľa seba. Ktorá ušetrí viac energie alebo peňazí? Kliknite
-          vľavo alebo vpravo. Správne klik za sebou = combo ×2, ×3.
-        </p>
+        <h2 className="text-xl font-semibold">{t.ready}</h2>
+        <p className="text-zinc-400">{t.readyBody}</p>
         <button type="button" className="btn btn-primary" onClick={start}>
-          Spustiť Power Flip
+          {t.startShort}
         </button>
       </div>
     );
@@ -140,14 +138,15 @@ export function PowerFlipClient({ rounds }: { rounds: PowerRound[] }) {
   if (phase === "done") {
     return (
       <RoundResult
+        dict={dict}
         state={{ submitting, error: submitError, result }}
         gameHref="/games/power-flip"
-        retryLabel="Znova"
+        retryLabel={t.retry}
         lines={[
-          { label: "Správne", value: String(correct) },
-          { label: "Zlé", value: String(wrong) },
-          { label: "Best combo", value: String(bestCombo) },
-          { label: "Skóre", value: String(Math.min(xp, XP_CAP)) },
+          { label: t.correct, value: String(correct) },
+          { label: t.wrong, value: String(wrong) },
+          { label: t.bestCombo, value: String(bestCombo) },
+          { label: t.score, value: String(Math.min(xp, XP_CAP)) },
         ]}
       />
     );
@@ -157,7 +156,7 @@ export function PowerFlipClient({ rounds }: { rounds: PowerRound[] }) {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-2 flex-wrap text-sm">
         <span className="chip">
-          <span className="opacity-70">Čas</span>
+          <span className="opacity-70">{t.time}</span>
           <strong>{secondsLeft}s</strong>
         </span>
         <ComboBadge combo={combo} multiplier={comboMultiplier(combo)} />
@@ -192,7 +191,7 @@ export function PowerFlipClient({ rounds }: { rounds: PowerRound[] }) {
           <FloatingFxLayer items={fxItems} />
         </div>
         <p className="text-xs text-zinc-400 italic min-h-[1.5em] text-center">
-          {lastFact ? `💡 ${lastFact}` : "Tap rýchlo — čas beží."}
+          {lastFact ? `💡 ${lastFact}` : t.tapFast}
         </p>
       </div>
     </div>

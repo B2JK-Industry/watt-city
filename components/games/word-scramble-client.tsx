@@ -35,7 +35,8 @@ function normalize(s: string): string {
   return s.trim().toUpperCase();
 }
 
-export function WordScrambleClient({ words }: { words: ScrambleWord[] }) {
+export function WordScrambleClient({ words, dict }: { words: ScrambleWord[]; dict: Dict }) {
+  const t = dict.word;
   const rounds = useMemo(
     () =>
       words.map((w) => ({
@@ -65,10 +66,10 @@ export function WordScrambleClient({ words }: { words: ScrambleWord[] }) {
       setSubmitError(null);
       const res = await submitScore(GAME_ID, score);
       if (res.ok) setResult(res);
-      else setSubmitError(res.error ?? "Nepodarilo sa zapísať skóre.");
+      else setSubmitError(res.error ?? dict.auth.errorGeneric);
       setSubmitting(false);
     },
-    [],
+    [dict.auth.errorGeneric],
   );
 
   useEffect(() => {
@@ -115,14 +116,15 @@ export function WordScrambleClient({ words }: { words: ScrambleWord[] }) {
   if (done) {
     return (
       <RoundResult
+        dict={dict}
         state={{ submitting, error: submitError, result }}
         gameHref="/games/word-scramble"
-        retryLabel="Nové kolo"
+        retryLabel={t.retry}
         lines={[
-          { label: "Správne", value: `${correct}/${total}` },
-          { label: "Preskočené", value: String(skipped) },
+          { label: t.correct, value: `${correct}/${total}` },
+          { label: t.skipped, value: String(skipped) },
           {
-            label: "Skóre",
+            label: t.score,
             value: String(Math.min(correct * XP_PER_WORD, XP_CAP)),
           },
         ]}
@@ -134,10 +136,10 @@ export function WordScrambleClient({ words }: { words: ScrambleWord[] }) {
     <div className="flex flex-col gap-5">
       <div className="flex items-center justify-between text-sm">
         <span className="chip">
-          Slovo {index + 1} / {total}
+          {t.word} {index + 1} / {total}
         </span>
         <span className="chip">
-          <span className="opacity-70">Správne</span>
+          <span className="opacity-70">{t.correct}</span>
           <strong className="text-[var(--accent)]">{correct}</strong>
         </span>
       </div>
@@ -178,10 +180,10 @@ export function WordScrambleClient({ words }: { words: ScrambleWord[] }) {
         />
         <div className="flex flex-wrap gap-3 justify-end">
           <button type="button" className="btn btn-ghost" onClick={skip}>
-            Preskočiť
+            {t.skip}
           </button>
           <button type="submit" className="btn btn-primary">
-            Potvrdiť (Enter)
+            {t.confirm}
           </button>
         </div>
       </form>

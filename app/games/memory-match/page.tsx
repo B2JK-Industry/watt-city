@@ -2,15 +2,15 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { MemoryMatchClient } from "@/components/games/memory-match-client";
-import { MEMORY_PAIRS, PAIRS_PER_ROUND } from "@/lib/content/memory-pairs";
+import { memoryPairsFor, PAIRS_PER_ROUND } from "@/lib/content/memory-pairs";
 import { sample } from "@/lib/shuffle";
-import { dictFor } from "@/lib/i18n";
+import { dictFor, type Lang } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
 export const dynamic = "force-dynamic";
 
-function pickRound() {
-  return sample(MEMORY_PAIRS, PAIRS_PER_ROUND);
+function pickRound(lang: Lang) {
+  return sample(memoryPairsFor(lang), PAIRS_PER_ROUND);
 }
 
 export default async function MemoryMatchPage() {
@@ -28,7 +28,7 @@ export default async function MemoryMatchPage() {
         <h1 className="text-3xl font-bold">{t.headerTitle}</h1>
         <p className="text-zinc-400">{t.headerBody}</p>
       </header>
-      <MemoryMatchClient pairs={pickRound()} />
+      <MemoryMatchClient pairs={pickRound(lang)} dict={dict} />
     </div>
   );
 }

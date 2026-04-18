@@ -22,7 +22,7 @@ export default async function CurrencyRushPage() {
         <h1 className="text-3xl font-bold">{t.headerTitle}</h1>
         <p className="text-zinc-400">{t.headerBody}</p>
       </header>
-      <CurrencyRushClient />
+      <CurrencyRushClient dict={dict} />
     </div>
   );
 }

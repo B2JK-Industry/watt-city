@@ -327,7 +327,7 @@ const en: typeof plDict = {
     headerTitle: "Budget Balance",
     headerBody:
       "Split the monthly income across 4 categories. The closer to the recommended band, the more Watts. You learn the 50/30/20 rule on real scenarios.",
-    incomeMonthly: "zł / month",
+    incomeMonthly: "/ month",
     distribution: "Split",
     total: "Total",
     recommendation: "Recommended {min}–{max}%",

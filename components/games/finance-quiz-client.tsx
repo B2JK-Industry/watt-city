@@ -7,12 +7,13 @@ import { submitScore, type ScoreResponse } from "@/lib/client-api";
 import { RoundResult } from "@/components/games/round-result";
 import type { Dict } from "@/lib/i18n";
 
-type Props = { questions: QuizQuestion[] };
+type Props = { questions: QuizQuestion[]; dict: Dict };
 type Phase = "playing" | "reveal" | "done";
 
 const GAME_ID = "finance-quiz";
 
-export function FinanceQuizClient({ questions }: Props) {
+export function FinanceQuizClient({ questions, dict }: Props) {
+  const t = dict.finance;
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>("playing");
   const [chosen, setChosen] = useState<number | null>(null);
@@ -33,9 +34,9 @@ export function FinanceQuizClient({ questions }: Props) {
     setSubmitError(null);
     const res = await submitScore(GAME_ID, xp);
     if (res.ok) setResult(res);
-    else setSubmitError(res.error ?? "Nepodarilo sa zapísať skóre.");
+    else setSubmitError(res.error ?? dict.auth.errorGeneric);
     setSubmitting(false);
-  }, []);
+  }, [dict.auth.errorGeneric]);
 
   useEffect(() => {
     if (phase === "done") submit(correctCount * XP_PER_CORRECT);
@@ -63,14 +64,15 @@ export function FinanceQuizClient({ questions }: Props) {
   if (phase === "done") {
     return (
       <RoundResult
+        dict={dict}
         state={{ submitting, error: submitError, result }}
         gameHref="/games/finance-quiz"
-        retryLabel="Nové kolo"
+        retryLabel={t.retryLabel}
         lines={[
-          { label: "Správne", value: `${correctCount}/${total}` },
-          { label: "Chyby", value: String(total - correctCount) },
+          { label: t.statsCorrect, value: `${correctCount}/${total}` },
+          { label: t.statsWrong, value: String(total - correctCount) },
           {
-            label: "Skóre",
+            label: t.statsScore,
             value: String(correctCount * XP_PER_CORRECT),
           },
         ]}
@@ -82,10 +84,12 @@ export function FinanceQuizClient({ questions }: Props) {
     <div className="flex flex-col gap-5">
       <div className="flex items-center justify-between text-sm text-zinc-400">
         <span>
-          Otázka {index + 1} / {total}
+          {t.progressQuestion
+            .replace("{i}", String(index + 1))
+            .replace("{n}", String(total))}
         </span>
         <span>
-          Správne:{" "}
+          {t.progressCorrect}:{" "}
           <strong className="text-[var(--accent)]">{correctCount}</strong>
         </span>
       </div>
@@ -139,7 +143,7 @@ export function FinanceQuizClient({ questions }: Props) {
               }`}
             >
               <p className="font-semibold mb-1">
-                {chosen === current.correctIndex ? "Správne ✓" : "Nesprávne ✗"}
+                {chosen === current.correctIndex ? t.correctMark : t.wrongMark}
               </p>
               <p className="text-sm text-zinc-300">{current.explanation}</p>
             </div>
@@ -148,7 +152,7 @@ export function FinanceQuizClient({ questions }: Props) {
               className="btn btn-primary self-end"
               onClick={nextStep}
             >
-              {index + 1 < total ? "Ďalej" : "Ukončiť a uložiť Watty"}
+              {index + 1 < total ? t.next : t.finish}
             </button>
           </div>
         )}
