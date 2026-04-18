@@ -26,22 +26,57 @@ export type ScoreFailure = { ok: false; error: string };
 
 export type ScoreResponse = ScoreSuccess | ScoreFailure;
 
+// Phase 6.1.4 — read the CSRF cookie (set by middleware) and echo it in
+// the X-CSRF-Token header on every mutating request. Cookies are readable
+// by JS on purpose — the protection comes from same-origin scripts being
+// the only code that can read document.cookie.
+function csrfToken(): string | null {
+  if (typeof document === "undefined") return null;
+  const m = document.cookie.match(/(?:^|;\s*)wc_csrf=([^;]+)/);
+  return m ? decodeURIComponent(m[1]) : null;
+}
+
+type FetchInit = Omit<RequestInit, "body"> & { body?: unknown };
+
+/** Fetch wrapper that auto-JSON-stringifies + attaches the CSRF header.
+ *  Use for every client → server mutating call. Returns the parsed JSON
+ *  response (or `{ ok: false, error }` on network/parse failure). */
+export async function postJson<T = unknown>(
+  path: string,
+  body?: unknown,
+  init: FetchInit = {},
+): Promise<T | { ok: false; error: string }> {
+  const token = csrfToken();
+  try {
+    const res = await fetch(path, {
+      ...init,
+      method: init.method ?? "POST",
+      headers: {
+        "content-type": "application/json",
+        ...(token ? { "x-csrf-token": token } : {}),
+        ...(init.headers ?? {}),
+      },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+    return (await res.json()) as T;
+  } catch (e) {
+    return { ok: false, error: (e as Error).message };
+  }
+}
+
 export async function submitScore(
   gameId: string,
   xp: number,
 ): Promise<ScoreResponse> {
-  const res = await fetch("/api/score", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ gameId, xp: Math.max(0, Math.floor(xp)) }),
+  const json = await postJson<ScoreSuccess | ScoreFailure>("/api/score", {
+    gameId,
+    xp: Math.max(0, Math.floor(xp)),
   });
-  try {
-    const json = await res.json();
-    if (!res.ok || !json?.ok) {
-      return { ok: false, error: json?.error ?? "Nepodarilo sa zapísať skóre." };
-    }
-    return json as ScoreSuccess;
-  } catch {
-    return { ok: false, error: "Neplatná odpoveď servera." };
+  if (!("ok" in json) || !json.ok) {
+    return {
+      ok: false,
+      error: ("error" in json && json.error) || "Błąd serwera.",
+    };
   }
+  return json as ScoreSuccess;
 }
