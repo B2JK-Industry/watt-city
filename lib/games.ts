@@ -1,31 +1,95 @@
+export type GameCategory = "finance" | "math" | "memory" | "knowledge" | "reflex";
+
 export type GameMeta = {
   id: string;
   title: string;
   tagline: string;
-  category: "finance" | "math" | "memory" | "knowledge";
+  description: string;
+  category: GameCategory;
   xpCap: number;
+  durationLabel: string;
   accent: string; // tailwind gradient class segment
-  emoji?: string;
+  emoji: string;
 };
 
 export const GAMES: GameMeta[] = [
   {
     id: "finance-quiz",
     title: "Finančný kvíz",
-    tagline: "Základy osobných financií — 1 bod za správnu odpoveď.",
-    category: "finance",
+    tagline: "5 otázok z osobných financií.",
+    description:
+      "Otestuj svoje vedomosti o úveroch, úsporách, ETF, inflácii a BLIK. Za každú správnu odpoveď +20 XP a vysvetlenie, prečo je správna.",
+    category: "knowledge",
     xpCap: 100,
-    accent: "from-amber-400 to-rose-500",
+    durationLabel: "~2 min",
+    accent: "from-amber-400 via-orange-500 to-rose-500",
+    emoji: "🧠",
   },
   {
     id: "math-sprint",
-    title: "Mat. šprint",
-    tagline: "60 sekúnd. Rýchle počty. Každá správna = XP.",
+    title: "Matematický šprint",
+    tagline: "60 s rýchlych počtov.",
+    description:
+      "Sčítanie, odčítanie, násobenie. Enter = odoslať. Správne +10, zle −5. Otestuj svoju mentálnu matematiku — strop 200 XP.",
     category: "math",
     xpCap: 200,
-    accent: "from-sky-400 to-indigo-600",
+    durationLabel: "60 s",
+    accent: "from-sky-400 via-indigo-500 to-purple-600",
+    emoji: "⚡",
+  },
+  {
+    id: "memory-match",
+    title: "Pamäťové páry",
+    tagline: "Spáruj pojem s definíciou.",
+    description:
+      "8 párov finančných pojmov a ich definícií. Otoč dve karty, ak sa zhodujú, ostanú odkryté. Rýchlejšie → vyššie XP.",
+    category: "memory",
+    xpCap: 160,
+    durationLabel: "~90 s",
+    accent: "from-emerald-400 via-teal-500 to-cyan-600",
+    emoji: "🎴",
+  },
+  {
+    id: "currency-rush",
+    title: "Kurzový šprint",
+    tagline: "Prevody mien proti času.",
+    description:
+      "EUR ↔ PLN ↔ USD. 45 sekúnd, čo najviac správnych odpovedí. Tolerancia ±2 %. Rýchle matematické premýšľanie v reálnych kurzoch.",
+    category: "finance",
+    xpCap: 180,
+    durationLabel: "45 s",
+    accent: "from-lime-400 via-yellow-500 to-amber-600",
+    emoji: "💱",
+  },
+  {
+    id: "word-scramble",
+    title: "Premiešané slová",
+    tagline: "Odkódoj finančný pojem.",
+    description:
+      "Písmená sú premiešané — odhaľ pôvodné poľské slovo z oblasti financií a ekonómie. 8 slov za kolo, každá správna +15 XP.",
+    category: "knowledge",
+    xpCap: 120,
+    durationLabel: "~2 min",
+    accent: "from-fuchsia-500 via-pink-500 to-rose-500",
+    emoji: "🔡",
   },
 ];
+
+export const CATEGORY_LABELS: Record<GameCategory, string> = {
+  finance: "Financie",
+  math: "Matematika",
+  memory: "Pamäť",
+  knowledge: "Vedomosti",
+  reflex: "Reflex",
+};
+
+export const CATEGORY_ACCENTS: Record<GameCategory, string> = {
+  finance: "text-lime-300 border-lime-500/40",
+  math: "text-sky-300 border-sky-500/40",
+  memory: "text-emerald-300 border-emerald-500/40",
+  knowledge: "text-amber-300 border-amber-500/40",
+  reflex: "text-rose-300 border-rose-500/40",
+};
 
 export function getGame(id: string): GameMeta | undefined {
   return GAMES.find((g) => g.id === id);

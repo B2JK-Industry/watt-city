@@ -1,13 +1,15 @@
 "use client";
 
-import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import type { QuizQuestion } from "@/lib/content/finance-quiz";
 import { XP_PER_CORRECT } from "@/lib/content/finance-quiz";
+import { submitScore, type ScoreResponse } from "@/lib/client-api";
+import { RoundResult } from "@/components/games/round-result";
 
 type Props = { questions: QuizQuestion[] };
-
 type Phase = "playing" | "reveal" | "done";
+
+const GAME_ID = "finance-quiz";
 
 export function FinanceQuizClient({ questions }: Props) {
   const [index, setIndex] = useState(0);
@@ -16,15 +18,27 @@ export function FinanceQuizClient({ questions }: Props) {
   const [correctCount, setCorrectCount] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitted, setSubmitted] = useState<{
-    awarded: number;
-    globalXP: number;
-    globalRank: number | null;
-  } | null>(null);
+  const [result, setResult] = useState<ScoreResponse | null>(null);
 
   const total = questions.length;
   const current = questions[index];
-  const progress = useMemo(() => ((index + (phase === "reveal" ? 1 : 0)) / total) * 100, [index, phase, total]);
+  const progress = useMemo(
+    () => ((index + (phase === "reveal" ? 1 : 0)) / total) * 100,
+    [index, phase, total],
+  );
+
+  const submit = useCallback(async (xp: number) => {
+    setSubmitting(true);
+    setSubmitError(null);
+    const res = await submitScore(GAME_ID, xp);
+    if (res.ok) setResult(res);
+    else setSubmitError(res.error ?? "Nepodarilo sa zapísať skóre.");
+    setSubmitting(false);
+  }, []);
+
+  useEffect(() => {
+    if (phase === "done") submit(correctCount * XP_PER_CORRECT);
+  }, [phase, correctCount, submit]);
 
   function choose(optionIdx: number) {
     if (phase !== "playing") return;
@@ -35,81 +49,31 @@ export function FinanceQuizClient({ questions }: Props) {
     setPhase("reveal");
   }
 
-  async function nextStep() {
+  function nextStep() {
     if (index + 1 < total) {
       setIndex((i) => i + 1);
       setChosen(null);
       setPhase("playing");
-      return;
-    }
-    setPhase("done");
-    setSubmitting(true);
-    setSubmitError(null);
-    try {
-      const res = await fetch("/api/score", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          gameId: "finance-quiz",
-          xp: correctCount * XP_PER_CORRECT,
-        }),
-      });
-      const json = await res.json();
-      if (!res.ok || !json.ok) {
-        setSubmitError(json.error ?? "Nepodarilo sa zapísať skóre.");
-        return;
-      }
-      setSubmitted({
-        awarded: json.awarded,
-        globalXP: json.globalXP,
-        globalRank: json.globalRank,
-      });
-    } catch {
-      setSubmitError("Sieťová chyba. XP sa nezapísali.");
-    } finally {
-      setSubmitting(false);
+    } else {
+      setPhase("done");
     }
   }
 
   if (phase === "done") {
     return (
-      <div className="card p-8 flex flex-col gap-4">
-        <h2 className="text-2xl font-bold">Koniec kola</h2>
-        <p className="text-zinc-300">
-          Správne odpovede: <strong>{correctCount}</strong> / {total}
-        </p>
-        {submitting && <p className="text-zinc-400">Zapisujem XP…</p>}
-        {submitError && (
-          <p className="text-rose-400">Chyba: {submitError}</p>
-        )}
-        {submitted && (
-          <div className="flex flex-col gap-2">
-            <p className="text-lg">
-              Získal si <strong className="text-[var(--accent)]">
-                +{submitted.awarded} XP
-              </strong>
-            </p>
-            <p className="text-sm text-zinc-400">
-              Celkovo máš {submitted.globalXP} XP
-              {submitted.globalRank !== null
-                ? ` · pozícia #${submitted.globalRank} globálne`
-                : ""}
-              .
-            </p>
-          </div>
-        )}
-        <div className="flex flex-wrap gap-3 mt-2">
-          <Link href="/games/finance-quiz" className="btn btn-primary">
-            Hrať znova
-          </Link>
-          <Link href="/leaderboard" className="btn btn-ghost">
-            Rebríček
-          </Link>
-          <Link href="/games" className="btn btn-ghost">
-            Iná hra
-          </Link>
-        </div>
-      </div>
+      <RoundResult
+        state={{ submitting, error: submitError, result }}
+        gameHref="/games/finance-quiz"
+        retryLabel="Nové kolo"
+        lines={[
+          { label: "Správne", value: `${correctCount}/${total}` },
+          { label: "Chyby", value: String(total - correctCount) },
+          {
+            label: "Skóre",
+            value: String(correctCount * XP_PER_CORRECT),
+          },
+        ]}
+      />
     );
   }
 
@@ -120,7 +84,8 @@ export function FinanceQuizClient({ questions }: Props) {
           Otázka {index + 1} / {total}
         </span>
         <span>
-          Správne: <strong className="text-[var(--accent)]">{correctCount}</strong>
+          Správne:{" "}
+          <strong className="text-[var(--accent)]">{correctCount}</strong>
         </span>
       </div>
       <div className="h-2 rounded-full bg-[var(--surface-2)] overflow-hidden">
@@ -135,14 +100,16 @@ export function FinanceQuizClient({ questions }: Props) {
           {current.options.map((opt, i) => {
             const isCorrect = i === current.correctIndex;
             const isChosen = i === chosen;
-            let variant = "bg-[var(--surface-2)] border-[var(--border)] hover:border-[var(--accent)]";
+            let variant =
+              "bg-[var(--surface-2)] border-[var(--border)] hover:border-[var(--accent)]";
             if (phase === "reveal") {
               if (isCorrect) {
                 variant = "bg-emerald-900/30 border-emerald-500/60";
               } else if (isChosen) {
                 variant = "bg-rose-900/30 border-rose-500/60";
               } else {
-                variant = "bg-[var(--surface-2)] border-[var(--border)] opacity-70";
+                variant =
+                  "bg-[var(--surface-2)] border-[var(--border)] opacity-70";
               }
             }
             return (

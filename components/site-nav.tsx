@@ -5,9 +5,20 @@ type Props = {
   username: string | null;
   xp: number;
   rank: number | null;
+  level: number;
+  levelProgress: number; // 0..1
+  title: string | null;
 };
 
-export function SiteNav({ username, xp, rank }: Props) {
+export function SiteNav({
+  username,
+  xp,
+  rank,
+  level,
+  levelProgress,
+  title,
+}: Props) {
+  const pct = Math.round(levelProgress * 100);
   return (
     <header className="w-full border-b border-[var(--border)]/60 backdrop-blur sticky top-0 z-20 bg-[color-mix(in_oklab,var(--background)_80%,transparent)]">
       <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
@@ -16,12 +27,26 @@ export function SiteNav({ username, xp, rank }: Props) {
           <span>XP Arena</span>
         </Link>
         <div className="hidden sm:flex items-center gap-5 text-sm">
-          <Link href="/games" className="hover:text-[var(--accent)]">Hry</Link>
-          <Link href="/leaderboard" className="hover:text-[var(--accent)]">Rebríček</Link>
+          <Link href="/games" className="hover:text-[var(--accent)] transition-colors">
+            Hry
+          </Link>
+          <Link
+            href="/leaderboard"
+            className="hover:text-[var(--accent)] transition-colors"
+          >
+            Rebríček
+          </Link>
         </div>
         <div className="flex items-center gap-3 text-sm">
           {username ? (
             <>
+              <span
+                className="level-ring"
+                style={{ ["--p" as string]: String(pct) }}
+                title={`Level ${level} · ${pct}% do ďalšieho`}
+              >
+                <span>{level}</span>
+              </span>
               <span className="chip">
                 <span className="opacity-70">XP</span>
                 <strong>{xp}</strong>
@@ -29,13 +54,20 @@ export function SiteNav({ username, xp, rank }: Props) {
                   <span className="opacity-70">· #{rank}</span>
                 )}
               </span>
-              <span className="hidden sm:inline opacity-80">{username}</span>
+              <span className="hidden md:flex flex-col leading-tight">
+                <span className="font-semibold">{username}</span>
+                {title && <span className="text-[11px] text-zinc-400">{title}</span>}
+              </span>
               <LogoutButton />
             </>
           ) : (
             <>
-              <Link href="/login" className="btn btn-ghost text-sm">Prihlásiť</Link>
-              <Link href="/register" className="btn btn-primary text-sm">Registrácia</Link>
+              <Link href="/login" className="btn btn-ghost text-sm">
+                Prihlásiť
+              </Link>
+              <Link href="/register" className="btn btn-primary text-sm">
+                Registrácia
+              </Link>
             </>
           )}
         </div>

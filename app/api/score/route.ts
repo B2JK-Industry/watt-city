@@ -3,6 +3,8 @@ import { z } from "zod";
 import { getSession } from "@/lib/session";
 import { awardXP } from "@/lib/leaderboard";
 import { getGame } from "@/lib/games";
+import { recordRound } from "@/lib/user-stats";
+import { levelFromXP } from "@/lib/level";
 
 const BodySchema = z.object({
   gameId: z.string().min(1).max(64),
@@ -44,11 +46,20 @@ export async function POST(request: NextRequest) {
   }
 
   const xp = Math.min(parsed.data.xp, game.xpCap);
-  const result = await awardXP(session.username, game.id, xp);
+  const [xpResult, recorded] = await Promise.all([
+    awardXP(session.username, game.id, xp),
+    recordRound(session.username, game.id, xp),
+  ]);
+
+  const level = levelFromXP(xpResult.globalXP);
 
   return Response.json({
     ok: true,
     awarded: xp,
-    ...result,
+    ...xpResult,
+    level,
+    gameStats: recorded.gameStats,
+    isNewBest: recorded.isNewBest,
+    previousBest: recorded.previousBest,
   });
 }

@@ -1,34 +1,33 @@
-import Link from "next/link";
 import { GAMES } from "@/lib/games";
+import { getSession } from "@/lib/session";
+import { getUserStats } from "@/lib/user-stats";
+import { GamesHub } from "@/components/games-hub";
 
-export default function GamesHubPage() {
+export const dynamic = "force-dynamic";
+
+export default async function GamesHubPage() {
+  const session = await getSession();
+  const stats = session ? await getUserStats(session.username) : null;
+
+  const personalized = GAMES.map((g) => {
+    const played = stats?.games[g.id];
+    return {
+      ...g,
+      bestScore: played?.bestScore ?? 0,
+      plays: played?.plays ?? 0,
+      lastPlayedAt: played?.lastPlayedAt ?? 0,
+    };
+  });
+
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 animate-slide-up">
       <header className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold">Hry</h1>
-        <p className="text-zinc-400">
-          Vyber si minihru. Body sa sčítajú do globálneho rebríčka.
+        <h1 className="text-3xl sm:text-4xl font-bold">Hry</h1>
+        <p className="text-zinc-400 max-w-2xl">
+          Vyber si minihru. Každá dáva XP do globálneho rebríčka a má svoj vlastný rebríček. Nováčikom odporúčame začať finančným kvízom.
         </p>
       </header>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {GAMES.map((g) => (
-          <Link
-            key={g.id}
-            href={`/games/${g.id}`}
-            className="card p-5 hover:border-[var(--accent)] transition-colors"
-          >
-            <div
-              className={`h-24 rounded-xl mb-4 bg-gradient-to-br ${g.accent}`}
-            />
-            <div className="flex items-center justify-between mb-1">
-              <h3 className="font-semibold text-lg">{g.title}</h3>
-              <span className="chip text-xs">{g.category}</span>
-            </div>
-            <p className="text-sm text-zinc-400">{g.tagline}</p>
-            <p className="text-xs mt-3 opacity-60">Max {g.xpCap} XP za kolo</p>
-          </Link>
-        ))}
-      </div>
+      <GamesHub games={personalized} loggedIn={Boolean(session)} />
     </div>
   );
 }

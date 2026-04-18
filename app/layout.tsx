@@ -4,6 +4,7 @@ import "./globals.css";
 import { SiteNav } from "@/components/site-nav";
 import { getSession } from "@/lib/session";
 import { userStats } from "@/lib/leaderboard";
+import { levelFromXP, titleForLevel } from "@/lib/level";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,6 +29,8 @@ export default async function RootLayout({
 }>) {
   const session = await getSession();
   const stats = session ? await userStats(session.username) : null;
+  const xp = stats?.globalXP ?? 0;
+  const level = levelFromXP(xp);
   return (
     <html
       lang="sk"
@@ -36,8 +39,11 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col">
         <SiteNav
           username={session?.username ?? null}
-          xp={stats?.globalXP ?? 0}
+          xp={xp}
           rank={stats?.globalRank ?? null}
+          level={level.level}
+          levelProgress={level.progress}
+          title={session ? titleForLevel(level.level) : null}
         />
         <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8">
           {children}

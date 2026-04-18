@@ -2,20 +2,44 @@ import Link from "next/link";
 import { globalLeaderboard } from "@/lib/leaderboard";
 import { GAMES } from "@/lib/games";
 import { getSession } from "@/lib/session";
+import { getUserStats } from "@/lib/user-stats";
+import { userStats as leaderboardStats } from "@/lib/leaderboard";
+import { levelFromXP, titleForLevel } from "@/lib/level";
+import { Dashboard } from "@/components/dashboard";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [entries, session] = await Promise.all([
-    globalLeaderboard(5),
-    getSession(),
-  ]);
+  const session = await getSession();
 
+  if (session) {
+    const [board, stats, top] = await Promise.all([
+      leaderboardStats(session.username),
+      getUserStats(session.username),
+      globalLeaderboard(5),
+    ]);
+    const level = levelFromXP(board.globalXP);
+    return (
+      <Dashboard
+        username={session.username}
+        xp={board.globalXP}
+        rank={board.globalRank}
+        level={level}
+        title={titleForLevel(level.level)}
+        stats={stats}
+        top={top}
+      />
+    );
+  }
+
+  const entries = await globalLeaderboard(5);
   return (
-    <div className="flex flex-col gap-12">
+    <div className="flex flex-col gap-12 animate-slide-up">
       <section className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-8 items-center">
         <div className="flex flex-col gap-6">
-          <span className="chip w-fit">PKO XP · Gaming · ETHSilesia 2026</span>
+          <span className="chip w-fit">
+            PKO XP · Gaming · ETHSilesia 2026
+          </span>
           <h1 className="text-4xl sm:text-5xl font-bold leading-tight">
             Ucz się grając.{" "}
             <span className="bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] bg-clip-text text-transparent">
@@ -24,21 +48,33 @@ export default async function Home() {
             Vyhraj rebríček.
           </h1>
           <p className="text-lg text-zinc-300 max-w-xl">
-            XP Arena je platforma edukačných minihier. Každá hra ti dá body do
-            globálneho rebríčka — financie, matematika, vedomosti. Čím viac
-            hráš, tým viac sa učíš.
+            XP Arena je platforma edukačných minihier. Každá ti dá body do
+            globálneho rebríčka — financie, matematika, pamäť, vedomosti.
+            Čím viac hráš, tým viac sa učíš.
           </p>
           <div className="flex flex-wrap gap-3">
-            <Link href="/games" className="btn btn-primary">Spustiť hru</Link>
-            {!session && (
-              <Link href="/register" className="btn btn-ghost">
-                Vytvoriť účet
-              </Link>
-            )}
+            <Link href="/register" className="btn btn-primary">
+              Vytvoriť účet
+            </Link>
+            <Link href="/games" className="btn btn-ghost">
+              Prehľad hier
+            </Link>
             <Link href="/leaderboard" className="btn btn-ghost">
               Rebríček
             </Link>
           </div>
+          <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+            {GAMES.slice(0, 4).map((g) => (
+              <li key={g.id} className="card p-3 flex items-center gap-2">
+                <span
+                  className={`w-8 h-8 rounded-lg bg-gradient-to-br ${g.accent} flex items-center justify-center`}
+                >
+                  {g.emoji}
+                </span>
+                <span className="font-medium">{g.title}</span>
+              </li>
+            ))}
+          </ul>
         </div>
         <div className="card p-6">
           <h2 className="text-sm uppercase tracking-wider text-zinc-400 mb-3">
@@ -72,33 +108,24 @@ export default async function Home() {
       </section>
 
       <section className="flex flex-col gap-4">
-        <div className="flex items-end justify-between">
-          <h2 className="text-2xl font-bold">Hry dostupné teraz</h2>
-          <Link
-            href="/games"
-            className="text-sm text-[var(--accent)] hover:underline"
-          >
-            Všetky hry →
-          </Link>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <h2 className="text-2xl font-bold">Čo si zahráš</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {GAMES.map((g) => (
             <Link
               key={g.id}
               href={`/games/${g.id}`}
-              className="card p-5 hover:border-[var(--accent)] transition-colors"
+              className="card game-tile p-5"
             >
               <div
-                className={`h-20 rounded-xl mb-4 bg-gradient-to-br ${g.accent}`}
-              />
+                className={`h-20 rounded-xl mb-4 bg-gradient-to-br ${g.accent} flex items-center justify-center text-4xl`}
+              >
+                {g.emoji}
+              </div>
               <div className="flex items-center justify-between mb-1">
                 <h3 className="font-semibold">{g.title}</h3>
-                <span className="chip text-xs">{g.category}</span>
+                <span className="chip text-xs">{g.durationLabel}</span>
               </div>
               <p className="text-sm text-zinc-400">{g.tagline}</p>
-              <p className="text-xs mt-3 opacity-60">
-                Max {g.xpCap} XP za kolo
-              </p>
             </Link>
           ))}
         </div>
