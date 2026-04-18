@@ -1,6 +1,9 @@
-# SKO — Vision & Mechanics
+# Watt City (working name) — Vision & Mechanics
 
-> Working title. Final brand TBD; see Risk #1 (PKO trademark) before public launch.
+> **Public name decided: "Watt City".**
+> SKO 2.0 is the pitch context only — used in conversations with PKO Bank Polski. The product name shipped to players is **Watt City**.
+>
+> See Risk #1 (PKO trademark) — the SKO label stays internal/pitch-only until partnership signed.
 
 ## 1. Why this exists
 
@@ -373,15 +376,15 @@ Confirmed scope for the first deliverable demo:
 
 ### MUST WORK (live, real)
 1. **Hourly AI game rotation** — cron + lazy fallback. New game spawns every hour; previous game retires to archive.
-2. **3 basic buildings** placeable on the static map:
-   - Domek (house) — produces coins
-   - Mała elektrownia — produces watts
-   - Sklepik osiedlowy — produces coins + bricks
-3. **Resource ledger** — tracking watts / coins / bricks (other resources hidden behind "coming soon")
-4. **Mortgage flow** — player can take 1 mortgage to unlock building of one **better** building (Huta szkła or Bank lokalny tier 3); shows monthly payment, interest, repayment from cashflow
-5. **Cashflow tick** — runs hourly with offline catch-up
-6. **Building visual on map** — clickable, shows level + production rate
-7. **Countdown** for current LIVE AI game
+2. **Single starter building**: only **Domek** at signup. Every other building (Mała elektrownia, Sklepik, Huta szkła, Bank lokalny T3, …) **must be earned by playing games**. Earn-to-unlock thresholds (e.g. accumulate 50 watts to unlock Mała elektrownia in catalog).
+3. **0 starter resources** — player must play games to accumulate anything. The first game's prize is what funds the second building.
+4. **Resource ledger** — tracking watts / coins / bricks (glass / steel / code visible-but-greyed "Wkrótce")
+5. **Mortgage flow** — once player has any building producing cashflow, can take 1 mortgage to unlock building of a **better** building (e.g. Huta szkła or Bank lokalny tier 3); shows monthly payment, interest, repayment from cashflow
+6. **Cashflow tick** — runs hourly with offline catch-up
+7. **Building visual on map** — clickable, shows level + production rate
+8. **Countdown** for current LIVE AI game
+
+The point of "must earn everything": the first 30 minutes of gameplay are pure player → game → reward → unlock. No free handouts. This is also the strongest pitch line: *"every building in your city was built with knowledge you earned"*.
 
 ### COMING-SOON (graphical placeholder, no logic)
 - Other resources (glass, steel, code) — visible icons, tooltip "wkrótce"

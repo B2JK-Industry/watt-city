@@ -95,7 +95,8 @@ Each item lists: ID · title · effort · acceptance criteria · dependencies ·
 
 | ID | Item | Effort | Acceptance | Dependencies |
 |---|---|---|---|---|
-| 1.3.1 | `lib/building-catalog.ts` — types + 3 active builds (Domek, Mała elektrownia, Sklepik) + 6 coming-soon entries | M | exported `BUILDING_CATALOG` array; each item has cost/yield/level cap/unlockTier | 1.2.1 |
+| 1.3.1 | `lib/building-catalog.ts` — types + **only Domek** as fully-active build + 8 coming-soon entries (Mała elektrownia, Sklepik, Huta szkła, Walcownia, Bank lokalny T3, etc.) | M | exported `BUILDING_CATALOG` array; player starts with **0 buildings**, unlocks Mała elektrownia after first 50 watts earned, Sklepik after first 50 coins, etc. | 1.2.1 |
+| 1.3.1a | "Earn-to-unlock" gating: building catalog hides items behind resource thresholds; tooltip shows "Zagraj X razy by odblokować" | S | first-time UX teaches earning loop | 1.3.1 |
 | 1.3.2 | New SVG static map: 20 fixed slots on a 1800×460 viewBox, each slot has `(x, y, w, h)` and an empty visual | L | renders without overlap; mobile usable | 0.10 |
 | 1.3.3 | Slot interaction states: empty (clickable, dashed outline) vs occupied (shows building) vs locked (greyed, tier required) | M | hover state, click opens build modal | 1.3.2 |
 | 1.3.4 | Build-place modal: shows catalog, filters by affordability, shows cost vs current resources, build CTA | L | clicking valid item deducts resources, places building on slot | 1.2.5, 1.3.1 |
@@ -292,7 +293,7 @@ Each item lists: ID · title · effort · acceptance criteria · dependencies ·
 | ID | Item | Effort |
 |---|---|---|
 | 2.9.1 | First-time user tour: 4-step modal (welcome → resources → buildings → first game) | M |
-| 2.9.2 | Sample resources for new account (50 coins + 50 bricks) | XS |
+| 2.9.2 | ~~Sample resources for new account~~ — **REJECTED**: per D4, players start with 0 resources and must earn everything | — |
 | 2.9.3 | Force-played first game = easiest quiz (no admin rotate needed for new joiners) | M |
 | 2.9.4 | Tutorial mortgage walkthrough (skippable) | M |
 | 2.9.5 | Profile setup: optional avatar (10 pre-made), display name (≠ username) | M |
@@ -720,18 +721,21 @@ These apply to *every* phase, not as one-time tasks:
 
 ## Open decisions
 
-These need an answer before execution proceeds. Listed in priority order.
+### Decisions RESOLVED (recorded for traceability)
 
-### Decisions blocking Phase 1
+| # | Question | **Decision** | Resolved | Rationale |
+|---|---|---|---|---|
+| **D1** | Public branding | **Rename now to "Watt City"** | tonight | Short, kid-friendly, retains continuity with the existing Watts currency; SKO 2.0 sub-title kept for pitch context only |
+| **D2** | Cron infrastructure | **Lazy-only + free external pinger; no Vercel Pro yet** | tonight | Pay only when revenue justifies; lazy fallback + cron-job.org covers MVP |
+| **D4** | Starter buildings | **Only Domek at signup; everything else must be earned by playing games** | tonight | Strongest possible "play to earn" loop from minute one; no free handouts |
+| **D5** | Mortgage params | 6% APR, 12/24/36 mo, max principal = 12× monthly cashflow | tonight | Industry-standard amortization; affordability cap prevents over-borrowing |
+
+### Decisions still open (blocking Phase 1)
 
 | # | Question | Options | Default if no answer |
 |---|---|---|---|
-| D1 | Public branding | (a) keep "XP Arena" + SKO subtitle; (b) rename to "Watt City"; (c) rename to "SKO 2.0" (legal risk) | **(a)** until PKO partnership signed |
-| D2 | Cron infrastructure | (a) Vercel Pro upgrade ($20/mo); (b) external cron-job.org pinger; (c) lazy-only with no scheduled cron | **(a)** because reliability matters once kids depend on it |
-| D3 | In-game currency display | (a) "💵 zł"; (b) "💰 W$"; (c) "🪙 SKO-coin" | **(b)** to avoid real-money confusion |
-| D4 | 3 starter buildings | (a) Domek + Mała elektrownia + Sklepik (mixed); (b) all coin producers; (c) all bricks producers | **(a)** mixed teaches resource interplay early |
-| D5 | Mortgage parameters | 6% APR, 12/24/36 mo, 5000 zł limit | as defaults |
-| D6 | Hourly cron during low-traffic hours (00:00–06:00) | (a) full rate; (b) pause; (c) reduce to /3h | **(b)** save cost; lazy fallback handles morning resume |
+| D3 | In-game currency display | (a) "💵 zł" (matches educational realism); (b) "💰 W$" (clearer not-real); (c) "🪙 W-coin" | **(b)** to avoid real-money confusion with kids |
+| D6 | Hourly cron during low-traffic hours (00:00–06:00) | (a) full rate; (b) pause; (c) reduce to /3h | **(b)** save Claude cost; lazy fallback handles morning resume |
 
 ### Decisions blocking Phase 2+
 
