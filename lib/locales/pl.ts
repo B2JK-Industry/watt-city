@@ -193,6 +193,8 @@ const pl = {
     aiArchiveTitle: "Archiwum wyzwań AI",
     aiArchiveBody:
       "Medale za każde minione AI wyzwanie — zostają tu na stałe, nawet po wygaśnięciu samej gry.",
+    liveMedalNote:
+      "Top 3 w chwili gdy gra wygaśnie dostaje medal na stałe. Poniżej bieżące pozycje — zmieniają się na żywo.",
     leaderLink: "Cała liga →",
     noneYet: "nikt jeszcze",
     whyTitle: "Dlaczego znikające gry?",

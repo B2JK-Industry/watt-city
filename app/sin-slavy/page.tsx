@@ -28,6 +28,12 @@ export default async function HallOfFamePage() {
     listArchivedAiGames(20),
   ]);
   const liveAi = [...aiGames].reverse();
+  const liveAiWithTop = await Promise.all(
+    liveAi.map(async (g) => ({
+      game: g,
+      top: await gameLeaderboard(g.id, 3),
+    })),
+  );
   const liveIds = new Set(aiGames.map((g) => g.id));
   const pastAi = archive.filter((r) => !liveIds.has(r.id));
   const pastAiWithTop = await Promise.all(
@@ -64,32 +70,80 @@ export default async function HallOfFamePage() {
               LIVE
             </span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {liveAi.map((g) => {
+          <p className="text-sm text-zinc-400 max-w-2xl">
+            {t.liveMedalNote}
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {liveAiWithTop.map(({ game: g, top }) => {
               const hoursLeft = Math.max(
                 0,
                 Math.round((g.validUntil - Date.now()) / (60 * 60 * 1000)),
               );
               return (
-                <Link
-                  key={g.id}
-                  href={`/games/ai/${g.id}`}
-                  className="card p-4 flex flex-col gap-2 hover:border-[var(--accent)] transition"
-                >
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-2xl">🤖</span>
-                    <strong className="font-black uppercase tracking-tight">
-                      {g.title}
-                    </strong>
-                    <span className="chip ml-auto text-[11px]">
-                      ⏱ {hoursLeft}h
-                    </span>
-                  </div>
-                  <p className="text-xs text-zinc-400">{g.theme}</p>
-                  <p className="text-xs text-zinc-500">
-                    {g.model} · {specKind(g.spec)}
-                  </p>
-                </Link>
+                <div key={g.id} className="card p-4 flex flex-col gap-3">
+                  <Link
+                    href={`/games/ai/${g.id}`}
+                    className="flex flex-col gap-2 hover:text-[var(--accent)]"
+                  >
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-2xl">🤖</span>
+                      <strong className="font-black uppercase tracking-tight">
+                        {g.title}
+                      </strong>
+                      <span className="chip ml-auto text-[11px]">
+                        ⏱ {hoursLeft}h
+                      </span>
+                    </div>
+                    <p className="text-xs text-zinc-400">{g.theme}</p>
+                    <p className="text-xs text-zinc-500">
+                      {g.model} · {specKind(g.spec)}
+                    </p>
+                  </Link>
+                  <ol className="flex flex-col gap-1.5">
+                    {[0, 1, 2].map((i) => {
+                      const entry = top[i];
+                      const medal = ["🥇", "🥈", "🥉"][i];
+                      const tone = [
+                        "bg-[var(--neo-yellow)]",
+                        "bg-zinc-300",
+                        "bg-[var(--neo-orange)]",
+                      ][i];
+                      return (
+                        <li
+                          key={i}
+                          className={`flex items-center justify-between rounded-lg border-2 border-[var(--ink)] px-2.5 py-1.5 ${
+                            entry
+                              ? `${tone} text-[#0a0a0f]`
+                              : "bg-[var(--surface-2)] text-zinc-500"
+                          } ${
+                            entry && entry.username === session?.username
+                              ? "ring-2 ring-[var(--neo-pink)]"
+                              : ""
+                          }`}
+                        >
+                          <span className="flex items-center gap-2.5 font-semibold truncate">
+                            <span className="text-lg">{medal}</span>
+                            {entry ? (
+                              <span className="truncate">
+                                {entry.username}
+                                {entry.username === session?.username && (
+                                  <span className="ml-1 text-[10px] font-black">
+                                    (TY)
+                                  </span>
+                                )}
+                              </span>
+                            ) : (
+                              <span className="italic">{t.noneYet}</span>
+                            )}
+                          </span>
+                          <span className="font-mono font-black text-sm whitespace-nowrap">
+                            {entry ? `${entry.xp.toLocaleString("pl-PL")} W` : "—"}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ol>
+                </div>
               );
             })}
           </div>
