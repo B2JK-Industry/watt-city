@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { pickResearchSeed } from "./research";
+import { pickResearchSeed, listResearchSeeds } from "./research";
 
 describe("pickResearchSeed — hourly rotation", () => {
   it("picks the same seed within the same hour bucket", () => {
@@ -28,5 +28,18 @@ describe("pickResearchSeed — hourly rotation", () => {
     }
     // 20 consecutive hours should yield 20 distinct themes (pool size ≥ 20)
     expect(themes.size).toBe(20);
+  });
+
+  it("pool now holds ≥ 40 themes after Phase 2.2 expansion", () => {
+    expect(listResearchSeeds().length).toBeGreaterThanOrEqual(40);
+  });
+
+  it("new themes carry age + subject metadata", () => {
+    const seeds = listResearchSeeds();
+    const withAge = seeds.filter((s) => s.age);
+    const withSubject = seeds.filter((s) => s.subject);
+    // Phase 2.2 added 20 tagged; allow for stricter in future.
+    expect(withAge.length).toBeGreaterThanOrEqual(15);
+    expect(withSubject.length).toBeGreaterThanOrEqual(15);
   });
 });
