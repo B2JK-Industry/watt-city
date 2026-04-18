@@ -305,3 +305,45 @@ export function slotSnapshot(state: PlayerState): SlotOccupant[] {
 }
 
 export { yieldAtLevel, costAtLevel };
+
+// ---------------------------------------------------------------------------
+// Lifetime stats — derived from ledger (Phase 2.5.6)
+// ---------------------------------------------------------------------------
+
+export type LifetimeStats = {
+  totalProduced: Resources;
+  totalUpgrades: number;
+  ageHours: number;
+};
+
+/** Aggregate produced resources for a single building from recent ledger
+ *  entries. Scans meta.instanceId match on kind="tick" (cashflow) and counts
+ *  kind="upgrade" events. Age is `now - builtAt`. Ledger cap (500) means
+ *  totalProduced is a RECENT lifetime for veteran cities — good enough for
+ *  the stats card without adding an extra counter per building. */
+export async function lifetimeStatsFor(
+  state: PlayerState,
+  instanceId: string,
+  now = Date.now(),
+): Promise<LifetimeStats | null> {
+  const b = state.buildings.find((x) => x.id === instanceId);
+  if (!b) return null;
+  const log = await recentLedger(state.username, 500);
+  const totalProduced: Resources = { ...ZERO_RESOURCES };
+  let totalUpgrades = 0;
+  for (const entry of log) {
+    if (entry.meta?.instanceId !== instanceId) continue;
+    if (entry.kind === "tick") {
+      for (const k of RESOURCE_KEYS) {
+        const d = entry.delta[k] ?? 0;
+        if (d > 0) totalProduced[k] += d;
+      }
+    }
+    if (entry.kind === "upgrade") totalUpgrades += 1;
+  }
+  return {
+    totalProduced,
+    totalUpgrades,
+    ageHours: Math.floor((now - b.builtAt) / (60 * 60 * 1000)),
+  };
+}

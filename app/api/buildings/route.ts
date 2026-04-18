@@ -5,6 +5,7 @@ import {
   slotSnapshot,
   computePlayerTier,
   lifetimeEarned,
+  lifetimeStatsFor,
   yieldAtLevel,
 } from "@/lib/buildings";
 
@@ -20,19 +21,22 @@ export async function GET() {
     catalogForPlayer(state),
     lifetimeEarned(state),
   ]);
-  const snapshot = slotSnapshot(state).map(({ slot, building, catalog: c }) => ({
-    slot,
-    building: building
-      ? {
-          ...building,
-          currentYield: c ? yieldAtLevel(c.baseYieldPerHour, building.level) : {},
-          labels: c?.labels ?? null,
-          glyph: c?.glyph ?? null,
-          roofColor: c?.roofColor ?? null,
-          bodyColor: c?.bodyColor ?? null,
-        }
-      : null,
-  }));
+  const snapshot = await Promise.all(
+    slotSnapshot(state).map(async ({ slot, building, catalog: c }) => ({
+      slot,
+      building: building
+        ? {
+            ...building,
+            currentYield: c ? yieldAtLevel(c.baseYieldPerHour, building.level) : {},
+            labels: c?.labels ?? null,
+            glyph: c?.glyph ?? null,
+            roofColor: c?.roofColor ?? null,
+            bodyColor: c?.bodyColor ?? null,
+            stats: await lifetimeStatsFor(state, building.id),
+          }
+        : null,
+    })),
+  );
   return Response.json({
     ok: true,
     resources: state.resources,

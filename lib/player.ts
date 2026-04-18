@@ -96,6 +96,10 @@ export type PlayerState = {
   lastTickAt: number;
   version: number; // schema version for migrations
   createdAt: number;
+  /** Last tier the client was informed about. When computePlayerTier(buildings)
+   *  exceeds this, layout surfaces the tier-up celebration on next render then
+   *  bumps this field. Missing on legacy records — treated as 1. */
+  acknowledgedTier?: number;
 };
 
 const STATE_KEY = (username: string) => `xp:player:${username}`;
@@ -119,6 +123,7 @@ export function emptyPlayerState(username: string, now = Date.now()): PlayerStat
     lastTickAt: now,
     version: PLAYER_SCHEMA_VERSION,
     createdAt: now,
+    acknowledgedTier: 1,
   };
 }
 

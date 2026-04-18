@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteNav } from "@/components/site-nav";
 import { NewGameToast } from "@/components/new-game-toast";
+import { TierUpToast } from "@/components/tier-up-toast";
 import { getSession } from "@/lib/session";
 import { userStats } from "@/lib/leaderboard";
 import { levelFromXP, tierForLevel } from "@/lib/level";
@@ -71,18 +72,49 @@ export default async function RootLayout({
           {children}
         </main>
         {session && (
-          <NewGameToast
-            newChallengeLabel={
-              {
-                pl: "🤖 Nowe wyzwanie AI",
-                uk: "🤖 Новий AI-виклик",
-                cs: "🤖 Nová AI výzva",
-                en: "🤖 New AI challenge",
-              }[lang]
-            }
-            dismissLabel={{ pl: "Zamknij", uk: "Закрити", cs: "Zavřít", en: "Dismiss" }[lang]}
-            playLabel={{ pl: "Graj", uk: "Грати", cs: "Hrát", en: "Play" }[lang]}
-          />
+          <>
+            <NewGameToast
+              newChallengeLabel={
+                {
+                  pl: "🤖 Nowe wyzwanie AI",
+                  uk: "🤖 Новий AI-виклик",
+                  cs: "🤖 Nová AI výzva",
+                  en: "🤖 New AI challenge",
+                }[lang]
+              }
+              dismissLabel={{ pl: "Zamknij", uk: "Закрити", cs: "Zavřít", en: "Dismiss" }[lang]}
+              playLabel={{ pl: "Graj", uk: "Грати", cs: "Hrát", en: "Play" }[lang]}
+            />
+            <TierUpToast
+              headline={
+                {
+                  pl: "Awans!",
+                  uk: "Підвищення!",
+                  cs: "Povýšení!",
+                  en: "Tier up!",
+                }[lang]
+              }
+              dismissLabel={
+                {
+                  pl: "Zamknij",
+                  uk: "Закрити",
+                  cs: "Zavřít",
+                  en: "Dismiss",
+                }[lang]
+              }
+              titleByTier={{
+                1: { pl: "Drewniana chata", uk: "Хатинка", cs: "Dřevěná chata", en: "Wooden Shed" }[lang]!,
+                2: { pl: "Rodzinny dom", uk: "Сімейний дім", cs: "Rodinný dům", en: "Family Home" }[lang]!,
+                3: { pl: "Kamienica", uk: "Кам’яниця", cs: "Činžák", en: "Tenement" }[lang]!,
+                4: { pl: "Solarna kamienica", uk: "Сонячна кам’яниця", cs: "Solární dům", en: "Solar House" }[lang]!,
+                5: { pl: "Biurowiec", uk: "Офіс", cs: "Kancelář", en: "Office" }[lang]!,
+                6: { pl: "Mrakodrap", uk: "Хмарочос", cs: "Mrakodrap", en: "Skyscraper" }[lang]!,
+                7: { pl: "Altus Tower", uk: "Altus Tower", cs: "Altus Tower", en: "Altus Tower" }[lang]!,
+                8: { pl: "Spodek", uk: "Сподек", cs: "Spodek", en: "Spodek Arena" }[lang]!,
+                9: { pl: "Varso Tower — endgame", uk: "Varso Tower — ендгейм", cs: "Varso Tower — endgame", en: "Varso Tower — endgame" }[lang]!,
+              }}
+            />
+          </>
         )}
         <footer className="w-full border-t-[3px] border-[var(--ink)] mt-12 bg-[var(--surface)]">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col gap-4">
