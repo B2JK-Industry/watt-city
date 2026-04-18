@@ -3,6 +3,7 @@ import type plDict from "./pl";
 const en: typeof plDict = {
   nav: {
     city: "City",
+    games: "Games",
     duel: "Duel",
     league: "League",
     hall: "Hall of Fame",

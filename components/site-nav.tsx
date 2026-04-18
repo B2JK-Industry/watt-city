@@ -32,7 +32,8 @@ export function SiteNav({
   const pct = Math.round(levelProgress * 100);
   const t = dict.nav;
   const navLinks: Array<{ href: string; label: string }> = [
-    { href: "/games", label: t.city },
+    { href: "/miasto", label: t.city },
+    { href: "/games", label: t.games },
     { href: "/duel", label: t.duel },
     { href: "/leaderboard", label: t.league },
     { href: "/sin-slavy", label: t.hall },

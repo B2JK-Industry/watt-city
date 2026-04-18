@@ -1,6 +1,7 @@
 const pl = {
   nav: {
     city: "Miasteczko",
+    games: "Gry",
     duel: "Pojedynek",
     league: "Liga",
     hall: "Sala sławy",
