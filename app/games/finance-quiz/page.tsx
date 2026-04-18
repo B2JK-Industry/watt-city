@@ -5,11 +5,19 @@ import { FinanceQuizClient } from "@/components/games/finance-quiz-client";
 import {
   FINANCE_QUESTIONS,
   QUESTIONS_PER_ROUND,
+  type QuizQuestion,
 } from "@/lib/content/finance-quiz";
+import { shuffle } from "@/lib/shuffle";
 
-function pickRound() {
-  const shuffled = [...FINANCE_QUESTIONS].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, QUESTIONS_PER_ROUND);
+function pickRound(): QuizQuestion[] {
+  return shuffle(FINANCE_QUESTIONS)
+    .slice(0, QUESTIONS_PER_ROUND)
+    .map((q) => {
+      const correctValue = q.options[q.correctIndex];
+      const shuffledOptions = shuffle(q.options);
+      const newCorrect = shuffledOptions.indexOf(correctValue);
+      return { ...q, options: shuffledOptions, correctIndex: newCorrect };
+    });
 }
 
 export const dynamic = "force-dynamic";

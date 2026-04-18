@@ -3,13 +3,12 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { MemoryMatchClient } from "@/components/games/memory-match-client";
 import { MEMORY_PAIRS, PAIRS_PER_ROUND } from "@/lib/content/memory-pairs";
+import { sample } from "@/lib/shuffle";
 
 export const dynamic = "force-dynamic";
 
 function pickRound() {
-  return [...MEMORY_PAIRS]
-    .sort(() => Math.random() - 0.5)
-    .slice(0, PAIRS_PER_ROUND);
+  return sample(MEMORY_PAIRS, PAIRS_PER_ROUND);
 }
 
 export default async function MemoryMatchPage() {

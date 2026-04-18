@@ -17,6 +17,8 @@ export type GameMeta = {
   accent: string;
   emoji: string;
   ageHint?: string;
+  isNew?: boolean;
+  hot?: boolean;
 };
 
 export const GAMES: GameMeta[] = [
@@ -32,6 +34,8 @@ export const GAMES: GameMeta[] = [
     accent: "from-emerald-400 via-teal-500 to-sky-600",
     emoji: "⚡",
     ageHint: "15–20",
+    isNew: true,
+    hot: true,
   },
   {
     id: "power-flip",
@@ -45,6 +49,7 @@ export const GAMES: GameMeta[] = [
     accent: "from-lime-400 via-emerald-500 to-green-600",
     emoji: "💡",
     ageHint: "15–20",
+    isNew: true,
   },
   {
     id: "stock-tap",
@@ -58,6 +63,8 @@ export const GAMES: GameMeta[] = [
     accent: "from-yellow-400 via-amber-500 to-orange-600",
     emoji: "📈",
     ageHint: "15–20",
+    isNew: true,
+    hot: true,
   },
   {
     id: "budget-balance",
@@ -71,6 +78,7 @@ export const GAMES: GameMeta[] = [
     accent: "from-cyan-400 via-blue-500 to-indigo-600",
     emoji: "📊",
     ageHint: "16+",
+    isNew: true,
   },
   {
     id: "finance-quiz",

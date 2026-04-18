@@ -2,12 +2,24 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { PowerFlipClient } from "@/components/games/power-flip-client";
-import { POWER_ROUNDS } from "@/lib/content/power-flip";
+import { POWER_ROUNDS, type PowerRound } from "@/lib/content/power-flip";
+import { shuffle } from "@/lib/shuffle";
 
 export const dynamic = "force-dynamic";
 
-function pickRound() {
-  return [...POWER_ROUNDS].sort(() => Math.random() - 0.5);
+function pickRound(): PowerRound[] {
+  return shuffle(POWER_ROUNDS).map((r) => {
+    // Randomly flip sides so the correct answer isn't always on the same one.
+    if (Math.random() < 0.5) {
+      return {
+        ...r,
+        left: r.right,
+        right: r.left,
+        correct: r.correct === "left" ? "right" : "left",
+      };
+    }
+    return r;
+  });
 }
 
 export default async function PowerFlipPage() {

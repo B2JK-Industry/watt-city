@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { ScoreResponse } from "@/lib/client-api";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { Confetti } from "@/components/confetti";
 
 export type RoundResultState = {
   submitting: boolean;
@@ -44,11 +45,12 @@ export function RoundResult({
   }, [state.result?.ok]);
 
   return (
-    <div className="card p-8 flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
+    <div className="relative card p-8 flex flex-col gap-6 overflow-hidden">
+      {isNewBest && <Confetti count={36} />}
+      <div className="relative flex flex-col gap-2">
         <h2 className="text-3xl font-bold">Koniec kola</h2>
         {isNewBest && (
-          <span className="self-start chip border-[var(--accent)] text-[var(--accent)]">
+          <span className="self-start chip border-[var(--accent)] text-[var(--accent)] animate-xp-pop">
             Nový osobný rekord ✨
           </span>
         )}

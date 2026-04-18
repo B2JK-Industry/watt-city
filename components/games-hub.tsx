@@ -84,12 +84,17 @@ export function GamesHub({ games, loggedIn }: Props) {
 
       {visible.length === 0 ? (
         <div className="card p-10 text-center text-zinc-400">
-          Nenašla sa žiadna hra pre „{query}“.
+          Nenašla sa žiadna hra pre „{query}".
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div
+          key={`${filter}-${query}`}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+        >
           {visible.map((g) => (
-            <GameCard key={g.id} game={g} loggedIn={loggedIn} />
+            <div key={g.id} className="stagger-item">
+              <GameCard game={g} loggedIn={loggedIn} />
+            </div>
           ))}
         </div>
       )}
@@ -105,8 +110,10 @@ function GameCard({ game, loggedIn }: { game: HubGame; loggedIn: boolean }) {
   return (
     <Link
       href={`/games/${game.id}`}
-      className="card game-tile p-5 flex flex-col gap-4 h-full"
+      className="relative card game-tile p-5 flex flex-col gap-4 h-full"
     >
+      {game.isNew && <span className="new-badge">Nové</span>}
+      {game.hot && <span className="hot-badge">🔥 Hot</span>}
       <div
         className={`relative h-24 rounded-xl bg-gradient-to-br ${game.accent} overflow-hidden`}
       >

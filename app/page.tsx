@@ -114,8 +114,10 @@ export default async function Home() {
             <Link
               key={g.id}
               href={`/games/${g.id}`}
-              className="card game-tile p-5"
+              className="relative card game-tile stagger-item p-5"
             >
+              {g.isNew && <span className="new-badge">Nové</span>}
+              {g.hot && <span className="hot-badge">🔥 Hot</span>}
               <div
                 className={`h-20 rounded-xl mb-4 bg-gradient-to-br ${g.accent} flex items-center justify-center text-4xl`}
               >

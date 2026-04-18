@@ -6,13 +6,12 @@ import {
   SCRAMBLE_WORDS,
   WORDS_PER_ROUND,
 } from "@/lib/content/word-scramble";
+import { sample } from "@/lib/shuffle";
 
 export const dynamic = "force-dynamic";
 
 function pickRound() {
-  return [...SCRAMBLE_WORDS]
-    .sort(() => Math.random() - 0.5)
-    .slice(0, WORDS_PER_ROUND);
+  return sample(SCRAMBLE_WORDS, WORDS_PER_ROUND);
 }
 
 export default async function WordScramblePage() {

@@ -189,7 +189,7 @@ export function Dashboard({
                 <Link
                   key={game.id}
                   href={`/games/${game.id}`}
-                  className="card game-tile p-5 flex flex-col gap-3"
+                  className="relative card game-tile stagger-item p-5 flex flex-col gap-3"
                 >
                   <div
                     className={`h-16 rounded-xl bg-gradient-to-br ${game.accent} flex items-center justify-center text-3xl`}
@@ -223,8 +223,10 @@ export function Dashboard({
               <Link
                 key={g.id}
                 href={`/games/${g.id}`}
-                className="card game-tile p-5 flex flex-col gap-3"
+                className="relative card game-tile stagger-item p-5 flex flex-col gap-3"
               >
+                {g.isNew && <span className="new-badge">Nové</span>}
+                {g.hot && <span className="hot-badge">🔥 Hot</span>}
                 <div
                   className={`h-20 rounded-xl bg-gradient-to-br ${g.accent} flex items-center justify-center text-4xl`}
                 >

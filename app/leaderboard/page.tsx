@@ -2,6 +2,7 @@ import Link from "next/link";
 import { gameLeaderboard, globalLeaderboard } from "@/lib/leaderboard";
 import { GAMES, getGame } from "@/lib/games";
 import { LeaderboardEntry } from "@/lib/redis";
+import { getSession } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
@@ -9,19 +10,30 @@ type Props = {
   searchParams: Promise<{ game?: string }>;
 };
 
+function rankBadge(rank: number): { icon: string; tone: string } | null {
+  if (rank === 1) return { icon: "🥇", tone: "text-amber-300" };
+  if (rank === 2) return { icon: "🥈", tone: "text-zinc-200" };
+  if (rank === 3) return { icon: "🥉", tone: "text-amber-700" };
+  return null;
+}
+
 export default async function LeaderboardPage({ searchParams }: Props) {
   const sp = await searchParams;
   const gameId = sp.game;
   const game = gameId ? getGame(gameId) : undefined;
+  const session = await getSession();
 
   const entries: LeaderboardEntry[] = game
     ? await gameLeaderboard(game.id, 50)
     : await globalLeaderboard(50);
 
+  const podium = entries.slice(0, 3);
+  const rest = entries.slice(3);
+
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold">Rebríček</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold">Rebríček</h1>
         <p className="text-zinc-400">
           {game
             ? `Najlepší hráči v hre ${game.title}.`
@@ -42,17 +54,44 @@ export default async function LeaderboardPage({ searchParams }: Props) {
             href={`/leaderboard?game=${g.id}`}
             className={`chip ${game?.id === g.id ? "border-[var(--accent)] text-[var(--accent)]" : ""}`}
           >
-            {g.title}
+            {g.emoji} {g.title}
           </Link>
         ))}
       </div>
 
-      <div className="card overflow-hidden">
-        {entries.length === 0 ? (
-          <p className="p-6 text-zinc-400">
-            Ešte nikto neskóroval{game ? ` v hre ${game.title}` : ""}. Buď prvý!
-          </p>
-        ) : (
+      {podium.length === 3 && (
+        <div className="grid grid-cols-3 gap-3 sm:gap-4 items-end">
+          <PodiumCard
+            entry={podium[1]}
+            height="h-28"
+            badge="🥈"
+            gradient="from-zinc-300 to-zinc-500"
+            isMe={podium[1].username === session?.username}
+          />
+          <PodiumCard
+            entry={podium[0]}
+            height="h-36"
+            badge="🥇"
+            gradient="from-amber-300 to-yellow-500"
+            isMe={podium[0].username === session?.username}
+            crown
+          />
+          <PodiumCard
+            entry={podium[2]}
+            height="h-24"
+            badge="🥉"
+            gradient="from-amber-600 to-orange-700"
+            isMe={podium[2].username === session?.username}
+          />
+        </div>
+      )}
+
+      {entries.length === 0 ? (
+        <div className="card p-10 text-center text-zinc-400">
+          Ešte nikto neskóroval{game ? ` v hre ${game.title}` : ""}. Buď prvý!
+        </div>
+      ) : (
+        <div className="card overflow-hidden">
           <table className="w-full">
             <thead className="bg-[var(--surface-2)]/60 text-xs uppercase tracking-wider text-zinc-400">
               <tr>
@@ -62,21 +101,95 @@ export default async function LeaderboardPage({ searchParams }: Props) {
               </tr>
             </thead>
             <tbody>
-              {entries.map((e) => (
-                <tr
-                  key={e.username}
-                  className="border-t border-[var(--border)]/60"
-                >
-                  <td className="px-4 py-3 font-bold opacity-80">#{e.rank}</td>
-                  <td className="px-4 py-3">{e.username}</td>
-                  <td className="px-4 py-3 text-right font-mono text-[var(--accent)]">
-                    {e.xp}
-                  </td>
-                </tr>
-              ))}
+              {(podium.length === 3 ? rest : entries).map((e) => {
+                const isMe = e.username === session?.username;
+                const badge = rankBadge(e.rank);
+                return (
+                  <tr
+                    key={e.username}
+                    className={`border-t border-[var(--border)]/60 transition-colors ${
+                      isMe ? "bg-[var(--accent)]/10" : ""
+                    }`}
+                  >
+                    <td className="px-4 py-3 font-bold">
+                      <span className="flex items-center gap-1.5">
+                        {badge ? (
+                          <span className={`text-lg ${badge.tone}`}>
+                            {badge.icon}
+                          </span>
+                        ) : (
+                          <span className="opacity-60">#{e.rank}</span>
+                        )}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="flex items-center gap-2">
+                        {e.username}
+                        {isMe && (
+                          <span className="chip text-[10px] border-[var(--accent)] text-[var(--accent)]">
+                            Ty
+                          </span>
+                        )}
+                      </span>
+                    </td>
+                    <td
+                      className={`px-4 py-3 text-right font-mono ${
+                        isMe
+                          ? "text-[var(--accent)] font-semibold"
+                          : "text-[var(--accent)]"
+                      }`}
+                    >
+                      {e.xp}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
-        )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PodiumCard({
+  entry,
+  height,
+  badge,
+  gradient,
+  isMe,
+  crown,
+}: {
+  entry: LeaderboardEntry;
+  height: string;
+  badge: string;
+  gradient: string;
+  isMe: boolean;
+  crown?: boolean;
+}) {
+  return (
+    <div
+      className={`flex flex-col items-center gap-2 ${
+        crown ? "animate-[glow-ring_2.4s_ease-in-out_infinite]" : ""
+      }`}
+    >
+      <div
+        className={`w-full ${height} rounded-2xl bg-gradient-to-b ${gradient} flex items-end justify-center p-3 text-2xl sm:text-3xl shadow-lg ${
+          isMe ? "ring-2 ring-[var(--accent)]" : ""
+        }`}
+      >
+        <span>{badge}</span>
+      </div>
+      <div className="text-center">
+        <div className="text-sm font-semibold truncate max-w-[120px] sm:max-w-[160px]">
+          {entry.username}
+          {isMe && (
+            <span className="text-[var(--accent)] ml-1 text-xs">(ty)</span>
+          )}
+        </div>
+        <div className="text-xs font-mono text-[var(--accent)]">
+          {entry.xp} XP
+        </div>
       </div>
     </div>
   );
