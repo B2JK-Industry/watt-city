@@ -17,6 +17,8 @@ export type CityGameState = {
 export type CityAiGame = {
   id: string;
   title: string;
+  validUntil: number;
+  glyph?: string;
 };
 
 type Props = {
@@ -919,15 +921,24 @@ function ConstructionSlot({
   aiGame?: CityAiGame;
 }) {
   const live = Boolean(aiGame);
-  const slot = plan.draw({
-    x: plan.x,
-    w: plan.w,
-    h: plan.h,
-    powered: live,
-    bestScore: 0,
-    cap: 0,
-    name: aiGame?.title ?? plan.buildingName,
-  });
+  const slot = live ? (
+    <LiveAiBuilding
+      x={plan.x}
+      w={plan.w}
+      h={plan.h}
+      aiGame={aiGame!}
+    />
+  ) : (
+    plan.draw({
+      x: plan.x,
+      w: plan.w,
+      h: plan.h,
+      powered: false,
+      bestScore: 0,
+      cap: 0,
+      name: plan.buildingName,
+    })
+  );
   if (!interactive) return <g>{slot}</g>;
   const href = aiGame ? `/games/ai/${aiGame.id}` : "/sin-slavy";
   const label = aiGame
@@ -951,6 +962,219 @@ function ConstructionSlot({
         {slot}
       </g>
     </Link>
+  );
+}
+
+function LiveAiBuilding({
+  x,
+  w,
+  h,
+  aiGame,
+}: {
+  x: number;
+  w: number;
+  h: number;
+  aiGame: CityAiGame;
+}) {
+  const top = GROUND - h;
+  const hoursLeft = Math.max(
+    0,
+    Math.round((aiGame.validUntil - Date.now()) / (60 * 60 * 1000)),
+  );
+  const short = aiGame.title.length > 10
+    ? aiGame.title.slice(0, 10) + "…"
+    : aiGame.title;
+  const rows = 9;
+  return (
+    <g>
+      {/* hours-left chip above roof */}
+      <g transform={`translate(${x + w / 2 - 22}, ${top - 44})`}>
+        <rect
+          x={0}
+          y={0}
+          width={44}
+          height={14}
+          fill="#0a0a0f"
+          stroke="#ec4899"
+          strokeWidth={1.5}
+          rx={2}
+        />
+        <text
+          x={22}
+          y={10}
+          textAnchor="middle"
+          fontSize={8}
+          fontWeight={900}
+          fill="#ec4899"
+        >
+          ⏱ {hoursLeft}h
+        </text>
+      </g>
+
+      {/* banner with title */}
+      <g transform={`translate(${x + w / 2 - 44}, ${top - 26})`}>
+        <rect
+          x={0}
+          y={0}
+          width={88}
+          height={18}
+          fill="#fde047"
+          stroke="#0a0a0f"
+          strokeWidth={2}
+          rx={2}
+        />
+        <text
+          x={44}
+          y={12}
+          textAnchor="middle"
+          fontSize={8}
+          fontWeight={900}
+          fill="#0a0a0f"
+        >
+          🤖 {short.toUpperCase()}
+        </text>
+      </g>
+
+      {/* antenna */}
+      <line
+        x1={x + w / 2}
+        y1={top - 4}
+        x2={x + w / 2}
+        y2={top - 22}
+        stroke="#0a0a0f"
+        strokeWidth={3}
+      />
+      <circle cx={x + w / 2} cy={top - 24} r={4} fill="#ec4899" />
+
+      {/* roof strip — pink accent */}
+      <rect
+        x={x - 5}
+        y={top - 6}
+        width={w + 10}
+        height={10}
+        fill="#0a0a0f"
+      />
+      <rect
+        x={x - 2}
+        y={top - 4}
+        width={w + 4}
+        height={6}
+        fill="#ec4899"
+      />
+
+      {/* body — deep violet so it stands out against other buildings */}
+      <rect
+        x={x}
+        y={top}
+        width={w}
+        height={h}
+        fill="#1e1b4b"
+        stroke="#0a0a0f"
+        strokeWidth={3}
+      />
+
+      {/* glowing windows */}
+      {Array.from({ length: rows }).map((_, row) => {
+        const wy = top + 14 + row * ((h - 40) / rows);
+        return (
+          <g key={row}>
+            <rect
+              x={x + 8}
+              y={wy}
+              width={w / 2 - 12}
+              height={7}
+              fill="#fde047"
+              stroke="#0a0a0f"
+              strokeWidth={1}
+            />
+            <rect
+              x={x + w / 2 + 4}
+              y={wy}
+              width={w / 2 - 12}
+              height={7}
+              fill="#22d3ee"
+              stroke="#0a0a0f"
+              strokeWidth={1}
+            />
+          </g>
+        );
+      })}
+
+      {/* glyph centered on façade */}
+      {aiGame.glyph && (
+        <text
+          x={x + w / 2}
+          y={top + h / 2 + 14}
+          textAnchor="middle"
+          fontSize={36}
+          style={{ filter: "drop-shadow(0 2px 0 #000)" }}
+        >
+          {aiGame.glyph}
+        </text>
+      )}
+
+      {/* door */}
+      <rect
+        x={x + w / 2 - 10}
+        y={GROUND - 22}
+        width={20}
+        height={22}
+        fill="#111"
+        stroke="#0a0a0f"
+        strokeWidth={2}
+      />
+      <rect
+        x={x + w / 2 - 7}
+        y={GROUND - 19}
+        width={14}
+        height={18}
+        fill="#fde047"
+      />
+
+      {/* LIVE badge bottom */}
+      <g transform={`translate(${x + w / 2 - 18}, ${GROUND - 50})`}>
+        <rect
+          width={36}
+          height={20}
+          fill="#ec4899"
+          stroke="#0a0a0f"
+          strokeWidth={2}
+          rx={2}
+        />
+        <text
+          x={18}
+          y={14}
+          textAnchor="middle"
+          fontSize={9}
+          fontWeight={900}
+          fill="#0a0a0f"
+        >
+          LIVE
+        </text>
+      </g>
+
+      {/* street sign */}
+      <rect
+        x={x}
+        y={GROUND + 4}
+        width={w}
+        height={16}
+        fill="#0a0a0f"
+        stroke="#0a0a0f"
+        strokeWidth={2}
+        rx={2}
+      />
+      <text
+        x={x + w / 2}
+        y={GROUND + 15}
+        textAnchor="middle"
+        fontSize={8}
+        fontWeight={900}
+        fill="#ec4899"
+      >
+        AI · {aiGame.id.replace("ai-", "").toUpperCase()}
+      </text>
+    </g>
   );
 }
 

@@ -29,7 +29,14 @@ export default async function GamesHubPage() {
 
   const aiGames = await listActiveAiGames();
   const liveAi = aiGames[aiGames.length - 1];
-  const cityAi = liveAi ? { id: liveAi.id, title: liveAi.title } : undefined;
+  const cityAi = liveAi
+    ? {
+        id: liveAi.id,
+        title: liveAi.title,
+        validUntil: liveAi.validUntil,
+        glyph: liveAi.buildingGlyph,
+      }
+    : undefined;
 
   const bodyParts = t.gamesHubBody
     .replace("{light}", "§LIGHT§")
