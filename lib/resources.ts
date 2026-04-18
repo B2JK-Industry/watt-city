@@ -237,16 +237,21 @@ export function yieldForGame(
   return null;
 }
 
-/** Clamp a Resources object to the spec bounds (non-negative integers, capped at 1M). */
+/** Max balance any single resource can hold (ECONOMY.md §1). */
 export const MAX_BALANCE = 1_000_000;
 
+/** Round + clamp magnitudes on a resource delta (keeping sign). Positive
+ *  deltas are capped at MAX_BALANCE; negative deltas (debits) at -MAX_BALANCE.
+ *  Applying the delta via `addResources` still floors balances at 0 so we
+ *  never go negative. */
 export function clampResources(r: Partial<Resources>): Partial<Resources> {
   const out: Partial<Resources> = {};
   for (const k of RESOURCE_KEYS) {
     const v = r[k];
-    if (v === undefined) continue;
-    const rounded = Math.floor(v);
-    out[k] = Math.max(0, Math.min(MAX_BALANCE, rounded));
+    if (v === undefined || v === 0) continue;
+    const rounded = v < 0 ? Math.ceil(v) : Math.floor(v);
+    const clamped = Math.max(-MAX_BALANCE, Math.min(MAX_BALANCE, rounded));
+    out[k] = clamped;
   }
   return out;
 }
