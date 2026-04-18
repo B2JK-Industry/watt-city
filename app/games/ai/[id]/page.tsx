@@ -17,6 +17,7 @@ import { AiCalcSprintClient } from "@/components/games/ai-calcsprint-client";
 import { AiBudgetClient } from "@/components/games/ai-budget-client";
 import { AiWhatIfClient } from "@/components/games/ai-whatif-client";
 import { AiChartReadClient } from "@/components/games/ai-chartread-client";
+import { GameComments } from "@/components/game-comments";
 
 export const dynamic = "force-dynamic";
 
@@ -101,6 +102,18 @@ export default async function AiGamePage({
       {spec.kind === "chart-read" && (
         <AiChartReadClient gameId={game.id} spec={spec} dict={dict} />
       )}
+      <GameComments
+        gameId={game.id}
+        currentUser={session.username}
+        labels={{
+          title: { pl: "Komentarze", uk: "Коментарі", cs: "Komentáře", en: "Comments" }[lang]!,
+          placeholder: { pl: "Co sądzisz o tej grze?", uk: "Що думаєш?", cs: "Co myslíš?", en: "What do you think?" }[lang]!,
+          post: { pl: "Wyślij", uk: "Надіслати", cs: "Odeslat", en: "Post" }[lang]!,
+          report: { pl: "Zgłoś", uk: "Скарга", cs: "Nahlásit", en: "Report" }[lang]!,
+          empty: { pl: "Brak komentarzy.", uk: "Немає коментарів.", cs: "Žádné komentáře.", en: "No comments yet." }[lang]!,
+          slurWarn: { pl: "Twój komentarz zawiera niedozwolone słowo.", uk: "Коментар містить заборонене слово.", cs: "Komentář obsahuje zakázané slovo.", en: "Your comment contains disallowed text." }[lang]!,
+        }}
+      />
     </div>
   );
 }
