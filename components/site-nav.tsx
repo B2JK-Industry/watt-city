@@ -3,6 +3,7 @@ import { LogoutButton } from "@/components/logout-button";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ResourceBar } from "@/components/resource-bar";
 import { NotificationBell } from "@/components/notification-bell";
+import { resolveTheme } from "@/lib/theme";
 import type { Lang, Dict } from "@/lib/i18n";
 import type { Resources } from "@/lib/resources";
 
@@ -43,12 +44,20 @@ export function SiteNav({
   return (
     <header className="w-full border-b-[3px] border-[var(--ink)] sticky top-0 z-20 bg-[var(--background)]">
       <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-        <Link href="/" className="flex items-center gap-2.5 font-black text-lg tracking-tight">
-          <span className="inline-flex items-center justify-center w-9 h-9 bg-[var(--accent)] border-[3px] border-[var(--ink)] shadow-[3px_3px_0_0_var(--ink)] text-[var(--background)] font-black text-base">
-            WC
-          </span>
-          <span className="uppercase">Watt City</span>
-        </Link>
+        {(() => {
+          const theme = resolveTheme();
+          return (
+            <Link href="/" className="flex items-center gap-2.5 font-black text-lg tracking-tight">
+              <span
+                className="inline-flex items-center justify-center w-9 h-9 border-[3px] border-[var(--ink)] shadow-[3px_3px_0_0_var(--ink)] font-black text-base"
+                style={{ background: theme.colors.accent, color: theme.colors.accentInk }}
+              >
+                {theme.brandShort}
+              </span>
+              <span className="uppercase">{theme.brand}</span>
+            </Link>
+          );
+        })()}
         <div className="hidden sm:flex items-center gap-5 text-sm">
           {navLinks.map((l) => (
             <Link

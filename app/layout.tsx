@@ -5,6 +5,7 @@ import { SiteNav } from "@/components/site-nav";
 import { NewGameToast } from "@/components/new-game-toast";
 import { TierUpToast } from "@/components/tier-up-toast";
 import { OnboardingTour } from "@/components/onboarding-tour";
+import { resolveTheme } from "@/lib/theme";
 import { getSession } from "@/lib/session";
 import { userStats } from "@/lib/leaderboard";
 import { levelFromXP, tierForLevel } from "@/lib/level";
@@ -37,6 +38,7 @@ export default async function RootLayout({
 }>) {
   const [session, lang] = await Promise.all([getSession(), getLang()]);
   const dict = dictFor(lang);
+  const theme = resolveTheme();
   // Lazy tick + signup gift on every authenticated render — both are
   // idempotent (tick is lock-guarded + ledger-deduped; gift is no-op if the
   // player already has ≥1 building). Runs before we read PlayerState so the
@@ -123,10 +125,13 @@ export default async function RootLayout({
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center justify-center w-9 h-9 bg-[var(--accent)] border-[3px] border-[var(--ink)] shadow-[3px_3px_0_0_var(--ink)] text-[#0a0a0f] font-black text-sm">
-                    WC
+                  <span
+                    className="inline-flex items-center justify-center w-9 h-9 border-[3px] border-[var(--ink)] shadow-[3px_3px_0_0_var(--ink)] font-black text-sm"
+                    style={{ background: theme.colors.accent, color: theme.colors.accentInk }}
+                  >
+                    {theme.brandShort}
                   </span>
-                  <span className="font-black uppercase">Watt City</span>
+                  <span className="font-black uppercase">{theme.brand}</span>
                 </div>
                 <p className="text-sm text-zinc-400 max-w-md">
                   {dict.footer.body
@@ -164,12 +169,21 @@ export default async function RootLayout({
             </div>
             <div className="border-t-2 border-[var(--ink)]/30 pt-4 pb-1">
               <p className="text-[11px] font-bold uppercase tracking-wider text-amber-400">
-                ⚠️ GRA EDUKACYJNA — to nie są prawdziwe pieniądze. Budynki,
-                kredyty i W-dolary istnieją tylko w grze. (Educational game —
-                not real money. Buildings, loans and W-dollars exist in-game
-                only.)
+                ⚠️ {theme.disclaimer}
               </p>
             </div>
+            {theme.mascot && (
+              <div className="flex items-center gap-3 border-t-2 border-[var(--ink)]/20 pt-3">
+                <div
+                  className="w-12 h-16 flex-shrink-0"
+                  aria-label={theme.mascot.label}
+                  dangerouslySetInnerHTML={{ __html: theme.mascot.svg }}
+                />
+                <p className="text-xs text-zinc-400">
+                  {theme.mascot.label} wspiera ekipę Watt City w PKO skinie.
+                </p>
+              </div>
+            )}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs text-zinc-500 pt-2">
               <span>{dict.footer.sponsors}</span>
               <span className="flex flex-wrap gap-3">
