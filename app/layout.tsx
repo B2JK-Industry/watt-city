@@ -4,6 +4,7 @@ import "./globals.css";
 import { SiteNav } from "@/components/site-nav";
 import { NewGameToast } from "@/components/new-game-toast";
 import { TierUpToast } from "@/components/tier-up-toast";
+import { OnboardingTour } from "@/components/onboarding-tour";
 import { getSession } from "@/lib/session";
 import { userStats } from "@/lib/leaderboard";
 import { levelFromXP, tierForLevel } from "@/lib/level";
@@ -85,6 +86,7 @@ export default async function RootLayout({
               dismissLabel={{ pl: "Zamknij", uk: "Закрити", cs: "Zavřít", en: "Dismiss" }[lang]}
               playLabel={{ pl: "Graj", uk: "Грати", cs: "Hrát", en: "Play" }[lang]}
             />
+            <OnboardingTour lang={lang} />
             <TierUpToast
               headline={
                 {

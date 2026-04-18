@@ -5,6 +5,8 @@ import { achievementStatus, sweepAchievements } from "@/lib/achievements";
 import { getPlayerState } from "@/lib/player";
 import { computePlayerTier } from "@/lib/buildings";
 import { userStats } from "@/lib/leaderboard";
+import { ProfileEdit } from "@/components/profile-edit";
+import { avatarFor } from "@/lib/avatars";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +22,7 @@ export default async function ProfilePage() {
   ]);
   const tier = computePlayerTier(state.buildings);
   const shareUrl = `/profile/${encodeURIComponent(session.username)}`;
+  const av = avatarFor(state.profile?.avatar);
 
   const heading = {
     pl: "Profil",
@@ -51,8 +54,15 @@ export default async function ProfilePage() {
       <header className="flex flex-col gap-2">
         <h1 className="brutal-heading text-3xl">{heading}</h1>
         <div className="flex flex-wrap gap-3 items-center">
+          <span
+            className="w-10 h-10 rounded border-[3px] border-[var(--ink)] flex items-center justify-center text-2xl"
+            aria-hidden
+            style={{ color: av.hue }}
+          >
+            {av.emoji}
+          </span>
           <span className="chip">
-            <strong>{session.username}</strong>
+            <strong>{state.profile?.displayName ?? session.username}</strong>
           </span>
           <span className="chip">
             Tier <strong>T{tier}</strong>
@@ -69,6 +79,11 @@ export default async function ProfilePage() {
           </a>
         </div>
       </header>
+      <ProfileEdit
+        lang={lang}
+        initialAvatar={state.profile?.avatar}
+        initialDisplayName={state.profile?.displayName}
+      />
       <section className="card p-4 flex flex-col gap-3">
         <h2 className="text-lg font-black uppercase">{achLabel}</h2>
         <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3">

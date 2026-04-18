@@ -107,6 +107,18 @@ export type PlayerState = {
    *  exceeds this, layout surfaces the tier-up celebration on next render then
    *  bumps this field. Missing on legacy records — treated as 1. */
   acknowledgedTier?: number;
+  /** Onboarding flags — Phase 2.9. Default-unset on legacy records. */
+  onboarding?: {
+    tourSeen?: boolean;
+    mortgageTutorialSeen?: boolean;
+    firstGamePlayed?: boolean;
+  };
+  /** Profile — Phase 2.9.5. avatar is an id from a pre-made set; displayName
+   *  is the kid-chosen render name (≠ username). */
+  profile?: {
+    avatar?: string;
+    displayName?: string;
+  };
 };
 
 const STATE_KEY = (username: string) => `xp:player:${username}`;
