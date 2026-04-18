@@ -192,6 +192,9 @@ const en: typeof plDict = {
     chipMedal: "🥇 medal · into profile",
     chipAI: "🤖 AI-generated",
     medalsByGame: "Medals by game",
+    aiArchiveTitle: "AI challenge archive",
+    aiArchiveBody:
+      "Medals from every past AI challenge — they stay here forever, even after the game itself expired.",
     leaderLink: "Full league →",
     noneYet: "nobody yet",
     whyTitle: "Why retiring games?",

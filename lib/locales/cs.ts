@@ -192,6 +192,9 @@ const cs: typeof plDict = {
     chipMedal: "🥇 medaile · do profilu",
     chipAI: "🤖 vytvořila AI",
     medalsByGame: "Medaile podle her",
+    aiArchiveTitle: "Archiv AI výzev",
+    aiArchiveBody:
+      "Medaile za každou minulou AI výzvu — zůstávají tu natrvalo, i když samotná hra už vypršela.",
     leaderLink: "Celá liga →",
     noneYet: "zatím nikdo",
     whyTitle: "Proč zanikající hry?",

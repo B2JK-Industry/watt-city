@@ -192,6 +192,9 @@ const uk: typeof plDict = {
     chipMedal: "🥇 медаль · у профіль",
     chipAI: "🤖 створив AI",
     medalsByGame: "Медалі за іграми",
+    aiArchiveTitle: "Архів AI-викликів",
+    aiArchiveBody:
+      "Медалі з кожного минулого AI-виклику — залишаються тут назавжди, навіть після того, як сама гра вичерпала час.",
     leaderLink: "Вся ліга →",
     noneYet: "ще ніхто",
     whyTitle: "Чому зникаючі ігри?",

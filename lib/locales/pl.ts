@@ -190,6 +190,9 @@ const pl = {
     chipMedal: "🥇 medal · do profilu",
     chipAI: "🤖 stworzyła AI",
     medalsByGame: "Medale według gier",
+    aiArchiveTitle: "Archiwum wyzwań AI",
+    aiArchiveBody:
+      "Medale za każde minione AI wyzwanie — zostają tu na stałe, nawet po wygaśnięciu samej gry.",
     leaderLink: "Cała liga →",
     noneYet: "nikt jeszcze",
     whyTitle: "Dlaczego znikające gry?",

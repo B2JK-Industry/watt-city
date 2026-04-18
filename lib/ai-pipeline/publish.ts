@@ -10,6 +10,20 @@ import { pickResearchSeed } from "./research";
 import { generateGameSpec } from "./generate";
 
 const INDEX_KEY = "xp:ai-games:index"; // JSON array of active AI game ids, oldest first
+const ARCHIVE_INDEX_KEY = "xp:ai-games:archive-index"; // never expires — newest first
+const ARCHIVE_KEY = (id: string) => `xp:ai-games:archive:${id}`;
+
+// Slim record persisted forever so Hall of Fame can surface past winners
+// after the live envelope's 48h TTL elapses.
+export type ArchivedAiGame = {
+  id: string;
+  title: string;
+  theme: string;
+  model: string;
+  kind: "quiz" | "scramble" | "price-guess";
+  generatedAt: number;
+  validUntil: number;
+};
 
 async function readIndex(): Promise<string[]> {
   return (await kvGet<string[]>(INDEX_KEY)) ?? [];
@@ -17,6 +31,18 @@ async function readIndex(): Promise<string[]> {
 
 async function writeIndex(ids: string[]): Promise<void> {
   await kvSet(INDEX_KEY, ids);
+}
+
+async function readArchiveIndex(): Promise<string[]> {
+  return (await kvGet<string[]>(ARCHIVE_INDEX_KEY)) ?? [];
+}
+
+async function appendToArchive(record: ArchivedAiGame): Promise<void> {
+  await kvSet(ARCHIVE_KEY(record.id), record);
+  const index = await readArchiveIndex();
+  // newest first, dedupe in case of retries
+  const next = [record.id, ...index.filter((id) => id !== record.id)];
+  await kvSet(ARCHIVE_INDEX_KEY, next);
 }
 
 export async function listActiveAiGames(): Promise<AiGame[]> {
@@ -29,6 +55,16 @@ export async function listActiveAiGames(): Promise<AiGame[]> {
 
 export async function getAiGame(id: string): Promise<AiGame | null> {
   return await kvGet<AiGame>(`xp:ai-games:${id}`);
+}
+
+export async function listArchivedAiGames(
+  limit = 20,
+): Promise<ArchivedAiGame[]> {
+  const ids = (await readArchiveIndex()).slice(0, limit);
+  const records = await Promise.all(
+    ids.map((id) => kvGet<ArchivedAiGame>(ARCHIVE_KEY(id))),
+  );
+  return records.filter((r): r is ArchivedAiGame => r !== null);
 }
 
 type RunResult =
@@ -107,6 +143,19 @@ export async function runPipeline(now = Date.now()): Promise<RunResult> {
     evicted = oldest;
   }
   await writeIndex(nextIndex);
+
+  // 7) Persist a permanent archive record so Hall of Fame can surface this
+  // game's title/theme + top-3 medal long after the live envelope expires.
+  // Leaderboard ZSET (xp:leaderboard:game:ai-<id>) already has no TTL.
+  await appendToArchive({
+    id,
+    title: envParse.data.title,
+    theme: envParse.data.theme,
+    model: envParse.data.model,
+    kind: envParse.data.spec.kind,
+    generatedAt: envParse.data.generatedAt,
+    validUntil: envParse.data.validUntil,
+  });
 
   return { ok: true, game: envParse.data, evicted };
 }

@@ -2,7 +2,10 @@ import Link from "next/link";
 import { GAMES } from "@/lib/games";
 import { gameLeaderboard } from "@/lib/leaderboard";
 import { getSession } from "@/lib/session";
-import { listActiveAiGames } from "@/lib/ai-pipeline/publish";
+import {
+  listActiveAiGames,
+  listArchivedAiGames,
+} from "@/lib/ai-pipeline/publish";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
@@ -13,7 +16,7 @@ export default async function HallOfFamePage() {
   const lang = await getLang();
   const dict = dictFor(lang);
   const t = dict.sinSlavy;
-  const [results, aiGames] = await Promise.all([
+  const [results, aiGames, archive] = await Promise.all([
     Promise.all(
       GAMES.map(async (g) => ({
         game: g,
@@ -21,8 +24,17 @@ export default async function HallOfFamePage() {
       })),
     ),
     listActiveAiGames(),
+    listArchivedAiGames(20),
   ]);
   const liveAi = [...aiGames].reverse();
+  const liveIds = new Set(aiGames.map((g) => g.id));
+  const pastAi = archive.filter((r) => !liveIds.has(r.id));
+  const pastAiWithTop = await Promise.all(
+    pastAi.map(async (r) => ({
+      record: r,
+      top: await gameLeaderboard(r.id, 3),
+    })),
+  );
 
   return (
     <div className="flex flex-col gap-8 animate-slide-up">
@@ -109,6 +121,91 @@ export default async function HallOfFamePage() {
             <div className="chip">{t.chipEnd}</div>
             <div className="chip">{t.chipMedal}</div>
             <div className="chip">{t.chipAI}</div>
+          </div>
+        </section>
+      )}
+
+      {/* Archive of expired AI games — permanent top-3 medals */}
+      {pastAiWithTop.length > 0 && (
+        <section className="flex flex-col gap-4">
+          <h2 className="brutal-heading text-xl sm:text-2xl">
+            {t.aiArchiveTitle}
+          </h2>
+          <p className="text-sm text-zinc-400 max-w-2xl">
+            {t.aiArchiveBody}
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {pastAiWithTop.map(({ record, top }) => {
+              const date = new Date(record.generatedAt);
+              return (
+                <div
+                  key={record.id}
+                  className="card p-5 flex flex-col gap-3 stagger-item"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-start gap-2 min-w-0">
+                      <span className="text-2xl shrink-0">🤖</span>
+                      <div className="min-w-0">
+                        <p className="font-black uppercase tracking-tight truncate">
+                          {record.title}
+                        </p>
+                        <p className="text-[11px] text-zinc-500 font-semibold truncate">
+                          {record.theme}
+                        </p>
+                        <p className="text-[10px] text-zinc-600 font-mono">
+                          {date.toLocaleDateString(lang === "en" ? "en-US" : "pl-PL")}{" "}
+                          · {record.model} · {record.kind}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <ol className="flex flex-col gap-1.5">
+                    {[0, 1, 2].map((i) => {
+                      const entry = top[i];
+                      const medal = ["🥇", "🥈", "🥉"][i];
+                      const tone = [
+                        "bg-[var(--neo-yellow)]",
+                        "bg-zinc-300",
+                        "bg-[var(--neo-orange)]",
+                      ][i];
+                      return (
+                        <li
+                          key={i}
+                          className={`flex items-center justify-between rounded-lg border-2 border-[var(--ink)] px-2.5 py-1.5 ${
+                            entry
+                              ? `${tone} text-[#0a0a0f]`
+                              : "bg-[var(--surface-2)] text-zinc-500"
+                          } ${
+                            entry && entry.username === session?.username
+                              ? "ring-2 ring-[var(--neo-pink)]"
+                              : ""
+                          }`}
+                        >
+                          <span className="flex items-center gap-2.5 font-semibold truncate">
+                            <span className="text-lg">{medal}</span>
+                            {entry ? (
+                              <span className="truncate">
+                                {entry.username}
+                                {entry.username === session?.username && (
+                                  <span className="ml-1 text-[10px] font-black">
+                                    (TY)
+                                  </span>
+                                )}
+                              </span>
+                            ) : (
+                              <span className="italic">{t.noneYet}</span>
+                            )}
+                          </span>
+                          <span className="font-mono font-black text-sm whitespace-nowrap">
+                            {entry ? `${entry.xp.toLocaleString("pl-PL")} W` : "—"}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ol>
+                </div>
+              );
+            })}
           </div>
         </section>
       )}
