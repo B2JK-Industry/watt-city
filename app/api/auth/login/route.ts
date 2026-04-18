@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { z } from "zod";
 import { loginUser } from "@/lib/auth";
 import { createSession } from "@/lib/session";
+import { clearDeletionFlag, deletionStatus } from "@/lib/soft-delete";
 
 const BodySchema = z.object({
   username: z.string().min(1).max(64),
@@ -29,6 +30,17 @@ export async function POST(request: NextRequest) {
   if (!result.ok) {
     return Response.json({ ok: false, error: result.error }, { status: 401 });
   }
+  // Phase 6.2.4: a login during the 30-day soft-delete grace period
+  // cancels the deletion. We inform the client so it can show a "welcome
+  // back — your deletion was cancelled" toast.
+  const wasFlagged = await deletionStatus(result.user.username);
+  if (wasFlagged.flagged) {
+    await clearDeletionFlag(result.user.username);
+  }
   await createSession(result.user.username);
-  return Response.json({ ok: true, username: result.user.username });
+  return Response.json({
+    ok: true,
+    username: result.user.username,
+    deletionCancelled: wasFlagged.flagged,
+  });
 }

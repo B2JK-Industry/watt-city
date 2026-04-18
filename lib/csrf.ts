@@ -17,21 +17,9 @@
 
 import { cookies } from "next/headers";
 import { randomBytes } from "node:crypto";
+import { CSRF_COOKIE, CSRF_HEADER, isExemptPath } from "./csrf-shared";
 
-export const CSRF_COOKIE = "wc_csrf";
-export const CSRF_HEADER = "x-csrf-token";
-
-const EXEMPT_PATH_PREFIXES = [
-  "/api/cron/",
-  "/api/admin/", // admin uses bearer token
-  "/api/auth/login", // login sets the cookie after success
-  "/api/auth/register",
-  "/api/lang",
-];
-
-export function isExemptPath(pathname: string): boolean {
-  return EXEMPT_PATH_PREFIXES.some((p) => pathname.startsWith(p));
-}
+export { CSRF_COOKIE, CSRF_HEADER, isExemptPath };
 
 export async function ensureCsrfCookie(): Promise<string> {
   const store = await cookies();

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { CSRF_COOKIE, CSRF_HEADER, isExemptPath } from "@/lib/csrf";
+import { CSRF_COOKIE, CSRF_HEADER, isExemptPath } from "@/lib/csrf-shared";
 
 /* Edge middleware — Phase 6.1.3 + 6.1.4.
  *

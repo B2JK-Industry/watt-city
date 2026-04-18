@@ -124,6 +124,61 @@ export default async function PrivacyPage() {
         <p className="text-sm text-zinc-300">{t.disclaimerBody}</p>
       </section>
 
+      <section className="card p-5 flex flex-col gap-3 border-[var(--neo-cyan)]">
+        <h2 className="brutal-heading text-lg">
+          9 · {
+            ({
+              pl: "Twoje prawa — jak skorzystać",
+              uk: "Твої права — як скористатися",
+              cs: "Tvá práva — jak uplatnit",
+              en: "Your rights — how to exercise them",
+            } as const)[lang]
+          }
+        </h2>
+        <ul className="text-sm text-zinc-300 space-y-2 list-disc pl-5">
+          <li>
+            <strong>Art. 20 (portability)</strong>:{" "}
+            <Link
+              href="/api/me/export"
+              className="underline text-[var(--accent)]"
+              prefetch={false}
+            >
+              /api/me/export
+            </Link>{" "}
+            — {({
+              pl: "pobierz wszystkie dane jako JSON.",
+              uk: "завантаж усі свої дані JSON-ом.",
+              cs: "stáhni všechna data jako JSON.",
+              en: "download everything we store about you as JSON.",
+            } as const)[lang]}
+          </li>
+          <li>
+            <strong>Art. 17 (erasure)</strong>: {({
+              pl: "w ustawieniach → Usuń konto. 30-dniowy okres karencji: ponowny login anuluje usunięcie.",
+              uk: "налаштування → видалити акаунт. 30-денний пільговий період, новий логін скасовує.",
+              cs: "nastavení → smazat účet. 30denní ochranná lhůta, opětovné přihlášení zruší.",
+              en: "Settings → Delete account. 30-day grace period — logging back in cancels the deletion.",
+            } as const)[lang]}
+          </li>
+          <li>
+            <strong>DPO</strong>: dpo@watt-city.example — {({
+              pl: "na pytania o dane osobowe.",
+              uk: "щодо персональних даних.",
+              cs: "pro dotazy k osobním údajům.",
+              en: "for personal-data questions.",
+            } as const)[lang]}
+          </li>
+          <li>
+            <strong>UODO</strong>: ul. Stawki 2, 00-193 Warszawa — {({
+              pl: "organ nadzorczy dla skarg.",
+              uk: "наглядовий орган для скарг.",
+              cs: "dozorový orgán pro stížnosti.",
+              en: "supervisory authority for complaints.",
+            } as const)[lang]}
+          </li>
+        </ul>
+      </section>
+
       <footer className="text-xs text-zinc-500 border-t-2 border-[var(--ink)]/30 pt-4">
         {t.version}{" "}
         <Link href="/" className="underline">

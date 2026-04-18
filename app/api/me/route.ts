@@ -1,18 +1,18 @@
 import { destroySession, getSession } from "@/lib/session";
-import { userStats, removeUserFromAllBoards } from "@/lib/leaderboard";
+import { userStats } from "@/lib/leaderboard";
 import { getUserStats } from "@/lib/user-stats";
 import { levelFromXP, tierForLevel } from "@/lib/level";
-import { GAMES } from "@/lib/games";
-import { kvDel } from "@/lib/redis";
+import { flagForDeletion, deletionStatus } from "@/lib/soft-delete";
 
 export async function GET() {
   const session = await getSession();
   if (!session) {
     return Response.json({ authenticated: false });
   }
-  const [board, stats] = await Promise.all([
+  const [board, stats, del] = await Promise.all([
     userStats(session.username),
     getUserStats(session.username),
+    deletionStatus(session.username),
   ]);
   const level = levelFromXP(board.globalXP);
   return Response.json({
@@ -24,12 +24,13 @@ export async function GET() {
     title: `${tierForLevel(level.level).emoji} ${tierForLevel(level.level).name}`,
     games: stats.games,
     totalPlays: stats.totalPlays,
+    deletion: del,
   });
 }
 
-// GDPR Article 17 ("right to erasure"): user-initiated account deletion.
-// Removes the user record, per-user stats, and every leaderboard entry.
-// Session cookie is destroyed so the client is effectively logged out.
+// GDPR Article 17 ("right to erasure"). Phase 6.2.4 — soft-delete with a
+// 30-day grace period. The cron at /api/cron/sweep-deletions finalises
+// (hard-erase) once grace elapses. Logging in during grace clears the flag.
 export async function DELETE() {
   const session = await getSession();
   if (!session) {
@@ -39,25 +40,14 @@ export async function DELETE() {
     );
   }
   const username = session.username;
-  await Promise.all([
-    kvDel(`xp:user:${username}`),
-    kvDel(`xp:stats:${username}`),
-    removeUserFromAllBoards(
-      username,
-      GAMES.map((g) => g.id),
-    ),
-  ]);
+  await flagForDeletion(username);
   await destroySession();
   return Response.json({
     ok: true,
-    erased: {
-      keys: [
-        `xp:user:${username}`,
-        `xp:stats:${username}`,
-        "xp:leaderboard:global",
-        ...GAMES.map((g) => `xp:leaderboard:game:${g.id}`),
-      ],
-      rightInvoked: "GDPR Art. 17 — right to erasure",
+    softDelete: {
+      rightInvoked: "GDPR Art. 17 — right to erasure (soft-delete, 30-day grace)",
+      graceDays: 30,
+      restoreBy: "log in again before 30 days elapse to cancel the deletion",
     },
   });
 }

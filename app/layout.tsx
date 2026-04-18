@@ -6,6 +6,7 @@ import { NewGameToast } from "@/components/new-game-toast";
 import { TierUpToast } from "@/components/tier-up-toast";
 import { OnboardingTour } from "@/components/onboarding-tour";
 import { CsrfBootstrap } from "@/components/csrf-bootstrap";
+import { CookieConsent } from "@/components/cookie-consent";
 import { resolveTheme } from "@/lib/theme";
 import { getSession } from "@/lib/session";
 import { userStats } from "@/lib/leaderboard";
@@ -62,6 +63,7 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <CsrfBootstrap />
+        <CookieConsent lang={lang} />
         <SiteNav
           username={session?.username ?? null}
           xp={xp}
