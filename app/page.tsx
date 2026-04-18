@@ -6,7 +6,7 @@ import { getUserStats } from "@/lib/user-stats";
 import { userStats as leaderboardStats } from "@/lib/leaderboard";
 import { levelFromXP, titleForLevel } from "@/lib/level";
 import { Dashboard } from "@/components/dashboard";
-import { CityPreview } from "@/components/city-preview";
+import { CityScene } from "@/components/city-scene";
 
 export const dynamic = "force-dynamic";
 
@@ -124,12 +124,12 @@ export default async function Home() {
       </section>
 
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">Panorama Katowíc</h2>
+        <h2 className="brutal-heading text-2xl">Noc nad Katowicami</h2>
         <p className="text-zinc-400 max-w-xl -mt-2">
-          9 budov = 9 minihier. Poklikaj na ktorúkoľvek a rozsvieť ju. Tu je
-          nahliadnutie — po registrácii dostaneš vlastnú verziu mesta.
+          9 budov = 9 minihier. Kým niektorú nezahráš, budova stojí v tme.
+          Po registrácii si rozsvieť celé mesto.
         </p>
-        <CityPreview />
+        <CityScene interactive={false} compact />
       </section>
 
     </div>

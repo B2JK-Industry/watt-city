@@ -11,12 +11,17 @@ export type LevelInfo = {
   progress: number; // 0..1
 };
 
-// level L starts at 50 * (L-1)^2 watts.
+// level L starts at K * (L-1)^2 watts.
+// K was 50 for the hackathon MVP (tier 5 at 800 W — too fast).
+// Bumped to 120 so a single perfect round (100–220 W) bumps you
+// at most one tier early on, and tier 5 is a proper grind (~1920 W).
+const K = 120;
+
 export function levelFromXP(xp: number): LevelInfo {
   const safe = Math.max(0, Math.floor(xp));
-  const level = Math.floor(Math.sqrt(safe / 50)) + 1;
-  const levelStart = 50 * (level - 1) ** 2;
-  const levelEnd = 50 * level ** 2;
+  const level = Math.floor(Math.sqrt(safe / K)) + 1;
+  const levelStart = K * (level - 1) ** 2;
+  const levelEnd = K * level ** 2;
   const span = levelEnd - levelStart;
   const xpIntoLevel = safe - levelStart;
   const xpToNext = Math.max(0, levelEnd - safe);

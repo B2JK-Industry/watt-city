@@ -18,8 +18,9 @@ export default async function CurrencyRushPage() {
         </Link>
         <h1 className="text-3xl font-bold">Kurzový šprint</h1>
         <p className="text-zinc-400">
-          45 sekúnd na čo najviac prevodov. EUR ↔ PLN ↔ USD. Tolerancia ±2 %.
-          Správna +12 W, zlá −4 (min 0). Max 180 W.
+          45 sekúnd na čo najviac prevodov. EUR ↔ PLN ↔ USD. Stačí byť blízko
+          (±3 % alebo ±3 jednotky) — nemusíš trafiť stotiny. Správna +12 W,
+          zlá −4 (min 0). Max 180 W. Na presnosť si zmeraj duel.
         </p>
       </header>
       <CurrencyRushClient />

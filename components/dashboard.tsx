@@ -4,6 +4,7 @@ import type { UserStats } from "@/lib/user-stats";
 import type { LevelInfo } from "@/lib/level";
 import { CITY_TIERS, tierForLevel } from "@/lib/level";
 import type { LeaderboardEntry } from "@/lib/redis";
+import { CityScene, type CityGameState } from "@/components/city-scene";
 
 type Props = {
   username: string;
@@ -53,6 +54,11 @@ export function Dashboard({
   const currentTier = tierForLevel(level.level);
   const nextTier =
     level.level < CITY_TIERS.length ? tierForLevel(level.level + 1) : null;
+  const cityGames: CityGameState[] = GAMES.map((g) => ({
+    meta: g,
+    plays: stats.games[g.id]?.plays ?? 0,
+    bestScore: stats.games[g.id]?.bestScore ?? 0,
+  }));
 
   return (
     <div className="flex flex-col gap-10 animate-slide-up">
@@ -292,50 +298,18 @@ export function Dashboard({
         )}
       </section>
 
-      {unplayed.length > 0 && (
-        <section className="flex flex-col gap-4">
-          <div className="flex items-end justify-between">
-            <h2 className="brutal-heading text-2xl">Ešte temné budovy</h2>
-            <Link
-              href="/games"
-              className="text-sm text-[var(--accent)] hover:underline"
-            >
-              Celá panoráma →
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
-            {unplayed.map((g) => (
-              <Link
-                key={g.id}
-                href={`/games/${g.id}`}
-                className="relative h-[140px] block rounded-xl border-[3px] border-[var(--ink)] overflow-hidden shadow-[4px_4px_0_0_var(--ink)] hover:shadow-[6px_6px_0_0_var(--ink)] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all stagger-item"
-              >
-                <div
-                  className={`${g.building.roof} border-b-[3px] border-[var(--ink)] h-5`}
-                  style={{
-                    backgroundImage:
-                      "repeating-linear-gradient(135deg, rgba(0,0,0,0.2) 0 5px, transparent 5px 10px)",
-                  }}
-                />
-                <div
-                  className={`${g.building.body} h-[calc(100%-1.25rem)] relative flex items-center justify-center`}
-                >
-                  <div className="absolute inset-2 rounded-md border-2 border-[var(--ink)] bg-[#0a0a0f]/70 flex items-center justify-center">
-                    <span className="text-4xl">{g.building.glyph}</span>
-                  </div>
-                  <span className="absolute bottom-1 left-1 right-1 text-[9px] font-black uppercase tracking-wider text-[#0a0a0f] bg-white/90 rounded-sm border-2 border-[var(--ink)] px-1 truncate text-center">
-                    {g.building.name}
-                  </span>
-                  <span
-                    aria-hidden="true"
-                    className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full border-2 border-[var(--ink)] bg-zinc-700"
-                  />
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
+      <section className="flex flex-col gap-4">
+        <div className="flex items-end justify-between">
+          <h2 className="brutal-heading text-2xl">Noc nad Katowicami</h2>
+          <Link
+            href="/games"
+            className="text-sm text-[var(--accent)] hover:underline"
+          >
+            Otvoriť mestečko →
+          </Link>
+        </div>
+        <CityScene games={cityGames} loggedIn compact />
+      </section>
     </div>
   );
 }

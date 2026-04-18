@@ -15,7 +15,11 @@ const DURATION_SECONDS = 45;
 const XP_CORRECT = 12;
 const XP_WRONG = 4;
 const XP_CAP = 180;
-const TOLERANCE = 0.02; // ±2 %
+// Single-player je odpúšťajúci: stačí trafiť celočíselnú odpoveď na ±3 %
+// alebo 3 jednotky od správneho výsledku (čo je viac). Presnosť na dve
+// desatinné miesta potom slúži iba pre duel režim, kde rozhoduje delta.
+const TOLERANCE = 0.03;
+const FLAT_TOLERANCE = 3;
 
 type Pair = { from: Currency; to: Currency; rate: number; label: string };
 type Currency = "EUR" | "PLN" | "USD";
@@ -118,7 +122,10 @@ export function CurrencyRushClient() {
       return;
     }
     const diff = Math.abs(parsed - problem.answer);
-    const allowed = Math.abs(problem.answer) * TOLERANCE + 0.5;
+    const allowed = Math.max(
+      FLAT_TOLERANCE,
+      Math.abs(problem.answer) * TOLERANCE,
+    );
     if (diff <= allowed) {
       setXp((x) => Math.min(x + XP_CORRECT, XP_CAP));
       setCorrect((c) => c + 1);

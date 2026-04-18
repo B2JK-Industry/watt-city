@@ -113,9 +113,20 @@ export function RoundResult({
       )}
 
       <div className="flex flex-wrap gap-3">
-        <Link href={gameHref} className="btn btn-primary">
+        <button
+          type="button"
+          onClick={() => {
+            // Hard reload: gameHref equals current URL so a Next <Link>
+            // wouldn't trigger navigation — reload re-runs the server page
+            // and generates a fresh seeded round / question set.
+            if (typeof window !== "undefined") {
+              window.location.href = gameHref;
+            }
+          }}
+          className="btn btn-primary"
+        >
           {retryLabel}
-        </Link>
+        </button>
         <Link href="/leaderboard" className="btn btn-ghost">
           Rebríček
         </Link>

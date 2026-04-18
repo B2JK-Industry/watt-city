@@ -30,13 +30,16 @@ export function SiteNav({
         </Link>
         <div className="hidden sm:flex items-center gap-5 text-sm">
           <Link href="/games" className="hover:text-[var(--accent)] transition-colors">
-            Hry
+            Mestečko
+          </Link>
+          <Link href="/duel" className="hover:text-[var(--accent)] transition-colors">
+            Duel
           </Link>
           <Link
             href="/leaderboard"
             className="hover:text-[var(--accent)] transition-colors"
           >
-            Rebríček
+            Liga
           </Link>
         </div>
         <div className="flex items-center gap-3 text-sm">
