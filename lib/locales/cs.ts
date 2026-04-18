@@ -353,6 +353,28 @@ const cs: typeof plDict = {
     sponsorsTitle: "Sponzoři a kategorie",
     roadmapTitle: "Roadmap",
     note: "Tato stránka je pitch verze · plný text v polštině (default).",
+    heroBody: `XP Arena je gamifikovaná platforma finanční a energetické gramotnosti pro Gen Z. Každá hra generuje Watty, které postupně „elektrifikují" tvou vlastní budovu v Katovicích — od dřevěné chatrče po Varso Tower (nejvyšší budova v EU). AI tvoří novou hru každých 6 hodin, stará po 24 hodinách zaniká, ale medaile za top 3 zůstává v profilu.`,
+    ideaBody1:
+      "Gen Z v Polsku pošle BLIK za 2 sekundy, ale neví co je RRSO. OECD PISA 2022 ukazuje rostoucí rozdíl mezi digitální zručností mladých a jejich finanční gramotností. Slezsko zároveň prochází historickým zeleným pivotem — bez mladé generace, která rozumí účtům za energii, ten pivot nefunguje.",
+    ideaBody2:
+      "Naše teze: finance a energetika jsou nudné jen ve statickém formátu. Ve 30-s hře s combo ×3 jsou najednou návykové. Proto jsme začali se třemi předpoklady:",
+    ideaList1: "Jeden velký cíl drží lidi dlouho. Progres = jedna rostoucí budova, ne abstraktní číslo.",
+    ideaList2: "Novota je palivo návyků. Platforma s fixní nabídkou se po týdnu ohraje. AI-generovaná hra každých 6 hodin drží dopamin.",
+    ideaList3: "Nejlepší vyhrává, ale vše zůstává. Hra zanikne po 24 h, ale medaile top 3 je permanentní — jako PR-ky ve Stravě, ale pro finance.",
+    teamBody:
+      "Projekt vede Daniel Babjak (SK) — engineering, AI pipeline, produkt. Tým B2JK-Industry je volné seskupení kamarádů-developerů, kteří se skládají na různých hackathonech (ETHSilesia, ETHWarsaw) a paralelně tlačí sesterský projekt Tauron Sąsiad pro kategorii AI Challenge.",
+    sponsorsBody:
+      "XP Arena explicitně cílí na kategorii PKO XP: Gaming (PKO Bank Polski, 10 000 PLN) — gamifikovaná finanční a energetická gramotnost pro mladé publikum. Obsah je nabitý PKO referencemi: IKO app, Konto dla Młodych (13–17 r.), IKE limit 2026, BLIK, Bezpieczny Kredyt 2 %, reálná úroková sazba, přechod WIBOR → WIRON a PKO Tower v Katovicích jako emocionální vrchol progresu.",
+    sponsorsStack:
+      "Stackujeme i kategorii Legal from Day One — platforma má privacy receipt, delete-account endpoint a GDPR-šité UI od prvního commitu.",
+    roadmap: [
+      "Q2 2026: Live ANTHROPIC_API_KEY → Claude 4.6 produkční AI pipeline. První veřejné 6-hodinové výzvy.",
+      "Q3 2026: Mobile PWA, push notifikace k dnešní AI výzvě.",
+      "Q3 2026: Sezónní eventy (Earth Hour, Tax Freedom Day, Black Friday budget challenge).",
+      "Q4 2026: SBT medaile na L2 (Base / Polygon zkEVM) — volitelná Web3 vrstva.",
+      "Q1 2027: Learning-group mód pro školy a učitele (reporting pokroku).",
+      `Q2 2027: PKO deep-link („otevři Konto dla Młodych") po odemčení tieru 5 — konverzní funnel pro sponzora.`,
+    ],
   },
   privacyPage: {
     title: "Ochrana soukromí",

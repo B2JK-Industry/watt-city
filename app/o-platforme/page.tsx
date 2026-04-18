@@ -42,15 +42,7 @@ export default async function AboutPage() {
             Katowice
           </span>
         </div>
-        <p className="text-lg text-zinc-300 max-w-3xl">
-          <strong className="text-[var(--foreground)]">XP Arena</strong> je
-          gamifikovaná platforma finančnej a energetickej gramotnosti pre
-          Gen Z. Každá hra ti generuje <strong>Watty</strong>, ktoré postupne
-          „elektrifikujú" tvoju vlastnú budovu v Katowiciach — od drevenej
-          búdy po <strong>Varso Tower</strong> (najvyššiu budovu v EÚ). AI
-          vytvára novú hru každých 6 hodín, stará po 24 hodinách zaniká, ale
-          medaila za top 3 ostáva v profile.
-        </p>
+        <p className="text-lg text-zinc-300 max-w-3xl">{t.heroBody}</p>
       </header>
 
       {/* -------- Myšlienka -------- */}
@@ -58,40 +50,22 @@ export default async function AboutPage() {
         <h2 className="brutal-heading text-2xl">{t.ideaTitle}</h2>
         <div className="card p-6 flex flex-col gap-3 text-zinc-300">
           <p>
-            Gen Z v Poľsku pošle BLIK (stratí fokus) za 2 sekundy, ale nevie čo
-            je <strong>RRSO</strong>. <a
+            {t.ideaBody1}{" "}
+            <a
               href="https://www.oecd.org/finance/financial-education/oecd-pisa-global-financial-literacy-survey.htm"
               className="underline text-[var(--accent)]"
               target="_blank"
               rel="noreferrer"
             >
               OECD PISA 2022
-            </a>{" "}
-            ukazuje rastúci rozdiel medzi digitálnou zručnosťou mladých a
-            ich finančnou gramotnosťou. Silesia zároveň prechádza historickým
-            zelenym pivotom — a bez mladej generácie, ktorá rozumie účtom za
-            energiu, ten pivot nefunguje.
+            </a>
+            .
           </p>
-          <p>
-            Naša téza: <strong>finance a energetika sú nudné iba v
-            statickom formáte</strong>. V 30-sekundovej hre s combo ×3 sú
-            zrazu návykové. Preto sme začali s troma predpokladmi:
-          </p>
+          <p>{t.ideaBody2}</p>
           <ol className="list-decimal pl-6 space-y-2">
-            <li>
-              <strong>Jeden veľký cieľ drží ľudí dlho.</strong> Progress = {" "}
-              <em>jedna rastúca budova</em>, nie abstraktný number.
-            </li>
-            <li>
-              <strong>Novelty je palivo návykov.</strong> Platforma s fixnou
-              ponukou sa po týždni oťahá. AI-generovaná hra každých 6 hodín
-              drží dopamin.
-            </li>
-            <li>
-              <strong>Najpovolanejší vyhráva, ale všetko ostáva.</strong>{" "}
-              Hra po 24 h zanikne, ale medaila top 3 je permanentná — ako{" "}
-              Strava PR-ky, ale pre financie.
-            </li>
+            <li>{t.ideaList1}</li>
+            <li>{t.ideaList2}</li>
+            <li>{t.ideaList3}</li>
           </ol>
         </div>
       </section>
@@ -434,13 +408,7 @@ export default async function AboutPage() {
               </p>
             </div>
           </div>
-          <p>
-            Projekt vedie <strong>Daniel Babjak</strong> (SK) — engineering,
-            AI pipeline, produkt. Tím B2JK-Industry je voľné zoskupenie
-            kamarátov-developerov ktoré sa skladá na viacerých hackathonoch
-            (ETHSilesia, ETHWarsaw) a paralelne tlačí aj sesterský projekt{" "}
-            <strong>Tauron Sąsiad</strong> pre AI Challenge track.
-          </p>
+          <p>{t.teamBody}</p>
           <p className="text-sm text-zinc-400">
             Kontakt:{" "}
             <a
@@ -460,32 +428,15 @@ export default async function AboutPage() {
       <section className="flex flex-col gap-4">
         <h2 className="brutal-heading text-2xl">{t.sponsorsTitle}</h2>
         <div className="card p-6 flex flex-col gap-3 text-sm text-zinc-300">
+          <p>{t.sponsorsBody}</p>
           <p>
-            XP Arena explicitne cieli na kategóriu{" "}
-            <strong className="text-[var(--accent)]">PKO XP: Gaming</strong>{" "}
-            (PKO Bank Polski, 10 000 PLN) — gamifikovaná finančná a
-            energetická gramotnosť pre mladé publikum. Obsah je nabitý
-            PKO-špecifickými referenciami: <strong>PKO IKO</strong> app,{" "}
-            <strong>Konto dla Młodych</strong> (13–17 r.),{" "}
-            <strong>IKE</strong> limit 2026, <strong>BLIK</strong>{" "}
-            platby, <strong>Bezpieczny Kredyt 2 %</strong>, reálna úroková
-            sadzba, <strong>WIBOR → WIRON</strong> prechod a PKO Tower v
-            Katowicách ako emocionálny vrchol progressu.
-          </p>
-          <p>
-            Stackujeme aj kategóriu{" "}
-            <strong className="text-[var(--accent-2)]">
-              Legal from Day One
-            </strong>{" "}
-            — platforma má privacy receipt, delete-account endpoint a
-            GDPR‐šité UI od prvého commitu (pozri{" "}
+            {t.sponsorsStack}{" "}
             <Link
               href="/ochrana-sukromia"
               className="underline text-[var(--accent)]"
             >
               /ochrana-sukromia
             </Link>
-            ).
           </p>
           <p className="text-xs text-zinc-500">
             Vďaka: PKO Bank Polski · Tauron · ETHWarsaw · AKMF ·
@@ -498,30 +449,9 @@ export default async function AboutPage() {
       <section className="flex flex-col gap-4">
         <h2 className="brutal-heading text-2xl">{t.roadmapTitle}</h2>
         <ul className="list-disc pl-6 space-y-2 text-sm text-zinc-300">
-          <li>
-            <strong>Q2 2026:</strong> Live ANTHROPIC_API_KEY → Claude 4.6
-            produkčná AI pipeline. Prvé verejné 6-hodinové výzvy.
-          </li>
-          <li>
-            <strong>Q3 2026:</strong> Mobile PWA, push notifikácie
-            k dnešnej AI výzve.
-          </li>
-          <li>
-            <strong>Q3 2026:</strong> Sezónne eventy (Earth Hour, Tax
-            Freedom Day, Black Friday budget challenge).
-          </li>
-          <li>
-            <strong>Q4 2026:</strong> SBT medaile na L2 (Base / Polygon
-            zkEVM) — voliteľná Web3 vrstva.
-          </li>
-          <li>
-            <strong>Q1 2027:</strong> Learning-group mód pre školy a
-            učiteľov (reporting pokroku).
-          </li>
-          <li>
-            <strong>Q2 2027:</strong> PKO deep-link („otvor Konto dla
-            Młodych") po odomknutí tier 5 — konverzný funnel pre sponzora.
-          </li>
+          {t.roadmap.map((line, i) => (
+            <li key={i}>{line}</li>
+          ))}
         </ul>
       </section>
 

@@ -353,6 +353,29 @@ const en: typeof plDict = {
     sponsorsTitle: "Sponsors & categories",
     roadmapTitle: "Roadmap",
     note: "This page is the pitch version · full copy in Polish (default).",
+    heroBody:
+      "XP Arena is a gamified financial & energy literacy platform for Gen Z. Every game generates Watts that gradually electrify your own building in Katowice — from a wooden shed to Varso Tower (tallest in the EU). AI creates a new game every 6 hours; the old one retires after 24 hours, but the top-3 medal stays in your profile.",
+    ideaBody1:
+      "Gen Z in Poland sends BLIK in 2 seconds but doesn't know what APR means. OECD PISA 2022 shows a growing gap between young peoples' digital fluency and their financial literacy. Silesia is simultaneously going through a historic green pivot — without a young generation that understands energy bills, that pivot won't work.",
+    ideaBody2:
+      "Our thesis: finance and energy are boring only in a static format. In a 30-second game with combo ×3 they become addictive. That's why we started from three assumptions:",
+    ideaList1: "One big goal keeps people around. Progress = one growing building, not an abstract number.",
+    ideaList2: "Novelty is habit fuel. A platform with fixed content dies after a week. An AI-generated game every 6 hours keeps the dopamine loop alive.",
+    ideaList3: "The best wins, but everything else stays. A game retires after 24 h, but the top-3 medal is permanent — like Strava PRs, but for finance.",
+    teamBody:
+      "Project lead: Daniel Babjak (SK) — engineering, AI pipeline, product. B2JK-Industry is a loose group of developer friends who team up for various hackathons (ETHSilesia, ETHWarsaw) and simultaneously ship the sister project Tauron Sąsiad for the AI Challenge track.",
+    sponsorsBody:
+      "XP Arena explicitly targets the PKO XP: Gaming category (PKO Bank Polski, 10,000 PLN) — gamified financial & energy literacy for a young audience. The content is packed with PKO references: IKO app, Konto dla Młodych (ages 13–17), IKE limit 2026, BLIK, Bezpieczny Kredyt 2 %, real interest rate, the WIBOR → WIRON transition, and PKO Tower in Katowice as the emotional peak of progress.",
+    sponsorsStack:
+      "We also stack the Legal from Day One category — the platform has a privacy receipt, account-deletion endpoint, and GDPR-shaped UI from the first commit.",
+    roadmap: [
+      "Q2 2026: Live ANTHROPIC_API_KEY → Claude 4.6 production AI pipeline. First public 6-hour challenges.",
+      "Q3 2026: Mobile PWA, push notifications for today's AI challenge.",
+      "Q3 2026: Seasonal events (Earth Hour, Tax Freedom Day, Black Friday budget challenge).",
+      "Q4 2026: SBT medals on L2 (Base / Polygon zkEVM) — optional Web3 layer.",
+      "Q1 2027: Learning-group mode for schools and teachers (progress reporting).",
+      "Q2 2027: PKO deep-link ('open Konto dla Młodych') after unlocking tier 5 — a conversion funnel for the sponsor.",
+    ],
   },
   privacyPage: {
     title: "Privacy",
