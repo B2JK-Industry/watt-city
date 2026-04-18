@@ -57,7 +57,8 @@ function scoreFor(seconds: number, mismatches: number): number {
 
 export function MemoryMatchClient({ pairs }: { pairs: MemoryPair[] }) {
   const [deck, setDeck] = useState<Card[]>(() => buildDeck(pairs));
-  const [selected, setSelected] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
   const [mismatches, setMismatches] = useState(0);
   const [startedAt] = useState(() => Date.now());
   const [elapsed, setElapsed] = useState(0);
@@ -107,51 +108,61 @@ export function MemoryMatchClient({ pairs }: { pairs: MemoryPair[] }) {
 
   const flip = useCallback(
     (id: string) => {
-      if (completed) return;
-      setDeck((cur) => {
-        const card = cur.find((c) => c.id === id);
-        if (!card || card.matched || card.revealed) return cur;
+      if (completed || busy) return;
+      const card = deck.find((c) => c.id === id);
+      if (!card || card.matched || card.revealed) return;
 
-        if (selected.length === 0) {
-          setSelected([id]);
-          return cur.map((c) => (c.id === id ? { ...c, revealed: true } : c));
-        }
-        if (selected.length === 1) {
-          const firstId = selected[0];
-          const first = cur.find((c) => c.id === firstId);
-          if (!first) return cur;
-          const isMatch =
-            first.pairId === card.pairId && first.side !== card.side;
-          const next = cur.map((c) =>
-            c.id === id ? { ...c, revealed: true } : c,
-          );
-          if (isMatch) {
-            setSelected([]);
-            return next.map((c) =>
-              c.pairId === card.pairId
-                ? { ...c, matched: true, revealed: true }
-                : c,
-            );
-          }
-          // mismatch — reveal briefly then hide
-          setSelected([firstId, id]);
-          setMismatches((m) => m + 1);
-          window.setTimeout(() => {
-            setDeck((later) =>
-              later.map((c) =>
-                c.id === firstId || c.id === id
-                  ? { ...c, revealed: false }
-                  : c,
-              ),
-            );
-            setSelected([]);
-          }, 900);
-          return next;
-        }
-        return cur;
-      });
+      // First pick: just reveal it.
+      if (selected === null) {
+        setSelected(id);
+        setDeck((cur) =>
+          cur.map((c) => (c.id === id ? { ...c, revealed: true } : c)),
+        );
+        return;
+      }
+
+      // Second pick — same card tapped twice, ignore.
+      if (selected === id) return;
+
+      const first = deck.find((c) => c.id === selected);
+      if (!first) {
+        setSelected(null);
+        return;
+      }
+      const isMatch = first.pairId === card.pairId && first.side !== card.side;
+
+      if (isMatch) {
+        setDeck((cur) =>
+          cur.map((c) =>
+            c.pairId === card.pairId
+              ? { ...c, matched: true, revealed: true }
+              : c,
+          ),
+        );
+        setSelected(null);
+        return;
+      }
+
+      // Mismatch: reveal the second card, lock further flips, then hide both.
+      setDeck((cur) =>
+        cur.map((c) => (c.id === id ? { ...c, revealed: true } : c)),
+      );
+      setMismatches((m) => m + 1);
+      setBusy(true);
+      const firstId = first.id;
+      window.setTimeout(() => {
+        setDeck((cur) =>
+          cur.map((c) =>
+            c.id === firstId || c.id === id
+              ? { ...c, revealed: false }
+              : c,
+          ),
+        );
+        setSelected(null);
+        setBusy(false);
+      }, 900);
     },
-    [completed, selected],
+    [busy, completed, deck, selected],
   );
 
   if (completed) {
