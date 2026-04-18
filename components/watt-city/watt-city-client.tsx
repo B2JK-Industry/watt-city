@@ -232,7 +232,7 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
       </header>
 
       {/* Slot map */}
-      <section className="card p-2 sm:p-4 overflow-x-auto">
+      <section className="card p-2 sm:p-4 city-scene-viewport">
         <svg
           viewBox={`0 0 ${VB_W} ${VB_H}`}
           className="w-full h-auto"

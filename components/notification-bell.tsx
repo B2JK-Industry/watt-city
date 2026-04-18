@@ -3,6 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { NotificationEntry } from "@/lib/notifications";
+import { SwipeToDismiss } from "@/components/swipe-to-dismiss";
+
+// Mobile-only swipe-to-dismiss wraps each notification list item.
+// Dismissing POSTs a mark-seen for all + hides that item locally.
 
 type Payload = {
   entries: NotificationEntry[];
@@ -26,6 +30,7 @@ type Props = {
 export function NotificationBell({ labels }: Props) {
   const [data, setData] = useState<Payload | null>(null);
   const [open, setOpen] = useState(false);
+  const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
   const panelRef = useRef<HTMLDivElement | null>(null);
 
   async function refresh() {
@@ -114,15 +119,22 @@ export function NotificationBell({ labels }: Props) {
                   </div>
                 </>
               );
+              if (dismissedIds.has(e.id)) return null;
               return (
                 <li key={e.id} className="p-2">
-                  {e.href ? (
-                    <Link href={e.href} onClick={() => setOpen(false)}>
-                      {body}
-                    </Link>
-                  ) : (
-                    body
-                  )}
+                  <SwipeToDismiss
+                    onDismiss={() =>
+                      setDismissedIds((s) => new Set(s).add(e.id))
+                    }
+                  >
+                    {e.href ? (
+                      <Link href={e.href} onClick={() => setOpen(false)}>
+                        {body}
+                      </Link>
+                    ) : (
+                      body
+                    )}
+                  </SwipeToDismiss>
                 </li>
               );
             })}

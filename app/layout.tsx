@@ -9,6 +9,7 @@ import { CsrfBootstrap } from "@/components/csrf-bootstrap";
 import { CookieConsent } from "@/components/cookie-consent";
 import { WebVitalsReporter } from "@/components/web-vitals-reporter";
 import { PwaRegister } from "@/components/pwa-register";
+import { BottomTabs } from "@/components/bottom-tabs";
 import { resolveTheme } from "@/lib/theme";
 import { getSession } from "@/lib/session";
 import { userStats } from "@/lib/leaderboard";
@@ -102,10 +103,11 @@ export default async function RootLayout({
         <main
           id="main-content"
           tabIndex={-1}
-          className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8"
+          className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 pb-24 sm:pb-8"
         >
           {children}
         </main>
+        {session && <BottomTabs lang={lang} />}
         {session && (
           <>
             <NewGameToast

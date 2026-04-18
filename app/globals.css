@@ -1,5 +1,37 @@
 @import "tailwindcss";
 
+/* ---------- Mobile UX (Phase 7.3) ---------- */
+
+/* 7.3.1 — touch targets ≥ 44×44 px on all interactive elements at mobile
+ * viewports. Scoped to < 640px so desktop buttons stay compact. */
+@media (max-width: 639px) {
+  button,
+  a.btn,
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* 7.3.3 — city scene SVG allows native pinch-zoom + pan while blocking
+ * double-tap-to-zoom (Safari default) on the page chrome. */
+.city-scene-viewport {
+  touch-action: pinch-zoom;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 7.3.5 — bottom tab bar safe-area padding for iOS PWA. */
+.bottom-tabs {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* 7.3.4 — transition for swipe-to-dismiss notifications. */
+.swipeable {
+  transition: transform 200ms ease-out, opacity 200ms ease-out;
+  touch-action: pan-y;
+}
+
 /* ---------- Accessibility (Phase 6.4) ---------- */
 
 /* Visible keyboard focus ring. 2px outline + 2px offset gives WCAG 2.4.7
