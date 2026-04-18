@@ -1,65 +1,108 @@
-import Image from "next/image";
+import Link from "next/link";
+import { globalLeaderboard } from "@/lib/leaderboard";
+import { GAMES } from "@/lib/games";
+import { getSession } from "@/lib/session";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const [entries, session] = await Promise.all([
+    globalLeaderboard(5),
+    getSession(),
+  ]);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="flex flex-col gap-12">
+      <section className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-8 items-center">
+        <div className="flex flex-col gap-6">
+          <span className="chip w-fit">PKO XP · Gaming · ETHSilesia 2026</span>
+          <h1 className="text-4xl sm:text-5xl font-bold leading-tight">
+            Ucz się grając.{" "}
+            <span className="bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] bg-clip-text text-transparent">
+              Zbieraj XP.
+            </span>{" "}
+            Vyhraj rebríček.
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-lg text-zinc-300 max-w-xl">
+            XP Arena je platforma edukačných minihier. Každá hra ti dá body do
+            globálneho rebríčka — financie, matematika, vedomosti. Čím viac
+            hráš, tým viac sa učíš.
           </p>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/games" className="btn btn-primary">Spustiť hru</Link>
+            {!session && (
+              <Link href="/register" className="btn btn-ghost">
+                Vytvoriť účet
+              </Link>
+            )}
+            <Link href="/leaderboard" className="btn btn-ghost">
+              Rebríček
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div className="card p-6">
+          <h2 className="text-sm uppercase tracking-wider text-zinc-400 mb-3">
+            Top 5 globálne
+          </h2>
+          {entries.length === 0 ? (
+            <p className="text-zinc-400 text-sm">
+              Ešte nikto neskóroval. Buď prvý!
+            </p>
+          ) : (
+            <ol className="flex flex-col gap-2">
+              {entries.map((e) => (
+                <li
+                  key={e.username}
+                  className="flex items-center justify-between py-2 border-b border-[var(--border)]/60 last:border-b-0"
+                >
+                  <span className="flex items-center gap-3">
+                    <span className="w-6 text-center font-bold opacity-70">
+                      #{e.rank}
+                    </span>
+                    <span>{e.username}</span>
+                  </span>
+                  <span className="font-mono font-semibold text-[var(--accent)]">
+                    {e.xp} XP
+                  </span>
+                </li>
+              ))}
+            </ol>
+          )}
         </div>
-      </main>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <div className="flex items-end justify-between">
+          <h2 className="text-2xl font-bold">Hry dostupné teraz</h2>
+          <Link
+            href="/games"
+            className="text-sm text-[var(--accent)] hover:underline"
+          >
+            Všetky hry →
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {GAMES.map((g) => (
+            <Link
+              key={g.id}
+              href={`/games/${g.id}`}
+              className="card p-5 hover:border-[var(--accent)] transition-colors"
+            >
+              <div
+                className={`h-20 rounded-xl mb-4 bg-gradient-to-br ${g.accent}`}
+              />
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="font-semibold">{g.title}</h3>
+                <span className="chip text-xs">{g.category}</span>
+              </div>
+              <p className="text-sm text-zinc-400">{g.tagline}</p>
+              <p className="text-xs mt-3 opacity-60">
+                Max {g.xpCap} XP za kolo
+              </p>
+            </Link>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

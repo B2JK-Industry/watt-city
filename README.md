@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# XP Arena
 
-## Getting Started
+Gamifikovaná edukačná platforma. Hráč sa zaregistruje, hrá minihry (financie,
+matematika, vedomosti) a zbiera XP do globálneho + per-game rebríčka.
 
-First, run the development server:
+Tento projekt je vstup do kategórie **PKO XP: Gaming** (ETHSilesia 2026).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Stack
+
+- Next.js 16 (App Router, Turbopack default) + React 19.2
+- TypeScript strict
+- Tailwind CSS 4
+- Upstash Redis pre persistent leaderboard + usery (s graceful in-memory fallbackom lokálne)
+- Zod pre validáciu API payloadov
+- HMAC-signed cookie sessions, scrypt password hashes (žiadne externé auth knižnice)
+
+## Štruktúra
+
+```
+app/
+  api/
+    auth/{register,login,logout}/route.ts
+    me/route.ts
+    score/route.ts
+    leaderboard/route.ts
+  games/
+    page.tsx               # hub
+    finance-quiz/page.tsx
+    math-sprint/page.tsx
+  leaderboard/page.tsx
+  login/page.tsx
+  register/page.tsx
+  page.tsx                 # landing
+  layout.tsx, globals.css
+components/
+  site-nav.tsx, logout-button.tsx, auth-form.tsx
+  games/
+    finance-quiz-client.tsx
+    math-sprint-client.tsx
+lib/
+  redis.ts                 # Upstash client + in-memory fallback
+  session.ts               # HMAC-signed cookie sessions
+  auth.ts                  # register/login + scrypt password hashing
+  leaderboard.ts           # awardXP, top-N
+  games.ts                 # game registry
+  content/finance-quiz.ts  # otázky kvízu
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Dev
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+cp .env.example .env.local   # nepovinné — bez Upstash beží in-memory
+pnpm dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Otvor http://localhost:3000.
 
-## Learn More
+## Pridanie novej minihry
 
-To learn more about Next.js, take a look at the following resources:
+1. Zaregistruj hru v `lib/games.ts` (`id`, `title`, `xpCap`, ...).
+2. Vytvor stránku `app/games/<id>/page.tsx` — server component, pull auth session,
+   redirect na `/login` ak nie je prihlásený.
+3. Logiku hry umiestni do klientskeho komponentu v `components/games/<id>-client.tsx`.
+4. Na konci kola klient POST-ne `/api/score` s `{ gameId, xp }`. Backend skóre
+   capne podľa `xpCap` a zapíše do `xp:leaderboard:global` + `xp:leaderboard:game:<id>`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Env
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` — pre persistentný rebríček
+- `SESSION_SECRET` — HMAC key pre cookie sessions (prod: povinné, >=16 znakov)
