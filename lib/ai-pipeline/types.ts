@@ -98,6 +98,105 @@ export const OrderSpecSchema = z.object({
   xpPerCorrect: z.number().int().min(10).max(40), // bonus for full sequence
 });
 
+/* ---------- Memory (concept ↔ icon/definition pairs, 4×4 grid) ---------- */
+
+export const MemoryPairSchema = z.object({
+  concept: z.string().min(2).max(40),
+  match: z.string().min(1).max(60),
+});
+
+export const MemorySpecSchema = z.object({
+  kind: z.literal("memory"),
+  pairs: z.array(MemoryPairSchema).min(6).max(8),
+  xpPerMatch: z.number().int().min(5).max(20),
+  hint: z.string().min(4).max(160), // overall theme hint
+});
+
+/* ---------- Fill-in-blank (sentence with one missing word) ---------- */
+
+export const FillBlankItemSchema = z.object({
+  sentence: z.string().min(10).max(200), // must contain "___" marker
+  answer: z.string().min(2).max(30),
+  alternatives: z.array(z.string().min(1).max(30)).max(3).optional(),
+  hint: z.string().min(4).max(160),
+});
+
+export const FillBlankSpecSchema = z.object({
+  kind: z.literal("fill-in-blank"),
+  items: z.array(FillBlankItemSchema).min(5).max(8),
+  xpPerCorrect: z.number().int().min(5).max(25),
+});
+
+/* ---------- Calc-sprint (60s mental math, finance-flavored) ---------- */
+
+export const CalcItemSchema = z.object({
+  expression: z.string().min(3).max(60), // e.g. "12 % × 5000 zł"
+  answer: z.number(),
+  unit: z.string().max(20).optional(), // "zł", "%", ""
+  tolerancePct: z.number().min(0).max(0.2).default(0),
+});
+
+export const CalcSpecSchema = z.object({
+  kind: z.literal("calc-sprint"),
+  items: z.array(CalcItemSchema).min(8).max(14),
+  durationSec: z.number().int().min(30).max(120).default(60),
+  xpPerCorrect: z.number().int().min(4).max(12),
+});
+
+/* ---------- Budget-allocate (split 100% across categories) ---------- */
+
+export const BudgetCategorySchema = z.object({
+  label: z.string().min(2).max(40),
+  targetPct: z.number().int().min(0).max(100),
+  tolerancePct: z.number().int().min(1).max(30),
+  explanation: z.string().min(10).max(240),
+});
+
+export const BudgetSpecSchema = z.object({
+  kind: z.literal("budget-allocate"),
+  scenario: z.string().min(10).max(200), // e.g. "Masz 4500 zł netto, Kraków, 22 lat, single"
+  incomeLabel: z.string().min(3).max(40),
+  categories: z.array(BudgetCategorySchema).min(3).max(5),
+  xpPerOnTarget: z.number().int().min(10).max(40),
+});
+
+/* ---------- What-if (scenario-driven multi-step reasoning) ---------- */
+
+export const WhatIfStepSchema = z.object({
+  prompt: z.string().min(10).max(200),
+  options: z.array(z.string().min(1).max(120)).length(3),
+  correctIndex: z.number().int().min(0).max(2),
+  explanation: z.string().min(10).max(300),
+});
+
+export const WhatIfSpecSchema = z.object({
+  kind: z.literal("what-if"),
+  scenario: z.string().min(20).max(400),
+  steps: z.array(WhatIfStepSchema).min(3).max(5),
+  xpPerCorrect: z.number().int().min(10).max(30),
+});
+
+/* ---------- Chart-read (SVG chart + one multiple-choice question) ---------- */
+
+export const ChartPointSchema = z.object({
+  x: z.union([z.number(), z.string().max(12)]),
+  y: z.number(),
+});
+
+export const ChartReadSpecSchema = z.object({
+  kind: z.literal("chart-read"),
+  chartType: z.enum(["line", "bar"]),
+  chartTitle: z.string().min(3).max(80),
+  xLabel: z.string().max(40),
+  yLabel: z.string().max(40),
+  points: z.array(ChartPointSchema).min(4).max(12),
+  question: z.string().min(8).max(200),
+  options: z.array(z.string().min(1).max(120)).length(4),
+  correctIndex: z.number().int().min(0).max(3),
+  explanation: z.string().min(10).max(300),
+  xpPerCorrect: z.number().int().min(10).max(40),
+});
+
 export const GameSpecSchema = z.discriminatedUnion("kind", [
   QuizSpecSchema,
   ScrambleSpecSchema,
@@ -105,6 +204,12 @@ export const GameSpecSchema = z.discriminatedUnion("kind", [
   TrueFalseSpecSchema,
   MatchPairsSpecSchema,
   OrderSpecSchema,
+  MemorySpecSchema,
+  FillBlankSpecSchema,
+  CalcSpecSchema,
+  BudgetSpecSchema,
+  WhatIfSpecSchema,
+  ChartReadSpecSchema,
 ]);
 export type GameSpec = z.infer<typeof GameSpecSchema>;
 
@@ -167,6 +272,13 @@ export function xpCapForSpec(spec: GameSpec): number {
   if (spec.kind === "true-false") return spec.items.length * spec.xpPerCorrect;
   if (spec.kind === "match-pairs") return spec.pairs.length * spec.xpPerMatch;
   if (spec.kind === "order") return spec.items.length * spec.xpPerCorrect;
+  if (spec.kind === "memory") return spec.pairs.length * spec.xpPerMatch;
+  if (spec.kind === "fill-in-blank") return spec.items.length * spec.xpPerCorrect;
+  if (spec.kind === "calc-sprint") return spec.items.length * spec.xpPerCorrect;
+  if (spec.kind === "budget-allocate")
+    return spec.categories.length * spec.xpPerOnTarget;
+  if (spec.kind === "what-if") return spec.steps.length * spec.xpPerCorrect;
+  if (spec.kind === "chart-read") return spec.xpPerCorrect; // single question
   return 100;
 }
 

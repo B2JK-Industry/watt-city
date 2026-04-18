@@ -7,6 +7,12 @@ import {
   TrueFalseSpecSchema,
   MatchPairsSpecSchema,
   OrderSpecSchema,
+  MemorySpecSchema,
+  FillBlankSpecSchema,
+  CalcSpecSchema,
+  BudgetSpecSchema,
+  WhatIfSpecSchema,
+  ChartReadSpecSchema,
   LocalizedSpecSchema,
   type GameSpec,
   type LocalizedSpec,
@@ -25,6 +31,12 @@ function schemaForKind(kind: SeedKind) {
     case "true-false": return TrueFalseSpecSchema;
     case "match-pairs": return MatchPairsSpecSchema;
     case "order": return OrderSpecSchema;
+    case "memory": return MemorySpecSchema;
+    case "fill-in-blank": return FillBlankSpecSchema;
+    case "calc-sprint": return CalcSpecSchema;
+    case "budget-allocate": return BudgetSpecSchema;
+    case "what-if": return WhatIfSpecSchema;
+    case "chart-read": return ChartReadSpecSchema;
   }
 }
 
@@ -110,6 +122,54 @@ function buildPlSystemPrompt(kind: SeedKind): string {
       "- rank: integer 1..N, unique per item, where 1 is first per direction.",
       "- direction: 'ascending' = lower rank shown first; 'descending' = higher rank first.",
       "- label: 2–8 words; hint: optional clue (e.g. year, value).",
+    ],
+    memory: [
+      "You are producing a MEMORY spec — concept↔match card pairs for a 4×4 flip-match grid.",
+      "Schema: {kind:'memory', pairs:[{concept, match}] × 6–8, xpPerMatch:int 5–20, hint}.",
+      "- concept: 2–4 words (e.g. 'BLIK', 'WIBOR', 'IKE').",
+      "- match: its short definition OR the paired icon label (e.g. '6-cyfrowy kod' / '📱').",
+      "- Every pair must be unambiguous — no two concepts share the same match text.",
+      "- hint: one sentence describing what topic the pairs cover.",
+    ],
+    "fill-in-blank": [
+      "You are producing a FILL-IN-BLANK spec — sentences with one missing key term.",
+      "Schema: {kind:'fill-in-blank', items:[{sentence (contains '___'), answer, alternatives?:[up to 3 accepted spellings], hint}] × 5–8, xpPerCorrect:int 5–25}.",
+      "- sentence: natural Polish, 10–25 words, with ONE '___' marker where the answer goes.",
+      "- answer: 2–30 chars, the exact expected fill (case-insensitive matching on client).",
+      "- alternatives: optional accepted variants (e.g. 'WIBOR' accepted as 'wibor').",
+      "- hint: brief clue, 4–20 words.",
+    ],
+    "calc-sprint": [
+      "You are producing a CALC-SPRINT spec — 60-second mental-math drill with finance flavour.",
+      "Schema: {kind:'calc-sprint', items:[{expression, answer:number, unit?, tolerancePct?}] × 8–14, durationSec:30–120 (default 60), xpPerCorrect:int 4–12}.",
+      "- expression: short PL/math mix (e.g. '12 % × 5000 zł', '8 lat × 3 %', '300 zł + 450 zł').",
+      "- answer: exact numeric solution (600, 24, 750…).",
+      "- unit: 'zł' / '%' / 'mies' / '' — keep simple. Locked during translation.",
+      "- tolerancePct: 0 for exact-answer items, up to 0.1 only when rounding is plausible.",
+    ],
+    "budget-allocate": [
+      "You are producing a BUDGET-ALLOCATE spec — player splits 100 % of income across 3–5 categories.",
+      "Schema: {kind:'budget-allocate', scenario, incomeLabel, categories:[{label, targetPct, tolerancePct, explanation}] × 3–5, xpPerOnTarget:int 10–40}.",
+      "- scenario: one-line persona (e.g. 'Student, 22 lata, 4500 zł netto, mieszkanie wynajmowane w Katowicach').",
+      "- incomeLabel: short phrase naming the income (e.g. 'Pensja netto 4500 zł').",
+      "- categories sum of targetPct must equal 100.",
+      "- tolerancePct: acceptable deviation (e.g. 5 means ±5 pp around target).",
+      "- explanation: one sentence per category teaching WHY that allocation makes sense.",
+    ],
+    "what-if": [
+      "You are producing a WHAT-IF spec — scenario + 3-5 sequential decisions.",
+      "Schema: {kind:'what-if', scenario, steps:[{prompt, options:[3], correctIndex:0–2, explanation}] × 3–5, xpPerCorrect:int 10–30}.",
+      "- scenario: 2–4 sentences, Polish context, concrete (age, income, choice point).",
+      "- steps: each is a branching decision; correctIndex is the financially-smart answer per current Polish market.",
+      "- explanation: why THAT option wins, citing rule/rate/regulator when possible.",
+    ],
+    "chart-read": [
+      "You are producing a CHART-READ spec — one chart + one multiple-choice question.",
+      "Schema: {kind:'chart-read', chartType:'line'|'bar', chartTitle, xLabel, yLabel, points:[{x, y:number}] × 4–12, question, options:[4], correctIndex:0–3, explanation, xpPerCorrect:int 10–40}.",
+      "- points: x can be year/month label or number; y is always numeric.",
+      "- question: asks about the chart (trend, max, min, growth rate, comparison).",
+      "- Chart should represent real Polish macro/finance data when possible (NBP rates, WIG20, Tauron tariffs over years, inflation CPI).",
+      "- correctIndex is the answer derivable from the chart data.",
     ],
   };
 
@@ -342,6 +402,105 @@ function mergeStructure(pl: GameSpec, translated: GameSpec): GameSpec {
           hint: t.hint ?? plItem.hint,
         };
       }),
+    };
+  }
+  if (pl.kind === "memory" && translated.kind === "memory") {
+    return {
+      kind: "memory",
+      xpPerMatch: pl.xpPerMatch,
+      hint: translated.hint ?? pl.hint,
+      pairs: pl.pairs.map((plPair, i) => {
+        const t = translated.pairs[i] ?? plPair;
+        return {
+          concept: t.concept ?? plPair.concept,
+          match: t.match ?? plPair.match,
+        };
+      }),
+    };
+  }
+  if (pl.kind === "fill-in-blank" && translated.kind === "fill-in-blank") {
+    return {
+      kind: "fill-in-blank",
+      xpPerCorrect: pl.xpPerCorrect,
+      items: pl.items.map((plItem, i) => {
+        const t = translated.items[i] ?? plItem;
+        return {
+          sentence: t.sentence ?? plItem.sentence,
+          answer: t.answer ?? plItem.answer,
+          alternatives: t.alternatives ?? plItem.alternatives,
+          hint: t.hint ?? plItem.hint,
+        };
+      }),
+    };
+  }
+  if (pl.kind === "calc-sprint" && translated.kind === "calc-sprint") {
+    return {
+      kind: "calc-sprint",
+      xpPerCorrect: pl.xpPerCorrect,
+      durationSec: pl.durationSec,
+      items: pl.items.map((plItem, i) => {
+        const t = translated.items[i] ?? plItem;
+        return {
+          expression: t.expression ?? plItem.expression,
+          answer: plItem.answer, // numeric truth locked
+          unit: plItem.unit, // locked
+          tolerancePct: plItem.tolerancePct,
+        };
+      }),
+    };
+  }
+  if (pl.kind === "budget-allocate" && translated.kind === "budget-allocate") {
+    return {
+      kind: "budget-allocate",
+      xpPerOnTarget: pl.xpPerOnTarget,
+      scenario: translated.scenario ?? pl.scenario,
+      incomeLabel: translated.incomeLabel ?? pl.incomeLabel,
+      categories: pl.categories.map((plCat, i) => {
+        const t = translated.categories[i] ?? plCat;
+        return {
+          label: t.label ?? plCat.label,
+          targetPct: plCat.targetPct, // numeric truth locked
+          tolerancePct: plCat.tolerancePct,
+          explanation: t.explanation ?? plCat.explanation,
+        };
+      }),
+    };
+  }
+  if (pl.kind === "what-if" && translated.kind === "what-if") {
+    return {
+      kind: "what-if",
+      xpPerCorrect: pl.xpPerCorrect,
+      scenario: translated.scenario ?? pl.scenario,
+      steps: pl.steps.map((plStep, i) => {
+        const t = translated.steps[i] ?? plStep;
+        return {
+          prompt: t.prompt ?? plStep.prompt,
+          options:
+            Array.isArray(t.options) && t.options.length === 3
+              ? t.options
+              : plStep.options,
+          correctIndex: plStep.correctIndex, // locked
+          explanation: t.explanation ?? plStep.explanation,
+        };
+      }),
+    };
+  }
+  if (pl.kind === "chart-read" && translated.kind === "chart-read") {
+    return {
+      kind: "chart-read",
+      xpPerCorrect: pl.xpPerCorrect,
+      chartType: pl.chartType, // locked
+      chartTitle: translated.chartTitle ?? pl.chartTitle,
+      xLabel: translated.xLabel ?? pl.xLabel,
+      yLabel: translated.yLabel ?? pl.yLabel,
+      points: pl.points, // numeric data locked verbatim
+      question: translated.question ?? pl.question,
+      options:
+        Array.isArray(translated.options) && translated.options.length === 4
+          ? translated.options
+          : pl.options,
+      correctIndex: pl.correctIndex, // locked
+      explanation: translated.explanation ?? pl.explanation,
     };
   }
   return pl;

@@ -18,7 +18,13 @@ export type SeedKind =
   | "price-guess"
   | "true-false"
   | "match-pairs"
-  | "order";
+  | "order"
+  | "memory"
+  | "fill-in-blank"
+  | "calc-sprint"
+  | "budget-allocate"
+  | "what-if"
+  | "chart-read";
 export type SeedDifficulty = "easy" | "medium" | "hard";
 
 export type ResearchSeed = {

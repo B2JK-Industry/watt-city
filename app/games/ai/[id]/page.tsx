@@ -11,6 +11,12 @@ import { AiPriceGuessClient } from "@/components/games/ai-price-guess-client";
 import { AiTrueFalseClient } from "@/components/games/ai-truefalse-client";
 import { AiMatchPairsClient } from "@/components/games/ai-matchpairs-client";
 import { AiOrderClient } from "@/components/games/ai-order-client";
+import { AiMemoryClient } from "@/components/games/ai-memory-client";
+import { AiFillBlankClient } from "@/components/games/ai-fillblank-client";
+import { AiCalcSprintClient } from "@/components/games/ai-calcsprint-client";
+import { AiBudgetClient } from "@/components/games/ai-budget-client";
+import { AiWhatIfClient } from "@/components/games/ai-whatif-client";
+import { AiChartReadClient } from "@/components/games/ai-chartread-client";
 
 export const dynamic = "force-dynamic";
 
@@ -76,6 +82,24 @@ export default async function AiGamePage({
       )}
       {spec.kind === "order" && (
         <AiOrderClient gameId={game.id} spec={spec} dict={dict} />
+      )}
+      {spec.kind === "memory" && (
+        <AiMemoryClient gameId={game.id} spec={spec} dict={dict} />
+      )}
+      {spec.kind === "fill-in-blank" && (
+        <AiFillBlankClient gameId={game.id} spec={spec} dict={dict} />
+      )}
+      {spec.kind === "calc-sprint" && (
+        <AiCalcSprintClient gameId={game.id} spec={spec} dict={dict} />
+      )}
+      {spec.kind === "budget-allocate" && (
+        <AiBudgetClient gameId={game.id} spec={spec} dict={dict} />
+      )}
+      {spec.kind === "what-if" && (
+        <AiWhatIfClient gameId={game.id} spec={spec} dict={dict} />
+      )}
+      {spec.kind === "chart-read" && (
+        <AiChartReadClient gameId={game.id} spec={spec} dict={dict} />
       )}
     </div>
   );
