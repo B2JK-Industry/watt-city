@@ -1,4 +1,10 @@
-export type GameCategory = "finance" | "math" | "memory" | "knowledge" | "reflex";
+export type GameCategory =
+  | "finance"
+  | "math"
+  | "memory"
+  | "knowledge"
+  | "reflex"
+  | "energy";
 
 export type GameMeta = {
   id: string;
@@ -8,11 +14,64 @@ export type GameMeta = {
   category: GameCategory;
   xpCap: number;
   durationLabel: string;
-  accent: string; // tailwind gradient class segment
+  accent: string;
   emoji: string;
+  ageHint?: string;
 };
 
 export const GAMES: GameMeta[] = [
+  {
+    id: "energy-dash",
+    title: "Energy Dash",
+    tagline: "Tap OZE, vyhni sa fosílom. Combo ×3.",
+    description:
+      "30 s reakčná hra na 4×4 mriežke. Klikaj iba obnoviteľné zdroje (slnko, vietor, voda, biomasa). Čiernych sa nedotkni. Rýchlosť rastie, combo dáva ×1.5/×2/×3. Strop 220 XP.",
+    category: "energy",
+    xpCap: 220,
+    durationLabel: "30 s",
+    accent: "from-emerald-400 via-teal-500 to-sky-600",
+    emoji: "⚡",
+    ageHint: "15–20",
+  },
+  {
+    id: "power-flip",
+    title: "Power Flip",
+    tagline: "Ktorá voľba šetrí viac energie?",
+    description:
+      "Dve možnosti, 30 s na combo. LED vs klasika, trieda A vs F, pokrievka vs bez, termostat vs radiátor naplno. Učíš sa pravidlá každodennej úspory.",
+    category: "energy",
+    xpCap: 180,
+    durationLabel: "30 s",
+    accent: "from-lime-400 via-emerald-500 to-green-600",
+    emoji: "💡",
+    ageHint: "15–20",
+  },
+  {
+    id: "stock-tap",
+    title: "Stock Tap",
+    tagline: "Kúp nízko, predaj vysoko. Live chart.",
+    description:
+      "45 sekúnd, živý graf ceny. Klik BUY, drž pozíciu, klik SELL v najvyššom bode. Ziskové obchody v rade = combo bonus. Stratové resetujú combo. Strop 220 XP.",
+    category: "finance",
+    xpCap: 220,
+    durationLabel: "45 s",
+    accent: "from-yellow-400 via-amber-500 to-orange-600",
+    emoji: "📈",
+    ageHint: "15–20",
+  },
+  {
+    id: "budget-balance",
+    title: "Budget Balance",
+    tagline: "Pravidlo 50/30/20 na živých scenároch.",
+    description:
+      "Dostaneš mesačný príjem (student / prvá práca / rodina) a 4 kategórie. Rozdeľ 100 % tak, aby si trafil odporúčané pásma. Čím lepšie, tým viac XP (strop 160).",
+    category: "finance",
+    xpCap: 160,
+    durationLabel: "bez časovača",
+    accent: "from-cyan-400 via-blue-500 to-indigo-600",
+    emoji: "📊",
+    ageHint: "16+",
+  },
   {
     id: "finance-quiz",
     title: "Finančný kvíz",
@@ -81,6 +140,7 @@ export const CATEGORY_LABELS: Record<GameCategory, string> = {
   memory: "Pamäť",
   knowledge: "Vedomosti",
   reflex: "Reflex",
+  energy: "Energetika",
 };
 
 export const CATEGORY_ACCENTS: Record<GameCategory, string> = {
@@ -89,6 +149,7 @@ export const CATEGORY_ACCENTS: Record<GameCategory, string> = {
   memory: "text-emerald-300 border-emerald-500/40",
   knowledge: "text-amber-300 border-amber-500/40",
   reflex: "text-rose-300 border-rose-500/40",
+  energy: "text-teal-300 border-teal-500/40",
 };
 
 export function getGame(id: string): GameMeta | undefined {
