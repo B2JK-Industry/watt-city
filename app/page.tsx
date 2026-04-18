@@ -7,7 +7,7 @@ import { userStats as leaderboardStats } from "@/lib/leaderboard";
 import { levelFromXP, titleForLevel } from "@/lib/level";
 import { Dashboard } from "@/components/dashboard";
 import { CityScene } from "@/components/city-scene";
-import { listActiveAiGames } from "@/lib/ai-pipeline/publish";
+import { listActiveAiGamesWithLazyRotation as listActiveAiGames } from "@/lib/ai-pipeline/lazy-rotation";
 import { xpCapForAnyLang } from "@/lib/ai-pipeline/types";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";

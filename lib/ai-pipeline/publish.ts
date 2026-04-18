@@ -56,6 +56,23 @@ export async function listActiveAiGames(): Promise<AiGame[]> {
   return games.filter((g): g is AiGame => g !== null);
 }
 
+// "Should the lazy path fire a rotation now?" — cheap (1 KV read for the
+// bucket sentinel + the already-loaded game list). No locking, no writes.
+// Callers use this to decide whether to await `rotateIfDue()` inline.
+export async function rotationIsDue(
+  games: AiGame[],
+  now = Date.now(),
+): Promise<boolean> {
+  const currentBucket = Math.floor(now / (ROTATION_HOURS * 60 * 60 * 1000));
+  const lastBucket = (await kvGet<number>(LAST_ROTATION_BUCKET_KEY)) ?? -1;
+  if (lastBucket === currentBucket) return false; // already rotated this hour
+  // Only rotate on-path if the live list is empty OR every game is already
+  // past its expiry. A partial refresh (some live, some expired) waits for
+  // the next cron/pinger to avoid stalling renders on a fresh game.
+  if (games.length === 0) return true;
+  return games.every((g) => g.validUntil <= now);
+}
+
 export async function getAiGame(id: string): Promise<AiGame | null> {
   return await kvGet<AiGame>(`xp:ai-games:${id}`);
 }

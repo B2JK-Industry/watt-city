@@ -125,35 +125,53 @@ vercel env pull .env.local --environment=production --yes
 {
   "crons": [
     {
-      "path": "/api/cron/daily-game",
+      "path": "/api/cron/rotate-if-due",
       "schedule": "0 9 * * *"            // Hobby tier limit: daily-only
     }
   ]
 }
 ```
 
+The Vercel cron is the **safety net**, not the primary. See ADR
+`docs/decisions/001-hourly-rotation-on-hobby.md` for rationale.
+
 ### Hobby vs Pro
 
-- **Hobby**: only daily granularity. We have `0 9 * * *` (every day 9 UTC).
-- **Pro** (when upgraded): allows `*/5 * * * *` for /5min granularity.
+- **Hobby**: only daily granularity. We have `0 9 * * *` (every day 09 UTC) pointing
+  at `rotate-if-due`, which is idempotent so daily firing cannot double-publish.
+- **Pro** (if upgraded): `*/5 * * * *` becomes allowable and replaces the external pinger.
 
-### External cron pinger (Hobby workaround)
+### External cron pinger (Hobby primary trigger)
 
-When we need /5min cadence on Hobby, use cron-job.org (free):
+This is the **primary hourly rotation trigger** for Watt City. cron-job.org is free
+and hits our endpoint every 5 minutes. Because `rotate-if-due` is bucket-aware, most
+5-minute calls are no-ops; at most one per hour does real work.
 
-1. Sign up at cron-job.org
-2. Create job: `POST https://watt-city.vercel.app/api/cron/rotate-if-due`
-3. Header: `Authorization: Bearer <CRON_SECRET>`
-4. Schedule: every 5 minutes
-5. Save
+1. Sign up at https://cron-job.org
+2. **Create job** →
+   - Title: `Watt City rotation pinger`
+   - URL: `https://watt-city.vercel.app/api/cron/rotate-if-due`
+   - Method: `POST`
+   - Schedule: every 5 minutes (`*/5 * * * *` in cron-job's UI)
+   - **Headers**: add `Authorization: Bearer <CRON_SECRET>` — use the same
+     value stored in Vercel env `CRON_SECRET`. Keep it out of commit history.
+   - Save job.
+3. Verify job runs by checking the "Executions" tab after 5 min —
+   expect `HTTP 200` with body `{"ok":true,...}`.
+4. Confirm telemetry: Vercel Logs → filter `rotation.fired` → should see one
+   `published` row per hour, `skipped` rows in between.
 
-### Lazy fallback
+Health of the pinger itself is visible on cron-job.org's job detail page
+(success rate + last 10 executions). If it drops below 95 % over 2 h,
+investigate.
 
-Even with cron broken, on every authenticated render we call `tickIfDue()` which checks:
-- Has cron rotated in last hour?
-- Are buildings overdue for tick?
+### Lazy fallback (code-level backstop)
 
-If yes, do work inline (with single-flight lock).
+Even with both cron + pinger broken, on every authenticated page render the
+server component invokes `rotateIfDue()` behind the same 60s single-flight
+lock. Same for the cashflow tick engine (Phase 1.4). If you see stale games
+despite pinger outage, it means nobody has loaded the page in the window —
+which is fine, because the next visitor triggers rotation on their render.
 
 ### Cron health checks
 

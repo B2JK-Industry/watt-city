@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { type GameMeta } from "@/lib/games";
+import { LiveCountdown } from "@/components/live-countdown";
 
 // Night panorama of Katowice — SVG viewBox is `VB_W x VB_H`. Buildings are
 // placed on a ground line at `GROUND`. Each game gets a unique silhouette.
@@ -1209,16 +1210,12 @@ function LiveAiBuilding({
   aiGame: CityAiGame;
 }) {
   const top = GROUND - h;
-  const hoursLeft = Math.max(
-    0,
-    Math.round((aiGame.validUntil - Date.now()) / (60 * 60 * 1000)),
-  );
   const short =
     aiGame.title.length > 10 ? aiGame.title.slice(0, 10) + "…" : aiGame.title;
   const r = recipeFor(aiGame.id);
   return (
     <g>
-      {/* hours-left chip above roof */}
+      {/* live countdown chip above roof — client-ticks every second */}
       <g transform={`translate(${x + w / 2 - 22}, ${top - 52})`}>
         <rect
           x={0}
@@ -1230,9 +1227,7 @@ function LiveAiBuilding({
           strokeWidth={1.5}
           rx={2}
         />
-        <text x={22} y={10} textAnchor="middle" fontSize={8} fontWeight={900} fill={r.roofColor}>
-          ⏱ {hoursLeft}h
-        </text>
+        <LiveCountdown validUntil={aiGame.validUntil} color={r.roofColor} />
       </g>
 
       {/* banner with title */}

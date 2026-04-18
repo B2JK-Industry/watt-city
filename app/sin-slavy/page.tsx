@@ -2,10 +2,8 @@ import Link from "next/link";
 import { GAMES, localizedTitle } from "@/lib/games";
 import { gameLeaderboard } from "@/lib/leaderboard";
 import { getSession } from "@/lib/session";
-import {
-  listActiveAiGames,
-  listArchivedAiGames,
-} from "@/lib/ai-pipeline/publish";
+import { listArchivedAiGames } from "@/lib/ai-pipeline/publish";
+import { listActiveAiGamesWithLazyRotation as listActiveAiGames } from "@/lib/ai-pipeline/lazy-rotation";
 import { specKind } from "@/lib/ai-pipeline/types";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
