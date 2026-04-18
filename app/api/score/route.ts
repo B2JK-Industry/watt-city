@@ -7,8 +7,15 @@ import { getAiGame } from "@/lib/ai-pipeline/publish";
 import { specKind, xpCapForAnyLang } from "@/lib/ai-pipeline/types";
 import { recordRound } from "@/lib/user-stats";
 import { levelFromXP } from "@/lib/level";
-import { yieldForGame, resourceDeltaFromYield } from "@/lib/resources";
+import {
+  yieldForGame,
+  resourceDeltaFromYield,
+  capDailyYield,
+  RESOURCE_KEYS,
+} from "@/lib/resources";
 import { creditResources, getPlayerState } from "@/lib/player";
+import { readEconomy, dailyYieldKey, dayBucket } from "@/lib/economy";
+import { kvGet, kvSet } from "@/lib/redis";
 
 const BodySchema = z.object({
   gameId: z.string().min(1).max(64),
@@ -76,20 +83,55 @@ export async function POST(request: NextRequest) {
   // Ledger dedupe key: `score:${gameId}:${previousBest}->${newBest}` — that
   // exact transition can happen at most once per player.
   let resources = null as Awaited<ReturnType<typeof getPlayerState>>["resources"] | null;
+  let capped = false;
   if (xpResult.delta > 0) {
     const y = yieldForGame(gameId, aiKind);
     if (y) {
       const state = await getPlayerState(session.username);
-      const deltaResources = resourceDeltaFromYield(xpResult.delta, y);
+      const raw = resourceDeltaFromYield(xpResult.delta, y);
+      const cfg = await readEconomy();
+      const day = dayBucket();
+
+      // Read today's already-earned totals per resource (parallel fetch).
+      const earned: Partial<Record<string, number>> = {};
+      await Promise.all(
+        RESOURCE_KEYS.map(async (k) => {
+          earned[k] = (await kvGet<number>(dailyYieldKey(session.username, k, day))) ?? 0;
+        }),
+      );
+      const trimmed = capDailyYield(
+        raw,
+        earned as Partial<Record<typeof RESOURCE_KEYS[number], number>>,
+        cfg.resourceCapPerKindDaily,
+      );
+      capped = Object.entries(raw).some(
+        ([k, v]) => (trimmed[k as keyof typeof trimmed] ?? 0) < (v ?? 0),
+      );
+
       const sourceId = `${gameId}:${xpResult.previousBest}->${xpResult.gameXP}`;
       const credit = await creditResources(
         state,
         "score",
-        deltaResources,
-        `score ${gameId} +${xpResult.delta}`,
+        trimmed,
+        `score ${gameId} +${xpResult.delta}${capped ? " (capped)" : ""}`,
         sourceId,
-        { gameId, aiKind, xp, previousBest: xpResult.previousBest },
+        { gameId, aiKind, xp, previousBest: xpResult.previousBest, capped },
       );
+      if (credit.applied) {
+        // Persist the day-earned counters so future scores in the same UTC day
+        // respect the cap. TTL ~2 days to survive across UTC boundaries.
+        await Promise.all(
+          (Object.entries(trimmed) as [keyof typeof trimmed, number][]).map(
+            async ([k, v]) => {
+              if (!v || v <= 0) return;
+              const next = (earned[k] ?? 0) + v;
+              await kvSet(dailyYieldKey(session.username, k, day), next, {
+                ex: 48 * 60 * 60,
+              });
+            },
+          ),
+        );
+      }
       resources = credit.resources;
     }
   }
@@ -107,5 +149,6 @@ export async function POST(request: NextRequest) {
     level,
     gameStats: recorded.gameStats,
     resources,
+    capped,
   });
 }

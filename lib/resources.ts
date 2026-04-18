@@ -106,7 +106,7 @@ export const RESOURCE_DEFS: Record<ResourceKey, ResourceDef> = {
     key: "glass",
     icon: "🪟",
     color: "#22d3ee",
-    mvpActive: false,
+    mvpActive: true,
     labels: {
       pl: "Szkło",
       uk: "Скло",
@@ -114,17 +114,17 @@ export const RESOURCE_DEFS: Record<ResourceKey, ResourceDef> = {
       en: "Glass",
     },
     descriptions: {
-      pl: "Wkrótce — odblokujesz w fazie 2 przez gry analityczne (price-guess, order).",
-      uk: "Скоро — відкриєте у фазі 2 через аналітичні ігри.",
-      cs: "Brzy — odemknete ve fázi 2 analytickými hrami.",
-      en: "Coming soon — phase 2 unlocks via analytical games.",
+      pl: "Za gry analityczne — price-guess, order, chart-read. Na Huta szkła, panele PV.",
+      uk: "За аналітичні ігри — price-guess, order, chart-read. Для скляного заводу.",
+      cs: "Za analytické hry — price-guess, order, chart-read. Na sklárnu a fotovoltaiku.",
+      en: "From analytical games — price-guess, order, chart-read. Powers glass foundry + PV.",
     },
   },
   steel: {
     key: "steel",
     icon: "🔩",
     color: "#94a3b8",
-    mvpActive: false,
+    mvpActive: true,
     labels: {
       pl: "Stal",
       uk: "Сталь",
@@ -132,17 +132,17 @@ export const RESOURCE_DEFS: Record<ResourceKey, ResourceDef> = {
       en: "Steel",
     },
     descriptions: {
-      pl: "Wkrótce — odblokujesz w fazie 2 przez trudne gry wieloetapowe.",
-      uk: "Скоро — відкриєте у фазі 2.",
-      cs: "Brzy — odemknete ve fázi 2.",
-      en: "Coming soon — phase 2 multi-step games.",
+      pl: "Za gry wieloetapowe — what-if, timeline-build. Na budynki T5+ (walcownia, fotowoltaika).",
+      uk: "За багатокрокові ігри — what-if, timeline-build. Для будівель T5+.",
+      cs: "Za vícestupňové hry — what-if, timeline-build. Pro budovy T5+.",
+      en: "From multi-step games — what-if, timeline-build. Powers T5+ buildings.",
     },
   },
   code: {
     key: "code",
     icon: "💾",
     color: "#22c55e",
-    mvpActive: false,
+    mvpActive: true,
     labels: {
       pl: "Kod",
       uk: "Код",
@@ -150,10 +150,10 @@ export const RESOURCE_DEFS: Record<ResourceKey, ResourceDef> = {
       en: "Code",
     },
     descriptions: {
-      pl: "Wkrótce — odblokujesz w fazie 2 przez najtrudniejsze gry (negotiate, tax-fill).",
-      uk: "Скоро — відкриєте у фазі 2.",
-      cs: "Brzy — odemknete ve fázi 2.",
-      en: "Coming soon — phase 2 advanced games.",
+      pl: "Za zaawansowane gry — negotiate, tax-fill. Na Software house + landmark T8.",
+      uk: "За складні ігри — negotiate, tax-fill. Для Software house + T8.",
+      cs: "Za pokročilé hry — negotiate, tax-fill. Pro Software house + T8.",
+      en: "From advanced games — negotiate, tax-fill. Powers Software house + T8.",
     },
   },
   cashZl: {
@@ -280,6 +280,28 @@ export function resourceDeltaFromYield(
     delta[y.secondary] = Math.floor(xpDelta * y.secondaryRatio);
   }
   return delta;
+}
+
+/** Apply a per-day earned cap to a positive resource delta. Given the prior
+ *  running total per resource (map key → already-earned today), trims each
+ *  resource's delta so `earnedToday + delta <= cap`. Negatives are passed
+ *  through unchanged (caps are earn-side only). Returns the trimmed delta. */
+export function capDailyYield(
+  delta: Partial<Resources>,
+  earnedToday: Partial<Record<ResourceKey, number>>,
+  cap: number,
+): Partial<Resources> {
+  const out: Partial<Resources> = {};
+  for (const [k, v] of Object.entries(delta) as [ResourceKey, number][]) {
+    if (v <= 0) {
+      out[k] = v;
+      continue;
+    }
+    const prior = earnedToday[k] ?? 0;
+    const remaining = Math.max(0, cap - prior);
+    out[k] = Math.min(v, remaining);
+  }
+  return out;
 }
 
 export { LANGS };
