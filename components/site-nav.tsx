@@ -47,6 +47,12 @@ export function SiteNav({
           >
             Sieň slávy
           </Link>
+          <Link
+            href="/o-platforme"
+            className="hover:text-[var(--accent)] transition-colors"
+          >
+            O platforme
+          </Link>
         </div>
         <div className="flex items-center gap-3 text-sm">
           {username ? (

@@ -85,16 +85,16 @@ export default async function RootLayout({
                 Sponzori: PKO Bank Polski · Tauron · ETHWarsaw · AKMF · Katowicki.Hub
               </span>
               <span className="flex flex-wrap gap-3">
+                <a href="/o-platforme" className="hover:text-[var(--accent)]">
+                  O platforme
+                </a>
                 <a
                   href="/ochrana-sukromia"
                   className="hover:text-[var(--accent)]"
                 >
                   Ochrana súkromia
                 </a>
-                <a
-                  href="/sin-slavy"
-                  className="hover:text-[var(--accent)]"
-                >
+                <a href="/sin-slavy" className="hover:text-[var(--accent)]">
                   Sieň slávy
                 </a>
                 <a

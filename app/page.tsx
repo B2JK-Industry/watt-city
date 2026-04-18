@@ -54,29 +54,31 @@ export default async function Home() {
             <span className="inline-block bg-[var(--accent)] text-[#0a0a0f] px-3 py-1 border-[3px] border-[var(--ink)] shadow-[6px_6px_0_0_var(--ink)] my-1">
               Watty
             </span>
-            . Postav{" "}
+            . Postav si{" "}
             <span className="inline-block bg-[var(--neo-cyan)] text-[#0a0a0f] px-3 py-1 border-[3px] border-[var(--ink)] shadow-[6px_6px_0_0_var(--ink)] my-1">
-              Katowice
+              dom
             </span>
-            .
+            v Katowiciach.
           </h1>
           <p className="text-lg text-zinc-300 max-w-xl">
-            Arkáda minihier o tom, čo Gen Z naozaj potrebuje vedieť: BLIK, ETF,
-            RRSO, energetika, inflácia, kurzy. Každý správny tap vygeneruje{" "}
-            <strong className="text-[var(--accent)]">Watty</strong>, ktoré
-            posúvajú tvoje sliezske mesto z baníckej osady až k{" "}
-            <strong className="text-[var(--neo-cyan)]">Europejska Stolica 2.0</strong>.
-            9 tierov. 9 hier. 1 liga.
+            Gamifikovaná finančná a energetická gramotnosť pre Gen Z. Každý
+            správny tap ti vygeneruje{" "}
+            <strong className="text-[var(--accent)]">Watty</strong> — a tvoja
+            <strong> jediná budova</strong> v Katowiciach rastie z baníckej
+            búdy v Nikiszowci až k{" "}
+            <strong className="text-[var(--neo-cyan)]">Varso Tower</strong>{" "}
+            (310 m, najvyššia v EÚ). 9 evergreen minihier, nová AI výzva každých
+            6 hodín, duel kódom s kamošom.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link href="/register" className="btn btn-primary">
               Vytvoriť účet
             </Link>
+            <Link href="/o-platforme" className="btn btn-cyan">
+              Ako to funguje
+            </Link>
             <Link href="/games" className="btn btn-ghost">
               Prehľad hier
-            </Link>
-            <Link href="/leaderboard" className="btn btn-ghost">
-              Rebríček
             </Link>
           </div>
           <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
