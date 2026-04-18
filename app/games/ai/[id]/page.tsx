@@ -1,25 +1,54 @@
 import Link from "next/link";
+import nextDynamic from "next/dynamic";
 import { notFound, redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { getAiGame } from "@/lib/ai-pipeline/publish";
 import { resolveSpecForLang } from "@/lib/ai-pipeline/types";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
-import { AiQuizClient } from "@/components/games/ai-quiz-client";
-import { AiScrambleClient } from "@/components/games/ai-scramble-client";
-import { AiPriceGuessClient } from "@/components/games/ai-price-guess-client";
-import { AiTrueFalseClient } from "@/components/games/ai-truefalse-client";
-import { AiMatchPairsClient } from "@/components/games/ai-matchpairs-client";
-import { AiOrderClient } from "@/components/games/ai-order-client";
-import { AiMemoryClient } from "@/components/games/ai-memory-client";
-import { AiFillBlankClient } from "@/components/games/ai-fillblank-client";
-import { AiCalcSprintClient } from "@/components/games/ai-calcsprint-client";
-import { AiBudgetClient } from "@/components/games/ai-budget-client";
-import { AiWhatIfClient } from "@/components/games/ai-whatif-client";
-import { AiChartReadClient } from "@/components/games/ai-chartread-client";
 import { GameComments } from "@/components/game-comments";
 
 export const dynamic = "force-dynamic";
+
+// Phase 6.5.3 — code-split every AI kind client into its own chunk. Only
+// the kind actually rendered for the current spec is downloaded. Saves
+// ~60 KB gzipped on first paint for the common quiz/scramble path.
+const AiQuizClient = nextDynamic(() =>
+  import("@/components/games/ai-quiz-client").then((m) => m.AiQuizClient),
+);
+const AiScrambleClient = nextDynamic(() =>
+  import("@/components/games/ai-scramble-client").then((m) => m.AiScrambleClient),
+);
+const AiPriceGuessClient = nextDynamic(() =>
+  import("@/components/games/ai-price-guess-client").then((m) => m.AiPriceGuessClient),
+);
+const AiTrueFalseClient = nextDynamic(() =>
+  import("@/components/games/ai-truefalse-client").then((m) => m.AiTrueFalseClient),
+);
+const AiMatchPairsClient = nextDynamic(() =>
+  import("@/components/games/ai-matchpairs-client").then((m) => m.AiMatchPairsClient),
+);
+const AiOrderClient = nextDynamic(() =>
+  import("@/components/games/ai-order-client").then((m) => m.AiOrderClient),
+);
+const AiMemoryClient = nextDynamic(() =>
+  import("@/components/games/ai-memory-client").then((m) => m.AiMemoryClient),
+);
+const AiFillBlankClient = nextDynamic(() =>
+  import("@/components/games/ai-fillblank-client").then((m) => m.AiFillBlankClient),
+);
+const AiCalcSprintClient = nextDynamic(() =>
+  import("@/components/games/ai-calcsprint-client").then((m) => m.AiCalcSprintClient),
+);
+const AiBudgetClient = nextDynamic(() =>
+  import("@/components/games/ai-budget-client").then((m) => m.AiBudgetClient),
+);
+const AiWhatIfClient = nextDynamic(() =>
+  import("@/components/games/ai-whatif-client").then((m) => m.AiWhatIfClient),
+);
+const AiChartReadClient = nextDynamic(() =>
+  import("@/components/games/ai-chartread-client").then((m) => m.AiChartReadClient),
+);
 
 export default async function AiGamePage({
   params,

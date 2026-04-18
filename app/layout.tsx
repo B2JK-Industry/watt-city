@@ -7,6 +7,7 @@ import { TierUpToast } from "@/components/tier-up-toast";
 import { OnboardingTour } from "@/components/onboarding-tour";
 import { CsrfBootstrap } from "@/components/csrf-bootstrap";
 import { CookieConsent } from "@/components/cookie-consent";
+import { WebVitalsReporter } from "@/components/web-vitals-reporter";
 import { resolveTheme } from "@/lib/theme";
 import { getSession } from "@/lib/session";
 import { userStats } from "@/lib/leaderboard";
@@ -66,6 +67,7 @@ export default async function RootLayout({
           {{ pl: "Przejdź do treści", uk: "До контенту", cs: "Přejít na obsah", en: "Skip to content" }[lang]}
         </a>
         <CsrfBootstrap />
+        <WebVitalsReporter />
         <CookieConsent lang={lang} />
         <SiteNav
           username={session?.username ?? null}

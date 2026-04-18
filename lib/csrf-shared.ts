@@ -10,6 +10,8 @@ export const EXEMPT_PATH_PREFIXES = [
   "/api/auth/login",
   "/api/auth/register",
   "/api/lang",
+  "/api/analytics/web-vitals", // sendBeacon can't set custom headers
+  "/api/consent/", // one-shot tokens are already high-entropy
 ];
 
 export function isExemptPath(pathname: string): boolean {
