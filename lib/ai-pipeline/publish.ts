@@ -41,7 +41,7 @@ export async function runPipeline(now = Date.now()): Promise<RunResult> {
   const seed = pickResearchSeed(now);
 
   // 2) Generate game spec
-  const deterministicSeed = Math.floor(now / (6 * 60 * 60 * 1000));
+  const deterministicSeed = Math.floor(now / (24 * 60 * 60 * 1000));
   let generated;
   try {
     generated = await generateGameSpec({ seed, deterministicSeed });
@@ -73,7 +73,7 @@ export async function runPipeline(now = Date.now()): Promise<RunResult> {
     id,
     title: seed.theme.split(" — ")[0],
     tagline: seed.notes.slice(0, 120),
-    description: `${seed.theme}. AI-generated 6-hour challenge. Top 3 hráči dostanú permanentnú medailu.`,
+    description: `${seed.theme}. AI-generated denná výzva. Top 3 hráči dostanú permanentnú medailu.`,
     theme: seed.theme,
     source: seed.source,
     buildingName: seed.buildingName,
@@ -82,7 +82,7 @@ export async function runPipeline(now = Date.now()): Promise<RunResult> {
     buildingBody: seed.buildingBody,
     spec: specParse.data,
     generatedAt: now,
-    validUntil: now + 6 * 60 * 60 * 1000,
+    validUntil: now + 24 * 60 * 60 * 1000,
     model: generated.model,
     seed: deterministicSeed,
   };

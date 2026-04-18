@@ -61,9 +61,9 @@ const ROTATION_POOL: ResearchSeed[] = [
   },
 ];
 
-// Deterministic pick: same UTC-6h bucket → same theme, so Vercel Cron
-// retries within the same slot don't mint a new game.
+// Deterministic pick: same UTC-day bucket → same theme, so Vercel Cron
+// retries within the same day don't mint a new game.
 export function pickResearchSeed(nowMs: number): ResearchSeed {
-  const sixHourBucket = Math.floor(nowMs / (6 * 60 * 60 * 1000));
-  return ROTATION_POOL[sixHourBucket % ROTATION_POOL.length];
+  const dayBucket = Math.floor(nowMs / (24 * 60 * 60 * 1000));
+  return ROTATION_POOL[dayBucket % ROTATION_POOL.length];
 }

@@ -3,6 +3,8 @@ import { z } from "zod";
 import { getSession } from "@/lib/session";
 import { awardXP } from "@/lib/leaderboard";
 import { getGame } from "@/lib/games";
+import { getAiGame } from "@/lib/ai-pipeline/publish";
+import { xpCapForSpec } from "@/lib/ai-pipeline/types";
 import { recordRound } from "@/lib/user-stats";
 import { levelFromXP } from "@/lib/level";
 
@@ -37,18 +39,32 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const game = getGame(parsed.data.gameId);
-  if (!game) {
-    return Response.json(
-      { ok: false, error: "Neznáma hra." },
-      { status: 404 },
-    );
+  const gameId = parsed.data.gameId;
+  let resolvedCap: number;
+  if (gameId.startsWith("ai-")) {
+    const ai = await getAiGame(gameId);
+    if (!ai) {
+      return Response.json(
+        { ok: false, error: "Neznáma hra." },
+        { status: 404 },
+      );
+    }
+    resolvedCap = xpCapForSpec(ai.spec);
+  } else {
+    const game = getGame(gameId);
+    if (!game) {
+      return Response.json(
+        { ok: false, error: "Neznáma hra." },
+        { status: 404 },
+      );
+    }
+    resolvedCap = game.xpCap;
   }
 
-  const xp = Math.min(parsed.data.xp, game.xpCap);
+  const xp = Math.min(parsed.data.xp, resolvedCap);
   const [xpResult, recorded] = await Promise.all([
-    awardXP(session.username, game.id, xp),
-    recordRound(session.username, game.id, xp),
+    awardXP(session.username, gameId, xp),
+    recordRound(session.username, gameId, xp),
   ]);
 
   const level = levelFromXP(xpResult.globalXP);

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /* ==========================================================================
- * AI Game of the 6-hour — deterministic game-spec schema.
+ * AI Game of the day — deterministic game-spec schema.
  *
  * Claude produces a JSON matching GameSpec, which the renderer (not in this
  * file) turns into a playable round. Keeping the shape strict means:
@@ -76,8 +76,16 @@ export const AiGameSchema = z.object({
 });
 export type AiGame = z.infer<typeof AiGameSchema>;
 
+/* ---------- XP cap derived from spec ---------- */
+
+export function xpCapForSpec(spec: GameSpec): number {
+  if (spec.kind === "quiz") return spec.items.length * spec.xpPerCorrect;
+  if (spec.kind === "scramble") return spec.words.length * spec.xpPerWord;
+  return spec.items.length * spec.xpPerCorrect;
+}
+
 /* ---------- Rotation policy ---------- */
 
-export const ROTATION_HOURS = 6;
-export const MAX_ACTIVE_AI_GAMES = 3; // construction site + 2 live
-export const AI_GAME_TTL_SECONDS = ROTATION_HOURS * 60 * 60 * 2; // 12h Redis TTL; logic evicts at 6h
+export const ROTATION_HOURS = 24;
+export const MAX_ACTIVE_AI_GAMES = 3;
+export const AI_GAME_TTL_SECONDS = ROTATION_HOURS * 60 * 60 * 2;
