@@ -294,26 +294,43 @@ export function Dashboard({
 
       {unplayed.length > 0 && (
         <section className="flex flex-col gap-4">
-          <h2 className="text-2xl font-bold">Ešte si nevyskúšal</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="flex items-end justify-between">
+            <h2 className="brutal-heading text-2xl">Ešte temné budovy</h2>
+            <Link
+              href="/games"
+              className="text-sm text-[var(--accent)] hover:underline"
+            >
+              Celá panoráma →
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
             {unplayed.map((g) => (
               <Link
                 key={g.id}
                 href={`/games/${g.id}`}
-                className="relative card game-tile stagger-item p-5 flex flex-col gap-3"
+                className="relative h-[140px] block rounded-xl border-[3px] border-[var(--ink)] overflow-hidden shadow-[4px_4px_0_0_var(--ink)] hover:shadow-[6px_6px_0_0_var(--ink)] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all stagger-item"
               >
-                {g.isNew && <span className="new-badge">Nové</span>}
-                {g.hot && <span className="hot-badge">🔥 Hot</span>}
                 <div
-                  className={`h-20 rounded-xl bg-gradient-to-br ${g.accent} flex items-center justify-center text-4xl`}
+                  className={`${g.building.roof} border-b-[3px] border-[var(--ink)] h-5`}
+                  style={{
+                    backgroundImage:
+                      "repeating-linear-gradient(135deg, rgba(0,0,0,0.2) 0 5px, transparent 5px 10px)",
+                  }}
+                />
+                <div
+                  className={`${g.building.body} h-[calc(100%-1.25rem)] relative flex items-center justify-center`}
                 >
-                  {g.emoji}
+                  <div className="absolute inset-2 rounded-md border-2 border-[var(--ink)] bg-[#0a0a0f]/70 flex items-center justify-center">
+                    <span className="text-4xl">{g.building.glyph}</span>
+                  </div>
+                  <span className="absolute bottom-1 left-1 right-1 text-[9px] font-black uppercase tracking-wider text-[#0a0a0f] bg-white/90 rounded-sm border-2 border-[var(--ink)] px-1 truncate text-center">
+                    {g.building.name}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full border-2 border-[var(--ink)] bg-zinc-700"
+                  />
                 </div>
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold">{g.title}</h3>
-                  <span className="chip text-xs">{g.durationLabel}</span>
-                </div>
-                <p className="text-sm text-zinc-400">{g.tagline}</p>
               </Link>
             ))}
           </div>

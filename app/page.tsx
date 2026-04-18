@@ -6,6 +6,7 @@ import { getUserStats } from "@/lib/user-stats";
 import { userStats as leaderboardStats } from "@/lib/leaderboard";
 import { levelFromXP, titleForLevel } from "@/lib/level";
 import { Dashboard } from "@/components/dashboard";
+import { CityPreview } from "@/components/city-preview";
 
 export const dynamic = "force-dynamic";
 
@@ -123,30 +124,14 @@ export default async function Home() {
       </section>
 
       <section className="flex flex-col gap-4">
-        <h2 className="text-2xl font-bold">Čo si zahráš</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {GAMES.map((g) => (
-            <Link
-              key={g.id}
-              href={`/games/${g.id}`}
-              className="relative card game-tile stagger-item p-5"
-            >
-              {g.isNew && <span className="new-badge">Nové</span>}
-              {g.hot && <span className="hot-badge">🔥 Hot</span>}
-              <div
-                className={`h-20 rounded-xl mb-4 bg-gradient-to-br ${g.accent} flex items-center justify-center text-4xl`}
-              >
-                {g.emoji}
-              </div>
-              <div className="flex items-center justify-between mb-1">
-                <h3 className="font-semibold">{g.title}</h3>
-                <span className="chip text-xs">{g.durationLabel}</span>
-              </div>
-              <p className="text-sm text-zinc-400">{g.tagline}</p>
-            </Link>
-          ))}
-        </div>
+        <h2 className="brutal-heading text-2xl">Panorama Katowíc</h2>
+        <p className="text-zinc-400 max-w-xl -mt-2">
+          9 budov = 9 minihier. Poklikaj na ktorúkoľvek a rozsvieť ju. Tu je
+          nahliadnutie — po registrácii dostaneš vlastnú verziu mesta.
+        </p>
+        <CityPreview />
       </section>
+
     </div>
   );
 }

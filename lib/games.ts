@@ -6,6 +6,19 @@ export type GameCategory =
   | "reflex"
   | "energy";
 
+export type BuildingShape = "standard" | "wide" | "tall" | "narrow";
+
+export type Building = {
+  name: string;        // In-city name: "PKO Tower"
+  role: string;        // Short role line: "Burzová veža"
+  shape: BuildingShape;
+  roof: string;        // Tailwind bg-* utility for the roof strip
+  body: string;        // Tailwind bg-* utility for the walls
+  glyph: string;       // Main emoji painted on the wall
+  sign: string;        // Emoji on the sign board
+  unlockTier?: number; // Tier >= 2 means locked until reached
+};
+
 export type GameMeta = {
   id: string;
   title: string;
@@ -19,6 +32,7 @@ export type GameMeta = {
   ageHint?: string;
   isNew?: boolean;
   hot?: boolean;
+  building: Building;
 };
 
 export const GAMES: GameMeta[] = [
@@ -36,6 +50,15 @@ export const GAMES: GameMeta[] = [
     ageHint: "15–20",
     isNew: true,
     hot: true,
+    building: {
+      name: "Silesia Solar Farm",
+      role: "Solárna farma",
+      shape: "wide",
+      roof: "bg-emerald-400",
+      body: "bg-emerald-500",
+      glyph: "☀️",
+      sign: "⚡",
+    },
   },
   {
     id: "power-flip",
@@ -50,6 +73,15 @@ export const GAMES: GameMeta[] = [
     emoji: "💡",
     ageHint: "15–20",
     isNew: true,
+    building: {
+      name: "Dom LED",
+      role: "Energetický showroom",
+      shape: "narrow",
+      roof: "bg-[var(--neo-lime)]",
+      body: "bg-lime-500",
+      glyph: "💡",
+      sign: "✨",
+    },
   },
   {
     id: "stock-tap",
@@ -65,6 +97,15 @@ export const GAMES: GameMeta[] = [
     ageHint: "15–20",
     isNew: true,
     hot: true,
+    building: {
+      name: "PKO Tower",
+      role: "Burzová veža",
+      shape: "tall",
+      roof: "bg-[var(--neo-yellow)]",
+      body: "bg-amber-500",
+      glyph: "📈",
+      sign: "🏦",
+    },
   },
   {
     id: "budget-balance",
@@ -79,6 +120,15 @@ export const GAMES: GameMeta[] = [
     emoji: "📊",
     ageHint: "16+",
     isNew: true,
+    building: {
+      name: "PKO Oddział",
+      role: "Banková pobočka",
+      shape: "standard",
+      roof: "bg-[var(--neo-cyan)]",
+      body: "bg-sky-500",
+      glyph: "🏦",
+      sign: "💳",
+    },
   },
   {
     id: "finance-quiz",
@@ -91,6 +141,15 @@ export const GAMES: GameMeta[] = [
     durationLabel: "~2 min",
     accent: "from-amber-400 via-orange-500 to-rose-500",
     emoji: "🧠",
+    building: {
+      name: "Biblioteka Śląska",
+      role: "Sliezska knižnica",
+      shape: "wide",
+      roof: "bg-amber-400",
+      body: "bg-amber-600",
+      glyph: "📚",
+      sign: "🧠",
+    },
   },
   {
     id: "math-sprint",
@@ -103,6 +162,15 @@ export const GAMES: GameMeta[] = [
     durationLabel: "60 s",
     accent: "from-sky-400 via-indigo-500 to-purple-600",
     emoji: "⚡",
+    building: {
+      name: "Instytut Matematyki",
+      role: "Matematický inštitút",
+      shape: "standard",
+      roof: "bg-indigo-400",
+      body: "bg-indigo-500",
+      glyph: "🔢",
+      sign: "π",
+    },
   },
   {
     id: "memory-match",
@@ -115,6 +183,15 @@ export const GAMES: GameMeta[] = [
     durationLabel: "~90 s",
     accent: "from-emerald-400 via-teal-500 to-cyan-600",
     emoji: "🎴",
+    building: {
+      name: "Muzeum Śląskie",
+      role: "Sliezske múzeum",
+      shape: "standard",
+      roof: "bg-teal-400",
+      body: "bg-teal-600",
+      glyph: "🏛️",
+      sign: "🎴",
+    },
   },
   {
     id: "currency-rush",
@@ -127,6 +204,15 @@ export const GAMES: GameMeta[] = [
     durationLabel: "45 s",
     accent: "from-lime-400 via-yellow-500 to-amber-600",
     emoji: "💱",
+    building: {
+      name: "Kantor Rynek",
+      role: "Zmenáreň na Rynku",
+      shape: "narrow",
+      roof: "bg-yellow-400",
+      body: "bg-yellow-600",
+      glyph: "💱",
+      sign: "€",
+    },
   },
   {
     id: "word-scramble",
@@ -139,6 +225,15 @@ export const GAMES: GameMeta[] = [
     durationLabel: "~2 min",
     accent: "from-fuchsia-500 via-pink-500 to-rose-500",
     emoji: "🔡",
+    building: {
+      name: "Drukarnia",
+      role: "Mestská tlačiareň",
+      shape: "standard",
+      roof: "bg-fuchsia-400",
+      body: "bg-fuchsia-600",
+      glyph: "🖨️",
+      sign: "🔡",
+    },
   },
 ];
 

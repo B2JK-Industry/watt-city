@@ -1,15 +1,20 @@
 import { GAMES } from "@/lib/games";
 import { getSession } from "@/lib/session";
 import { getUserStats } from "@/lib/user-stats";
-import { GamesHub } from "@/components/games-hub";
+import { userStats } from "@/lib/leaderboard";
+import { levelFromXP, tierForLevel } from "@/lib/level";
+import { CityBlock, type CityGame } from "@/components/city-block";
 
 export const dynamic = "force-dynamic";
 
 export default async function GamesHubPage() {
   const session = await getSession();
   const stats = session ? await getUserStats(session.username) : null;
+  const lb = session ? await userStats(session.username) : null;
+  const level = lb ? levelFromXP(lb.globalXP) : null;
+  const tier = level ? tierForLevel(level.level) : null;
 
-  const personalized = GAMES.map((g) => {
+  const personalized: CityGame[] = GAMES.map((g) => {
     const played = stats?.games[g.id];
     return {
       ...g,
@@ -21,13 +26,30 @@ export default async function GamesHubPage() {
 
   return (
     <div className="flex flex-col gap-8 animate-slide-up">
-      <header className="flex flex-col gap-2">
-        <h1 className="text-3xl sm:text-4xl font-bold">Hry</h1>
+      <header className="flex flex-col gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <h1 className="brutal-heading text-3xl sm:text-4xl">
+            Tvoje mestečko
+          </h1>
+          {tier && (
+            <span
+              className="brutal-tag"
+              style={{
+                background: "var(--neo-yellow)",
+                color: "#0a0a0f",
+              }}
+            >
+              {tier.emoji} {tier.name}
+            </span>
+          )}
+        </div>
         <p className="text-zinc-400 max-w-2xl">
-          Vyber si minihru. Každá vygeneruje Watty pre tvoje sliezske mesto. Nováčikom odporúčame začať Finančným kvízom.
+          Každá budova v Katowiciach je minihra. Klikni na budovu, zahraj,
+          vygeneruj Watty — budovy sa <strong>rozsvietia</strong>,
+          tvoje mesto rastie. Žltá lampa vpravo hore = rozsvietené.
         </p>
       </header>
-      <GamesHub games={personalized} loggedIn={Boolean(session)} />
+      <CityBlock games={personalized} loggedIn={Boolean(session)} />
     </div>
   );
 }
