@@ -1,7 +1,6 @@
-// Silesia Watt League — jedna metafora:
-//  * Namiesto "XP" zbieraš Watty (W), ktoré "elektrifikujú" tvoje sliezske mesto.
-//  * Každý tier posunie tvoje mesto z osady k Europskej stolici kultúry.
-//  * Level-up = nová budova/zóna, ktorá sa v meste rozsvieti.
+// XP Arena progression — namiesto "mestskej progresie" ide o
+// RASTÚCU vlastnú budovu hráča. Začínaš ako drevená búda v baníckej
+// osade a skončíš na streche Varso Tower (najvyššia budova v EÚ).
 
 export type LevelInfo = {
   level: number;
@@ -11,10 +10,7 @@ export type LevelInfo = {
   progress: number; // 0..1
 };
 
-// level L starts at K * (L-1)^2 watts.
-// K was 50 for the hackathon MVP (tier 5 at 800 W — too fast).
-// Bumped to 120 so a single perfect round (100–220 W) bumps you
-// at most one tier early on, and tier 5 is a proper grind (~1920 W).
+// Level L starts at K * (L-1)^2 watts. K = 120 pre rozumný grind.
 const K = 120;
 
 export function levelFromXP(xp: number): LevelInfo {
@@ -31,105 +27,104 @@ export function levelFromXP(xp: number): LevelInfo {
 
 export type CityTier = {
   level: number;
-  name: string;        // short name (navbar + badge)
-  full: string;        // longer descriptive name (dashboard)
+  name: string;
+  full: string;
   emoji: string;
-  accent: string;      // tailwind color utility without prefix (bg-<accent>)
-  unlocks: string;     // "new building/zone" unlocked at this tier
-  story: string;       // 1-sentence flavor text
+  accent: string; // tailwind bg-*
+  story: string;
+  unlocks: string;
 };
 
-// 9 tiers cover L1–L9+, matching levelFromXP break-points.
 export const CITY_TIERS: CityTier[] = [
   {
     level: 1,
-    name: "Osada",
-    full: "Uhoľná osada (1930s Silesia)",
-    emoji: "🏚️",
-    accent: "bg-zinc-400",
-    unlocks: "Prvý rodinný domček",
+    name: "Drevená búda",
+    full: "Drevená búda v Nikiszowci",
+    emoji: "🛖",
+    accent: "bg-amber-700",
     story:
-      "Začínaš v starej sliezskej baníckej osade. Komíny, uhlie, pár lámp. Treba prúd.",
+      "Banícka štvrť, koniec 19. storočia. Jedna drevená búda, jedna lampa, hromada uhlia. Začíname.",
+    unlocks: "Strecha nad hlavou",
   },
   {
     level: 2,
-    name: "Robotnícka štvrť",
-    full: "Robotnícka štvrť",
-    emoji: "🏘️",
-    accent: "bg-amber-400",
-    unlocks: "Pekáreň a tramvajová zastávka",
+    name: "Robotnícky dom",
+    full: "Robotnícky dom (Nikiszowiec)",
+    emoji: "🏚️",
+    accent: "bg-orange-700",
     story:
-      "Okolie sa rozrastá. Stavia sa prvá zastávka tramvaje, pekáreň svieti až do noci.",
+      "Červenotehlový radový dom. Všetko v jednom trakte: kuchyňa, spálňa, detská izba pri peci.",
+    unlocks: "Dvor + kôlňa",
   },
   {
     level: 3,
-    name: "Mestská časť",
-    full: "Mestská časť · dzielnica",
-    emoji: "🏙️",
-    accent: "bg-[var(--neo-lime)]",
-    unlocks: "Základná škola a PKO pobočka",
+    name: "Rodinný dom",
+    full: "Rodinný dom s dvorom",
+    emoji: "🏠",
+    accent: "bg-rose-500",
     story:
-      "Prvá škola a pobočka banky — deti sa učia, rodičia otvárajú Konto dla Młodych.",
+      "Dve poschodia, vlastné kúrenie, prvý bojler. Prababka by bola hrdá — máme vodu v byte.",
+    unlocks: "Podkrovie + záhrada",
   },
   {
     level: 4,
-    name: "Mesto",
-    full: "Katowice · industriálne jadro",
-    emoji: "🏢",
-    accent: "bg-[var(--neo-cyan)]",
-    unlocks: "Spodek, Rynek, trhovisko",
+    name: "Kamenica",
+    full: "Kamenica v Śródmieście",
+    emoji: "🏡",
+    accent: "bg-amber-500",
     story:
-      "Ikonický Spodek sa rozsvieti, Rynek nabehne životom. Silnejšia sieť = viac ľudí.",
+      "4-poschodová mestská kamenica v centre. V prízemí kaviareň, hore nájomníci. Prvý pasívny príjem.",
+    unlocks: "Obchod na prízemí",
   },
   {
     level: 5,
-    name: "Smart Katowice",
-    full: "Smart Katowice · digitálna éra",
-    emoji: "🏛️",
-    accent: "bg-[var(--neo-yellow)]",
-    unlocks: "Metro, cyklostezky, 5G",
+    name: "Solárna činžovka",
+    full: "Moderná činžovka s OZE",
+    emoji: "🏘️",
+    accent: "bg-lime-500",
     story:
-      "Doprava je elektrická, cyklostezky zapojené, BLIK platby v každom stánku.",
+      "Solárne panely na streche, tepelné čerpadlo. Nulové faktúry, nájomníci na zozname 2 roky dopredu.",
+    unlocks: "Solárna strecha + e-auto nabíjačka",
   },
   {
     level: 6,
-    name: "Silesia Hub",
-    full: "Silesia Hub · regionálne centrum",
-    emoji: "⚡",
-    accent: "bg-[var(--neo-pink)]",
-    unlocks: "Technopark + solárne farmy",
+    name: "Kancelárska budova",
+    full: "Kancelárska budova (10 poschodí)",
+    emoji: "🏢",
+    accent: "bg-cyan-500",
     story:
-      "Start-upy lepia kancelárie vedľa OZE zdrojov. Tauron premenil uhoľné polia na solár.",
+      "10 poschodí, startupy ti prenajímajú priestor. BLIK plátané obedy v prízemnej reštaurácii.",
+    unlocks: "PKO pobočka v lobby",
   },
   {
     level: 7,
-    name: "Green Metropolis",
-    full: "Green Metropolis · klimaticky neutrálne jadro",
-    emoji: "🌆",
-    accent: "bg-emerald-400",
-    unlocks: "Geotermálne kúpele + vertikálna farma",
+    name: "Mrakodrap",
+    full: "Katowicki mrakodrap (30 p.)",
+    emoji: "🏙️",
+    accent: "bg-indigo-500",
     story:
-      "Bývalá baňa je teraz múzeum. Teplo pod zemou vyhrieva bazény, strechy kŕmia mesto.",
+      "30 poschodí, helipad na streche. Dominancia skyline Katowíc. Teraz ti neprehliadnu.",
+    unlocks: "Sky lounge + heli plocha",
   },
   {
     level: 8,
-    name: "Finance District",
-    full: "Finance District · stredoeurópske fintech centrum",
-    emoji: "🏦",
-    accent: "bg-[var(--neo-purple)]",
-    unlocks: "PKO Tower + burzová plocha",
+    name: "Altus Tower",
+    full: "Altus Tower · Katowice (125 m)",
+    emoji: "🌆",
+    accent: "bg-fuchsia-500",
     story:
-      "Mladí z Katovíc riadia portfóliá IKE a ETF z 30. poschodia. Financie sú play.",
+      "Reálna druhá najvyššia v Silesii. Tvoje meno na mosadznej tabuli vo vestibule.",
+    unlocks: "Anténa + PKO logo na streche",
   },
   {
     level: 9,
-    name: "Europejska Stolica 2.0",
-    full: "Europejska Stolica Kultury 2.0",
+    name: "Varso Tower",
+    full: "Varso Tower · Warszawa (310 m)",
     emoji: "🚀",
-    accent: "bg-[var(--neo-red)]",
-    unlocks: "EU hlavný hub kultúry a AI",
+    accent: "bg-rose-500",
     story:
-      "Katowice hostia Euro-summit, filmový festival a AI konferenciu v rovnakom týždni. Legenda.",
+      "Najvyššia budova v Európskej únii. Tak, áno — tvoje hry ťa tam dostali. Teraz ťa volajú prednášať.",
+    unlocks: "Observation deck + neón na vrchu",
   },
 ];
 
@@ -138,7 +133,6 @@ export function tierForLevel(level: number): CityTier {
   return CITY_TIERS[idx];
 }
 
-// Kept for backwards compatibility with any old imports.
 export function titleForLevel(level: number): string {
   return tierForLevel(level).name;
 }

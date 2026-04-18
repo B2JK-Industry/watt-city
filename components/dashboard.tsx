@@ -5,6 +5,7 @@ import type { LevelInfo } from "@/lib/level";
 import { CITY_TIERS, tierForLevel } from "@/lib/level";
 import type { LeaderboardEntry } from "@/lib/redis";
 import { CityScene, type CityGameState } from "@/components/city-scene";
+import { PlayerBuilding } from "@/components/player-building";
 
 type Props = {
   username: string;
@@ -174,73 +175,71 @@ export function Dashboard({
       </section>
 
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-xl sm:text-2xl">Tvoje mesto</h2>
-        <div className="card p-5 sm:p-6 flex flex-col gap-4">
-          <p className="text-zinc-300 text-sm">
-            <span className="text-xl">{currentTier.emoji}</span>{" "}
-            {currentTier.story}
-          </p>
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between text-xs uppercase tracking-widest">
-              <span className="text-zinc-400">
-                Tier {level.level}: {currentTier.name}
-              </span>
-              {nextTier && (
-                <span className="text-zinc-400">
-                  Ďalej → {nextTier.emoji} {nextTier.name}
-                </span>
-              )}
+        <h2 className="brutal-heading text-xl sm:text-2xl">Tvoja budova</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-5">
+          <PlayerBuilding level={level.level} progress={level.progress} />
+          <div className="card p-5 flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <span className="text-4xl">{currentTier.emoji}</span>
+              <div>
+                <p className="text-[10px] uppercase tracking-widest font-black text-[var(--accent)]">
+                  Tier {level.level}
+                </p>
+                <p className="text-xl font-black uppercase tracking-tight">
+                  {currentTier.full}
+                </p>
+              </div>
             </div>
-            <div className="h-3 rounded-full bg-[var(--surface-2)] border-2 border-[var(--ink)] overflow-hidden">
-              <div
-                className="h-full bg-[var(--accent)]"
-                style={{ width: `${progressPct}%` }}
-              />
-            </div>
-            {nextTier && level.xpToNext > 0 && (
-              <p className="text-xs text-zinc-400">
-                Ešte <strong className="text-[var(--accent)]">{level.xpToNext} W</strong> a odomkne sa ti{" "}
-                <strong className="text-[var(--foreground)]">{nextTier.unlocks}</strong>.
-              </p>
+            <p className="text-sm text-zinc-300 leading-relaxed">
+              {currentTier.story}
+            </p>
+            {nextTier && (
+              <div className="flex flex-col gap-1 rounded-xl border-[3px] border-[var(--ink)] bg-[var(--surface-2)] p-3">
+                <p className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold">
+                  Ďalej
+                </p>
+                <p className="font-semibold">
+                  {nextTier.emoji} {nextTier.full}
+                </p>
+                <p className="text-xs text-zinc-400">
+                  Odomkne:{" "}
+                  <strong className="text-zinc-200">{nextTier.unlocks}</strong>
+                </p>
+                {level.xpToNext > 0 && (
+                  <p className="text-xs">
+                    Ešte{" "}
+                    <strong className="text-[var(--accent)]">
+                      {level.xpToNext} W
+                    </strong>
+                    .
+                  </p>
+                )}
+              </div>
             )}
-          </div>
-          <div className="grid grid-cols-3 sm:grid-cols-9 gap-2">
-            {CITY_TIERS.map((t) => {
-              const unlocked = level.level >= t.level;
-              const current = level.level === t.level;
-              return (
-                <div
-                  key={t.level}
-                  title={`Tier ${t.level} · ${t.name} — ${t.unlocks}`}
-                  className={`aspect-square rounded-lg border-[3px] border-[var(--ink)] flex flex-col items-center justify-center text-center transition-all ${
-                    unlocked
-                      ? `${t.accent} shadow-[3px_3px_0_0_var(--ink)]`
-                      : "bg-[var(--surface-2)] opacity-40"
-                  } ${
-                    current
-                      ? "scale-[1.06] shadow-[5px_5px_0_0_var(--ink)] ring-2 ring-[var(--neo-pink)] ring-offset-2 ring-offset-[var(--background)]"
-                      : ""
-                  }`}
-                >
-                  <span className="text-xl sm:text-2xl leading-none">
-                    {unlocked ? t.emoji : "🔒"}
-                  </span>
-                  <span
-                    className={`text-[9px] font-black uppercase tracking-wider mt-0.5 ${
-                      unlocked ? "text-[#0a0a0f]" : "text-zinc-500"
-                    }`}
+            <div className="grid grid-cols-9 gap-1">
+              {CITY_TIERS.map((t) => {
+                const unlocked = level.level >= t.level;
+                const current = level.level === t.level;
+                return (
+                  <div
+                    key={t.level}
+                    title={`Tier ${t.level}: ${t.full}`}
+                    className={`aspect-square rounded-md border-2 border-[var(--ink)] flex items-center justify-center text-xs ${
+                      unlocked ? `${t.accent}` : "bg-[var(--surface-2)] opacity-40"
+                    } ${current ? "ring-2 ring-[var(--neo-pink)]" : ""}`}
                   >
-                    T{t.level}
-                  </span>
-                </div>
-              );
-            })}
+                    {unlocked ? t.emoji : "🔒"}
+                  </div>
+                );
+              })}
+            </div>
+            <p className="text-[11px] text-zinc-500 leading-snug">
+              Cesta: Drevená búda → Nikiszowiec → Rodinný dom → Kamenica →
+              Solárna činžovka → Kancelária → Mrakodrap → Altus Tower →{" "}
+              <strong className="text-zinc-300">Varso Tower 310 m</strong>{" "}
+              (najvyššia v EÚ).
+            </p>
           </div>
-          <p className="text-xs text-zinc-500">
-            Každý tier odomkne novú zónu mesta. Cesta: Osada → Robotnícka štvrť
-            → Mestská časť → Katowice → Smart City → Silesia Hub → Green
-            Metropolis → Finance District → Europejska Stolica 2.0.
-          </p>
         </div>
       </section>
 

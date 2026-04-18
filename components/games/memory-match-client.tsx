@@ -199,30 +199,45 @@ export function MemoryMatchClient({ pairs }: { pairs: MemoryPair[] }) {
 function MemoryCard({ card, onClick }: { card: Card; onClick: () => void }) {
   const faceUp = card.revealed || card.matched;
   const isDefinition = card.side === "definition";
+
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={card.matched || card.revealed}
-      className={`relative aspect-[5/4] rounded-2xl text-left transition-all duration-300 [transform-style:preserve-3d] ${
-        faceUp ? "[transform:rotateY(180deg)]" : ""
-      } ${card.matched ? "opacity-80 ring-2 ring-emerald-400/60" : ""}`}
+      aria-label={faceUp ? card.text : "Skrytá karta"}
+      className={`relative aspect-[5/4] rounded-2xl border-[3px] border-[var(--ink)] transition-all overflow-hidden shadow-[4px_4px_0_0_var(--ink)] ${
+        card.matched
+          ? "opacity-95 ring-4 ring-emerald-400"
+          : !faceUp
+          ? "hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_var(--ink)] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_0_var(--ink)]"
+          : ""
+      }`}
     >
-      <span
-        className="absolute inset-0 rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[var(--surface-2)] via-[var(--surface)] to-[var(--surface-2)] flex items-center justify-center [backface-visibility:hidden]"
-        aria-hidden="true"
-      >
-        <span className="text-3xl opacity-60">🎴</span>
-      </span>
-      <span
-        className={`absolute inset-0 rounded-2xl border p-3 flex items-center justify-center text-center [backface-visibility:hidden] [transform:rotateY(180deg)] ${
-          isDefinition
-            ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-100 text-sm"
-            : "border-cyan-500/40 bg-cyan-500/10 text-cyan-100 font-semibold"
-        }`}
-      >
-        {card.text}
-      </span>
+      {faceUp ? (
+        <span
+          className={`absolute inset-0 flex items-center justify-center text-center p-3 ${
+            isDefinition
+              ? "bg-emerald-500 text-[#0a0a0f] text-xs sm:text-sm font-semibold leading-snug"
+              : "bg-[var(--neo-cyan)] text-[#0a0a0f] text-base sm:text-lg font-black uppercase tracking-tight"
+          }`}
+        >
+          {card.text}
+        </span>
+      ) : (
+        <span
+          className="absolute inset-0 flex items-center justify-center"
+          style={{
+            background:
+              "repeating-linear-gradient(45deg, var(--surface-2) 0 10px, var(--surface) 10px 20px)",
+          }}
+          aria-hidden="true"
+        >
+          <span className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-md border-[3px] border-[var(--ink)] bg-[var(--accent)] text-[#0a0a0f] font-black text-xl shadow-[2px_2px_0_0_var(--ink)]">
+            ?
+          </span>
+        </span>
+      )}
     </button>
   );
 }

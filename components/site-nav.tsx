@@ -41,6 +41,12 @@ export function SiteNav({
           >
             Liga
           </Link>
+          <Link
+            href="/sin-slavy"
+            className="hover:text-[var(--accent)] transition-colors"
+          >
+            Sieň slávy
+          </Link>
         </div>
         <div className="flex items-center gap-3 text-sm">
           {username ? (

@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { GAMES, type GameMeta } from "@/lib/games";
+import { type GameMeta } from "@/lib/games";
 
 // Night panorama of Katowice — SVG viewBox is `VB_W x VB_H`. Buildings are
 // placed on a ground line at `GROUND`. Each game gets a unique silhouette.
 
-const VB_W = 1400;
+const VB_W = 1500;
 const VB_H = 460;
 const GROUND = 400;
 
@@ -33,13 +33,16 @@ export function CityScene({
   return (
     <div
       className="relative w-full rounded-2xl border-[3px] border-[var(--ink)] overflow-hidden shadow-[6px_6px_0_0_var(--ink)]"
-      style={{ background: "#07071a" }}
+      style={{
+        background: "#07071a",
+        aspectRatio: `${VB_W} / ${VB_H}`,
+        maxHeight: compact ? 360 : 560,
+      }}
     >
       <svg
         viewBox={`0 0 ${VB_W} ${VB_H}`}
         preserveAspectRatio="xMidYMid meet"
-        className="block w-full"
-        style={{ aspectRatio: `${VB_W} / ${VB_H}`, maxHeight: compact ? 320 : 560 }}
+        className="absolute inset-0 w-full h-full"
         role="img"
         aria-label="Nočná panoráma Katowíc: 9 budov predstavujúcich minihry XP Arény"
       >
@@ -135,13 +138,16 @@ export function CityScene({
           </g>
         ))}
 
-        {/* Buildings */}
+        {/* Construction site for the "AI game of the day" slot */}
+        <ConstructionSlot plan={CONSTRUCTION} interactive={interactive} />
+
+        {/* Buildings — wrapped in SVG-native <a> so click zones sit in the
+            exact same coordinate space as the art (no HTML-overlay drift). */}
         {BUILDING_PLAN.map((b, i) => {
           const g = get(b.gameId);
           const powered = (g?.plays ?? 0) > 0;
-          return (
+          const slot = (
             <BuildingSlot
-              key={b.gameId}
               plan={b}
               powered={powered}
               bestScore={g?.bestScore ?? 0}
@@ -149,46 +155,33 @@ export function CityScene({
               index={i}
             />
           );
+          if (!interactive) return <g key={b.gameId}>{slot}</g>;
+          const label = `${b.title} — ${b.buildingName}${
+            loggedIn && g ? ` · rekord ${g.bestScore}/${b.cap} W` : ""
+          }`;
+          return (
+            <Link
+              key={b.gameId}
+              href={`/games/${b.gameId}`}
+              aria-label={label}
+            >
+              <g className="building-link" data-powered={powered}>
+                <title>{label}</title>
+                {/* invisible hit rect so the whole footprint is clickable */}
+                <rect
+                  x={b.x - 6}
+                  y={GROUND - b.h - 30}
+                  width={b.w + 12}
+                  height={b.h + 60}
+                  fill="transparent"
+                  pointerEvents="all"
+                />
+                {slot}
+              </g>
+            </Link>
+          );
         })}
       </svg>
-
-      {/* Interactive overlay: Next-Link hot zones over each building */}
-      {interactive && (
-        <div className="absolute inset-0">
-          {BUILDING_PLAN.map((b) => {
-            const g = get(b.gameId);
-            const powered = (g?.plays ?? 0) > 0;
-            const top = (GROUND - b.h) / VB_H;
-            const left = b.x / VB_W;
-            const width = b.w / VB_W;
-            const height = (b.h + 40) / VB_H; // extend to ground
-            return (
-              <Link
-                key={b.gameId}
-                href={`/games/${b.gameId}`}
-                aria-label={`${b.title} — ${b.buildingName}`}
-                title={`${b.buildingName}${loggedIn && g ? ` · rekord ${g.bestScore}/${b.cap} W` : ""}`}
-                style={{
-                  position: "absolute",
-                  left: `${left * 100}%`,
-                  top: `${top * 100}%`,
-                  width: `${width * 100}%`,
-                  height: `${height * 100}%`,
-                }}
-                className="group"
-              >
-                <span className="sr-only">
-                  {b.title} — {powered ? "rozsvietená budova" : "zhasnutá budova"}
-                </span>
-                <span
-                  aria-hidden="true"
-                  className="absolute inset-0 rounded-md ring-0 group-hover:ring-2 group-hover:ring-[var(--neo-yellow)]/70 transition-all"
-                />
-              </Link>
-            );
-          })}
-        </div>
-      )}
     </div>
   );
 }
@@ -301,13 +294,24 @@ const BUILDING_PLAN: Plan[] = [
     gameId: "word-scramble",
     title: "Premiešané slová",
     buildingName: "Drukarnia",
-    x: 1280,
+    x: 1260,
     w: 100,
     h: 200,
     cap: 120,
     draw: Printshop,
   },
 ];
+
+const CONSTRUCTION: Plan = {
+  gameId: "__coming-soon__",
+  title: "AI výzva dňa",
+  buildingName: "Stavenisko",
+  x: 1370,
+  w: 70,
+  h: 220,
+  cap: 0,
+  draw: ConstructionSite,
+};
 
 function BuildingSlot({
   plan,
@@ -808,6 +812,124 @@ function BankBranch({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
       <rect x={x + w - 30} y={GROUND - 32} width={16} height={28} fill={powered ? "#22d3ee" : "#0c4a6e"} />
       <WattMeter x={x} y={GROUND + 8} w={w} value={bestScore} cap={cap} />
     </g>
+  );
+}
+
+function ConstructionSite({ x, w, h, name }: DrawProps) {
+  // AI-generated "game of the day" placeholder. Scaffolding, caution tape,
+  // crane, AI badge. Click leads to /sin-slavy (today's challenge).
+  const top = GROUND - h;
+  return (
+    <g>
+      {/* banner sign */}
+      <g transform={`translate(${x + w / 2 - 42}, ${top - 26})`}>
+        <rect x={0} y={0} width={84} height={18} fill="#0a0a0f" stroke="#fde047" strokeWidth={2} rx={2} />
+        <text x={42} y={12} textAnchor="middle" fontSize={9} fontWeight={900} fill="#fde047">
+          🤖 AI VÝZVA
+        </text>
+      </g>
+      {/* crane */}
+      <g transform={`translate(${x + w / 2 - 4}, ${top - 10})`}>
+        <rect x={0} y={0} width={6} height={80} fill="#a16207" stroke="#0a0a0f" strokeWidth={2} />
+        <g className="crane-arm" transform="translate(0,0)">
+          <rect x={-30} y={-2} width={60} height={6} fill="#a16207" stroke="#0a0a0f" strokeWidth={2} />
+          <line x1={22} y1={4} x2={22} y2={22} stroke="#0a0a0f" strokeWidth={1.5} />
+          <rect x={18} y={22} width={8} height={8} fill="#fde047" stroke="#0a0a0f" strokeWidth={1.5} />
+        </g>
+      </g>
+      {/* scaffolding */}
+      <rect x={x} y={top + 20} width={w} height={h - 20} fill="#1f2937" stroke="#0a0a0f" strokeWidth={3} />
+      {/* diagonal caution stripes */}
+      <rect
+        x={x}
+        y={top + 20}
+        width={w}
+        height={h - 20}
+        fill="transparent"
+        style={{
+          fill: "url(#caution)",
+        }}
+      />
+      <defs>
+        <pattern id="caution" width="20" height="20" patternUnits="userSpaceOnUse">
+          <rect width="20" height="20" fill="#111827" />
+          <path d="M0 20 L20 0" stroke="#fde047" strokeWidth="4" />
+        </pattern>
+      </defs>
+      {/* scaffolding rails */}
+      {[top + 40, top + 80, top + 120, top + 160, top + 200].map((y, i) => (
+        <line
+          key={i}
+          x1={x + 2}
+          y1={y}
+          x2={x + w - 2}
+          y2={y}
+          stroke="#fde047"
+          strokeWidth={2}
+          opacity={0.9}
+        />
+      ))}
+      {/* uprights */}
+      {[x + 10, x + w / 2, x + w - 10].map((cx, i) => (
+        <line
+          key={i}
+          x1={cx}
+          y1={top + 20}
+          x2={cx}
+          y2={GROUND}
+          stroke="#fde047"
+          strokeWidth={2}
+          opacity={0.9}
+        />
+      ))}
+      {/* AI badge */}
+      <g transform={`translate(${x + w / 2 - 18}, ${GROUND - 50})`}>
+        <rect width={36} height={20} fill="#fde047" stroke="#0a0a0f" strokeWidth={2} rx={2} />
+        <text x={18} y={14} textAnchor="middle" fontSize={9} fontWeight={900} fill="#0a0a0f">
+          SOON
+        </text>
+      </g>
+      {/* sign at bottom */}
+      <rect x={x} y={GROUND + 4} width={w} height={16} fill="#0a0a0f" stroke="#0a0a0f" strokeWidth={2} rx={2} />
+      <text x={x + w / 2} y={GROUND + 15} textAnchor="middle" fontSize={8} fontWeight={900} fill="#fde047">
+        STAVENISKO
+      </text>
+    </g>
+  );
+}
+
+function ConstructionSlot({
+  plan,
+  interactive,
+}: {
+  plan: Plan;
+  interactive: boolean;
+}) {
+  const slot = plan.draw({
+    x: plan.x,
+    w: plan.w,
+    h: plan.h,
+    powered: false,
+    bestScore: 0,
+    cap: 0,
+    name: plan.buildingName,
+  });
+  if (!interactive) return <g>{slot}</g>;
+  return (
+    <Link href="/sin-slavy" aria-label="AI výzva dňa — coming soon">
+      <g className="building-link">
+        <title>AI výzva dňa · zatiaľ vo výstavbe</title>
+        <rect
+          x={plan.x - 6}
+          y={GROUND - plan.h - 30}
+          width={plan.w + 12}
+          height={plan.h + 60}
+          fill="transparent"
+          pointerEvents="all"
+        />
+        {slot}
+      </g>
+    </Link>
   );
 }
 
