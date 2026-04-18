@@ -12,18 +12,33 @@ export function AuthForm({ mode, dict }: Props) {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [birthYear, setBirthYear] = useState<number | "">("");
+  const [parentEmail, setParentEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+
+  const currentYear = new Date().getUTCFullYear();
+  const needsParent =
+    mode === "register" && birthYear !== "" && currentYear - Number(birthYear) < 16;
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
     setPending(true);
     try {
+      const body: Record<string, unknown> = { username, password };
+      if (mode === "register") {
+        if (birthYear === "") {
+          setError("Podaj rok urodzenia.");
+          return;
+        }
+        body.birthYear = Number(birthYear);
+        if (needsParent) body.parentEmail = parentEmail;
+      }
       const res = await fetch(`/api/auth/${mode}`, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify(body),
       });
       const json = await res.json();
       if (!res.ok || !json.ok) {
@@ -68,6 +83,44 @@ export function AuthForm({ mode, dict }: Props) {
           maxLength={200}
         />
       </label>
+      {mode === "register" && (
+        <>
+          <label className="flex flex-col gap-1.5 text-sm">
+            <span className="text-zinc-300">Rok urodzenia (RODO-K)</span>
+            <select
+              className="input"
+              value={birthYear}
+              onChange={(e) =>
+                setBirthYear(e.target.value === "" ? "" : Number(e.target.value))
+              }
+              required
+            >
+              <option value="">—</option>
+              {Array.from({ length: 90 }, (_, i) => currentYear - 5 - i).map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </select>
+          </label>
+          {needsParent && (
+            <label className="flex flex-col gap-1.5 text-sm">
+              <span className="text-zinc-300">
+                E-mail rodzica (wymagane dla &lt; 16 lat)
+              </span>
+              <input
+                type="email"
+                className="input"
+                value={parentEmail}
+                onChange={(e) => setParentEmail(e.target.value)}
+                required={needsParent}
+                placeholder="rodzic@example.com"
+                maxLength={120}
+              />
+            </label>
+          )}
+        </>
+      )}
       {error && (
         <div className="text-sm text-rose-400 bg-rose-950/30 border border-rose-900/60 rounded-md px-3 py-2">
           {error}

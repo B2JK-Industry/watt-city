@@ -2,10 +2,28 @@ import { NextRequest } from "next/server";
 import { z } from "zod";
 import { registerUser } from "@/lib/auth";
 import { createSession } from "@/lib/session";
+import {
+  ageBucketFromBirthYear,
+  containsPII,
+  openConsentRequest,
+  requiresParentalConsent,
+  writeAgeBucket,
+} from "@/lib/gdpr-k";
+
+const CURRENT_YEAR = new Date().getUTCFullYear();
 
 const BodySchema = z.object({
   username: z.string().min(1).max(64),
   password: z.string().min(1).max(200),
+  // Phase 6.3.1: required. Client collects via a <select> of birth years.
+  birthYear: z
+    .number()
+    .int()
+    .min(1900)
+    .max(CURRENT_YEAR)
+    .optional(),
+  // Phase 6.3.2: if under-16, parent's email for consent dispatch.
+  parentEmail: z.string().email().max(120).optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -21,14 +39,69 @@ export async function POST(request: NextRequest) {
   }
   if (!parsed.success) {
     return Response.json(
-      { ok: false, error: "Podaj nazwę i hasło." },
+      { ok: false, error: "Podaj nazwę, hasło i rok urodzenia." },
       { status: 400 },
     );
   }
+
+  // Phase 6.3.3 PII validator — reject obvious identifiers in the username.
+  const pii = containsPII(parsed.data.username);
+  if (pii) {
+    return Response.json(
+      {
+        ok: false,
+        error: `Nazwa użytkownika nie może zawierać danych osobowych (${pii}). Wybierz pseudonim.`,
+      },
+      { status: 400 },
+    );
+  }
+
+  // 6.3.1 — age gate. If birthYear missing, treat as unknown and require it.
+  const birthYear = parsed.data.birthYear;
+  if (!birthYear) {
+    return Response.json(
+      { ok: false, error: "Podaj rok urodzenia (wymagane przez RODO-K)." },
+      { status: 400 },
+    );
+  }
+  const bucket = ageBucketFromBirthYear(birthYear);
+
+  // 6.3.2 — under-16 requires parent email to dispatch consent request.
+  // We still create the account so the kid can start exploring read-only
+  // surfaces; the gating flags block posting / spending / trading until
+  // consent is granted (enforced elsewhere in Phase 6.3 follow-ups).
+  const needsConsent = requiresParentalConsent(bucket);
+  const parentEmail = parsed.data.parentEmail;
+  if (needsConsent && !parentEmail) {
+    return Response.json(
+      {
+        ok: false,
+        error:
+          "Konta dla osób poniżej 16 lat wymagają zgody rodzica. Podaj adres e-mail rodzica.",
+      },
+      { status: 400 },
+    );
+  }
+
   const result = await registerUser(parsed.data.username, parsed.data.password);
   if (!result.ok) {
     return Response.json({ ok: false, error: result.error }, { status: 400 });
   }
+
+  await writeAgeBucket(result.user.username, birthYear);
+
+  let pendingConsentToken: string | null = null;
+  if (needsConsent && parentEmail) {
+    const pending = await openConsentRequest(result.user.username, parentEmail);
+    pendingConsentToken = pending.token;
+  }
+
   await createSession(result.user.username);
-  return Response.json({ ok: true, username: result.user.username });
+  return Response.json({
+    ok: true,
+    username: result.user.username,
+    ageBucket: bucket,
+    needsConsent,
+    pendingConsentToken,
+  });
 }
