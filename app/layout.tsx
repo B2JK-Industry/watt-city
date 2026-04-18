@@ -84,14 +84,28 @@ export default async function RootLayout({
               <span>
                 Sponzori: PKO Bank Polski · Tauron · ETHWarsaw · AKMF · Katowicki.Hub
               </span>
-              <a
-                href="https://github.com/B2JK-Industry/xp-arena-ETHSilesia2026"
-                className="hover:text-[var(--accent)]"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Zdrojový kód →
-              </a>
+              <span className="flex flex-wrap gap-3">
+                <a
+                  href="/ochrana-sukromia"
+                  className="hover:text-[var(--accent)]"
+                >
+                  Ochrana súkromia
+                </a>
+                <a
+                  href="/sin-slavy"
+                  className="hover:text-[var(--accent)]"
+                >
+                  Sieň slávy
+                </a>
+                <a
+                  href="https://github.com/B2JK-Industry/xp-arena-ETHSilesia2026"
+                  className="hover:text-[var(--accent)]"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Zdrojový kód →
+                </a>
+              </span>
             </div>
           </div>
         </footer>

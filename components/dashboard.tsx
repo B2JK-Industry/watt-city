@@ -6,6 +6,7 @@ import { CITY_TIERS, tierForLevel } from "@/lib/level";
 import type { LeaderboardEntry } from "@/lib/redis";
 import { CityScene, type CityGameState } from "@/components/city-scene";
 import { PlayerBuilding } from "@/components/player-building";
+import { DeleteAccountButton } from "@/components/delete-account-button";
 
 type Props = {
   username: string;
@@ -308,6 +309,33 @@ export function Dashboard({
           </Link>
         </div>
         <CityScene games={cityGames} loggedIn compact />
+      </section>
+
+      <section className="flex flex-col gap-3 card p-5">
+        <div className="flex flex-wrap items-center gap-2">
+          <h2 className="brutal-heading text-lg">Moje údaje a práva</h2>
+          <span
+            className="brutal-tag"
+            style={{ background: "var(--neo-lime)", color: "#0a0a0f" }}
+          >
+            GDPR
+          </span>
+        </div>
+        <p className="text-sm text-zinc-400">
+          Ukladáme iba tvoje meno, hash hesla (scrypt) a herné skóre — žiadny
+          e-mail, žiadne telefónne číslo, žiadne tretie strany. Dáta v Upstash
+          Redis (EU) + Vercel (EU). Viac v{" "}
+          <Link href="/ochrana-sukromia" className="underline text-[var(--accent)]">
+            Ochrane súkromia
+          </Link>
+          .
+        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link href="/ochrana-sukromia" className="btn btn-ghost text-xs">
+            Privacy receipt
+          </Link>
+          <DeleteAccountButton />
+        </div>
       </section>
     </div>
   );

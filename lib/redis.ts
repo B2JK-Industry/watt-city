@@ -140,3 +140,16 @@ export async function zRank(
   const idx = sorted.findIndex((e) => e.member === member);
   return idx === -1 ? null : idx + 1;
 }
+
+export async function zRem(zkey: string, member: string): Promise<void> {
+  if (upstash) {
+    await upstash.zrem(zkey, member);
+    return;
+  }
+  const entries = memory.zsets.get(zkey);
+  if (!entries) return;
+  memory.zsets.set(
+    zkey,
+    entries.filter((e) => e.member !== member),
+  );
+}

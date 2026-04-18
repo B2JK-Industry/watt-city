@@ -53,13 +53,15 @@ export async function POST(request: NextRequest) {
 
   const level = levelFromXP(xpResult.globalXP);
 
+  // xpResult already carries the authoritative isNewBest / delta /
+  // previousBest derived from the per-game leaderboard ZSET. user-stats
+  // (recordRound) only tracks play count / total score; we don't let its
+  // flags override the leaderboard's truth.
   return Response.json({
     ok: true,
     awarded: xp,
     ...xpResult,
     level,
     gameStats: recorded.gameStats,
-    isNewBest: recorded.isNewBest,
-    previousBest: recorded.previousBest,
   });
 }

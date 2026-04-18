@@ -19,6 +19,7 @@ export type ScoreSuccess = {
   };
   isNewBest: boolean;
   previousBest: number;
+  delta: number;
 };
 
 export type ScoreFailure = { ok: false; error: string };

@@ -1,7 +1,9 @@
-import { getSession } from "@/lib/session";
-import { userStats } from "@/lib/leaderboard";
+import { destroySession, getSession } from "@/lib/session";
+import { userStats, removeUserFromAllBoards } from "@/lib/leaderboard";
 import { getUserStats } from "@/lib/user-stats";
-import { levelFromXP, titleForLevel } from "@/lib/level";
+import { levelFromXP, tierForLevel } from "@/lib/level";
+import { GAMES } from "@/lib/games";
+import { kvDel } from "@/lib/redis";
 
 export async function GET() {
   const session = await getSession();
@@ -19,8 +21,43 @@ export async function GET() {
     globalXP: board.globalXP,
     globalRank: board.globalRank,
     level,
-    title: titleForLevel(level.level),
+    title: `${tierForLevel(level.level).emoji} ${tierForLevel(level.level).name}`,
     games: stats.games,
     totalPlays: stats.totalPlays,
+  });
+}
+
+// GDPR Article 17 ("right to erasure"): user-initiated account deletion.
+// Removes the user record, per-user stats, and every leaderboard entry.
+// Session cookie is destroyed so the client is effectively logged out.
+export async function DELETE() {
+  const session = await getSession();
+  if (!session) {
+    return Response.json(
+      { ok: false, error: "Nie si prihlásený." },
+      { status: 401 },
+    );
+  }
+  const username = session.username;
+  await Promise.all([
+    kvDel(`xp:user:${username}`),
+    kvDel(`xp:stats:${username}`),
+    removeUserFromAllBoards(
+      username,
+      GAMES.map((g) => g.id),
+    ),
+  ]);
+  await destroySession();
+  return Response.json({
+    ok: true,
+    erased: {
+      keys: [
+        `xp:user:${username}`,
+        `xp:stats:${username}`,
+        "xp:leaderboard:global",
+        ...GAMES.map((g) => `xp:leaderboard:game:${g.id}`),
+      ],
+      rightInvoked: "GDPR Art. 17 — right to erasure",
+    },
   });
 }

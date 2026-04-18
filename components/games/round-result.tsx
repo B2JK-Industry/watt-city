@@ -73,18 +73,58 @@ export function RoundResult({
       {state.error && <p className="text-rose-400 text-sm">{state.error}</p>}
 
       {awarded !== null && state.result?.ok && (
-        <div className="relative bg-[var(--accent)] text-[#0a0a0f] border-[3px] border-[var(--ink)] shadow-[6px_6px_0_0_var(--ink)] rounded-2xl p-5 flex flex-col gap-3">
+        <div
+          className={`relative border-[3px] border-[var(--ink)] shadow-[6px_6px_0_0_var(--ink)] rounded-2xl p-5 flex flex-col gap-3 ${
+            isNewBest
+              ? "bg-[var(--accent)] text-[#0a0a0f]"
+              : "bg-[var(--surface-2)] text-[var(--foreground)]"
+          }`}
+        >
           <div className="flex items-end justify-between">
             <div className="flex flex-col">
-              <span className="text-xs uppercase tracking-widest font-bold opacity-70">
-                Vygeneroval si
+              <span
+                className={`text-xs uppercase tracking-widest font-bold ${
+                  isNewBest ? "opacity-70" : "text-zinc-400"
+                }`}
+              >
+                {isNewBest
+                  ? "Nový rekord · pridané do mesta"
+                  : "Skóre tohto kola"}
               </span>
-              <span className="text-5xl font-black tracking-tight">
-                +{awarded} W
+              <span
+                className={`text-5xl font-black tracking-tight ${
+                  !isNewBest ? "text-zinc-300" : ""
+                }`}
+              >
+                {awarded} W
               </span>
+              {isNewBest && state.result.delta > 0 && (
+                <span className="text-sm font-bold">
+                  +{state.result.delta} W nad tvoj predošlý rekord
+                  {state.result.previousBest > 0
+                    ? ` (${state.result.previousBest} W)`
+                    : ""}
+                </span>
+              )}
+              {!isNewBest && (
+                <span className="text-sm font-semibold text-zinc-400">
+                  Tvoj rekord v tejto hre zostáva{" "}
+                  <strong className="text-[var(--accent)]">
+                    {state.result.gameXP} W
+                  </strong>
+                  . Opakovaním hry skóre nepridávaš — musíš ho{" "}
+                  <strong>prekonať</strong>.
+                </span>
+              )}
             </div>
             {level && (
-              <div className="text-right bg-[#0a0a0f] text-[var(--accent)] border-[3px] border-[#0a0a0f] rounded-xl px-3 py-1.5">
+              <div
+                className={`text-right border-[3px] rounded-xl px-3 py-1.5 ${
+                  isNewBest
+                    ? "bg-[#0a0a0f] text-[var(--accent)] border-[#0a0a0f]"
+                    : "bg-[#0a0a0f] text-[var(--accent)] border-[var(--ink)]"
+                }`}
+              >
                 <span className="text-[10px] uppercase tracking-widest block opacity-70 text-zinc-300">
                   Tier
                 </span>
@@ -95,7 +135,10 @@ export function RoundResult({
           <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm font-semibold">
             <span>
               Tvoje mesto:{" "}
-              <strong className="font-black">{state.result.globalXP}</strong> W
+              <strong className="font-black">
+                {state.result.globalXP.toLocaleString("sk-SK")}
+              </strong>{" "}
+              W
             </span>
             {rank !== null && (
               <span>

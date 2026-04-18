@@ -77,6 +77,20 @@ export function AuthForm({ mode }: Props) {
           ? "Prihlásiť sa"
           : "Vytvoriť účet"}
       </button>
+      {mode === "register" && (
+        <p className="text-[11px] text-zinc-500 leading-snug">
+          Registráciou súhlasíš so spracovaním mena, hash-u hesla a herných
+          skóre podľa{" "}
+          <a
+            href="/ochrana-sukromia"
+            className="underline text-[var(--accent)]"
+          >
+            Ochrany súkromia
+          </a>
+          . Žiadny e-mail, žiadne analytiky, žiadni inzerenti. Účet vieš
+          kedykoľvek zmazať jedným klikom.
+        </p>
+      )}
     </form>
   );
 }
