@@ -8,6 +8,8 @@ import { levelFromXP, tierForLevel } from "@/lib/level";
 import { dictFor, LANG_HTML } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 import { getPlayerState } from "@/lib/player";
+import { tickPlayer } from "@/lib/tick";
+import { ensureSignupGift } from "@/lib/buildings";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +34,15 @@ export default async function RootLayout({
 }>) {
   const [session, lang] = await Promise.all([getSession(), getLang()]);
   const dict = dictFor(lang);
+  // Lazy tick + signup gift on every authenticated render — both are
+  // idempotent (tick is lock-guarded + ledger-deduped; gift is no-op if the
+  // player already has ≥1 building). Runs before we read PlayerState so the
+  // resource bar reflects the just-ticked balance.
+  if (session) {
+    await tickPlayer(session.username);
+    const preState = await getPlayerState(session.username);
+    await ensureSignupGift(preState);
+  }
   const [stats, player] = await Promise.all([
     session ? userStats(session.username) : Promise.resolve(null),
     session ? getPlayerState(session.username) : Promise.resolve(null),
