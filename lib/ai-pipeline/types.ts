@@ -260,6 +260,9 @@ export const AiGameSchema = z.object({
   validUntil: z.number().int(),
   model: z.string().max(60),
   seed: z.number().int(),
+  // Phase 5.2.6: deterministic sha256 over canonicalised spec. Optional so
+  // pre-5.2 envelopes keep validating; new publishes always set it.
+  contentHash: z.string().length(64).optional(),
 });
 export type AiGame = z.infer<typeof AiGameSchema>;
 

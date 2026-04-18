@@ -9,6 +9,7 @@ import {
 } from "./types";
 import { pickResearchSeed, type ResearchSeed } from "./research";
 import { generateGameSpec } from "./generate";
+import { moderateSpec, contentHash } from "./moderation";
 
 const INDEX_KEY = "xp:ai-games:index"; // JSON array of active AI game ids, oldest first
 const ARCHIVE_INDEX_KEY = "xp:ai-games:archive-index"; // never expires — newest first
@@ -122,6 +123,25 @@ export async function runPipeline(
     };
   }
 
+  // 3b) Content moderation — reject on any denylist hit. We'd rather drop a
+  // rotation and let the next hour try again than publish something a
+  // parent will flag.
+  const findings = moderateSpec(specParse.data);
+  if (findings.length > 0) {
+    // eslint-disable-next-line no-console
+    console.log(
+      JSON.stringify({
+        event: "moderation.rejected",
+        theme: seed.theme,
+        findings: findings.slice(0, 3),
+      }),
+    );
+    return {
+      ok: false,
+      error: `moderation: ${findings[0].category} in ${findings[0].field}`,
+    };
+  }
+
   // 4) Portfolio diversity — reject if same theme is already live
   const index = await readIndex();
   for (const id of index) {
@@ -149,6 +169,7 @@ export async function runPipeline(
     validUntil: now + ROTATION_HOURS * 60 * 60 * 1000,
     model: generated.model,
     seed: deterministicSeed,
+    contentHash: contentHash(specParse.data),
   };
   const envParse = AiGameSchema.safeParse(game);
   if (!envParse.success) {
