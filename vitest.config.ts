@@ -9,6 +9,6 @@ export default defineConfig({
   },
   test: {
     include: ["**/*.test.ts", "**/*.test.tsx"],
-    exclude: ["node_modules", "dist", ".next"],
+    exclude: ["node_modules", "dist", ".next", "e2e", "playwright-report"],
   },
 });
