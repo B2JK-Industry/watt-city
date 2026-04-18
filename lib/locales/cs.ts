@@ -389,6 +389,55 @@ const cs: typeof plDict = {
     securityTitle: "Bezpečnost",
     minorsTitle: "Děti a mládež",
     disclaimerTitle: "Hackathon disclaimer",
+    whoBody:
+      "Správcem údajů podle GDPR čl. 4 odst. 7 je tým B2JK-Industry (hackathonový tým ETHSilesia 2026, Katovice, PL). Kontakt pro právní otázky: e-mail v README repa. Veřejný zdrojový kód: github.com/B2JK-Industry/xp-arena-ETHSilesia2026.",
+    whatIntro: "Ukládáme minimum — každé pole s konkrétním účelem a dobou uchování.",
+    whatNotStored:
+      "Co NEUKLÁDÁME: e-mail, telefon, reálné jméno, IP adresu, polohu, analytický fingerprint, third-party cookies, remarketingové tagy. Nepoužíváme Google Analytics, Meta Pixel, Hotjar ani ekvivalenty.",
+    whereList: [
+      "Redis databáze: Upstash, EU (Frankfurt). Sorted sets pro leaderboardy, JSON pro účty a duely.",
+      "Aplikační vrstva: Vercel Edge + Node runtime, EU regiony.",
+      "Kód: GitHub, privátní repozitář během hackathonu, po skončení public.",
+    ],
+    rightsList: [
+      "Čl. 15 — přístup: celá tvá datová stopa je viditelná v dashboardu (Watty, hry, duely). Nic skryté.",
+      "Čl. 16 — oprava: jméno teď nemůžeš přejmenovat, ale můžeš účet smazat a založit nový.",
+      "Čl. 17 — výmaz (right to be forgotten): jedno kliknutí v dashboardu → smaže účet, skóre a všechny záznamy z leaderboardů.",
+      "Čl. 20 — přenositelnost: otevřené API /api/me (GET) vrátí tvá data v JSON.",
+      "Čl. 21 — námitka: právní základ pro zpracování je tvůj souhlas při registraci. Odvolání souhlasu = smazání účtu.",
+      "Čl. 22 — automatizované rozhodování: nevyužíváme. Leaderboard je deterministický, duel má seed a fixní pravidla.",
+    ],
+    aiIntro: "Až spustíme „AI výzvu dne\" (na roadmapě):",
+    aiList: [
+      "Claude bude generovat pouze samotné zadání hry (kvíz, slova, čísla). Nikdy nevidí tvé jméno, skóre ani ID.",
+      "Výstupy AI zveřejňujeme s odznakem 🤖 AI — nikdy se netváříme, že je napsal člověk.",
+      "Tvé odpovědi do AI modelu neposíláme. Zůstávají v našem Upstash.",
+      "Pokud se AI zmýlí (halucinace), nahlas to přes GitHub issue — opravíme a re-deploy.",
+    ],
+    securityList: [
+      "Hesla: scrypt s náhodnou 16-bytovou solí (Node.js crypto.scryptSync).",
+      "Sessions: HMAC-SHA256 podepsaný cookie, HttpOnly, Secure, SameSite=Lax, 30-denní maxAge.",
+      "API vstupy validované přes Zod (žádné \"anything goes\").",
+      "Incident response: pokud najdeš zranitelnost, napiš přes GitHub security advisory.",
+    ],
+    minorsBody:
+      "Platforma cílí na Gen Z (15–20 let). Pro osoby mladší než 16 (v PL práh GDPR pro souhlas) doporučujeme souhlas rodiče. Nesbíráme žádné osobní údaje, které by umožnily identifikovat dítě mimo hru.",
+    disclaimerBody:
+      "XP Arena vznikla během ETHSilesia 2026 (17.–19. dubna 2026) v Katovicích. Jde o prototyp — finanční rady ve hrách nemají charakter investičního poradenství ve smyslu MiFID II. Obsah her je pro vzdělávací účely a ověřený proti veřejně dostupným zdrojům, ale nenahrazuje konzultaci s bankou, poradcem nebo KNF (Komisja Nadzoru Finansowego).",
+    version: "Verze 1.0 · 2026-04-18 ·",
+    backHome: "Zpět na domov",
+    dataFields: {
+      usernameValue: "<co jsi zadal>",
+      passwordValue: "scrypt hash + sůl (64 bajtů)",
+      wattsValue: "číselné hodnoty per hra",
+      statsValue: "počet pokusů, best skóre, čas posledné hry",
+      duelsValue: "kód, odpovědi, časy kol",
+      sessionValue: "HMAC-signed, HttpOnly, 30 dní",
+      untilDelete: "dokud nesmažeš účet",
+      duelTtl: "automaticky 6 hodin (Redis TTL)",
+      sessionTtl: "max 30 dní nebo do odhlášení",
+      passwordNote: "Původní heslo neukládáme a neumíme ho přečíst.",
+    },
   },
   footer: {
     body:

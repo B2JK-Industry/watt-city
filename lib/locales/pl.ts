@@ -387,6 +387,55 @@ const pl = {
     securityTitle: "Bezpieczeństwo",
     minorsTitle: "Dzieci i młodzież",
     disclaimerTitle: "Hackathon disclaimer",
+    whoBody:
+      "Administratorem danych w rozumieniu GDPR art. 4 ust. 7 jest zespół B2JK-Industry (hackathonowy zespół ETHSilesia 2026, Katowice, PL). Kontakt do spraw prawnych: e-mail w README repo. Publiczny kod źródłowy: github.com/B2JK-Industry/xp-arena-ETHSilesia2026.",
+    whatIntro: "Przechowujemy minimum — każde pole z konkretnym celem i terminem.",
+    whatNotStored:
+      "Czego NIE przechowujemy: e-mail, telefon, prawdziwe imię, adres IP, lokalizacja, fingerprint analityczny, third-party cookies, tagi remarketingowe. Nie używamy Google Analytics, Meta Pixel, Hotjar ani ekwiwalentów.",
+    whereList: [
+      "Baza Redis: Upstash, UE (Frankfurt). Sorted sets dla leaderboardów, JSON dla kont i pojedynków.",
+      "Warstwa aplikacyjna: Vercel Edge + Node runtime, regiony UE.",
+      "Kod: GitHub, prywatne repo podczas hackathonu, publiczne po zakończeniu.",
+    ],
+    rightsList: [
+      "Art. 15 — dostęp: cała twoja ścieżka danych jest widoczna w dashboardzie (Waty, gry, pojedynki). Nic ukrytego.",
+      "Art. 16 — sprostowanie: nazwy na razie nie można zmienić, ale można usunąć konto i założyć nowe.",
+      `Art. 17 — usunięcie („right to be forgotten"): jedno kliknięcie w dashboardzie → usuwa konto, wyniki i wszystkie wpisy z leaderboardów.`,
+      "Art. 20 — przenośność: otwarte API /api/me (GET) zwraca twoje dane w JSON.",
+      "Art. 21 — sprzeciw: podstawą prawną przetwarzania jest twoja zgoda przy rejestracji. Cofnięcie zgody = usunięcie konta.",
+      "Art. 22 — automatyczne decydowanie: nie stosujemy. Leaderboard jest deterministyczny, pojedynek ma seed i stałe reguły.",
+    ],
+    aiIntro: `Gdy uruchomimy „AI wyzwanie dnia" (w roadmapie):`,
+    aiList: [
+      "Claude będzie generować tylko zadanie gry (quiz, słowa, liczby). Nigdy nie widzi twojej nazwy, wyniku ani ID.",
+      "Wyniki AI publikujemy z odznaką 🤖 AI — nigdy nie udajemy, że napisał to człowiek.",
+      "Twoich odpowiedzi do modelu AI nie wysyłamy. Zostają w naszym Upstash.",
+      "Jeśli AI się pomyli (halucynacja), zgłoś to przez GitHub issue — naprawimy i redeployujemy.",
+    ],
+    securityList: [
+      "Hasła: scrypt z losową 16-bajtową solą (Node.js crypto.scryptSync).",
+      "Sessions: HMAC-SHA256 podpisany cookie, HttpOnly, Secure, SameSite=Lax, 30-dniowy maxAge.",
+      `Wejścia API walidowane przez Zod (żadnego „anything goes").`,
+      "Incident response: jeśli znajdziesz podatność, napisz przez GitHub security advisory.",
+    ],
+    minorsBody:
+      "Platforma celuje w Gen Z (15–20 lat). Dla osób młodszych niż 16 (w PL próg GDPR dla zgody) zalecamy zgodę rodzica. Nie zbieramy żadnych danych osobowych pozwalających identyfikować dziecko poza grą.",
+    disclaimerBody:
+      "XP Arena powstała podczas ETHSilesia 2026 (17–19 kwietnia 2026) w Katowicach. To prototyp — porady finansowe w grach nie mają charakteru doradztwa inwestycyjnego w rozumieniu MiFID II. Treść gier jest do celów edukacyjnych i sprawdzona wobec publicznie dostępnych źródeł, ale nie zastępuje konsultacji z bankiem, doradcą lub KNF (Komisja Nadzoru Finansowego).",
+    version: "Wersja 1.0 · 2026-04-18 ·",
+    backHome: "Powrót do strony głównej",
+    dataFields: {
+      usernameValue: "<to, co wpisałeś>",
+      passwordValue: "scrypt hash + sól (64 bajty)",
+      wattsValue: "wartości liczbowe per gra",
+      statsValue: "liczba prób, best score, czas ostatniej gry",
+      duelsValue: "kod, odpowiedzi, czasy rund",
+      sessionValue: "HMAC-signed, HttpOnly, 30 dni",
+      untilDelete: "dopóki nie usuniesz konta",
+      duelTtl: "automatycznie 6 godzin (Redis TTL)",
+      sessionTtl: "max 30 dni lub do wylogowania",
+      passwordNote: "Oryginalnego hasła nie przechowujemy i nie umiemy go odczytać.",
+    },
   },
   footer: {
     body:

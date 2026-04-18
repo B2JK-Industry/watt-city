@@ -390,6 +390,55 @@ const en: typeof plDict = {
     securityTitle: "Security",
     minorsTitle: "Minors",
     disclaimerTitle: "Hackathon disclaimer",
+    whoBody:
+      "Data controller under GDPR Art. 4(7) is the B2JK-Industry team (ETHSilesia 2026 hackathon team, Katowice, PL). Legal contact: email in the repo README. Public source code: github.com/B2JK-Industry/xp-arena-ETHSilesia2026.",
+    whatIntro: "We store the minimum — every field with a concrete purpose and retention.",
+    whatNotStored:
+      "What we do NOT store: email, phone, real name, IP address, location, analytics fingerprint, third-party cookies, remarketing tags. We don't use Google Analytics, Meta Pixel, Hotjar, or equivalents.",
+    whereList: [
+      "Redis: Upstash, EU (Frankfurt). Sorted sets for leaderboards, JSON for accounts and duels.",
+      "Application layer: Vercel Edge + Node runtime, EU regions.",
+      "Code: GitHub, private repo during the hackathon, public after.",
+    ],
+    rightsList: [
+      "Art. 15 — access: your entire data footprint is visible in the dashboard (Watts, games, duels). Nothing hidden.",
+      "Art. 16 — rectification: you can't rename the username yet, but you can delete the account and create a new one.",
+      "Art. 17 — erasure (right to be forgotten): one click in the dashboard → wipes account, scores and all leaderboard entries.",
+      "Art. 20 — portability: open /api/me (GET) returns your data as JSON.",
+      "Art. 21 — objection: the legal basis for processing is your consent at registration. Withdrawing consent = account deletion.",
+      "Art. 22 — automated decision-making: we don't use any. Leaderboards are deterministic; duels have a fixed seed and rules.",
+    ],
+    aiIntro: "When we launch the 'AI challenge of the day' (on the roadmap):",
+    aiList: [
+      "Claude will only generate the game brief itself (quiz, words, numbers). It never sees your name, score, or ID.",
+      "AI outputs are published with a 🤖 AI badge — we never pretend a human wrote them.",
+      "We don't send your answers to the AI model. They stay in our Upstash.",
+      "If the AI is wrong about content (hallucination), report it via GitHub issue — we'll fix and redeploy.",
+    ],
+    securityList: [
+      "Passwords: scrypt with a random 16-byte salt (Node.js crypto.scryptSync).",
+      "Sessions: HMAC-SHA256 signed cookie, HttpOnly, Secure, SameSite=Lax, 30-day maxAge.",
+      "API inputs validated via Zod (nothing goes unchecked).",
+      "Incident response: if you find a vulnerability, open a GitHub security advisory.",
+    ],
+    minorsBody:
+      "The platform targets Gen Z (15–20). For users under 16 (the PL GDPR consent threshold) we recommend parental consent. We don't collect any personal data that would identify a child outside the game.",
+    disclaimerBody:
+      "XP Arena was built during ETHSilesia 2026 (April 17–19, 2026) in Katowice. It's a prototype — financial advice in the games does NOT constitute investment advice under MiFID II. Game content is for educational purposes and verified against publicly available sources, but doesn't replace a conversation with a bank, advisor, or KNF (Polish Financial Supervision Authority).",
+    version: "Version 1.0 · 2026-04-18 ·",
+    backHome: "Back to home",
+    dataFields: {
+      usernameValue: "<what you typed>",
+      passwordValue: "scrypt hash + salt (64 bytes)",
+      wattsValue: "numeric values per game",
+      statsValue: "play count, best score, last played",
+      duelsValue: "code, answers, round times",
+      sessionValue: "HMAC-signed, HttpOnly, 30 days",
+      untilDelete: "until you delete the account",
+      duelTtl: "automatically 6 hours (Redis TTL)",
+      sessionTtl: "max 30 days or until logout",
+      passwordNote: "We never store the original password and cannot read it.",
+    },
   },
   footer: {
     body:

@@ -3,22 +3,18 @@ import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
 export const metadata = {
-  title: "Ochrana súkromia · XP Arena",
+  title: "Ochrona prywatności · XP Arena",
 };
 
 export default async function PrivacyPage() {
   const lang = await getLang();
   const dict = dictFor(lang);
   const t = dict.privacyPage;
+  const f = t.dataFields;
+
   return (
     <div className="flex flex-col gap-6 animate-slide-up max-w-3xl">
       <header className="flex flex-col gap-2">
-        {lang !== "pl" && lang !== "cs" && lang !== "uk" && (
-          <p className="text-xs text-zinc-500 italic">
-            Full legal copy kept in Polish as the authoritative text for PL
-            jurisdiction. Key headings are localized below.
-          </p>
-        )}
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="brutal-heading text-3xl sm:text-4xl">{t.title}</h1>
           <span
@@ -33,203 +29,106 @@ export default async function PrivacyPage() {
 
       <section className="card p-5 flex flex-col gap-3">
         <h2 className="brutal-heading text-lg">1 · {t.whoTitle}</h2>
-        <p className="text-sm text-zinc-300">
-          Prevádzkovateľom a správcom údajov v zmysle GDPR čl. 4 ods. 7 je tím{" "}
-          <strong>B2JK-Industry</strong> (hackathonový tím ETHSilesia 2026,
-          Katowice, PL). Kontakt pre právne otázky: e-mail v README repa.{" "}
-          <a
-            href="https://github.com/B2JK-Industry/xp-arena-ETHSilesia2026"
-            className="underline text-[var(--accent)]"
-          >
-            Verejný zdrojový kód
-          </a>
-          .
-        </p>
+        <p className="text-sm text-zinc-300">{t.whoBody}</p>
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
         <h2 className="brutal-heading text-lg">2 · {t.whatTitle}</h2>
+        <p className="text-sm text-zinc-400">{t.whatIntro}</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
           <DataRow
-            field="Používateľské meno"
-            value="&lt;to, čo si zadal&gt;"
-            purpose="identita v hre a v rebríčkoch"
-            retention="kým si účet nezmažeš"
+            field={dict.auth.usernameLabel}
+            value={f.usernameValue}
+            purpose={dict.leaderboard.title}
+            retention={f.untilDelete}
           />
           <DataRow
-            field="Heslo"
-            value="scrypt hash + soľ (64 bajtov)"
-            purpose="prihlásenie"
-            retention="kým si účet nezmažeš"
-            note="Originálne heslo neuchovávame a ani ho nevieme prečítať."
+            field={dict.auth.passwordLabel}
+            value={f.passwordValue}
+            purpose={dict.nav.login}
+            retention={f.untilDelete}
+            note={f.passwordNote}
           />
           <DataRow
-            field="Watty a skóre"
-            value="číselné hodnoty per hra"
-            purpose="rebríčky a progression"
-            retention="kým si účet nezmažeš"
+            field={dict.dashboard.totalWatts}
+            value={f.wattsValue}
+            purpose={dict.leaderboard.title}
+            retention={f.untilDelete}
           />
           <DataRow
-            field="Štatistiky hier"
-            value="počet pokusov, best skóre, čas posl. hry"
-            purpose="dashboard"
-            retention="kým si účet nezmažeš"
+            field={t.whatTitle}
+            value={f.statsValue}
+            purpose={dict.dashboard.yourBuildingTitle}
+            retention={f.untilDelete}
           />
           <DataRow
-            field="Duely"
-            value="kód, odpovede, časy kôl"
-            purpose="PvP match"
-            retention="automaticky 6 hodín (Redis TTL)"
+            field={dict.duel.title}
+            value={f.duelsValue}
+            purpose="PvP"
+            retention={f.duelTtl}
           />
           <DataRow
             field="Session cookie"
-            value="HMAC-signed, HttpOnly, 30 dní"
-            purpose="aby si nemusel stále prihlasovať"
-            retention="max 30 dní alebo do odhlásenia"
+            value={f.sessionValue}
+            purpose={dict.nav.login}
+            retention={f.sessionTtl}
           />
         </div>
-        <p className="text-xs text-zinc-500 mt-2">
-          <strong>Čo NEukladáme:</strong> e-mail, telefón, reálne meno, IP
-          adresu, polohu, analytický fingerprint, third-party cookies,
-          remarketingové tagy. Nepoužívame Google Analytics, Meta Pixel,
-          Hotjar ani ekvivalenty.
-        </p>
+        <p className="text-xs text-zinc-500 mt-2">{t.whatNotStored}</p>
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
         <h2 className="brutal-heading text-lg">3 · {t.whereTitle}</h2>
         <ul className="text-sm text-zinc-300 space-y-1.5 list-disc pl-5">
-          <li>
-            <strong>Redis databáza:</strong> Upstash, EU (Frankfurt). Sorted
-            sets pre rebríčky, JSON pre účty a duely.
-          </li>
-          <li>
-            <strong>Aplikačná vrstva:</strong> Vercel Edge + Node runtime, EU
-            regióny.
-          </li>
-          <li>
-            <strong>Kód:</strong> GitHub, privátny repozitár počas hackathonu,
-            po skončení public.
-          </li>
+          {t.whereList.map((line, i) => (
+            <li key={i}>{line}</li>
+          ))}
         </ul>
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
         <h2 className="brutal-heading text-lg">4 · {t.rightsTitle}</h2>
         <ul className="text-sm text-zinc-300 space-y-2 list-disc pl-5">
-          <li>
-            <strong>Čl. 15 — prístup:</strong> celá tvoja dátová stopa je
-            viditeľná v dashboarde (Watty, hry, duely). Nič skryté.
-          </li>
-          <li>
-            <strong>Čl. 16 — oprava:</strong> meno si teraz nemôžeš premenovať,
-            ale môžeš účet zmazať a založiť nový.
-          </li>
-          <li>
-            <strong>Čl. 17 — vymazanie („right to be forgotten"):</strong>{" "}
-            jedno kliknutie v dashboarde → zmaže sa účet, skóre a všetky
-            záznamy z rebríčkov (aj podium).
-          </li>
-          <li>
-            <strong>Čl. 20 — prenositeľnosť:</strong> otvorené API{" "}
-            <code>/api/me</code> (GET) vráti tvoje dáta v JSON. Zobrať a
-            uložiť, kľudne aj skriptom.
-          </li>
-          <li>
-            <strong>Čl. 21 — námietka:</strong> právny základ pre spracovanie
-            je tvoj súhlas pri registrácii. Odhlásenie súhlasu = vymazanie
-            účtu.
-          </li>
-          <li>
-            <strong>Čl. 22 — automatizované rozhodovanie:</strong>{" "}
-            nevyužívame. Rebríček je deterministický, duel má seed a fixné
-            pravidlá.
-          </li>
+          {t.rightsList.map((line, i) => (
+            <li key={i}>{line}</li>
+          ))}
         </ul>
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
         <h2 className="brutal-heading text-lg">5 · {t.aiTitle}</h2>
-        <p className="text-sm text-zinc-300">
-          Keď pustíme „AI výzvu dňa" (v roadmape):
-        </p>
+        <p className="text-sm text-zinc-300">{t.aiIntro}</p>
         <ul className="text-sm text-zinc-300 space-y-1.5 list-disc pl-5">
-          <li>
-            Claude bude generovať iba samotné <strong>zadanie hry</strong>{" "}
-            (kvíz, slová, čísla). Nikdy nevidí tvoje meno, skóre ani ID.
-          </li>
-          <li>
-            Výstupy AI zverejňujeme s odznakom{" "}
-            <span className="brutal-tag" style={{ background: "var(--neo-pink)", color: "#0a0a0f" }}>
-              🤖 AI
-            </span>{" "}
-            — nikdy sa netvárime, že ich napísal človek.
-          </li>
-          <li>
-            Tvoje odpovede do AI modelu neposielame. Zostávajú v našom Upstash.
-          </li>
-          <li>
-            Ak sa AI zmýli v obsahu (halucinácia), môžeš to nahlásiť cez
-            GitHub issue — opravíme a re-deploy.
-          </li>
+          {t.aiList.map((line, i) => (
+            <li key={i}>{line}</li>
+          ))}
         </ul>
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
         <h2 className="brutal-heading text-lg">6 · {t.securityTitle}</h2>
         <ul className="text-sm text-zinc-300 space-y-1.5 list-disc pl-5">
-          <li>
-            Heslá: <strong>scrypt</strong> s náhodnou 16-bajtovou soľou
-            (Node.js <code>crypto.scryptSync</code>).
-          </li>
-          <li>
-            Sessions: HMAC-SHA256 podpísaný cookie, <code>HttpOnly</code>,{" "}
-            <code>Secure</code>, <code>SameSite=Lax</code>, 30-dňový maxAge.
-          </li>
-          <li>
-            API vstupy validované cez <strong>Zod</strong> (žiadne „anything
-            goes").
-          </li>
-          <li>
-            Incident response: ak nájdeš zraniteľnosť, napíš nám cez GitHub
-            security advisory.
-          </li>
+          {t.securityList.map((line, i) => (
+            <li key={i}>{line}</li>
+          ))}
         </ul>
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
         <h2 className="brutal-heading text-lg">7 · {t.minorsTitle}</h2>
-        <p className="text-sm text-zinc-300">
-          Platforma cieli na Gen Z (15–20 rokov). Pre osoby mladšie ako 16{" "}
-          (v PL hranica GDPR pre súhlas) odporúčame súhlas rodiča. Nezbierame
-          žiadne osobné údaje, ktoré by umožňovali identifikáciu dieťaťa
-          mimo hry.
-        </p>
+        <p className="text-sm text-zinc-300">{t.minorsBody}</p>
       </section>
 
       <section className="card p-5 flex flex-col gap-3 border-[var(--accent)]">
         <h2 className="brutal-heading text-lg">8 · {t.disclaimerTitle}</h2>
-        <p className="text-sm text-zinc-300">
-          XP Arena bola postavená{" "}
-          <strong>počas ETHSilesia 2026</strong> (17.–19. apríl 2026) v
-          Katowiciach. Ide o <em>prototyp</em> — finančné rady v hrách nemajú
-          charakter investičného poradenstva v zmysle MiFID II. Obsah hier je
-          pre edukačné účely a je overený proti verejne dostupným zdrojom, ale
-          nenahrádza konzultáciu s bankou, poradcom, alebo{" "}
-          <a
-            href="https://www.knf.gov.pl/"
-            className="underline text-[var(--accent)]"
-            target="_blank"
-            rel="noreferrer"
-          >
-            KNF
-          </a>{" "}
-          (Komisja Nadzoru Finansowego).
-        </p>
+        <p className="text-sm text-zinc-300">{t.disclaimerBody}</p>
       </section>
 
       <footer className="text-xs text-zinc-500 border-t-2 border-[var(--ink)]/30 pt-4">
-        Verzia 1.0 · 2026-04-18 · <Link href="/" className="underline">Späť na domov</Link>
+        {t.version}{" "}
+        <Link href="/" className="underline">
+          {t.backHome}
+        </Link>
       </footer>
     </div>
   );
@@ -253,12 +152,12 @@ function DataRow({
       <p className="font-black uppercase text-xs tracking-widest text-[var(--accent)]">
         {field}
       </p>
-      <p className="text-xs font-mono text-zinc-300 mt-1" dangerouslySetInnerHTML={{ __html: value }} />
+      <p className="text-xs font-mono text-zinc-300 mt-1">{value}</p>
       <p className="text-xs text-zinc-400 mt-2">
-        <span className="text-zinc-500">Účel:</span> {purpose}
+        <span className="text-zinc-500">Retention:</span> {retention}
       </p>
       <p className="text-xs text-zinc-400">
-        <span className="text-zinc-500">Uchovávame:</span> {retention}
+        <span className="text-zinc-500">Purpose:</span> {purpose}
       </p>
       {note && <p className="text-[11px] text-zinc-500 mt-1 italic">{note}</p>}
     </div>
