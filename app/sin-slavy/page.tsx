@@ -2,6 +2,7 @@ import Link from "next/link";
 import { GAMES } from "@/lib/games";
 import { gameLeaderboard } from "@/lib/leaderboard";
 import { getSession } from "@/lib/session";
+import { listActiveAiGames } from "@/lib/ai-pipeline/publish";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
@@ -12,12 +13,16 @@ export default async function HallOfFamePage() {
   const lang = await getLang();
   const dict = dictFor(lang);
   const t = dict.sinSlavy;
-  const results = await Promise.all(
-    GAMES.map(async (g) => ({
-      game: g,
-      top: await gameLeaderboard(g.id, 3),
-    })),
-  );
+  const [results, aiGames] = await Promise.all([
+    Promise.all(
+      GAMES.map(async (g) => ({
+        game: g,
+        top: await gameLeaderboard(g.id, 3),
+      })),
+    ),
+    listActiveAiGames(),
+  ]);
+  const liveAi = [...aiGames].reverse();
 
   return (
     <div className="flex flex-col gap-8 animate-slide-up">
@@ -34,33 +39,79 @@ export default async function HallOfFamePage() {
         <p className="text-zinc-400 max-w-2xl">{t.body}</p>
       </header>
 
-      {/* Today's AI challenge placeholder */}
-      <section className="card p-6 flex flex-col gap-3 border-[var(--accent)]">
-        <div className="flex flex-wrap items-center gap-2">
-          <h2 className="brutal-heading text-xl">{t.todayTitle}</h2>
-          <span className="brutal-tag" style={{ background: "var(--neo-pink)", color: "#0a0a0f" }}>
-            {t.comingSoon}
-          </span>
-        </div>
-        <p className="text-sm text-zinc-300 max-w-2xl">
-          {t.todayBody.split("{permBadge}").map((part, i, arr) =>
-            i < arr.length - 1 ? (
-              <span key={i}>
-                {part}
-                <strong className="text-[var(--accent)]">{t.permBadge}</strong>
-              </span>
-            ) : (
-              <span key={i}>{part}</span>
-            ),
-          )}
-        </p>
-        <div className="flex flex-wrap gap-3">
-          <div className="chip">{t.chipStart}</div>
-          <div className="chip">{t.chipEnd}</div>
-          <div className="chip">{t.chipMedal}</div>
-          <div className="chip">{t.chipAI}</div>
-        </div>
-      </section>
+      {/* Today's AI challenge — live list if any, placeholder otherwise */}
+      {liveAi.length > 0 ? (
+        <section className="card p-6 flex flex-col gap-4 border-[var(--accent)]">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="brutal-heading text-xl">{t.todayTitle}</h2>
+            <span
+              className="brutal-tag"
+              style={{ background: "var(--accent)", color: "#0a0a0f" }}
+            >
+              LIVE
+            </span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {liveAi.map((g) => {
+              const hoursLeft = Math.max(
+                0,
+                Math.round((g.validUntil - Date.now()) / (60 * 60 * 1000)),
+              );
+              return (
+                <Link
+                  key={g.id}
+                  href={`/games/ai/${g.id}`}
+                  className="card p-4 flex flex-col gap-2 hover:border-[var(--accent)] transition"
+                >
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-2xl">🤖</span>
+                    <strong className="font-black uppercase tracking-tight">
+                      {g.title}
+                    </strong>
+                    <span className="chip ml-auto text-[11px]">
+                      ⏱ {hoursLeft}h
+                    </span>
+                  </div>
+                  <p className="text-xs text-zinc-400">{g.theme}</p>
+                  <p className="text-xs text-zinc-500">
+                    {g.model} · {g.spec.kind}
+                  </p>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      ) : (
+        <section className="card p-6 flex flex-col gap-3 border-[var(--accent)]">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="brutal-heading text-xl">{t.todayTitle}</h2>
+            <span
+              className="brutal-tag"
+              style={{ background: "var(--neo-pink)", color: "#0a0a0f" }}
+            >
+              {t.comingSoon}
+            </span>
+          </div>
+          <p className="text-sm text-zinc-300 max-w-2xl">
+            {t.todayBody.split("{permBadge}").map((part, i, arr) =>
+              i < arr.length - 1 ? (
+                <span key={i}>
+                  {part}
+                  <strong className="text-[var(--accent)]">{t.permBadge}</strong>
+                </span>
+              ) : (
+                <span key={i}>{part}</span>
+              ),
+            )}
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <div className="chip">{t.chipStart}</div>
+            <div className="chip">{t.chipEnd}</div>
+            <div className="chip">{t.chipMedal}</div>
+            <div className="chip">{t.chipAI}</div>
+          </div>
+        </section>
+      )}
 
       {/* Permanent games — current top 3 */}
       <section className="flex flex-col gap-4">
