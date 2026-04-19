@@ -27,6 +27,7 @@ import {
   type Resources,
   type ResourceKey,
 } from "@/lib/resources";
+import { refreshCityValue } from "@/lib/city-value";
 
 // ---------------------------------------------------------------------------
 // Cost/affordability checks
@@ -153,6 +154,8 @@ export async function placeBuilding(
   };
   state.buildings.push(instance);
   await savePlayerState(state);
+  // R1.3: keep city-value leaderboard in sync on any mutation.
+  await refreshCityValue(state.username, state.buildings);
   return { ok: true, state, building: instance };
 }
 
@@ -194,6 +197,7 @@ export async function upgradeBuilding(
     b.cumulativeCost[k] = existing + v;
   }
   await savePlayerState(state);
+  await refreshCityValue(state.username, state.buildings);
   return { ok: true, state, building: b };
 }
 
@@ -227,6 +231,7 @@ export async function demolishBuilding(
   );
   state.buildings = state.buildings.filter((x) => x.id !== instanceId);
   await savePlayerState(state);
+  await refreshCityValue(state.username, state.buildings);
   return { ok: true, state, refund };
 }
 
@@ -249,6 +254,7 @@ export async function ensureSignupGift(state: PlayerState): Promise<PlayerState>
   };
   state.buildings.push(instance);
   await savePlayerState(state);
+  await refreshCityValue(state.username, state.buildings);
   return state;
 }
 
