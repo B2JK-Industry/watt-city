@@ -121,6 +121,42 @@ one, then play it at `/games/ai/<id>`.
 - `CRON_SECRET` — shared secret Vercel Cron / external pinger send in
   `Authorization: Bearer`; omit during dev to allow any caller
 - `ADMIN_SECRET` — required by `/api/admin/*` in production
+- Web3 (opt-in, default off — see "Web3 surface" below):
+  - `NEXT_PUBLIC_WEB3_ENABLED=true` activates the `/profile` on-chain gallery
+  - `NEXT_PUBLIC_WEB3_CHAIN_ID=84532` (Base Sepolia testnet)
+  - `NEXT_PUBLIC_WC_PROJECT_ID` — WalletConnect / Reown cloud project id
+  - `WEB3_CONTRACT_ADDRESS` — deployed `WattCityMedal` address
+  - `WEB3_RELAYER_PRIVATE_KEY` — EOA funded with testnet ETH (never committed)
+  - `NFT_STORAGE_API_KEY` — IPFS pin service for medal metadata
+
+## Web3 surface (opt-in)
+
+Watt City ships an **optional** soulbound-NFT layer for ETHSilesia 2026's
+Web3/Base track. Kids' off-chain achievements mirror to on-chain
+`WattCityMedal` tokens **only with parent consent** (V4.6 observer flow)
+and **burn on consent revocation** (GDPR Art. 17). Every under-16 account
+without `web3OptIn === true` is hard-gated server-side (HTTP 403) — the
+client cannot bypass it. Default path of the app has zero web3 imports
+(tree-shaken behind `NEXT_PUBLIC_WEB3_ENABLED`); 99% of users never see
+a wallet button.
+
+| Field | Value |
+|---|---|
+| Chain | {{CHAIN_NAME}} (chainId `{{CHAIN_ID}}`) |
+| Contract | `WattCityMedal` — soulbound ERC-721, ~200 LOC, invariant-tested |
+| Address | `{{CONTRACT_ADDRESS}}` |
+| BaseScan | [{{CONTRACT_ADDRESS}}]({{BASESCAN_URL}}) |
+| Source | `contracts/WattCityMedal.sol` |
+| Tests | `contracts/test/WattCityMedal.test.ts` (source-level invariants) |
+| Audit | Post-pilot. Mainnet gated on external audit per `docs/web3/DEPLOY.md §5` |
+| Submission one-pager | [`docs/web3/SUBMISSION.md`](docs/web3/SUBMISSION.md) |
+| Architecture | [`docs/web3/PLAN.md`](docs/web3/PLAN.md) |
+| Runbook | [`docs/web3/DEPLOY.md`](docs/web3/DEPLOY.md) |
+| Demo video (2 min) | {{VIDEO_URL}} |
+
+Running the Web3 surface locally requires Hardhat 2.x on Node 22 LTS (or
+Foundry); see `docs/web3/DEPLOY.md §1–§3` for the toolchain. Do **not**
+deploy to Base mainnet before the audit closes.
 
 ## Smoke test
 

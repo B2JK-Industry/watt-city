@@ -70,13 +70,25 @@ Extend `profile.onboarding` with `web3OptIn: boolean`. UI path:
 
 **Acceptance**: Under-16 test account (`ageBucket: 2015`) can NOT mint. Flip `web3OptIn` via parent approve → mint succeeds. Flip off → all previously-minted medals get `burn()` called and disappear from the gallery within one poll cycle.
 
-### W7 — Submission package
-- `docs/web3/SUBMISSION.md` (NEW) — 1-pager for ETHSilesia Web3 judges: problem, approach, soulbound rationale (why not transferable), parent-consent story (why this is the ONLY kid-safe on-chain achievement design), Base Sepolia deployment, demo URL, GitHub link.
-- `README.md` update: new "Web3 surface" section with contract address, BaseScan link, video walkthrough link.
-- 2-minute demo video (operator records): visit `/profile` as kid → parent approves → kid connects wallet → mints medal → opens BaseScan to show Transfer event. Upload to YouTube (unlisted OK), link in SUBMISSION.md.
-- Pitch slide content (markdown bullets — operator renders to deck): why soulbound, why Base, why parent-gate, deployment address, burn-on-revocation as GDPR feature (not bug).
+### W7 — Submission package (fill + verify, NOT author)
 
-**Acceptance**: `docs/web3/SUBMISSION.md` is self-contained — a judge reads only that one file + watches the video + clicks the BaseScan link and understands the whole pitch.
+**Docs already pre-staged** on the base branch — do NOT rewrite narrative:
+- `docs/web3/SUBMISSION.md` — full content with `{{TOKEN}}` placeholders
+- `docs/web3/DEPLOYMENTS.md` — pre-staged table (you filled the deploy row in W2)
+- `README.md` — "Web3 surface" section with placeholders
+
+W7 steps:
+1. Run `pnpm tsx scripts/fill-web3-submission.ts --demo-url=<url> --video-url=<url> --contact=<email>` to substitute the operator-provided values
+2. Run `bash scripts/check-placeholders.sh` — must exit 0 (or document the specific operator-pending tokens in the session summary)
+3. Write `docs/progress/SESSION-SUMMARY-WEB3.md` matching the D1..D8 summary format: W-item completion matrix, deployed address, open blockers, recommended next steps
+4. If the narrative is factually wrong after implementation (e.g. a route path diverged), fix it in a dedicated commit — don't bundle with the filler
+
+Operator actions the filler depends on:
+- `--demo-url` → Vercel preview or prod deployment URL
+- `--video-url` → YouTube (unlisted OK) upload after screen-recording the demo
+- `--contact` → operator email
+
+**Acceptance**: `scripts/check-placeholders.sh` exits 0 (or the only remaining tokens are operator-pending video/contact, documented in SESSION-SUMMARY-WEB3.md). A fresh judge reads `docs/web3/SUBMISSION.md` + watches the video + clicks the BaseScan link and understands the whole pitch.
 
 ## Ship order & commit convention
 
@@ -153,13 +165,14 @@ contracts/
   WattCityMedal.sol              (untouched, already present)
   test/WattCityMedal.test.ts     (untouched)
 docs/
-  web3/DEPLOYMENTS.md            NEW — address + BaseScan URL
-  web3/SUBMISSION.md             NEW — ETHSilesia judge one-pager
-  progress/SESSION-SUMMARY-WEB3.md  NEW — W1..W7 recap
+  web3/DEPLOYMENTS.md            PRE-STAGED — fill deploy row in W2, filler fills chain/id in W7
+  web3/SUBMISSION.md             PRE-STAGED — narrative authored, fill {{TOKEN}}s in W7
+  progress/SESSION-SUMMARY-WEB3.md  NEW — W1..W7 recap (write at end of W7)
 lib/web3/
   config.ts                      NEW — wagmi/viem config, chain guard
   medal-uris.ts                  NEW — AchievementId → ipfs:// URI
   mint.ts                        NEW — relayer + tokenId derivation
+  burn-all.ts                    NEW — consent-revocation iterator
 app/api/web3/
   mint/route.ts                  NEW — POST, CSRF + session + consent
   my-medals/route.ts             NEW — GET, reads ownedOf()
@@ -172,6 +185,9 @@ scripts/
   hardhat.config.ts              NEW
   deploy.ts                      NEW — Base Sepolia deploy script
   upload-medal-metadata.ts       NEW — NFT.Storage bulk upload
+  fill-web3-submission.ts        PRE-STAGED — post-deploy placeholder filler
+  check-placeholders.sh          PRE-STAGED — pre-submission guard
+README.md                        PRE-STAGED — web3 section with placeholders
 .env.example                     EXTENDED — web3 env vars
 README.md                        EXTENDED — web3 section
 package.json                     EXTENDED — wagmi/viem/rainbowkit/hardhat

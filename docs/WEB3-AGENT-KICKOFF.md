@@ -193,20 +193,7 @@ Right after reading this prompt:
 - Contract source is `contracts/WattCityMedal.sol` — DO NOT modify. The source invariant tests guard it.
 - Deploy script in `scripts/deploy.ts` — reads from env, deploys, prints address.
 - Verify on BaseScan via `hardhat verify`.
-- Write result to `docs/web3/DEPLOYMENTS.md`:
-  ```markdown
-  # Watt City deployments
-  
-  ## Base Sepolia (testnet)
-  
-  | Contract | Address | BaseScan |
-  |---|---|---|
-  | WattCityMedal | 0x... | https://sepolia.basescan.org/address/0x... |
-  
-  Deployed at block: ...
-  Verified: YYYY-MM-DD HH:MM
-  Deployer EOA: 0x...  (funded from Coinbase Sepolia faucet)
-  ```
+- **`docs/web3/DEPLOYMENTS.md` is pre-staged** with `{{CONTRACT_ADDRESS}}` / `{{BASESCAN_URL}}` / `{{DEPLOY_BLOCK}}` / `{{DEPLOY_TIMESTAMP}}` / `{{DEPLOYER_ADDRESS}}` tokens. After a successful deploy replace those tokens with the real values in-place — the fill script in W7 will also cover this, but filling here lets downstream W-items read the address. Do NOT author the file from scratch; keep the pre-staged narrative intact.
 - **Blocker protocol**: if faucet drained / unavailable, deploy to `npx hardhat node` localhost, note in progress report, continue W3+.
 
 ### W3 — IPFS metadata
@@ -264,18 +251,33 @@ Right after reading this prompt:
 - GDPR Art. 17 path: existing `/profile` deletion flow must also iterate + burn all user's medals before clearing state
 - New backend helper: `lib/web3/burn-all.ts` — iterates user's tokens, calls relayer burn, logs each
 
-### W7 — Submission package
-- `docs/web3/SUBMISSION.md` — one page, self-contained:
-  - Problem: kids earn achievements; no verifiable record
-  - Solution: soulbound on-chain medals with parent consent
-  - Why soulbound: not speculative; it's a certificate
-  - Why Base: low gas, Coinbase Smart Wallet passkey path
-  - Deployment: address + BaseScan link
-  - Demo: URL + 2-min video link (placeholder — operator fills)
-  - GitHub: B2JK-Industry/xp-arena-ETHSilesia2026
-  - Contact: operator email
-- README update: new "Web3 surface" section with contract address + BaseScan + video link + feature flag docs
-- `docs/progress/SESSION-SUMMARY-WEB3.md` — final recap matching the D1..D8 summary format
+### W7 — Submission package (fill + verify, NOT author)
+
+**IMPORTANT**: the submission docs are **already pre-staged** on base:
+- `docs/web3/SUBMISSION.md` — full narrative already authored with `{{TOKEN}}` placeholders
+- `docs/web3/DEPLOYMENTS.md` — pre-staged table with `{{CONTRACT_ADDRESS}}` etc.
+- `README.md` — "Web3 surface" section pre-staged with `{{VIDEO_URL}}` / `{{CONTRACT_ADDRESS}}` / `{{BASESCAN_URL}}`
+
+Your job in W7 is **not to author these** — it's to **fill placeholders and verify**:
+
+1. Ensure `docs/web3/DEPLOYMENTS.md` has real deploy values (you did this in W2).
+2. Run the filler script:
+   ```bash
+   pnpm tsx scripts/fill-web3-submission.ts \
+     --demo-url=https://xp-arena-ethsilesia2026.vercel.app \
+     --video-url={{VIDEO_URL_FROM_OPERATOR}} \
+     --contact={{CONTACT_FROM_OPERATOR}}
+   ```
+   If operator hasn't uploaded the video yet, leave `{{VIDEO_URL}}` in place (the filler reports it as still-pending, exits 1) — commit the demo/contact substitution and note the missing video in the progress log.
+3. Run the pre-submission guard:
+   ```bash
+   bash scripts/check-placeholders.sh
+   ```
+   Must exit 0 before W7 is complete. If a token legitimately cannot be resolved this session (e.g. video awaits operator), document precisely which tokens remain and what the operator needs to do in `docs/progress/SESSION-SUMMARY-WEB3.md`.
+4. Do NOT rewrite the narrative. If a line in `SUBMISSION.md` is factually wrong after implementation (e.g. a route path diverged), propose the fix in a dedicated commit — don't bundle it with the filler run.
+5. Write `docs/progress/SESSION-SUMMARY-WEB3.md` — final recap matching the D1..D8 summary format (W-item completion matrix, deployed address, open blockers, recommended next steps).
+
+**Acceptance**: `scripts/check-placeholders.sh` exits 0, OR the remaining tokens are exactly the operator-pending ones (video/contact) documented in SESSION-SUMMARY-WEB3.md. Guard enforces the "no unfilled submission" floor.
 
 ## Feedback to user
 
