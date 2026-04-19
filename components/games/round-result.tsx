@@ -3,10 +3,11 @@
 import Link from "next/link";
 import type { ScoreResponse } from "@/lib/client-api";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Confetti } from "@/components/confetti";
-import type { Dict } from "@/lib/i18n";
+import type { Dict, Lang } from "@/lib/i18n";
 import plDict from "@/lib/locales/pl";
+import { PostGameBreakdown } from "@/components/post-game-breakdown";
 
 export type RoundResultState = {
   submitting: boolean;
@@ -22,6 +23,9 @@ type Props = {
   retryLabel?: string;
   lines: StatLine[];
   dict?: Dict;
+  /** Cleanup issue 3 — explicit locale for the PostGameBreakdown modal
+   *  (which has its own 4-lang copy). Optional; falls back to "pl". */
+  lang?: Lang;
 };
 
 export function RoundResult({
@@ -30,6 +34,7 @@ export function RoundResult({
   retryLabel,
   lines,
   dict = plDict,
+  lang = "pl",
 }: Props) {
   const t = dict.roundResult;
   const retry = retryLabel ?? t.retry;
@@ -41,6 +46,22 @@ export function RoundResult({
   const level = state.result && state.result.ok ? state.result.level : null;
   const rank =
     state.result && state.result.ok ? state.result.globalRank : null;
+
+  // Cleanup issue 3 — mount PostGameBreakdown modal when the server
+  // returned a non-null `multBreakdown`. Flag gating happens server-side
+  // in /api/score (flag v2_post_game_modal); null = modal off.
+  const multBreakdown =
+    state.result && state.result.ok ? state.result.multBreakdown : null;
+  const resources =
+    state.result && state.result.ok ? state.result.resources : null;
+  const [breakdownOpen, setBreakdownOpen] = useState(false);
+  useEffect(() => {
+    if (multBreakdown && awarded !== null) {
+      // Defer one tick so Confetti gets to paint first
+      const id = setTimeout(() => setBreakdownOpen(true), 120);
+      return () => clearTimeout(id);
+    }
+  }, [multBreakdown, awarded]);
 
   // refresh navbar stats (level ring in server layout) after score is applied
   useEffect(() => {
@@ -203,6 +224,28 @@ export function RoundResult({
           {t.otherGame}
         </Link>
       </div>
+
+      {/* Cleanup issue 3 — PostGameBreakdown modal. Shown iff the server
+          emitted a non-null multBreakdown (flag-gated) and we have a
+          credited amount to show. */}
+      {multBreakdown && awarded !== null && breakdownOpen && (
+        <PostGameBreakdown
+          lang={lang}
+          baseValue={
+            state.result?.ok ? state.result.delta || state.result.awarded : 0
+          }
+          finalValue={awarded}
+          breakdown={multBreakdown}
+          resourceDelta={
+            resources
+              ? (Object.fromEntries(
+                  Object.entries(resources).filter(([, v]) => v !== 0),
+                ) as Record<string, number>)
+              : undefined
+          }
+          onClose={() => setBreakdownOpen(false)}
+        />
+      )}
     </div>
   );
 }
