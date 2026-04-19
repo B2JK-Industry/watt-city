@@ -16,6 +16,7 @@ import {
   type SlotDef,
 } from "@/lib/building-catalog";
 import type { Loan } from "@/lib/player";
+import { KnfDisclaimer } from "@/components/knf-disclaimer";
 
 const VB_W = 1800;
 const VB_H = 460;
@@ -622,6 +623,9 @@ function MortgageCard({
               )}
             </ul>
           )}
+          {/* R7.2 KNF disclaimer — required on every loan-taking surface */}
+          <KnfDisclaimer lang={lang} variant="inline" />
+
           <button
             className="btn btn-primary text-sm"
             disabled={busy || !quote?.eligibility.ok}
