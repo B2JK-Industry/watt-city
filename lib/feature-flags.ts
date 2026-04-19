@@ -79,6 +79,18 @@ export const DEFAULT_FLAGS: FlagsBundle = {
   v3_score_lock: { mode: "on" }, // building-mutation lock during /api/score
   v3_loan_calendar: { mode: "on" }, // loan-schedule widget + auto-repay toggle
   v3_loan_comparison: { mode: "on" }, // /loans/compare ladder
+
+  // ---------------------------------------------------------------------------
+  // V4 — classroom pivot. Teacher surface + PDF export + demo seed + parent
+  // observer + coming-soon banner. All default on; principal view defaults
+  // off (pilots enable explicitly via setFlags).
+  // ---------------------------------------------------------------------------
+  v4_teacher_hero: { mode: "on" }, // /dla-szkol + /nauczyciel/signup + wizard
+  v4_pdf_export: { mode: "on" }, // weekly PDF report for classes
+  v4_demo_seed: { mode: "on" }, // admin-gated anyway, flag is belt-and-suspenders
+  v4_parent_observer: { mode: "on" }, // /rodzic dashboard polish
+  v4_coming_soon_banner: { mode: "on" }, // V5 content teaser on / + /games
+  v4_principal: { mode: "off" }, // multi-class view — off until pilots
 };
 
 /** Compute the 0..99 percentile bucket for a stable userId hash. */
