@@ -8,7 +8,8 @@ import { userStats } from "@/lib/leaderboard";
 import { ProfileEdit } from "@/components/profile-edit";
 import { ParentInviteCard } from "@/components/parent-invite-card";
 import { avatarFor } from "@/lib/avatars";
-import { web3Enabled, fetchOnchainMedals } from "@/lib/web3/client";
+import { web3Enabled } from "@/lib/web3/client";
+import { Web3MedalGallerySection } from "@/components/web3/medal-gallery-section";
 
 export const dynamic = "force-dynamic";
 
@@ -116,58 +117,8 @@ export default async function ProfilePage() {
       </section>
 
       {web3Enabled() && (
-        <OnchainMedalsSection
-          username={session.username}
-          lockedLabel={lockedLabel}
-        />
+        <Web3MedalGallerySection username={session.username} lang={lang} />
       )}
     </div>
-  );
-}
-
-async function OnchainMedalsSection({
-  username,
-  lockedLabel,
-}: {
-  username: string;
-  lockedLabel: string;
-}) {
-  // Phase 8 scaffold — render on-chain medals when web3 is enabled AND
-  // the user has a linked wallet. In the mock path (`web3Enabled()` false),
-  // this component doesn't mount at all; when enabled but no wallet, we
-  // show the opt-in CTA. Real wallet linking (Phase 8.1.5) adds a separate
-  // endpoint; for now the wallet value is read from the player state.
-  const medals = await fetchOnchainMedals(null);
-  return (
-    <section className="card p-4 flex flex-col gap-3 border-[var(--neo-cyan)]">
-      <h2 className="text-lg font-black uppercase">On-chain medals (beta)</h2>
-      <p className="text-xs text-zinc-400">
-        {lockedLabel} — połącz portfel (Base / Coinbase Smart Wallet), by
-        zamintować medale on-chain za każde osiągnięcie. Brak opłat dla
-        gracza.
-      </p>
-      {medals.length === 0 ? (
-        <p className="text-xs text-zinc-500">
-          Konto {username} nie ma jeszcze medali on-chain.
-        </p>
-      ) : (
-        <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {medals.map((m) => (
-            <li
-              key={m.tokenId}
-              className="border-2 border-[var(--neo-cyan)]/40 rounded p-3 flex flex-col items-center gap-1 text-center"
-            >
-              <span className="text-3xl" aria-hidden>
-                🏅
-              </span>
-              <code className="text-[10px] text-zinc-400">{m.tokenId.slice(0, 10)}</code>
-              <span className="text-[11px] text-zinc-500">
-                {new Date(m.mintedAt).toLocaleDateString("pl-PL")}
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
   );
 }
