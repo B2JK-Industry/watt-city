@@ -12,10 +12,40 @@
  * system speaks one visual language under stress.
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Lang } from "@/lib/i18n";
 import type { DeficitState } from "@/lib/watts";
+
+// localStorage key + signature derivation. The signature combines the
+// current milestone label and the brownout multiplier, both of which
+// step when the deficit escalates (enter → 50% → 25% → bankruptcy
+// eligible). Same signature = same episode of pain, keep hidden; new
+// signature = cliff crossed, pop back so the user notices.
+const DEFICIT_DISMISS_KEY = "wc_deficit_dismiss_v1";
+
+function deficitSignature(deficit: DeficitState): string {
+  if (!deficit.inDeficit) return "";
+  return `${deficit.nextMilestone ?? "post-grace"}|${deficit.brownout}`;
+}
+
+function readDeficitDismiss(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage.getItem(DEFICIT_DISMISS_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function writeDeficitDismiss(signature: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(DEFICIT_DISMISS_KEY, signature);
+  } catch {
+    /* best-effort */
+  }
+}
 
 type Copy = Record<
   | "title"
@@ -98,6 +128,25 @@ export function WattDeficitPanel({ deficit, lang }: Props) {
     "idle" | "taking" | "done" | "already-used"
   >("idle");
   const t = COPY[lang];
+  const signature = deficitSignature(deficit);
+
+  // Re-check localStorage whenever the deficit signature changes. Same
+  // signature means we're still in the same milestone band the user
+  // already acknowledged — keep hidden. New signature (milestone or
+  // brownout changed) means a cliff crossed — pop back into view.
+  useEffect(() => {
+    if (!deficit.inDeficit) {
+      setDismissed(false);
+      return;
+    }
+    const prev = readDeficitDismiss();
+    setDismissed(prev !== null && prev === signature);
+  }, [deficit.inDeficit, signature]);
+
+  function dismiss() {
+    writeDeficitDismiss(signature);
+    setDismissed(true);
+  }
 
   if (!deficit.inDeficit) return null;
   if (dismissed) return null;
@@ -183,9 +232,9 @@ export function WattDeficitPanel({ deficit, lang }: Props) {
           </button>
           <button
             type="button"
-            onClick={() => setDismissed(true)}
+            onClick={dismiss}
             aria-label={t.dismiss}
-            className="text-xs opacity-50 hover:opacity-100 w-6 h-6 flex items-center justify-center"
+            className="text-xs opacity-60 hover:opacity-100 active:opacity-100 w-7 h-7 sm:w-6 sm:h-6 flex items-center justify-center"
           >
             ✕
           </button>
