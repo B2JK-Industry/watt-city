@@ -122,10 +122,31 @@ export default async function RootLayout({
     }
     return `XP Lv ${level.level}`;
   })();
+  /* D8 polish — SKIN=pko only changed the brand chip colour before;
+   * the rest of the app kept the Watt City yellow from :root. Inject
+   * the PKO palette as a style override on <html> so every
+   * `var(--accent)` / `var(--background)` / `var(--surface)` /
+   * `var(--ink)` consumer picks up the PKO skin without per-component
+   * rewrites. data-skin attribute lets CSS or tests key off the skin. */
+  const skinVars: React.CSSProperties =
+    theme.id === "pko"
+      ? ({
+          "--accent": theme.colors.accent,
+          "--accent-2": theme.colors.accent,
+          "--background": theme.colors.background,
+          "--surface": theme.colors.surface,
+          "--surface-2": theme.colors.surface,
+          "--ink": theme.colors.ink,
+          "--foreground": theme.colors.ink,
+          "--brand": theme.colors.accent,
+        } as React.CSSProperties)
+      : ({} as React.CSSProperties);
   return (
     <html
       lang={LANG_HTML[lang]}
+      data-skin={theme.id}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      style={skinVars}
     >
       <body className="min-h-full flex flex-col">
         <a href="#main-content" className="skip-to-content">

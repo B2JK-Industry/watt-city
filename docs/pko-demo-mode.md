@@ -2,6 +2,13 @@
 
 V4.10 — how to run Watt City with the PKO skin applied.
 
+> **D8 demo-polish update** — `app/layout.tsx` now injects PKO palette
+> as inline CSS variables on `<html>` when `SKIN=pko`, so every
+> `var(--accent)` / `var(--background)` / `var(--surface)` consumer
+> picks up the skin (previously only the single brand chip changed
+> colour). Pages tag the `data-skin="pko"` attribute on `<html>` so
+> tests + dev tools can key off it.
+
 ## One-line boot
 
 ```bash
