@@ -21,6 +21,7 @@ import { getLang } from "@/lib/i18n-server";
 import { getPlayerState } from "@/lib/player";
 import { tickPlayer } from "@/lib/tick";
 import { ensureSignupGift } from "@/lib/buildings";
+import { isFlagEnabled } from "@/lib/feature-flags";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -72,9 +73,12 @@ export default async function RootLayout({
     const preState = await getPlayerState(session.username);
     await ensureSignupGift(preState);
   }
-  const [stats, player] = await Promise.all([
+  const [stats, player, hudEnabled] = await Promise.all([
     session ? userStats(session.username) : Promise.resolve(null),
     session ? getPlayerState(session.username) : Promise.resolve(null),
+    session
+      ? isFlagEnabled("v2_cashflow_hud", session.username)
+      : Promise.resolve(false),
   ]);
   const xp = stats?.globalXP ?? 0;
   const level = levelFromXP(xp);
@@ -109,7 +113,7 @@ export default async function RootLayout({
         >
           {children}
         </main>
-        {session && player && (
+        {session && player && hudEnabled && (
           <CashflowHud hud={buildHudBundle(player)} lang={lang} />
         )}
         {session && <BottomTabs lang={lang} />}

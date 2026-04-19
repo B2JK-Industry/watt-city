@@ -51,14 +51,17 @@ export const DEFAULT_FLAGS: FlagsBundle = {
   // rollout. "on" initially — we can flip to "off" without a deploy.
   v2_cashflow_hud: { mode: "on" },
 
-  // R3.4 post-game modal: off until every game client is wired to
-  // trigger it. When wiring lands we flip to "percentage: 50" and then
-  // ramp.
-  v2_post_game_modal: { mode: "off" },
+  // R3.4 post-game modal: the score endpoint already returns
+  // `multBreakdown` (see app/api/score/route.ts) so clients with the
+  // modal wired receive it. Ramp percentage so we observe rendering
+  // behaviour on real traffic before flipping everyone.
+  v2_post_game_modal: { mode: "percentage", value: 50 },
 
   // R7.3 restructuring vs V1 bankructwo: percentage ramp so we observe
-  // real restructure events before full rollout.
-  v2_restructuring: { mode: "percentage", value: 0 },
+  // real restructure events before full rollout. Flipped from 0→50 as
+  // part of the kid-friendly safety rollout; remaining 50% stay on V1
+  // hard-bankruptcy for the measurement window.
+  v2_restructuring: { mode: "percentage", value: 50 },
 
   // R9.1 migration gate: the value-based migration runs only for users
   // whose percentile bucket is below this. Defaults OFF — flipping
