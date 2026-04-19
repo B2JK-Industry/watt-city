@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { Lang } from "@/lib/i18n";
 
 type Props = { lang: Lang };
@@ -66,11 +67,22 @@ function stepsFor(lang: Lang): Step[] {
 // persisted server-side via PATCH /api/me/profile so the modal doesn't pop
 // on every page load after the player's first visit.
 export function OnboardingTour({ lang }: Props) {
+  const pathname = usePathname();
+  // Pathname gate — the tour is a home-page welcome, not a deep-link
+  // interceptor. Bookmarking /games/ai/XYZ, /miasto, or /loans/compare
+  // should open that page, not a 4-step modal. The first time the user
+  // lands on `/` the tour still opens and writes `tourSeen` so it
+  // doesn't re-appear anywhere.
+  const onHome = pathname === "/";
   const [needsTour, setNeedsTour] = useState<boolean | null>(null);
   const [index, setIndex] = useState(0);
   const steps = stepsFor(lang);
 
   useEffect(() => {
+    if (!onHome) {
+      setNeedsTour(false);
+      return;
+    }
     let cancelled = false;
     fetch("/api/me/profile")
       .then((r) => r.json())
@@ -86,7 +98,7 @@ export function OnboardingTour({ lang }: Props) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [onHome]);
 
   async function dismiss() {
     setNeedsTour(false);
