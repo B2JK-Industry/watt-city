@@ -6,6 +6,7 @@ import { getPlayerState } from "@/lib/player";
 import { computePlayerTier } from "@/lib/buildings";
 import { userStats } from "@/lib/leaderboard";
 import { ProfileEdit } from "@/components/profile-edit";
+import { ParentInviteCard } from "@/components/parent-invite-card";
 import { avatarFor } from "@/lib/avatars";
 import { web3Enabled, fetchOnchainMedals } from "@/lib/web3/client";
 
@@ -85,6 +86,10 @@ export default async function ProfilePage() {
         initialAvatar={state.profile?.avatar}
         initialDisplayName={state.profile?.displayName}
       />
+      {/* Cleanup issue 4 — V4.6 parent-invite flow needs a UI entry point;
+          the V4.6 backend routes exist but /profile had no "Generate code"
+          affordance, so the full kid→code→parent flow was unreachable. */}
+      <ParentInviteCard lang={lang} />
       <section className="card p-4 flex flex-col gap-3">
         <h2 className="text-lg font-black uppercase">{achLabel}</h2>
         <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3">
