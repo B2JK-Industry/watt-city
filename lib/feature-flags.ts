@@ -51,17 +51,16 @@ export const DEFAULT_FLAGS: FlagsBundle = {
   // rollout. "on" initially — we can flip to "off" without a deploy.
   v2_cashflow_hud: { mode: "on" },
 
-  // R3.4 post-game modal: the score endpoint already returns
-  // `multBreakdown` (see app/api/score/route.ts) so clients with the
-  // modal wired receive it. Ramp percentage so we observe rendering
-  // behaviour on real traffic before flipping everyone.
-  v2_post_game_modal: { mode: "percentage", value: 50 },
+  // R3.4 post-game modal: the score endpoint returns `multBreakdown`
+  // (see app/api/score/route.ts) and the RoundResult mounts the modal
+  // via cleanup issue 3. D7 demo-polish ramp — flipped from 50%→on so
+  // every PKO-demo audience sees the same modal.
+  v2_post_game_modal: { mode: "on" },
 
-  // R7.3 restructuring vs V1 bankructwo: percentage ramp so we observe
-  // real restructure events before full rollout. Flipped from 0→50 as
-  // part of the kid-friendly safety rollout; remaining 50% stay on V1
-  // hard-bankruptcy for the measurement window.
-  v2_restructuring: { mode: "percentage", value: 50 },
+  // R7.3 restructuring vs V1 bankructwo: kid-friendly soft-landing
+  // path for over-leverage. D7 demo-polish ramp — flipped from 50%→on
+  // so no demo visitor hits the hard-bankruptcy V1 path.
+  v2_restructuring: { mode: "on" },
 
   // R9.1 migration gate: the value-based migration runs only for users
   // whose percentile bucket is below this. Defaults OFF — flipping
