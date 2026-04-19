@@ -10,7 +10,7 @@ export type BuildingShape = "standard" | "wide" | "tall" | "narrow";
 
 export type Building = {
   name: string;        // In-city name: "PKO Tower"
-  role: string;        // Short role line: "Burzová veža"
+  role: string;        // Short role line: "Wieża giełdowa"
   shape: BuildingShape;
   roof: string;        // Tailwind bg-* utility for the roof strip
   body: string;        // Tailwind bg-* utility for the walls
@@ -35,13 +35,24 @@ export type GameMeta = {
   building: Building;
 };
 
+/* Cleanup issue 1 — GAMES titles/taglines/descriptions + building.role
+ * normalised to Polish (the canonical locale). Before: Slovak strings
+ * leaked to PL users via landing cards, leaderboard, sin-slavy, city
+ * scene tooltips, and every consumer that used `game.title` directly
+ * instead of `localizedTitle(game, dict)`. Translation table per the
+ * UX audit (docs/ux-audit/REPORT-2026-04-19.md issue #3).
+ *
+ * Per-game dict namespaces in `lib/locales/{pl,uk,cs,en}.ts` keep
+ * their language-specific `headerTitle` values — `localizedTitle`
+ * still prefers the dict. These strings are the safety net for direct
+ * `.title` / `.tagline` reads. */
 export const GAMES: GameMeta[] = [
   {
     id: "energy-dash",
-    title: "Energy Dash",
-    tagline: "Tap OZE, vyhni sa fosílom. Combo ×3.",
+    title: "Energetyczny sprint",
+    tagline: "Klikaj OZE, omijaj paliwa kopalne. Combo ×3.",
     description:
-      "30 s reakčná hra na 4×4 mriežke. Klikaj iba obnoviteľné zdroje (slnko, vietor, voda, biomasa). Čiernych sa nedotkni. Rýchlosť rastie, combo dáva ×1.5/×2/×3. Max 220 W.",
+      "30-sekundowa gra refleksowa na siatce 4×4. Klikaj tylko odnawialne źródła (słońce, wiatr, woda, biomasa). Czarnych (węgiel, ropa) nie dotykaj. Prędkość rośnie, combo daje ×1.5/×2/×3. Max 220 W.",
     category: "energy",
     xpCap: 220,
     durationLabel: "30 s",
@@ -52,7 +63,7 @@ export const GAMES: GameMeta[] = [
     hot: true,
     building: {
       name: "Silesia Solar Farm",
-      role: "Solárna farma",
+      role: "Farma solarna",
       shape: "wide",
       roof: "bg-emerald-400",
       body: "bg-emerald-500",
@@ -62,10 +73,10 @@ export const GAMES: GameMeta[] = [
   },
   {
     id: "power-flip",
-    title: "Power Flip",
-    tagline: "Ktorá voľba šetrí viac energie?",
+    title: "Przełącznik mocy",
+    tagline: "Który wybór oszczędza więcej energii?",
     description:
-      "Dve možnosti, 30 s na combo. LED vs klasika, trieda A vs F, pokrievka vs bez, termostat vs radiátor naplno. Učíš sa pravidlá každodennej úspory.",
+      "Dwie opcje, 30 sekund na combo. LED vs klasyka, klasa A vs F, pokrywka vs bez, termostat vs grzejnik na full. Uczysz się zasad codziennej oszczędności energii.",
     category: "energy",
     xpCap: 180,
     durationLabel: "30 s",
@@ -75,7 +86,7 @@ export const GAMES: GameMeta[] = [
     isNew: true,
     building: {
       name: "Dom LED",
-      role: "Energetický showroom",
+      role: "Showroom energetyczny",
       shape: "narrow",
       roof: "bg-[var(--neo-lime)]",
       body: "bg-lime-500",
@@ -85,10 +96,10 @@ export const GAMES: GameMeta[] = [
   },
   {
     id: "stock-tap",
-    title: "Stock Tap",
-    tagline: "Kúp nízko, predaj vysoko. Live chart.",
+    title: "Kurs akcji",
+    tagline: "Kup nisko, sprzedaj wysoko. Wykres na żywo.",
     description:
-      "45 sekúnd, živý graf ceny. Klik BUY, drž pozíciu, klik SELL v najvyššom bode. Ziskové obchody v rade = combo bonus. Stratové resetujú combo. Max 220 W.",
+      "45 sekund, żywy wykres ceny. Klik BUY, trzymaj pozycję, klik SELL w najwyższym punkcie. Zyskowne transakcje z rzędu = bonus combo. Stratne resetują combo. Max 220 W.",
     category: "finance",
     xpCap: 220,
     durationLabel: "45 s",
@@ -99,7 +110,7 @@ export const GAMES: GameMeta[] = [
     hot: true,
     building: {
       name: "PKO Tower",
-      role: "Burzová veža",
+      role: "Wieża giełdowa",
       shape: "tall",
       roof: "bg-[var(--neo-yellow)]",
       body: "bg-amber-500",
@@ -109,20 +120,20 @@ export const GAMES: GameMeta[] = [
   },
   {
     id: "budget-balance",
-    title: "Budget Balance",
-    tagline: "Pravidlo 50/30/20 na živých scenároch.",
+    title: "Budżet domowy",
+    tagline: "Zasada 50/30/20 na żywych scenariuszach.",
     description:
-      "Dostaneš mesačný príjem (student / prvá práca / rodina) a 4 kategórie. Rozdeľ 100 % tak, aby si trafil odporúčané pásma. Čím lepšie, tým viac Wattov (max 160 W).",
+      "Dostajesz miesięczny dochód (student / pierwsza praca / rodzina) i 4 kategorie. Rozdziel 100% tak, by trafić w zalecane pasma. Im lepiej, tym więcej Watów (max 160 W).",
     category: "finance",
     xpCap: 160,
-    durationLabel: "bez časovača",
+    durationLabel: "bez licznika",
     accent: "from-cyan-400 via-blue-500 to-indigo-600",
     emoji: "📊",
     ageHint: "16+",
     isNew: true,
     building: {
       name: "PKO Oddział",
-      role: "Banková pobočka",
+      role: "Oddział bankowy",
       shape: "standard",
       roof: "bg-[var(--neo-cyan)]",
       body: "bg-sky-500",
@@ -132,10 +143,10 @@ export const GAMES: GameMeta[] = [
   },
   {
     id: "finance-quiz",
-    title: "Finančný kvíz",
-    tagline: "5 otázok z osobných financií.",
+    title: "Quiz finansowy",
+    tagline: "5 pytań z finansów osobistych.",
     description:
-      "Otestuj svoje vedomosti o úveroch, úsporách, ETF, inflácii a BLIK. Za každú správnu odpoveď +20 W a vysvetlenie, prečo je správna.",
+      "Sprawdź swoją wiedzę o kredytach, oszczędzaniu, ETF, inflacji i BLIK. Za każdą poprawną odpowiedź +20 W i wyjaśnienie, dlaczego jest poprawna.",
     category: "knowledge",
     xpCap: 100,
     durationLabel: "~2 min",
@@ -143,7 +154,7 @@ export const GAMES: GameMeta[] = [
     emoji: "🧠",
     building: {
       name: "Biblioteka Śląska",
-      role: "Sliezska knižnica",
+      role: "Biblioteka regionalna",
       shape: "wide",
       roof: "bg-amber-400",
       body: "bg-amber-600",
@@ -153,10 +164,10 @@ export const GAMES: GameMeta[] = [
   },
   {
     id: "math-sprint",
-    title: "Matematický šprint",
-    tagline: "60 s rýchlych počtov.",
+    title: "Sprint matematyczny",
+    tagline: "60 s szybkich obliczeń.",
     description:
-      "Sčítanie, odčítanie, násobenie. Enter = odoslať. Správne +10, zle −5. Otestuj svoju mentálnu matematiku — max 200 W.",
+      "Dodawanie, odejmowanie, mnożenie. Enter = wyślij. Poprawnie +10, błędnie −5. Sprawdź swoją pamięciową matematykę — max 200 W.",
     category: "math",
     xpCap: 200,
     durationLabel: "60 s",
@@ -164,7 +175,7 @@ export const GAMES: GameMeta[] = [
     emoji: "⚡",
     building: {
       name: "Instytut Matematyki",
-      role: "Matematický inštitút",
+      role: "Instytut matematyczny",
       shape: "standard",
       roof: "bg-indigo-400",
       body: "bg-indigo-500",
@@ -174,10 +185,10 @@ export const GAMES: GameMeta[] = [
   },
   {
     id: "memory-match",
-    title: "Pamäťové páry",
-    tagline: "Spáruj pojem s definíciou.",
+    title: "Gra pamięciowa",
+    tagline: "Dopasuj pojęcie do definicji.",
     description:
-      "8 párov finančných pojmov a ich definícií. Otoč dve karty, ak sa zhodujú, ostanú odkryté. Rýchlejšie → vyššie skóre.",
+      "8 par pojęć finansowych i ich definicji. Odwróć dwie karty — jeśli się zgadzają, zostają odkryte. Szybciej = wyższy wynik.",
     category: "memory",
     xpCap: 160,
     durationLabel: "~90 s",
@@ -185,7 +196,7 @@ export const GAMES: GameMeta[] = [
     emoji: "🎴",
     building: {
       name: "Muzeum Śląskie",
-      role: "Sliezske múzeum",
+      role: "Muzeum regionalne",
       shape: "standard",
       roof: "bg-teal-400",
       body: "bg-teal-600",
@@ -195,10 +206,10 @@ export const GAMES: GameMeta[] = [
   },
   {
     id: "currency-rush",
-    title: "Kurzový šprint",
-    tagline: "Prevody mien proti času.",
+    title: "Pary walutowe",
+    tagline: "Przeliczenia walut na czas.",
     description:
-      "EUR ↔ PLN ↔ USD. 45 sekúnd, čo najviac správnych odpovedí. Tolerancia ±2 %. Rýchle matematické premýšľanie v reálnych kurzoch.",
+      "EUR ↔ PLN ↔ USD. 45 sekund, jak najwięcej poprawnych odpowiedzi. Tolerancja ±2%. Szybkie matematyczne myślenie na realnych kursach.",
     category: "finance",
     xpCap: 180,
     durationLabel: "45 s",
@@ -206,7 +217,7 @@ export const GAMES: GameMeta[] = [
     emoji: "💱",
     building: {
       name: "Kantor Rynek",
-      role: "Zmenáreň na Rynku",
+      role: "Kantor na Rynku",
       shape: "narrow",
       roof: "bg-yellow-400",
       body: "bg-yellow-600",
@@ -216,10 +227,10 @@ export const GAMES: GameMeta[] = [
   },
   {
     id: "word-scramble",
-    title: "Premiešané slová",
-    tagline: "Odkódoj finančný pojem.",
+    title: "Litery w chaosie",
+    tagline: "Odkoduj finansowe pojęcie.",
     description:
-      "Písmená sú premiešané — odhaľ pôvodné poľské slovo z oblasti financií a ekonómie. 8 slov za kolo, každá správna +15 W.",
+      "Litery są pomieszane — odkryj oryginalne polskie słowo z obszaru finansów i ekonomii. 8 słów na rundę, każde poprawne +15 W.",
     category: "knowledge",
     xpCap: 120,
     durationLabel: "~2 min",
@@ -227,7 +238,7 @@ export const GAMES: GameMeta[] = [
     emoji: "🔡",
     building: {
       name: "Drukarnia",
-      role: "Mestská tlačiareň",
+      role: "Miejska drukarnia",
       shape: "standard",
       roof: "bg-fuchsia-400",
       body: "bg-fuchsia-600",
@@ -238,12 +249,12 @@ export const GAMES: GameMeta[] = [
 ];
 
 export const CATEGORY_LABELS: Record<GameCategory, string> = {
-  finance: "Financie",
-  math: "Matematika",
-  memory: "Pamäť",
-  knowledge: "Vedomosti",
-  reflex: "Reflex",
-  energy: "Energetika",
+  finance: "Finanse",
+  math: "Matematyka",
+  memory: "Pamięć",
+  knowledge: "Wiedza",
+  reflex: "Refleks",
+  energy: "Energetyka",
 };
 
 export const CATEGORY_ACCENTS: Record<GameCategory, string> = {
@@ -260,8 +271,8 @@ export function getGame(id: string): GameMeta | undefined {
 }
 
 // Each evergreen game has its own dict namespace for page copy; this helper
-// resolves id → the localized title. Falls back to the hardcoded SK title
-// from GameMeta (used as a dev-time anchor) if the dict lookup misses.
+// resolves id → the localized title. Falls back to the hardcoded Polish
+// title from GameMeta (now canonical post-cleanup) if the dict lookup misses.
 const ID_TO_DICT_KEY: Record<string, string> = {
   "energy-dash": "energy",
   "power-flip": "power",
