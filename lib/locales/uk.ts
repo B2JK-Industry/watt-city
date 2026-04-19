@@ -480,6 +480,22 @@ const uk: typeof plDict = {
     sponsorsThanks: "Дякуємо: PKO Bank Polski · Tauron · ETHWarsaw · AKMF · Katowicki.Hub.",
     footerHome: "Назад на головну",
     footerPrivacy: "Конфіденційність",
+    web3Title: "Web3 · соулбаунд медалі (опціонально)",
+    web3StatusLabel: "Статус:",
+    web3StatusValue:
+      "У межах ETHSilesia 2026 · testnet-деплой на Base Sepolia. Mainnet після аудиту (після пілоту).",
+    web3Body:
+      "Досягнення, здобуті у грі, можна опціонально записати як соулбаунд NFT (ERC-721) — сертифікат, а не спекулятивний актив. Медалі непередавані (не можна передати, продати, делегувати). Для акаунтів до 16 років потрібна згода батьків (flow V4.6). Відкликання згоди = спалення медалей (GDPR Art. 17).",
+    web3TenetsTitle: "Чотири принципи дизайну",
+    web3Tenets: [
+      "Соулбаунд — сертифікат, не trading card. Кожен трансфер revertує з `Soulbound`.",
+      "Згода батьків — hard-gated на сервері. Клієнт не може оминути.",
+      "Burn-on-revocation — відкликання автоматично палить медалі на блокчейні.",
+      "Coinbase Smart Wallet (passkey) — Face ID замість seedphrase. Безпечно для дитини.",
+    ],
+    web3LinksLabel: "Повний опис архітектури:",
+    web3SubmissionLinkLabel: "документ submission",
+    web3PlanLinkLabel: "план архітектури",
   },
   privacyPage: {
     title: "Приватність",
