@@ -93,6 +93,37 @@ type Props = {
   lang: Lang;
 };
 
+// localStorage key: dismissal is keyed on the alert reason string so
+// the HUD auto-re-opens the moment the alert changes (e.g. "income +
+// loan safe" → "watts going negative"). Same reason string ⇒ stays
+// hidden across navigation + reload. Empty-string reason = no current
+// alert, so dismissal just hides the ambient HUD.
+const HUD_DISMISS_KEY = "wc_hud_dismiss_v1";
+
+type HudDismiss = { reason: string; ts: number };
+
+function readHudDismiss(): HudDismiss | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(HUD_DISMISS_KEY);
+    return raw ? (JSON.parse(raw) as HudDismiss) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeHudDismiss(reason: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(
+      HUD_DISMISS_KEY,
+      JSON.stringify({ reason, ts: Date.now() }),
+    );
+  } catch {
+    /* best-effort */
+  }
+}
+
 export function CashflowHud({ hud, lang }: Props) {
   const pathname = usePathname();
   const copy = COPY[lang];
@@ -112,11 +143,19 @@ export function CashflowHud({ hud, lang }: Props) {
     }
   }
 
-  // Clear dismissal when alert severity changes upward (user shouldn't be
-  // able to permanently hide a freshly critical state).
+  // Re-evaluate dismissal against localStorage whenever the alert
+  // reason changes. Same reason string ⇒ stay hidden; different ⇒ pop
+  // back. This replaces the old in-memory-only reset that made the HUD
+  // reappear after every navigation.
   useEffect(() => {
-    setDismissed(false);
+    const prev = readHudDismiss();
+    setDismissed(prev !== null && prev.reason === hud.alertReason);
   }, [hud.alertReason]);
+
+  function dismiss() {
+    writeHudDismiss(hud.alertReason ?? "");
+    setDismissed(true);
+  }
 
   if (dismissed && hud.alertLevel !== "critical") return null;
 
@@ -174,8 +213,8 @@ export function CashflowHud({ hud, lang }: Props) {
           {!inDeficit && hud.alertLevel !== "critical" && (
             <button
               type="button"
-              onClick={() => setDismissed(true)}
-              className="hidden sm:inline-flex w-6 h-6 items-center justify-center text-[10px] opacity-50 hover:opacity-100"
+              onClick={dismiss}
+              className="inline-flex w-7 h-7 sm:w-6 sm:h-6 items-center justify-center text-xs sm:text-[10px] opacity-60 hover:opacity-100 active:opacity-100"
               aria-label={copy.dismiss}
             >
               ✕
