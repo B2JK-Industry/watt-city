@@ -37,6 +37,12 @@ yarn-error.log*
 # vercel
 .vercel
 
+# Foundry / forge (Phase 8 W2)
+contracts/out/
+contracts/cache/
+contracts/lib/
+broadcast/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
