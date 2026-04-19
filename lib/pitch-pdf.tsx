@@ -16,6 +16,7 @@
  */
 
 import React from "react";
+import { join } from "path";
 import {
   Document,
   Page,
@@ -23,14 +24,27 @@ import {
   View,
   StyleSheet,
   renderToBuffer,
+  Font,
 } from "@react-pdf/renderer";
 import { curriculumByArea } from "@/lib/curriculum";
+
+/* D2 polish — Helvetica base14 has no Polish diacritics; see the
+ * same fix in lib/pdf-report.tsx. Register Roboto from public/fonts. */
+const FONT_DIR = join(process.cwd(), "public", "fonts");
+Font.register({
+  family: "Roboto",
+  fonts: [
+    { src: join(FONT_DIR, "Roboto-Regular.ttf") },
+    { src: join(FONT_DIR, "Roboto-Bold.ttf"), fontWeight: 700 },
+    { src: join(FONT_DIR, "Roboto-Italic.ttf"), fontStyle: "italic" },
+  ],
+});
 
 const s = StyleSheet.create({
   page: {
     padding: 36,
     fontSize: 10,
-    fontFamily: "Helvetica",
+    fontFamily: "Roboto",
     color: "#0a0a0f",
   },
   h1: { fontSize: 22, fontWeight: "bold", marginBottom: 2 },

@@ -14,6 +14,7 @@
  */
 
 import React from "react";
+import { join } from "path";
 import {
   Document,
   Page,
@@ -30,13 +31,33 @@ import {
   type CurriculumArea,
 } from "@/lib/curriculum";
 
+/* D2 polish — Helvetica (base14) uses WinAnsiEncoding and has no
+ * Polish diacritics, so "Uczeń", "Szkoła", "życiu", "Wartość" rendered
+ * as "UczeD", "SzkoBa", "yciu", "WartoO" — not ship-ready. Register
+ * Roboto (bundled in `public/fonts`, TTF with full Latin-2 coverage)
+ * and use it as the default family. @react-pdf/font expects `src` as
+ * string file-path (passed to fontkit.open), not a Buffer. */
+const FONT_DIR = join(process.cwd(), "public", "fonts");
+Font.register({
+  family: "Roboto",
+  fonts: [
+    { src: join(FONT_DIR, "Roboto-Regular.ttf") },
+    { src: join(FONT_DIR, "Roboto-Bold.ttf"), fontWeight: 700 },
+  ],
+});
+
 Font.registerHyphenationCallback((word) => [word]);
 
 const s = StyleSheet.create({
   page: {
-    padding: 36,
+    paddingTop: 36,
+    paddingHorizontal: 36,
+    // Leave room for the fixed footer (bottom:24 + ~36 tall) so content
+    // doesn't slide under it on the last page. Prevents the curriculum
+    // bar chart from clipping when the roster is large.
+    paddingBottom: 60,
     fontSize: 10,
-    fontFamily: "Helvetica",
+    fontFamily: "Roboto",
     color: "#0a0a0f",
   },
   headerRow: {
@@ -129,11 +150,12 @@ function ReportDocument(props: ReportInput): React.JSX.Element {
   return (
     <Document title={`Watt City weekly report — ${cls.name} — ${weekIso}`}>
       <Page size="A4" style={s.page}>
-        <View style={s.headerRow}>
+        <View style={s.headerRow} fixed>
           <View>
             <Text style={s.brand}>Watt City · SKO 2.0</Text>
             <Text style={s.dim}>
               {schoolName} · {cls.name} · klasa {cls.grade}
+              {cls.subject ? ` · ${cls.subject}` : ""}
             </Text>
           </View>
           <View style={{ textAlign: "right" }}>
@@ -213,26 +235,29 @@ function ReportDocument(props: ReportInput): React.JSX.Element {
           </>
         )}
 
-        {/* Curriculum coverage */}
-        <Text style={s.h2}>Podstawa programowa · klasa {grade}</Text>
-        {areas.map((a) => {
-          const c = cov[a];
-          if (c.total === 0) return null;
-          const pct = Math.round((c.covered / c.total) * 100);
-          return (
-            <View key={a}>
-              <View style={s.row}>
-                <Text style={{ fontWeight: "bold" }}>{a}</Text>
-                <Text>
-                  {c.covered}/{c.total} ({pct}%)
-                </Text>
+        {/* Curriculum coverage — `wrap={false}` keeps the whole
+            chart on a single page instead of splitting mid-bar. */}
+        <View wrap={false}>
+          <Text style={s.h2}>Podstawa programowa · klasa {grade}</Text>
+          {areas.map((a) => {
+            const c = cov[a];
+            if (c.total === 0) return null;
+            const pct = Math.round((c.covered / c.total) * 100);
+            return (
+              <View key={a}>
+                <View style={s.row}>
+                  <Text style={{ fontWeight: "bold" }}>{a}</Text>
+                  <Text>
+                    {c.covered}/{c.total} ({pct}%)
+                  </Text>
+                </View>
+                <View style={s.barOuter}>
+                  <View style={[s.barInner, { width: `${pct}%` }]} />
+                </View>
               </View>
-              <View style={s.barOuter}>
-                <View style={[s.barInner, { width: `${pct}%` }]} />
-              </View>
-            </View>
-          );
-        })}
+            );
+          })}
+        </View>
 
         <View style={s.footer} fixed>
           <Text>
