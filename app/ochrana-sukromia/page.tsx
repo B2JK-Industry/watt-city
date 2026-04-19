@@ -119,9 +119,14 @@ export default async function PrivacyPage() {
         <p className="text-sm text-zinc-300">{t.disclaimerBody}</p>
       </section>
 
+      <section className="card p-5 flex flex-col gap-3 border-[var(--neo-lime)]">
+        <h2 className="brutal-heading text-lg">9 · {t.web3Title}</h2>
+        <p className="text-sm text-zinc-300 leading-relaxed">{t.web3Body}</p>
+      </section>
+
       <section className="card p-5 flex flex-col gap-3 border-[var(--neo-cyan)]">
         <h2 className="brutal-heading text-lg">
-          9 · {
+          10 · {
             ({
               pl: "Twoje prawa — jak skorzystać",
               uk: "Твої права — як скористатися",
