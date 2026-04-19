@@ -10,6 +10,8 @@ import { CookieConsent } from "@/components/cookie-consent";
 import { WebVitalsReporter } from "@/components/web-vitals-reporter";
 import { PwaRegister } from "@/components/pwa-register";
 import { BottomTabs } from "@/components/bottom-tabs";
+import { CashflowHud } from "@/components/cashflow-hud";
+import { buildHudBundle } from "@/lib/hud-data";
 import { resolveTheme } from "@/lib/theme";
 import { getSession } from "@/lib/session";
 import { userStats } from "@/lib/leaderboard";
@@ -107,6 +109,9 @@ export default async function RootLayout({
         >
           {children}
         </main>
+        {session && player && (
+          <CashflowHud hud={buildHudBundle(player)} lang={lang} />
+        )}
         {session && <BottomTabs lang={lang} />}
         {session && (
           <>

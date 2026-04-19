@@ -27,6 +27,7 @@ import { getCatalogEntry, yieldAtLevel } from "@/lib/building-catalog";
 import { processLoanPayments } from "@/lib/loans";
 import { kvSetNX, kvGet, kvDel } from "@/lib/redis";
 import type { Resources } from "@/lib/resources";
+import { brownoutFactor, refreshWattDeficit } from "@/lib/watts";
 
 const TICK_LOCK = (u: string) => `xp:tick-lock:${u}`;
 const HOUR_MS = 60 * 60 * 1000;
@@ -48,17 +49,26 @@ function citywideMultiplier(buildings: BuildingInstance[]): number {
   return mult;
 }
 
-// Compute per-building yield at its current level, with citywide multiplier.
+// Compute per-building yield at its current level, with citywide multiplier
+// and BLOCKER-1 brownout scaling. Watts production by energy buildings is
+// NEVER brownout-scaled — they keep supplying the grid so the player can
+// dig out of the deficit.
 function yieldWithMult(
   b: BuildingInstance,
   citymult: number,
+  brownout: number,
 ): Partial<Resources> {
   const entry = getCatalogEntry(b.catalogId);
   if (!entry) return {};
   const base = yieldAtLevel(entry.baseYieldPerHour, b.level);
   const out: Partial<Resources> = {};
   for (const [k, v] of Object.entries(base) as [keyof Resources, number][]) {
-    out[k] = Math.ceil(v * citymult);
+    // Energy production bypasses brownout so rescue is always possible.
+    const factor = k === "watts" ? 1 : brownout;
+    const scaled = v * citymult * factor;
+    // During brownout non-watts yields can round to 0 at low base yields.
+    // That's OK — the base-5 Domek still yields ≥1 because of Math.ceil.
+    out[k] = scaled > 0 ? Math.max(1, Math.ceil(scaled)) : 0;
   }
   return out;
 }
@@ -125,12 +135,27 @@ export async function tickPlayer(
     const baseHourBucket = Math.floor(state.lastTickAt / HOUR_MS);
     const citymult = citywideMultiplier(state.buildings);
 
+    // R2.1: reconcile deficit-since against the current building set BEFORE
+    // simulating catch-up hours. refreshWattDeficit is a no-op if already
+    // consistent; otherwise it stamps (fresh deficit) or clears (rescued).
+    refreshWattDeficit(state, state.lastTickAt);
+
     let entriesWritten = 0;
-    for (const building of state.buildings) {
-      const perHour = yieldWithMult(building, citymult);
-      if (Object.keys(perHour).length === 0) continue;
-      for (let h = 0; h < cappedHours; h++) {
-        const hourBucket = baseHourBucket + h + 1;
+    // Outer loop over hours so brownout can re-evaluate each hour bucket.
+    // Buildings don't change shape during catchup, so deficit state is
+    // constant except for elapsed-hours accumulation.
+    for (let h = 0; h < cappedHours; h++) {
+      const hourBucket = baseHourBucket + h + 1;
+      const hourTs = hourBucket * HOUR_MS;
+      const deficitHours =
+        state.wattDeficitSince != null
+          ? Math.max(0, (hourTs - state.wattDeficitSince) / HOUR_MS)
+          : 0;
+      const brownout = brownoutFactor(deficitHours);
+
+      for (const building of state.buildings) {
+        const perHour = yieldWithMult(building, citymult, brownout);
+        if (Object.keys(perHour).length === 0) continue;
         const sourceId = `${building.id}:${hourBucket}`;
         const credit = await creditResources(
           state,
@@ -138,7 +163,12 @@ export async function tickPlayer(
           perHour,
           `cashflow ${building.catalogId} L${building.level} (hour ${hourBucket})`,
           sourceId,
-          { instanceId: building.id, hourBucket, level: building.level },
+          {
+            instanceId: building.id,
+            hourBucket,
+            level: building.level,
+            brownout,
+          },
         );
         if (credit.applied) {
           entriesWritten += 1;

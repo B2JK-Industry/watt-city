@@ -30,7 +30,9 @@ describe("resources — yield computation", () => {
   it("maps AI kinds via aiKind arg", () => {
     expect(yieldForGame("ai-abc123", "quiz")?.primary).toBe("coins");
     expect(yieldForGame("ai-abc123", "scramble")?.primary).toBe("bricks");
-    expect(yieldForGame("ai-abc123", "negotiate")?.primary).toBe("code");
+    // V2 refactor: negotiate used to yield 'code' (deprecated); it now
+    // routes to coins via AI_KIND_YIELDS rewrite.
+    expect(yieldForGame("ai-abc123", "negotiate")?.primary).toBe("coins");
   });
 
   it("scales primary resource 1:1 with xp delta", () => {

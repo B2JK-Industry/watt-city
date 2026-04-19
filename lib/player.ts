@@ -92,6 +92,11 @@ export type Loan = {
   monthsPaid: number;
   missedConsecutive: number;
   status: LoanStatus;
+  /** V2 R2.2 — month indices (1..termMonths) where payment was missed.
+   *  Makes the payment-history pattern visible on the profile page even
+   *  after missedConsecutive resets on a later successful month. Optional
+   *  for legacy records; readers treat missing as []. */
+  latePayments?: number[];
 };
 
 export type PlayerState = {
@@ -119,6 +124,25 @@ export type PlayerState = {
     avatar?: string;
     displayName?: string;
   };
+  /** V2 R2.1 — timestamp when the current watt deficit began. null/undefined
+   *  means the city is balanced or in surplus. Set/cleared by
+   *  `refreshWattDeficit()` at every build/upgrade/demolish and tick entry.
+   *  Used to compute brownout severity and the BLOCKER-1 bankruptcy-gate
+   *  grace window (72h). */
+  wattDeficitSince?: number | null;
+  /** V2 R7.3 — classroom / teacher-mode flag (HIGH-8). When true,
+   *  bankruptcy-style seizure NEVER fires. Instead the UI shows a red-
+   *  alert "rebalance within 3 days" banner. Set by teacher-mode opt-in
+   *  during school deployments. */
+  classroomMode?: boolean;
+  /** V2 R7.3 — mentor help state. One-time 0% APR emergency loan
+   *  available after 2nd missed payment, re-available once per 30 days.
+   *  `lastUsedAt` is the ms timestamp the player last invoked
+   *  mentor-help; null/undefined = never used. */
+  mentorHelp?: {
+    lastUsedAt?: number | null;
+    usageCount?: number;
+  };
 };
 
 const STATE_KEY = (username: string) => `xp:player:${username}`;
@@ -143,6 +167,7 @@ export function emptyPlayerState(username: string, now = Date.now()): PlayerStat
     version: PLAYER_SCHEMA_VERSION,
     createdAt: now,
     acknowledgedTier: 1,
+    wattDeficitSince: null,
   };
 }
 
