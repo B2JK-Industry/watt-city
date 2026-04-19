@@ -132,7 +132,7 @@ const uk: typeof plDict = {
     writing: "Електрифікую твій дім…",
     yourCity: "Твій дім",
     leagueRank: "Сілезька ліга",
-    toNextTier: "До наступного tier",
+    toNextTier: "До наступного рівня",
     retry: "Зіграти знову",
     leaderboard: "Ліга",
     otherGame: "Інша гра",
