@@ -130,7 +130,7 @@ const pl = {
     writing: "Elektryfikuję twój dom…",
     yourCity: "Twój dom",
     leagueRank: "Liga śląska",
-    toNextTier: "Do następnego tieru",
+    toNextTier: "Do następnego poziomu",
     retry: "Zagraj ponownie",
     leaderboard: "Liga",
     otherGame: "Inna gra",
@@ -501,6 +501,22 @@ const pl = {
     sponsorsThanks: "Podziękowania: PKO Bank Polski · Tauron · ETHWarsaw · AKMF · Katowicki.Hub.",
     footerHome: "Powrót do strony głównej",
     footerPrivacy: "Ochrona prywatności",
+    web3Title: "Web3 · soulbound medale (opcjonalne)",
+    web3StatusLabel: "Status:",
+    web3StatusValue:
+      "W ramach ETHSilesia 2026 · testnet deploy na Base Sepolia. Mainnet po audycie (post-pilot).",
+    web3Body:
+      "Osiągnięcia zdobywane w grze mogą być opcjonalnie zapisane jako soulbound NFT (ERC-721) — certyfikat, nie spekulatywny asset. Medale są niezbywalne (nie można ich przekazać, sprzedać, oddelegować). Dla kont poniżej 16 roku życia wymagamy zgody rodzica (flow V4.6). Cofnięcie zgody = spalenie medali (GDPR Art. 17).",
+    web3TenetsTitle: "Cztery zasady projektowe",
+    web3Tenets: [
+      "Soulbound — certyfikat, nie trading card. Każdy transfer odwraca się z `Soulbound`.",
+      "Zgoda rodzica — hard-gated po stronie serwera. Klient nie może jej ominąć.",
+      "Burn-on-revocation — cofnięcie zgody automatycznie pali medale na blockchainie.",
+      "Coinbase Smart Wallet (passkey) — Face ID zamiast seedphrase. Bezpieczne dla dziecka.",
+    ],
+    web3LinksLabel: "Pełny opis architektury:",
+    web3SubmissionLinkLabel: "dokumentacja submission",
+    web3PlanLinkLabel: "plan architektury",
   },
   privacyPage: {
     title: "Ochrona prywatności",
@@ -550,6 +566,9 @@ const pl = {
       "Platforma celuje w Gen Z (15–20 lat). Dla osób młodszych niż 16 (w PL próg GDPR dla zgody) zalecamy zgodę rodzica. Nie zbieramy żadnych danych osobowych pozwalających identyfikować dziecko poza grą.",
     disclaimerBody:
       "Watt City powstała podczas ETHSilesia 2026 (17–19 kwietnia 2026) w Katowicach. To prototyp — porady finansowe w grach nie mają charakteru doradztwa inwestycyjnego w rozumieniu MiFID II. Treść gier jest do celów edukacyjnych i sprawdzona wobec publicznie dostępnych źródeł, ale nie zastępuje konsultacji z bankiem, doradcą lub KNF (Komisja Nadzoru Finansowego).",
+    web3Title: "Dane on-chain (opcjonalne)",
+    web3Body:
+      "Jeśli aktywujesz soulbound medale w /profile (wymaga zgody rodzica dla kont < 16 lat), ograniczony zestaw danych trafi na publiczny blockchain (Base, warstwa L2 Ethereum): adres twojego portfela, deterministyczny tokenId (hash nazwy użytkownika + id osiągnięcia) oraz link IPFS do metadanych medalu (nazwa osiągnięcia, ikona). Nie wysyłamy e-maila, imienia, ID sesji ani żadnych PII na blockchain. Medale są niezbywalne (soulbound). Cofnięcie zgody uruchamia `burn(tokenId)` dla każdego wcześniej zamintowanego medalu — on-chain link znika (event Transfer → 0x0 jest publiczny). Opt-in, domyślnie wyłączone. Szczegóły w dokumentacji `docs/web3/PLAN.md`.",
     version: "Wersja 1.0 · 2026-04-18 ·",
     backHome: "Powrót do strony głównej",
     dataFields: {
