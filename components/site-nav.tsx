@@ -18,6 +18,32 @@ type Props = {
   dict: Dict;
   /** Server-fetched wallet. Null when anonymous. */
   resources: Resources | null;
+  /** Cleanup issue 5 — role-aware nav discoverability. Passed from
+   *  `app/layout.tsx` after reading the session user's teacher/parent
+   *  flags. Defaults to `"kid"` when omitted so existing callers keep
+   *  working. */
+  role?: "kid" | "teacher" | "parent" | "anon";
+};
+
+const SCHOOL_LABEL: Record<Lang, string> = {
+  pl: "Dla szkół",
+  uk: "Для шкіл",
+  cs: "Pro školy",
+  en: "For schools",
+};
+
+const TEACHER_CLASSES_LABEL: Record<Lang, string> = {
+  pl: "Moje klasy",
+  uk: "Мої класи",
+  cs: "Mé třídy",
+  en: "My classes",
+};
+
+const PARENT_KID_LABEL: Record<Lang, string> = {
+  pl: "Dziecko",
+  uk: "Дитина",
+  cs: "Dítě",
+  en: "My kid",
 };
 
 export function SiteNav({
@@ -30,6 +56,7 @@ export function SiteNav({
   lang,
   dict,
   resources,
+  role = username ? "kid" : "anon",
 }: Props) {
   const pct = Math.round(levelProgress * 100);
   const t = dict.nav;
@@ -39,12 +66,23 @@ export function SiteNav({
   // V3.6 — /duel routes removed (see ADR 001-v3-duel-removal). nav nie
   // ukazuje link; dict keys zachované pre back-compat ale nie sú
   // referencované.
+  // Cleanup issue 5 — role-aware links so every V4 page has a nav
+  // entry point. Anonymous visitor gets the classroom landing CTA;
+  // logged-in teacher gets the class dashboard; logged-in parent
+  // (linked to a kid) gets the observer dashboard.
   const navLinks: Array<{ href: string; label: string }> = [
     { href: "/miasto", label: t.city },
     { href: "/games", label: t.games },
     { href: "/leaderboard", label: t.league },
     { href: "/o-platforme", label: t.about },
   ];
+  if (role === "anon") {
+    navLinks.push({ href: "/dla-szkol", label: SCHOOL_LABEL[lang] });
+  } else if (role === "teacher") {
+    navLinks.push({ href: "/nauczyciel", label: TEACHER_CLASSES_LABEL[lang] });
+  } else if (role === "parent") {
+    navLinks.push({ href: "/rodzic", label: PARENT_KID_LABEL[lang] });
+  }
   return (
     <header className="w-full border-b-[3px] border-[var(--ink)] sticky top-0 z-20 bg-[var(--background)]">
       <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
