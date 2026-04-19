@@ -4,6 +4,7 @@ import { getSession } from "@/lib/session";
 import { getTeacher, isTeacher, listClassesFor } from "@/lib/class";
 import { TeacherClassCreator } from "@/components/teacher-class-creator";
 import { TeacherOnboardingTour } from "@/components/teacher-onboarding-tour";
+import { PkoMascot } from "@/components/pko-mascot";
 
 /* V4.1 — teacher dashboard. Landing destination after signup; shows
  * existing classes + inline wizard to create a new one. */
@@ -27,21 +28,25 @@ export default async function TeacherDashboard() {
     <div className="flex flex-col gap-8 animate-slide-up max-w-5xl">
       <TeacherOnboardingTour tourSeenAt={teacher?.tourSeenAt ?? null} />
 
-      <header className="flex flex-col gap-2">
-        <p className="text-xs uppercase tracking-widest text-zinc-400">
-          Witaj, nauczycielu
-        </p>
-        <h1 className="brutal-heading text-3xl sm:text-4xl">
-          {teacher?.displayName ?? session.username}
-        </h1>
-        <p className="text-sm text-zinc-300">
-          {teacher?.schoolName ?? "Szkoła"} ·{" "}
-          <span className="opacity-70">
-            {classes.length === 0
-              ? "brak klas"
-              : `${classes.length} klas${classes.length === 1 ? "a" : ""}`}
-          </span>
-        </p>
+      <header className="flex items-start justify-between gap-3">
+        <div className="flex flex-col gap-2">
+          <p className="text-xs uppercase tracking-widest text-zinc-400">
+            Witaj, nauczycielu
+          </p>
+          <h1 className="brutal-heading text-3xl sm:text-4xl">
+            {teacher?.displayName ?? session.username}
+          </h1>
+          <p className="text-sm text-zinc-300">
+            {teacher?.schoolName ?? "Szkoła"} ·{" "}
+            <span className="opacity-70">
+              {classes.length === 0
+                ? "brak klas"
+                : `${classes.length} klas${classes.length === 1 ? "a" : ""}`}
+            </span>
+          </p>
+        </div>
+        {/* V4.10 — PKO corner badge (only renders when SKIN=pko) */}
+        <PkoMascot size="badge" />
       </header>
 
       <section className="flex flex-col gap-3">

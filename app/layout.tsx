@@ -245,9 +245,15 @@ export default async function RootLayout({
                   aria-label={theme.mascot.label}
                   dangerouslySetInnerHTML={{ __html: theme.mascot.svg }}
                 />
-                <p className="text-xs text-zinc-400">
-                  {theme.mascot.label} wspiera ekipę Watt City w PKO skinie.
-                </p>
+                <div className="flex flex-col gap-0.5 text-xs text-zinc-400">
+                  <span className="font-black uppercase tracking-widest text-[11px]">
+                    Powered by PKO Bank Polski
+                  </span>
+                  <span>
+                    {theme.mascot.label} + SKO 2.0 partnership — wspiera ekipę
+                    Watt City w PKO skinie.
+                  </span>
+                </div>
               </div>
             )}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs text-zinc-500 pt-2">

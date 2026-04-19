@@ -3,7 +3,11 @@
  * Summarises the past week of the kid's activity in one sentence
  * parent-facing. SMTP-delivered digest is deferred to V5 — this is
  * the read-only card the parent sees when they open /rodzic.
+ *
+ * V4.10: PKO mascot renders in the card corner when SKIN=pko.
  */
+
+import { PkoMascot } from "@/components/pko-mascot";
 
 type Props = {
   kidName: string;
@@ -19,26 +23,29 @@ export function ParentDigestCard(props: Props) {
 
   return (
     <section
-      className="card p-4 flex flex-col gap-3"
+      className="card p-4 flex gap-3"
       style={{ borderColor: "var(--neo-cyan)", borderLeftWidth: "4px" }}
     >
-      <div className="flex items-baseline justify-between">
-        <h2 className="text-xs uppercase tracking-widest font-black text-[var(--accent)]">
-          📬 Co się działo w tym tygodniu
-        </h2>
-      </div>
-      <p className="text-sm leading-relaxed">{summary}</p>
-      {themesThisWeek.length > 0 && (
-        <div className="text-xs">
-          <span className="opacity-60">Tematy:</span>{" "}
-          {themesThisWeek.map((t, i) => (
-            <span key={t}>
-              <strong>{t}</strong>
-              {i < themesThisWeek.length - 1 ? " · " : ""}
-            </span>
-          ))}
+      <div className="flex-1 flex flex-col gap-3">
+        <div className="flex items-baseline justify-between">
+          <h2 className="text-xs uppercase tracking-widest font-black text-[var(--accent)]">
+            📬 Co się działo w tym tygodniu
+          </h2>
         </div>
-      )}
+        <p className="text-sm leading-relaxed">{summary}</p>
+        {themesThisWeek.length > 0 && (
+          <div className="text-xs">
+            <span className="opacity-60">Tematy:</span>{" "}
+            {themesThisWeek.map((t, i) => (
+              <span key={t}>
+                <strong>{t}</strong>
+                {i < themesThisWeek.length - 1 ? " · " : ""}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+      <PkoMascot size="badge" />
     </section>
   );
 }
