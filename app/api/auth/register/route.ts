@@ -9,6 +9,8 @@ import {
   requiresParentalConsent,
   writeAgeBucket,
 } from "@/lib/gdpr-k";
+import { getPlayerState } from "@/lib/player";
+import { ensureSignupGift } from "@/lib/buildings";
 
 const CURRENT_YEAR = new Date().getUTCFullYear();
 
@@ -97,6 +99,26 @@ export async function POST(request: NextRequest) {
   }
 
   await createSession(result.user.username);
+
+  // V3.2 — trigger the signup gift + starter kit synchronously here so
+  // the very first authenticated render already sees Domek on slot 10
+  // and 50 coins + 50 bricks in the wallet. Non-fatal if it fails (the
+  // layout.tsx path re-runs ensureSignupGift on every authenticated
+  // render as a back-stop), so we swallow errors with a structured log.
+  try {
+    const state = await getPlayerState(result.user.username);
+    await ensureSignupGift(state);
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(
+      JSON.stringify({
+        event: "v3.2.register-gift-failed",
+        user: result.user.username,
+        error: (e as Error).message,
+      }),
+    );
+  }
+
   return Response.json({
     ok: true,
     username: result.user.username,

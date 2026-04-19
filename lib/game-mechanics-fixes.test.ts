@@ -49,37 +49,39 @@ describe("fix: Domek is no longer free to upgrade (exploit closed)", () => {
     expect(cost.coins!).toBeGreaterThan(0);
   });
 
-  it("upgradeBuilding on signup-gift domek REJECTS with not-affordable when wallet is empty", async () => {
+  it("upgradeBuilding on domek DOES deduct cost (exploit closed — upgrade is no longer free)", async () => {
     let state = await getPlayerState(u);
     await ensureSignupGift(state);
     state = await getPlayerState(u);
-    // Wallet is empty (signup gift doesn't grant coins).
-    const domek = state.buildings.find((b) => b.catalogId === "domek")!;
-    const result = await upgradeBuilding(state, domek.id);
+    // V3.2: signup now grants 50 coins + 50 bricks — enough to cover
+    // Domek L1→L2 (32 coins). The "exploit closed" invariant is that
+    // the upgrade COSTS coins (not that it's blocked), so assert the
+    // balance drops by the expected amount after upgrading.
+    const before = state.resources.coins;
+    const domek = getCatalogEntry("domek")!;
+    const nextCost = costAtLevel(domek.baseCost, 2);
+    expect((nextCost.coins ?? 0) > 0).toBe(true);
+    const instance = state.buildings.find((b) => b.catalogId === "domek")!;
+    const result = await upgradeBuilding(state, instance.id);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const after = await getPlayerState(u);
+    expect(after.resources.coins).toBe(before - (nextCost.coins ?? 0));
+  });
+
+  it("upgradeBuilding on domek REJECTS when coins drop below next-level cost", async () => {
+    let state = await getPlayerState(u);
+    await ensureSignupGift(state);
+    state = await getPlayerState(u);
+    // Drain coins so the upgrade can't afford itself.
+    state.resources.coins = 0;
+    await (await import("@/lib/player")).savePlayerState(state);
+    state = await getPlayerState(u);
+    const instance = state.buildings.find((b) => b.catalogId === "domek")!;
+    const result = await upgradeBuilding(state, instance.id);
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.error).toBe("not-affordable");
-  });
-
-  it("upgradeBuilding on domek succeeds only after the player earns enough coins", async () => {
-    let state = await getPlayerState(u);
-    await ensureSignupGift(state);
-    state = await getPlayerState(u);
-    const domek = getCatalogEntry("domek")!;
-    const nextCost = costAtLevel(domek.baseCost, 2);
-    // Grant exactly the required amount.
-    await creditResources(
-      state,
-      "admin_grant",
-      nextCost,
-      "fix-domek-test",
-      `grant:${u}`,
-    );
-    state = await getPlayerState(u);
-    const instance = state.buildings.find((b) => b.catalogId === "domek")!;
-    expect(canAfford(state.resources, nextCost)).toBe(true);
-    const result = await upgradeBuilding(state, instance.id);
-    expect(result.ok).toBe(true);
   });
 });
 
