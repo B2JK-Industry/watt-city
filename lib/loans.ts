@@ -362,7 +362,12 @@ export async function processLoanPayments(
           sourceId,
           { loanId: loan.id, month: dueMonth, fromCash, fromCoins },
         );
-        loan.outstanding = Math.max(0, loan.outstanding - payment);
+        // V2 fix: decrement outstanding by `owed` (what the player actually
+        // paid in cash), not `payment` (the pre-ceil float). Prior code
+        // over-collected by the fractional-cent residue every month, so an
+        // over-collected 0.3-0.9 per month × 36 months was silently pocketed
+        // by the ledger with no ledger-balancing entry.
+        loan.outstanding = Math.max(0, loan.outstanding - owed);
         loan.monthsPaid += 1;
         loan.missedConsecutive = 0;
         loan.nextPaymentDueAt += MONTH_MS;

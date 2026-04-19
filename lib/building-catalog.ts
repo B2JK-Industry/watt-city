@@ -64,7 +64,13 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     id: "domek",
     category: "residential",
     tier: 1,
-    baseCost: {}, // free at signup
+    // V2 fix: baseCost used to be `{}` which made every Domek upgrade free
+    // (costAtLevel({}, n) === {}) AND made the free signup-gift Domek
+    // invisible on the city-value leaderboard. Minimal baseCost closes
+    // both: the signup gift overrides cumulativeCost={} via
+    // ensureSignupGift (stays free), but upgrades cost 20×1.6^(L-1) coins
+    // and computeBuildingValue now credits 20 per level.
+    baseCost: { coins: 20 },
     baseYieldPerHour: { coins: 5 },
     wattUpkeepPerHour: 0, // Domek is off-grid — no brownout exposure
     unlock: { kind: "always" },

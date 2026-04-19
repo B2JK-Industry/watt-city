@@ -268,7 +268,7 @@ const ROTATION_POOL: Omit<ResearchSeed, "difficulty">[] = [
     theme: "Słownik kryptowalut",
     kind: "scramble",
     buildingName: "Crypto Kiosk",
-    buildingGlyph: "🪙",
+    buildingGlyph: "₿", // distinct from "Kieszonkowe" 🪙
     buildingRoof: "bg-amber-500",
     buildingBody: "bg-amber-700",
     source: "MiCA + edukacja KNF",
@@ -749,7 +749,7 @@ const ROTATION_POOL: Omit<ResearchSeed, "difficulty">[] = [
     theme: "iPhone deprecjacja 3 lata",
     kind: "chart-read",
     buildingName: "Tech Recycle",
-    buildingGlyph: "📱",
+    buildingGlyph: "♻️", // distinct from "Apple Pay vs Google Pay" 📱
     buildingRoof: "bg-zinc-400",
     buildingBody: "bg-zinc-600",
     source: "Apple + allegro.pl raport",
