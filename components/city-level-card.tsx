@@ -118,11 +118,9 @@ export function CityLevelCard({ player, lang }: Props) {
         </span>
       </div>
 
-      <div className="flex items-end justify-between gap-4">
-        <div className="flex items-baseline gap-2">
-          <span className="text-xs uppercase opacity-70">{t.level}</span>
-          <span className="text-4xl font-black tabular-nums">{city.level}</span>
-        </div>
+      <div className="flex items-center justify-between gap-4">
+        {/* V3.1 — progress ring around level number */}
+        <ProgressRing level={city.level} pct={pct} />
         <div className="text-right">
           <div className="text-[10px] uppercase opacity-70">
             {t.buildingsLabel}
@@ -130,20 +128,10 @@ export function CityLevelCard({ player, lang }: Props) {
           <div className="text-xl font-bold tabular-nums">
             {player.buildings.length}
           </div>
+          <div className="text-[10px] uppercase opacity-70 mt-1">
+            {t.level}
+          </div>
         </div>
-      </div>
-
-      <div
-        className="h-2 border-2 border-[var(--ink)] bg-[var(--surface-2)] relative overflow-hidden"
-        role="progressbar"
-        aria-valuenow={pct}
-        aria-valuemin={0}
-        aria-valuemax={100}
-      >
-        <div
-          className="h-full bg-[var(--accent)]"
-          style={{ width: `${pct}%` }}
-        />
       </div>
       <div className="flex items-center justify-between text-[11px]">
         <span className="opacity-70">
@@ -165,5 +153,40 @@ export function CityLevelCard({ player, lang }: Props) {
         )}
       </div>
     </section>
+  );
+}
+
+function ProgressRing({ level, pct }: { level: number; pct: number }) {
+  const r = 34;
+  const circumference = 2 * Math.PI * r;
+  const offset = circumference * (1 - Math.max(0, Math.min(100, pct)) / 100);
+  return (
+    <div className="relative" aria-hidden>
+      <svg width="80" height="80" viewBox="0 0 80 80">
+        <circle
+          cx="40"
+          cy="40"
+          r={r}
+          fill="none"
+          stroke="var(--surface-2)"
+          strokeWidth="6"
+        />
+        <circle
+          cx="40"
+          cy="40"
+          r={r}
+          fill="none"
+          stroke="var(--accent)"
+          strokeWidth="6"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          transform="rotate(-90 40 40)"
+        />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="text-2xl font-black tabular-nums">{level}</span>
+      </div>
+    </div>
   );
 }

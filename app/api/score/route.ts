@@ -18,6 +18,8 @@ import { creditResources, getPlayerState } from "@/lib/player";
 import { readEconomy, dailyYieldKey, dayBucket } from "@/lib/economy";
 import { kvGet, kvSet } from "@/lib/redis";
 import { scoreMultiplier, scoreMultiplierBreakdown } from "@/lib/multipliers";
+import { acquireBuildingLock, releaseBuildingLock } from "@/lib/building-lock";
+import { isFlagEnabled } from "@/lib/feature-flags";
 import { sweepAchievements } from "@/lib/achievements";
 import { recordEvent } from "@/lib/analytics";
 
@@ -77,6 +79,16 @@ export async function POST(request: NextRequest) {
   }
 
   const xp = Math.min(parsed.data.xp, resolvedCap);
+  // V3.4: acquire building-mutation lock so multBreakdown + credit can't
+  // see diverging `state.buildings`. Lock is best-effort — failing to
+  // acquire (e.g. Redis hiccup) just means the race window reopens;
+  // we don't block scoring on it.
+  const lockEnabled = await isFlagEnabled("v3_score_lock", session.username);
+  const lockToken = lockEnabled
+    ? await acquireBuildingLock(session.username)
+    : null;
+  let response: Response;
+  try {
   const [xpResult, recorded] = await Promise.all([
     awardXP(session.username, gameId, xp),
     recordRound(session.username, gameId, xp),
@@ -165,7 +177,7 @@ export async function POST(request: NextRequest) {
   // previousBest derived from the per-game leaderboard ZSET. user-stats
   // (recordRound) only tracks play count / total score; we don't let its
   // flags override the leaderboard's truth.
-  return Response.json({
+  response = Response.json({
     ok: true,
     awarded: xp,
     ...xpResult,
@@ -175,4 +187,10 @@ export async function POST(request: NextRequest) {
     capped,
     multBreakdown,
   });
+  } finally {
+    if (lockToken) {
+      await releaseBuildingLock(session.username, lockToken);
+    }
+  }
+  return response;
 }

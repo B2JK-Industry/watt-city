@@ -12,10 +12,13 @@ import { PwaRegister } from "@/components/pwa-register";
 import { BottomTabs } from "@/components/bottom-tabs";
 import { CashflowHud } from "@/components/cashflow-hud";
 import { buildHudBundle } from "@/lib/hud-data";
+import { WattDeficitPanel } from "@/components/watt-deficit-panel";
+import { deficitState } from "@/lib/watts";
 import { resolveTheme } from "@/lib/theme";
 import { getSession } from "@/lib/session";
 import { userStats } from "@/lib/leaderboard";
-import { levelFromXP, tierForLevel } from "@/lib/level";
+import { levelFromXP } from "@/lib/level";
+import { cityLevelFromState } from "@/lib/city-level";
 import { dictFor, LANG_HTML } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 import { getPlayerState } from "@/lib/player";
@@ -73,15 +76,32 @@ export default async function RootLayout({
     const preState = await getPlayerState(session.username);
     await ensureSignupGift(preState);
   }
-  const [stats, player, hudEnabled] = await Promise.all([
-    session ? userStats(session.username) : Promise.resolve(null),
-    session ? getPlayerState(session.username) : Promise.resolve(null),
-    session
-      ? isFlagEnabled("v2_cashflow_hud", session.username)
-      : Promise.resolve(false),
-  ]);
+  const [stats, player, hudEnabled, cityFirstEnabled, brownoutPanelEnabled] =
+    await Promise.all([
+      session ? userStats(session.username) : Promise.resolve(null),
+      session ? getPlayerState(session.username) : Promise.resolve(null),
+      session
+        ? isFlagEnabled("v2_cashflow_hud", session.username)
+        : Promise.resolve(false),
+      session
+        ? isFlagEnabled("v3_city_first", session.username)
+        : Promise.resolve(true),
+      session
+        ? isFlagEnabled("v3_brownout_panel", session.username)
+        : Promise.resolve(false),
+    ]);
   const xp = stats?.globalXP ?? 0;
   const level = levelFromXP(xp);
+  // V3.1: nav badge shows city-level + grid state when flag is on; falls back
+  // to a minimal "Level N" XP label when flipped off (no tier emojis — those
+  // were the XP-Arena legacy that V3 removes). Existing player data untouched.
+  const navTitle = (() => {
+    if (!session) return null;
+    if (cityFirstEnabled && player) {
+      return cityLevelFromState(player).badgeLabel;
+    }
+    return `XP Lv ${level.level}`;
+  })();
   return (
     <html
       lang={LANG_HTML[lang]}
@@ -95,13 +115,16 @@ export default async function RootLayout({
         <WebVitalsReporter />
         <PwaRegister lang={lang} />
         <CookieConsent lang={lang} />
+        {session && player && brownoutPanelEnabled && (
+          <WattDeficitPanel deficit={deficitState(player)} lang={lang} />
+        )}
         <SiteNav
           username={session?.username ?? null}
           xp={xp}
           rank={stats?.globalRank ?? null}
           level={level.level}
           levelProgress={level.progress}
-          title={session ? `${tierForLevel(level.level).emoji} ${tierForLevel(level.level).name}` : null}
+          title={navTitle}
           lang={lang}
           dict={dict}
           resources={player?.resources ?? null}
@@ -222,9 +245,15 @@ export default async function RootLayout({
                   aria-label={theme.mascot.label}
                   dangerouslySetInnerHTML={{ __html: theme.mascot.svg }}
                 />
-                <p className="text-xs text-zinc-400">
-                  {theme.mascot.label} wspiera ekipę Watt City w PKO skinie.
-                </p>
+                <div className="flex flex-col gap-0.5 text-xs text-zinc-400">
+                  <span className="font-black uppercase tracking-widest text-[11px]">
+                    Powered by PKO Bank Polski
+                  </span>
+                  <span>
+                    {theme.mascot.label} + SKO 2.0 partnership — wspiera ekipę
+                    Watt City w PKO skinie.
+                  </span>
+                </div>
               </div>
             )}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs text-zinc-500 pt-2">

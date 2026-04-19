@@ -258,6 +258,7 @@ export async function takeMortgage(
     monthsPaid: 0,
     missedConsecutive: 0,
     status: "active",
+    autoRepay: true, // V3.5 default — opt-out via /api/loans/[id]/auto-repay
   };
   state.loans.push(loan);
   // Credit the principal as cash.
@@ -345,7 +346,10 @@ export async function processLoanPayments(
       const owed = Math.ceil(payment);
       const cash = state.resources.cashZl ?? 0;
       const coins = state.resources.coins ?? 0;
-      if (cash + coins >= owed) {
+      // V3.5 — autoRepay off forces the miss path even with funds.
+      // Treat undefined as true (back-compat with pre-V3.5 loans).
+      const autoRepay = loan.autoRepay !== false;
+      if (autoRepay && cash + coins >= owed) {
         const fromCash = Math.min(cash, owed);
         const fromCoins = owed - fromCash;
         const delta: Partial<Resources> = {};
@@ -577,6 +581,7 @@ export async function takeLoan(
     monthsPaid: 0,
     missedConsecutive: 0,
     status: "active",
+    autoRepay: true, // V3.5 default
   };
   state.loans.push(loan);
   await creditResources(
@@ -833,6 +838,7 @@ export async function issueMentorHelp(
     monthsPaid: 0,
     missedConsecutive: 0,
     status: "active",
+    autoRepay: true,
   };
   state.loans.push(loan);
   state.mentorHelp = {
@@ -879,4 +885,45 @@ export function classroomRebalanceDeadline(
   if (!Number.isFinite(anchor)) return null;
   const deadline = anchor + CLASSROOM_REBALANCE_HOURS * 60 * 60 * 1000;
   return deadline - now;
+}
+
+// ---------------------------------------------------------------------------
+// V3.7 — Loan comparison ladder
+// ---------------------------------------------------------------------------
+
+export type LoanComparisonRow = Quote & {
+  type: ProductLoanType;
+  /** True for high-APR products the UI should visually warn against. */
+  warning: boolean;
+  /** True for the cheapest eligible option in the returned ladder. */
+  cheapest: boolean;
+};
+
+/** V3.7 — fan out `compareLoans(principal, termMonths, state)` across every
+ *  product in LOAN_CONFIGS, returns them sorted cheapest first. Products
+ *  whose quote is not eligible (term not in the product's allowed list)
+ *  are filtered out so the UI doesn't render unactionable rows.
+ *  Mortgage retains its own Preferred-APR path (quoteMortgage). */
+export function compareLoans(
+  principal: number,
+  termMonths: number,
+  state: PlayerState,
+): LoanComparisonRow[] {
+  const rows: LoanComparisonRow[] = [];
+  for (const type of Object.keys(LOAN_CONFIGS) as ProductLoanType[]) {
+    const cfg = LOAN_CONFIGS[type];
+    if (!cfg.allowedTermsMonths.includes(termMonths)) continue;
+    const q = quoteLoan(state, { type, principal, termMonths });
+    rows.push({
+      ...q,
+      type,
+      warning: cfg.caution,
+      cheapest: false, // set below after sort
+    });
+  }
+  rows.sort((a, b) => a.totalInterest - b.totalInterest);
+  // Flag cheapest eligible row (ok+positive principal) as cheapest=true.
+  const firstEligible = rows.findIndex((r) => r.ok);
+  if (firstEligible >= 0) rows[firstEligible].cheapest = true;
+  return rows;
 }

@@ -36,10 +36,12 @@ export function SiteNav({
   // V2 R3.3 — nav cleanup: fold "Sala sławy" into Ranking, drop duplicates.
   // "Liga" keeps its existing dict key but visually reads as a city-first
   // ranking (leaderboard page switches to topCities in R3.1.2).
+  // V3.6 — /duel routes removed (see ADR 001-v3-duel-removal). nav nie
+  // ukazuje link; dict keys zachované pre back-compat ale nie sú
+  // referencované.
   const navLinks: Array<{ href: string; label: string }> = [
     { href: "/miasto", label: t.city },
     { href: "/games", label: t.games },
-    { href: "/duel", label: t.duel },
     { href: "/leaderboard", label: t.league },
     { href: "/o-platforme", label: t.about },
   ];

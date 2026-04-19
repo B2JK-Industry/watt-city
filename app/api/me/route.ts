@@ -1,7 +1,9 @@
 import { destroySession, getSession } from "@/lib/session";
 import { userStats } from "@/lib/leaderboard";
 import { getUserStats } from "@/lib/user-stats";
-import { levelFromXP, tierForLevel } from "@/lib/level";
+import { levelFromXP } from "@/lib/level";
+import { cityLevelFromState } from "@/lib/city-level";
+import { getPlayerState } from "@/lib/player";
 import { flagForDeletion, deletionStatus } from "@/lib/soft-delete";
 
 export async function GET() {
@@ -9,19 +11,30 @@ export async function GET() {
   if (!session) {
     return Response.json({ authenticated: false });
   }
-  const [board, stats, del] = await Promise.all([
+  const [board, stats, del, player] = await Promise.all([
     userStats(session.username),
     getUserStats(session.username),
     deletionStatus(session.username),
+    getPlayerState(session.username),
   ]);
   const level = levelFromXP(board.globalXP);
+  const cityLevel = cityLevelFromState(player);
   return Response.json({
     authenticated: true,
     username: session.username,
     globalXP: board.globalXP,
     globalRank: board.globalRank,
     level,
-    title: `${tierForLevel(level.level).emoji} ${tierForLevel(level.level).name}`,
+    // V3.1 — city-first title: "Level 5 · ⚡+12/h" instead of tier emoji + name.
+    title: cityLevel.badgeLabel,
+    cityLevel: {
+      level: cityLevel.level,
+      progressToNext: cityLevel.progressToNext,
+      totalPoints: cityLevel.totalPoints,
+      nextUnlocks: cityLevel.nextUnlocks,
+      currentUnlocks: cityLevel.currentUnlocks,
+      grid: cityLevel.grid,
+    },
     games: stats.games,
     totalPlays: stats.totalPlays,
     deletion: del,

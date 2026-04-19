@@ -97,6 +97,11 @@ export type Loan = {
    *  after missedConsecutive resets on a later successful month. Optional
    *  for legacy records; readers treat missing as []. */
   latePayments?: number[];
+  /** V3.5 — auto-repay toggle. `undefined` / `true` = tick engine auto-
+   *  deducts monthly payment when due (default-on for new loans per the
+   *  design doc — "kids learn automation is helpful"). `false` = player
+   *  opted out via the dashboard toggle and must click to pay manually. */
+  autoRepay?: boolean;
 };
 
 export type PlayerState = {

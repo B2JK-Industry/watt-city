@@ -256,6 +256,26 @@ export async function sHas(key: string, member: string): Promise<boolean> {
   return memory.sets.get(key)?.has(member) ?? false;
 }
 
+export async function sMembers(key: string): Promise<string[]> {
+  if (upstash) {
+    const result = (await upstash.smembers(key)) as string[];
+    return Array.isArray(result) ? result.map(String) : [];
+  }
+  return Array.from(memory.sets.get(key) ?? []);
+}
+
+export async function sRem(key: string, member: string): Promise<boolean> {
+  if (upstash) {
+    const removed = await upstash.srem(key, member);
+    return removed === 1;
+  }
+  const existing = memory.sets.get(key);
+  if (!existing) return false;
+  const was = existing.has(member);
+  existing.delete(member);
+  return was;
+}
+
 export async function zRem(zkey: string, member: string): Promise<void> {
   if (upstash) {
     await upstash.zrem(zkey, member);

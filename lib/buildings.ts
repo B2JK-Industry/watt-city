@@ -29,6 +29,7 @@ import {
 } from "@/lib/resources";
 import { refreshCityValue } from "@/lib/city-value";
 import { refreshWattDeficit } from "@/lib/watts";
+import { isFlagEnabled } from "@/lib/feature-flags";
 
 // ---------------------------------------------------------------------------
 // Cost/affordability checks
@@ -127,7 +128,7 @@ export async function placeBuilding(
   }
   const earned = await lifetimeEarned(state);
   const tier = computePlayerTier(state.buildings);
-  if (!isUnlocked(entry, earned, tier)) {
+  if (!isUnlocked(entry, earned, tier, state.buildings)) {
     return { ok: false, error: "locked" };
   }
   if (!canAfford(state.resources, entry.baseCost)) {
@@ -245,23 +246,54 @@ export async function demolishBuilding(
 // ---------------------------------------------------------------------------
 
 export async function ensureSignupGift(state: PlayerState): Promise<PlayerState> {
-  if (state.buildings.length > 0) return state;
-  const entry = getCatalogEntry("domek");
-  if (!entry) return state;
-  const instance: BuildingInstance = {
-    id: `b-${DOMEK_SLOT_ID}-domek`,
-    slotId: DOMEK_SLOT_ID,
-    catalogId: "domek",
-    level: 1,
-    builtAt: Date.now(),
-    lastTickAt: Date.now(),
-    cumulativeCost: {}, // free
-  };
-  state.buildings.push(instance);
-  refreshWattDeficit(state);
-  await savePlayerState(state);
-  await refreshCityValue(state.username, state.buildings);
+  let mutated = false;
+  if (state.buildings.length === 0) {
+    const entry = getCatalogEntry("domek");
+    if (entry) {
+      const instance: BuildingInstance = {
+        id: `b-${DOMEK_SLOT_ID}-domek`,
+        slotId: DOMEK_SLOT_ID,
+        catalogId: "domek",
+        level: 1,
+        builtAt: Date.now(),
+        lastTickAt: Date.now(),
+        cumulativeCost: {}, // free
+      };
+      state.buildings.push(instance);
+      refreshWattDeficit(state);
+      mutated = true;
+    }
+  }
+
+  // V3.2 — starter kit (50 coins + 50 bricks). Uses creditResources with
+  // a fixed sourceId so the SADD dedup guarantees idempotency — a user
+  // who already received it can hit this path on every layout render
+  // without double-credit. Feature-gated via `v3_starter_kit`.
+  if (await isFlagEnabled("v3_starter_kit", state.username)) {
+    const credit = await creditResources(
+      state,
+      "backfill", // kind is narrow — reuse the migration/backfill lane
+      { coins: 50, bricks: 50 },
+      "V3.2 starter kit (signup gift — 50 coins + 50 bricks)",
+      "signup:starter-kit",
+      { reason: "v3-starter-kit" },
+    );
+    if (credit.applied) mutated = true;
+  }
+
+  if (mutated) {
+    await savePlayerState(state);
+    await refreshCityValue(state.username, state.buildings);
+  }
   return state;
+}
+
+/** V3.2 — true iff the player has already received the starter kit. Reads
+ *  the ledger dedup set so the check is free (no extra Redis round-trip
+ *  beyond the SADD-inspection done by `creditResources` itself). */
+export async function hasReceivedStarterKit(username: string): Promise<boolean> {
+  const { sHas } = await import("@/lib/redis");
+  return await sHas(`xp:player:${username}:ledger-dedup`, "backfill:signup:starter-kit");
 }
 
 // ---------------------------------------------------------------------------
@@ -281,7 +313,7 @@ export async function catalogForPlayer(
   const earned = await lifetimeEarned(state);
   const tier = computePlayerTier(state.buildings);
   return BUILDING_CATALOG.map((entry) => {
-    const unlocked = isUnlocked(entry, earned, tier);
+    const unlocked = isUnlocked(entry, earned, tier, state.buildings);
     const affordable = canAfford(state.resources, entry.baseCost);
     let reasonLocked: string | null = null;
     if (!entry.mvpActive) {

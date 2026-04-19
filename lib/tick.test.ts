@@ -44,7 +44,8 @@ describe("cashflow tick", () => {
     expect(result.ticked).toBe(true);
     expect(result.hoursApplied).toBe(1);
     expect(result.entriesWritten).toBe(1);
-    expect(result.resources.coins).toBe(5);
+    // V3.2 starter kit: 50 coins at signup + 5 coins from Domek tick = 55.
+    expect(result.resources.coins).toBe(55);
   });
 
   it("idempotent — second call in same hour is no-op (lock released or not)", async () => {
@@ -81,7 +82,8 @@ describe("cashflow tick", () => {
     // 60 days later — should cap at 30 × 24 = 720h
     const result = await tickPlayer(u, start + 60 * 24 * 60 * 60 * 1000);
     expect(result.hoursApplied).toBe(30 * 24);
-    expect(result.resources.coins).toBe(30 * 24 * 5); // 5 coins/h × 720h
+    // V3.2 starter kit (50) + 720h × 5 coins/h = 3650.
+    expect(result.resources.coins).toBe(50 + 30 * 24 * 5);
     expect(result.reason).toBe("offline-cap-hit");
   });
 
@@ -112,16 +114,17 @@ describe("cashflow tick", () => {
     for (const b of state.buildings) b.lastTickAt = start;
     await savePlayerState(state);
 
-    // Tick 48h later. Domek baseline (no brownout) = 48 × 5 = 240 coins.
-    // Huta glass baseline = 48 × 4 = 192 glass.
-    // With brownout: first 24h full = 24 × 5 = 120 coins + 24 × 4 = 96 glass,
-    // next 24h @ 50% = 24 × max(1, ceil(2.5)) = 72 coins + 24 × 2 = 48 glass.
-    // Expected coins ≈ 120 + 72 = 192 (< 240 baseline).
+    // Tick 48h later. Baseline (no brownout) would be 48h × 5 coins =
+    // 240 coin-yield. With brownout: first 24h full (120 coins), next
+    // 24h @ 50% (~72 coins) → ~192 coins from ticks. Add V3.2 starter
+    // kit (50 coins) → expected total ~242. Baseline-without-brownout
+    // would total 240+50 = 290. Assert ticked yield < baseline while
+    // still > starter kit alone.
     const result = await tickPlayer(u, start + 48 * 60 * 60 * 1000 + 1000);
     expect(result.ticked).toBe(true);
     expect(result.hoursApplied).toBe(48);
-    expect(result.resources.coins).toBeGreaterThan(0);
-    expect(result.resources.coins).toBeLessThan(240); // BLOCKER-1 reduction
+    expect(result.resources.coins).toBeGreaterThan(50); // more than starter alone
+    expect(result.resources.coins).toBeLessThan(50 + 240); // BLOCKER-1 reduction
   });
 
   it("brownout: rescued city clears wattDeficitSince on next mutation", async () => {

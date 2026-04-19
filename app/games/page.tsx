@@ -3,12 +3,18 @@ import { GAMES, localizedTitle } from "@/lib/games";
 import { getSession } from "@/lib/session";
 import { getUserStats } from "@/lib/user-stats";
 import { userStats } from "@/lib/leaderboard";
-import { levelFromXP, tierForLevel } from "@/lib/level";
+import { levelFromXP } from "@/lib/level";
+import { getPlayerState } from "@/lib/player";
+import { cityLevelFromState } from "@/lib/city-level";
 import { CityScene, type CityGameState } from "@/components/city-scene";
 import { listActiveAiGames } from "@/lib/ai-pipeline/publish";
 import { xpCapForAnyLang } from "@/lib/ai-pipeline/types";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
+import {
+  ComingSoonBanner,
+  ComingSoonGrid,
+} from "@/components/coming-soon-banner";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +23,9 @@ export default async function GamesHubPage() {
   const stats = session ? await getUserStats(session.username) : null;
   const lb = session ? await userStats(session.username) : null;
   const level = lb ? levelFromXP(lb.globalXP) : null;
-  const tier = level ? tierForLevel(level.level) : null;
+  // V3.1: replace tier label with city-level badge
+  const player = session ? await getPlayerState(session.username) : null;
+  const cityBadge = player ? cityLevelFromState(player).badgeLabel : null;
   const lang = await getLang();
   const dict = dictFor(lang);
   const t = dict.games;
@@ -51,12 +59,12 @@ export default async function GamesHubPage() {
           <h1 className="brutal-heading text-3xl sm:text-4xl">
             {t.gamesHubTitle}
           </h1>
-          {tier && (
+          {cityBadge && (
             <span
               className="brutal-tag"
               style={{ background: "var(--neo-yellow)", color: "#0a0a0f" }}
             >
-              {tier.emoji} {tier.name}
+              {cityBadge}
             </span>
           )}
           <span
@@ -119,6 +127,8 @@ export default async function GamesHubPage() {
           ))}
         </ul>
       </aside>
+      <ComingSoonBanner lang={lang} />
+      <ComingSoonGrid lang={lang} />
     </div>
   );
 }

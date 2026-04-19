@@ -61,12 +61,7 @@ export default async function PrivacyPage() {
             purpose={dict.dashboard.yourBuildingTitle}
             retention={f.untilDelete}
           />
-          <DataRow
-            field={dict.duel.title}
-            value={f.duelsValue}
-            purpose="PvP"
-            retention={f.duelTtl}
-          />
+          {/* V3.6 — duel feature removed; no more duel storage to disclose. */}
           <DataRow
             field="Session cookie"
             value={f.sessionValue}
