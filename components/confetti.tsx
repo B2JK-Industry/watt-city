@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const COLORS = [
   "var(--accent)",
@@ -12,7 +12,25 @@ const COLORS = [
 
 type Props = { count?: number; className?: string };
 
+/* D6 polish — respects `prefers-reduced-motion`. When reduced, renders
+ * nothing (confetti is purely decorative — there's no informational
+ * signal to preserve). Otherwise renders `count` particles with random
+ * offsets, colours, and fall durations. */
+function useReducedMotion(): boolean {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setReduced(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return reduced;
+}
+
 export function Confetti({ count = 28, className = "" }: Props) {
+  const reduced = useReducedMotion();
   const particles = useMemo(() => {
     return Array.from({ length: count }, (_, i) => {
       const isSquare = Math.random() < 0.4;
@@ -27,6 +45,8 @@ export function Confetti({ count = 28, className = "" }: Props) {
       };
     });
   }, [count]);
+
+  if (reduced) return null;
 
   return (
     <div

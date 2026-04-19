@@ -5,6 +5,7 @@ import type { ScoreResponse } from "@/lib/client-api";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Confetti } from "@/components/confetti";
+import { CountUp } from "@/components/count-up";
 import type { Dict, Lang } from "@/lib/i18n";
 import plDict from "@/lib/locales/pl";
 import { PostGameBreakdown } from "@/components/post-game-breakdown";
@@ -121,7 +122,7 @@ export function RoundResult({
                   !isNewBest ? "text-zinc-300" : ""
                 }`}
               >
-                {awarded} W
+                <CountUp value={awarded} durationMs={850} /> W
               </span>
               {isNewBest && state.result.delta > 0 && (
                 <span className="text-sm font-bold">

@@ -390,6 +390,24 @@ body {
   100% { transform: scale(1); opacity: 1; }
 }
 
+/* D6 — tier-up toast entrance: slides up from below with slight
+ * overshoot (cubic-bezier has a >1 final control point). */
+@keyframes tier-up-enter {
+  0%   { transform: translate(-50%, 24px); opacity: 0; }
+  60%  { transform: translate(-50%, -6px); opacity: 1; }
+  100% { transform: translate(-50%, 0);    opacity: 1; }
+}
+
+/* D6 — HUD resource delta flash. Quick pulse on the border when a
+ * resource value changes. Consumers apply via Tailwind:
+ *   className="motion-safe:animate-[hud-delta-flash_640ms_ease-out]"
+ * and set `--delta-flash` to the desired accent colour (lime for +,
+ * pink for −). */
+@keyframes hud-delta-flash {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; }
+  30%      { box-shadow: 0 0 0 6px var(--delta-flash, var(--neo-lime)); }
+}
+
 /* ---------- CityScene SVG interactivity ---------- */
 
 .building-link {
