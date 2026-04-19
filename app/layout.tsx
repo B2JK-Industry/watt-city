@@ -25,6 +25,8 @@ import { getPlayerState } from "@/lib/player";
 import { tickPlayer } from "@/lib/tick";
 import { ensureSignupGift } from "@/lib/buildings";
 import { isFlagEnabled } from "@/lib/feature-flags";
+import { isTeacher } from "@/lib/class";
+import { parentKidUsername } from "@/lib/parent-link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -76,20 +78,38 @@ export default async function RootLayout({
     const preState = await getPlayerState(session.username);
     await ensureSignupGift(preState);
   }
-  const [stats, player, hudEnabled, cityFirstEnabled, brownoutPanelEnabled] =
-    await Promise.all([
-      session ? userStats(session.username) : Promise.resolve(null),
-      session ? getPlayerState(session.username) : Promise.resolve(null),
-      session
-        ? isFlagEnabled("v2_cashflow_hud", session.username)
-        : Promise.resolve(false),
-      session
-        ? isFlagEnabled("v3_city_first", session.username)
-        : Promise.resolve(true),
-      session
-        ? isFlagEnabled("v3_brownout_panel", session.username)
-        : Promise.resolve(false),
-    ]);
+  const [
+    stats,
+    player,
+    hudEnabled,
+    cityFirstEnabled,
+    brownoutPanelEnabled,
+    teacherFlag,
+    linkedKid,
+  ] = await Promise.all([
+    session ? userStats(session.username) : Promise.resolve(null),
+    session ? getPlayerState(session.username) : Promise.resolve(null),
+    session
+      ? isFlagEnabled("v2_cashflow_hud", session.username)
+      : Promise.resolve(false),
+    session
+      ? isFlagEnabled("v3_city_first", session.username)
+      : Promise.resolve(true),
+    session
+      ? isFlagEnabled("v3_brownout_panel", session.username)
+      : Promise.resolve(false),
+    // Cleanup issue 5 — role lookup so SiteNav can add "Moje klasy" /
+    // "Dziecko" / "Dla szkół" links appropriate to the viewer.
+    session ? isTeacher(session.username) : Promise.resolve(false),
+    session ? parentKidUsername(session.username) : Promise.resolve(null),
+  ]);
+  const navRole: "kid" | "teacher" | "parent" | "anon" = !session
+    ? "anon"
+    : teacherFlag
+      ? "teacher"
+      : linkedKid
+        ? "parent"
+        : "kid";
   const xp = stats?.globalXP ?? 0;
   const level = levelFromXP(xp);
   // V3.1: nav badge shows city-level + grid state when flag is on; falls back
@@ -120,6 +140,7 @@ export default async function RootLayout({
         )}
         <SiteNav
           username={session?.username ?? null}
+          role={navRole}
           xp={xp}
           rank={stats?.globalRank ?? null}
           level={level.level}
