@@ -449,6 +449,19 @@ const cs: typeof plDict = {
       { title: "Generuj Watty", body: "Best-score model: opakování nezvýší skóre, musíš překonat rekord. Tvá budova roste tier po tieru." },
       { title: "Soutěž", body: "Duel kódem s kamarádem (PvP bonus ×2 Watty), Slezská Watt liga, Síň slávy s medailemi." },
     ],
+    scienceIntro:
+      "Dnešní uživatel přichází po celém dni unavený a hledá nový dopaminergní podnět, ne replikaci včerejšího. Výzkum v behaviorální psychologii a HCI to potvrzuje:",
+    scienceBullets: [
+      { boldHead: "Berridge & Robinson — incentive salience (1998).", body: "Dopamin nekóduje potěšení (liking), ale motivaci hledat (wanting) nové podněty. Platformy, které pravidelně přinášejí novost, drží „wanting\" na vyšších hodnotách.", linkHref: "https://pubmed.ncbi.nlm.nih.gov/9858756/", linkText: "PubMed" },
+      { boldHead: "Skinner — intermittent reinforcement.", body: "Proměnlivé odměny (nevíš dopředu, co bude dnes) tvoří nejtrvalejší návyky — víc než konstantní odměny.", linkHref: "https://en.wikipedia.org/wiki/Reinforcement#Intermittent_reinforcement_schedules", linkText: "Wikipedia" },
+      { boldHead: "Csíkszentmihályi — Flow (1990).", body: "Hráč zůstává pohlcen, když výzva mírně převyšuje dovednost. 30-sekundová hra s combo-multiplikátory přesně trefí tuto zónu — příliš lehká uspí, příliš těžká otráví.", linkHref: "https://en.wikipedia.org/wiki/Flow_(psychology)", linkText: "Flow" },
+      { boldHead: "Deci & Ryan — Self-Determination Theory.", body: "Motivaci drží trojice: autonomie (vybírám si hru), kompetence (žebříček, medaile), vztahovost (duel s kámošem).", linkHref: "https://selfdeterminationtheory.org/", linkText: "SDT" },
+      { boldHead: "Nir Eyal — Hooked (2014).", body: "Proměnlivé odměny + investice (buildup) = smyčka návyku. Watt City kombinuje oboje: AI variabilita + rostoucí budova jako investice v čase.", linkHref: "https://www.nirandfar.com/hooked/", linkText: "nirandfar.com" },
+      { boldHead: "Duolingo retention playbook.", body: "Streak + denní výzva + ligy = 100 M+ MAU. Replikujeme principy, ale místo jazykových lekcí nabízíme finance + energetiku a „animovanou sovu\" jsme nahradili rostoucí budovou.", linkHref: "https://blog.duolingo.com/how-we-reimagined-our-streak-system/", linkText: "Duolingo blog" },
+      { boldHead: "NYT Wordle — „water cooler\" efekt.", body: "Deterministický seed, všichni hrají stejnou úlohu → spontánní rozhovory. Náš „duel kódem\" a „seeded AI výzva dne\" vyvolávají stejný efekt.", linkHref: "https://www.nytco.com/press/wordle/", linkText: "NYT" },
+    ],
+    scienceConclusion:
+      "Závěr: hodně generovaných her není „cheat na engagement\" — je to přímý překlad desetiletí výzkumu do dostupné platformy.",
     pipelineIntro: "Pipeline je v commitu už teď — produkční trigger čeká jen na aktivaci ANTHROPIC_API_KEY. Bez klíče běží deterministický fallback.",
     pipelineSteps: [
       { name: "Research", details: ["lib/ai-pipeline/research.ts","16 témat × 4 úhly × 3 obtížnosti — denní bucket vybere kombinaci.","Každé téma má 1 typ (quiz / scramble / price-guess / true-false / match-pairs / order)."] },

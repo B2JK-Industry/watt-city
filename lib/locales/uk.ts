@@ -449,6 +449,19 @@ const uk: typeof plDict = {
       { title: "Генеруй Вати", body: "Best-score модель: повтори не збільшать рахунок, треба побити рекорд. Будинок росте tier за tier-ом." },
       { title: "Змагайся", body: "Дуель кодом з другом (PvP бонус ×2 Вати), Сілезька Watt ліга, Зала Слави з медалями." },
     ],
+    scienceIntro:
+      "Сьогоднішній користувач приходить втомлений після дня і шукає новий дофаміновий стимул, а не повтор вчорашнього. Дослідження з поведінкової психології та HCI це підтверджують:",
+    scienceBullets: [
+      { boldHead: "Berridge & Robinson — incentive salience (1998).", body: "Дофамін кодує не задоволення (liking), а мотивацію шукати (wanting) нові стимули. Платформи, що регулярно приносять новизну, тримають „wanting\" на вищому рівні.", linkHref: "https://pubmed.ncbi.nlm.nih.gov/9858756/", linkText: "PubMed" },
+      { boldHead: "Skinner — intermittent reinforcement.", body: "Змінні нагороди (не знаєш наперед, що буде сьогодні) створюють найстійкіші звички — сильніші за постійні нагороди.", linkHref: "https://en.wikipedia.org/wiki/Reinforcement#Intermittent_reinforcement_schedules", linkText: "Wikipedia" },
+      { boldHead: "Csíkszentmihályi — Flow (1990).", body: "Гравець залишається захопленим, коли виклик трохи перевищує вміння. 30-секундна гра з combo-множниками влучає саме в цю зону.", linkHref: "https://en.wikipedia.org/wiki/Flow_(psychology)", linkText: "Flow" },
+      { boldHead: "Deci & Ryan — Self-Determination Theory.", body: "Мотивацію тримає трійця: автономія (обираю гру), компетенція (рейтинг, медалі) і звʼязаність (дуель з другом).", linkHref: "https://selfdeterminationtheory.org/", linkText: "SDT" },
+      { boldHead: "Nir Eyal — Hooked (2014).", body: "Змінні нагороди + інвестиція (buildup) = петля звички. Watt City поєднує обидва: варіативність AI + зростаючий будинок як інвестиція у часі.", linkHref: "https://www.nirandfar.com/hooked/", linkText: "nirandfar.com" },
+      { boldHead: "Duolingo retention playbook.", body: "Streak + щоденний виклик + ліги = 100 M+ MAU. Реплікуємо принципи, але замінюємо мовні уроки на фінанси + енергетику, а „анімовану сову\" на зростаючий будинок.", linkHref: "https://blog.duolingo.com/how-we-reimagined-our-streak-system/", linkText: "Duolingo blog" },
+      { boldHead: "NYT Wordle — ефект „water cooler\".", body: "Детермінований seed → усі грають одне і те саме завдання → спонтанні розмови. Наш „дуель кодом\" і „seeded AI виклик дня\" дають той самий ефект.", linkHref: "https://www.nytco.com/press/wordle/", linkText: "NYT" },
+    ],
+    scienceConclusion:
+      "Висновок: багато згенерованих ігор — це не „чит на engagement\", а прямий переклад десятиліть досліджень у доступну платформу.",
     pipelineIntro: "Pipeline вже в commiti — продакшн trigger чекає лише на активацію ANTHROPIC_API_KEY. Без ключа працює детермінований fallback.",
     pipelineSteps: [
       { name: "Research", details: ["lib/ai-pipeline/research.ts","16 тем × 4 ракурси × 3 рівні складності — daily bucket вибере комбінацію.","Кожна тема прив'язана до 1 типу (quiz / scramble / price-guess / true-false / match-pairs / order)."] },

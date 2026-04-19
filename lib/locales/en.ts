@@ -450,6 +450,19 @@ const en: typeof plDict = {
       { title: "Generate Watts", body: "Best-score model: replays don't add XP, you must beat your record. Your building grows tier by tier." },
       { title: "Compete", body: "Code-based duel with a friend (PvP bonus ×2 Watts), Silesia Watt League, Hall of Fame medals." },
     ],
+    scienceIntro:
+      "Today's user arrives tired after a long day and looks for a new dopaminergic stimulus, not a replay of yesterday's. Behavioural-psychology and HCI research backs this up:",
+    scienceBullets: [
+      { boldHead: "Berridge & Robinson — incentive salience (1998).", body: "Dopamine does not encode liking but wanting — the motivation to seek new stimuli. Platforms that regularly deliver novelty keep 'wanting' at higher levels.", linkHref: "https://pubmed.ncbi.nlm.nih.gov/9858756/", linkText: "PubMed" },
+      { boldHead: "Skinner — intermittent reinforcement.", body: "Variable rewards (you don't know in advance what today brings) create the most persistent habits — stronger than constant rewards.", linkHref: "https://en.wikipedia.org/wiki/Reinforcement#Intermittent_reinforcement_schedules", linkText: "Wikipedia" },
+      { boldHead: "Csíkszentmihályi — Flow (1990).", body: "The player stays absorbed when the challenge slightly exceeds their skill. A 30-second game with combo multipliers lands exactly in that zone — too easy lulls, too hard repels.", linkHref: "https://en.wikipedia.org/wiki/Flow_(psychology)", linkText: "Flow" },
+      { boldHead: "Deci & Ryan — Self-Determination Theory.", body: "Motivation rests on a triad: autonomy (I choose the game), competence (leaderboard, medals), relatedness (duel with a friend).", linkHref: "https://selfdeterminationtheory.org/", linkText: "SDT" },
+      { boldHead: "Nir Eyal — Hooked (2014).", body: "Variable rewards + investment (buildup) = habit loop. Watt City combines both: AI variability + a growing building as investment over time.", linkHref: "https://www.nirandfar.com/hooked/", linkText: "nirandfar.com" },
+      { boldHead: "Duolingo retention playbook.", body: "Streak + daily challenge + leagues = 100 M+ MAU. We replicate the principles but swap language lessons for finance + energy, and the 'animated owl' for a growing building.", linkHref: "https://blog.duolingo.com/how-we-reimagined-our-streak-system/", linkText: "Duolingo blog" },
+      { boldHead: "NYT Wordle — 'water-cooler' effect.", body: "Deterministic seed means everyone plays the same puzzle → spontaneous conversations. Our code-based duel and seeded daily AI challenge yield the same effect.", linkHref: "https://www.nytco.com/press/wordle/", linkText: "NYT" },
+    ],
+    scienceConclusion:
+      "Conclusion: 'lots of generated games' isn't an 'engagement cheat' — it's a direct translation of decades of research into an accessible platform.",
     pipelineIntro: "Pipeline is in the commit already — production trigger only waits for ANTHROPIC_API_KEY activation. Without the key, a deterministic fallback runs.",
     pipelineSteps: [
       { name: "Research", details: ["lib/ai-pipeline/research.ts","16 themes × 4 angles × 3 difficulties — daily bucket picks the combination.","Each theme is bound to one kind (quiz / scramble / price-guess / true-false / match-pairs / order)."] },

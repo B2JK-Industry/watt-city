@@ -70,144 +70,47 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* -------- Veda za dizajnom -------- */}
+      {/* -------- Veda za dizajnom — dict-driven (see lib/locales/*.ts
+          aboutPage.scienceIntro / scienceBullets / scienceConclusion).
+          No hardcoded locale lives here anymore. */}
       <section className="flex flex-col gap-4">
         <h2 className="brutal-heading text-2xl">{t.scienceTitle}</h2>
         <div className="card p-6 flex flex-col gap-4 text-zinc-300">
-          <p>
-            Dnešný užívateľ prichádza unavený z celého dňa a hľadá{" "}
-            <strong>nový dopaminergný podnet</strong>, nie replikáciu
-            včerajšieho. Výskum v behaviorálnej psychológii a HCI to
-            potvrdzuje:
-          </p>
+          <p>{t.scienceIntro}</p>
           <ul className="list-disc pl-6 space-y-3">
-            <li>
-              <strong>Berridge &amp; Robinson — incentive salience (1998).</strong>{" "}
-              Dopamin nekóduje potešenie (liking) ale <em>motiváciu hľadať</em>{" "}
-              nové podnety (wanting). Platformy ktoré pravidelne prinášajú{" "}
-              novotu udržiavajú „wanting" na vyšších hodnotách.{" "}
-              <a
-                href="https://pubmed.ncbi.nlm.nih.gov/9858756/"
-                className="underline text-[var(--accent)]"
-                target="_blank"
-                rel="noreferrer"
-              >
-                PubMed
-              </a>
-            </li>
-            <li>
-              <strong>
-                Skinner — intermittent reinforcement (operant conditioning).
-              </strong>{" "}
-              Variabilné odmeny (nevieš dopredu čo dnes bude) tvoria
-              najtrvalejšie návyky — viac než konštantné odmeny.{" "}
-              <a
-                href="https://en.wikipedia.org/wiki/Reinforcement#Intermittent_reinforcement_schedules"
-                className="underline text-[var(--accent)]"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Wikipedia
-              </a>
-            </li>
-            <li>
-              <strong>
-                Csíkszentmihályi — Flow (1990).
-              </strong>{" "}
-              Hráč ostáva pohltený keď výzva mierne prevyšuje zručnosť. 30-s
-              hra s combo multiplikátormi tento zóny trafí presne — príliš
-              ľahká uspí, príliš ťažká otrávi.{" "}
-              <a
-                href="https://en.wikipedia.org/wiki/Flow_(psychology)"
-                className="underline text-[var(--accent)]"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Flow
-              </a>
-            </li>
-            <li>
-              <strong>Deci &amp; Ryan — Self-Determination Theory.</strong>{" "}
-              Motiváciu drží trojica autonómia (vyberám si hru), kompetencia
-              (rebríček, medaile), vzťahovosť (duel s kamošom).{" "}
-              <a
-                href="https://selfdeterminationtheory.org/"
-                className="underline text-[var(--accent)]"
-                target="_blank"
-                rel="noreferrer"
-              >
-                SDT
-              </a>
-            </li>
-            <li>
-              <strong>Nir Eyal — Hooked (2014).</strong> Variabilné odmeny +
-              investícia (buildup) = habit loop. Watt City kombinuje oba: AI
-              variabilita + rastúca budova ako investícia v čase.{" "}
-              <a
-                href="https://www.nirandfar.com/hooked/"
-                className="underline text-[var(--accent)]"
-                target="_blank"
-                rel="noreferrer"
-              >
-                nirandfar.com
-              </a>
-            </li>
-            <li>
-              <strong>Duolingo retention playbook.</strong> Streak + denná
-              výzva + leagues = 100 M+ MAU. Replikujeme princípy, ale
-              výmenou za lekcie jazyka ponúkame finance + energetiku, a
-              metaforu „animovaná sova" sme nahradili rastúcou budovou.{" "}
-              <a
-                href="https://blog.duolingo.com/how-we-reimagined-our-streak-system/"
-                className="underline text-[var(--accent)]"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Duolingo blog
-              </a>
-            </li>
-            <li>
-              <strong>NYT Wordle — water-cooler efekt.</strong> Deterministický
-              seed, všetci hrajú rovnakú úlohu → spontánne rozhovory. Náš{" "}
-              <em>duel kódom</em> a <em>seeded AI výzva dňa</em> odvodzujú
-              rovnaký efekt.{" "}
-              <a
-                href="https://www.nytco.com/press/wordle/"
-                className="underline text-[var(--accent)]"
-                target="_blank"
-                rel="noreferrer"
-              >
-                NYT
-              </a>
-            </li>
+            {t.scienceBullets.map((bullet) => (
+              <li key={bullet.linkHref}>
+                <strong>{bullet.boldHead}</strong>{" "}
+                {bullet.body}{" "}
+                <a
+                  href={bullet.linkHref}
+                  className="underline text-[var(--accent)]"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {bullet.linkText}
+                </a>
+              </li>
+            ))}
           </ul>
           <p className="text-sm text-zinc-400 italic">
-            Záver: <strong>veľa generovaných hier</strong> nie je „cheat na
-            engagement" — je to priamy preklad desaťročí výskumu do
-            dostupnej platformy.
+            {t.scienceConclusion}
           </p>
         </div>
       </section>
 
-      {/* -------- Ako to funguje -------- */}
+      {/* -------- Ako to funguje — dict-driven (t.howSteps). */}
       <section className="flex flex-col gap-4">
         <h2 className="brutal-heading text-2xl">{t.howTitle}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <StepCard
-            n={1}
-            title="Hraj"
-            body="9 evergreen minihier (finance + energetika) + dnešná AI výzva. Každá trvá 30–90 s. Combo ×3. Okamžitý feedback."
-          />
-          <StepCard
-            n={2}
-            title="Vygeneruj Watty"
-            body="Best-score model: opakovanie ti nezvýši skóre, musíš rekord prekonať. Tvoja budova rastie tier po tieri."
-          />
-          <StepCard
-            n={3}
-            title="Súťaž"
-            body="Duel kódom s kamošom (PvP bonus ×2 Watty), Sliezska Watt liga, Sieň slávy medailí."
-          />
+          {t.howSteps.map((step, i) => (
+            <StepCard
+              key={step.title}
+              n={i + 1}
+              title={step.title}
+              body={step.body}
+            />
+          ))}
         </div>
       </section>
 

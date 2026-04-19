@@ -447,6 +447,54 @@ const pl = {
       { title: "Generuj Waty", body: "Best-score model: powtórka nie zwiększa wyniku, musisz pobić rekord. Twój budynek rośnie tier po tierze." },
       { title: "Rywalizuj", body: "Pojedynek na kod z kolegą (PvP bonus ×2 Waty), Śląska Liga Watów, Sala Sławy z medalami." },
     ],
+    scienceIntro:
+      "Dzisiejszy użytkownik wraca z całego dnia zmęczony i szuka nowego bodźca dopaminergicznego, a nie powtórki wczorajszego. Badania w psychologii behawioralnej i HCI to potwierdzają:",
+    scienceBullets: [
+      {
+        boldHead: "Berridge & Robinson — incentive salience (1998).",
+        body: "Dopamina nie koduje przyjemności (liking), ale motywację szukania (wanting) nowych bodźców. Platformy, które regularnie przynoszą nowość, utrzymują „wanting\" na wyższym poziomie.",
+        linkHref: "https://pubmed.ncbi.nlm.nih.gov/9858756/",
+        linkText: "PubMed",
+      },
+      {
+        boldHead: "Skinner — intermittent reinforcement (operant conditioning).",
+        body: "Zmienne nagrody (nie wiesz z góry, co będzie dziś) tworzą najtrwalsze nawyki — silniejsze niż nagrody stałe.",
+        linkHref: "https://en.wikipedia.org/wiki/Reinforcement#Intermittent_reinforcement_schedules",
+        linkText: "Wikipedia",
+      },
+      {
+        boldHead: "Csíkszentmihályi — Flow (1990).",
+        body: "Gracz pozostaje pochłonięty, gdy wyzwanie nieznacznie przewyższa jego umiejętności. 30-sekundowa gra z mnożnikami combo trafia w tę strefę — zbyt łatwa usypia, zbyt trudna zraża.",
+        linkHref: "https://en.wikipedia.org/wiki/Flow_(psychology)",
+        linkText: "Flow",
+      },
+      {
+        boldHead: "Deci & Ryan — Self-Determination Theory.",
+        body: "Motywację trzyma trójca: autonomia (wybieram grę), kompetencja (ranking, medale) i relacyjność (pojedynek z kolegą).",
+        linkHref: "https://selfdeterminationtheory.org/",
+        linkText: "SDT",
+      },
+      {
+        boldHead: "Nir Eyal — Hooked (2014).",
+        body: "Zmienne nagrody + inwestycja (buildup) = pętla nawyku. Watt City łączy oba elementy: zmienność AI + rosnący budynek jako inwestycja w czasie.",
+        linkHref: "https://www.nirandfar.com/hooked/",
+        linkText: "nirandfar.com",
+      },
+      {
+        boldHead: "Duolingo retention playbook.",
+        body: "Streak + codzienne wyzwanie + ligi = 100 M+ MAU. Replikujemy zasady, ale w miejsce lekcji językowych oferujemy finanse + energetykę, a metaforę „animowanej sowy\" zastąpiliśmy rosnącym budynkiem.",
+        linkHref: "https://blog.duolingo.com/how-we-reimagined-our-streak-system/",
+        linkText: "Duolingo blog",
+      },
+      {
+        boldHead: "NYT Wordle — efekt „water cooler\".",
+        body: "Deterministyczny seed sprawia, że wszyscy gracze rozwiązują to samo zadanie → spontaniczne rozmowy. Nasz „pojedynek na kod\" i „seedowane AI wyzwanie dnia\" wywołują ten sam efekt.",
+        linkHref: "https://www.nytco.com/press/wordle/",
+        linkText: "NYT",
+      },
+    ],
+    scienceConclusion:
+      "Wniosek: wiele generowanych gier to nie „cheat na engagement\" — to bezpośrednie przełożenie dekad badań na dostępną platformę.",
     pipelineIntro: "Pipeline jest w commicie już teraz — produkcyjny trigger czeka tylko na aktywację ANTHROPIC_API_KEY. Bez klucza działa deterministyczny fallback, dzięki czemu juror może prześledzić pełny cykl bez billingu.",
     pipelineSteps: [
       { name: "Research", details: [
