@@ -26,7 +26,12 @@ export type BuildingTier = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export type UnlockCondition =
   | { kind: "always" }
   | { kind: "lifetime-resource"; resource: keyof Resources; amount: number }
-  | { kind: "tier"; minTier: BuildingTier };
+  | { kind: "tier"; minTier: BuildingTier }
+  /** V3.2 — unlocked once a specific building exists in the city. */
+  | { kind: "has-building"; catalogId: string }
+  /** V3.2 — satisfied if any sub-condition is. Enables OR-shortcuts
+   *  like "Mała elektrownia: earn 50 watts OR build Sklepik first". */
+  | { kind: "any-of"; conditions: UnlockCondition[] };
 
 export type BuildingCatalogEntry = {
   id: string;
@@ -91,31 +96,10 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     },
     mvpActive: true,
   },
-  {
-    id: "mala-elektrownia",
-    category: "industry",
-    tier: 2,
-    baseCost: { bricks: 80, coins: 50 },
-    baseYieldPerHour: { watts: 8 },
-    wattUpkeepPerHour: -8, // produces 8 watts net to the grid
-    unlock: { kind: "lifetime-resource", resource: "watts", amount: 50 },
-    glyph: "⚡",
-    roofColor: "#facc15",
-    bodyColor: "#a16207",
-    labels: {
-      pl: "Mała elektrownia",
-      uk: "Маленька електростанція",
-      cs: "Malá elektrárna",
-      en: "Small Power Plant",
-    },
-    teasers: {
-      pl: "Produkuje 8 ⚡/h. Odblokujesz po zarobieniu 50 ⚡ w grach refleksowych.",
-      uk: "Виробляє 8 ⚡/год. Відкриється після зароблених 50 ⚡.",
-      cs: "Produkuje 8 ⚡/h. Odemkne se po získání 50 ⚡.",
-      en: "Produces 8 ⚡/h. Unlocks after you earn 50 ⚡ from reflex games.",
-    },
-    mvpActive: true,
-  },
+  // V3.2 — Sklepik moved BEFORE Mała elektrownia. Sklepik is the easier
+  // first build (50 coins earned = any game; yields coins+bricks so it
+  // bootstraps the econ). Mała elektrownia stays step 2 with a shortcut
+  // unlock: satisfied either by earning 50 watts OR simply owning Sklepik.
   {
     id: "sklepik",
     category: "commercial",
@@ -138,6 +122,37 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
       uk: "6 🪙 + 2 🧱 щогодини. Відкриється після 50 🪙 зі знаннєвих ігор.",
       cs: "6 🪙 + 2 🧱 každou hodinu. Odemkne se po 50 🪙 ze znalostních her.",
       en: "6 🪙 + 2 🧱 per hour. Unlocks after 50 🪙 from knowledge games.",
+    },
+    mvpActive: true,
+  },
+  {
+    id: "mala-elektrownia",
+    category: "industry",
+    tier: 2,
+    baseCost: { bricks: 80, coins: 50 },
+    baseYieldPerHour: { watts: 8 },
+    wattUpkeepPerHour: -8, // produces 8 watts net to the grid
+    unlock: {
+      kind: "any-of",
+      conditions: [
+        { kind: "lifetime-resource", resource: "watts", amount: 50 },
+        { kind: "has-building", catalogId: "sklepik" },
+      ],
+    },
+    glyph: "⚡",
+    roofColor: "#facc15",
+    bodyColor: "#a16207",
+    labels: {
+      pl: "Mała elektrownia",
+      uk: "Маленька електростанція",
+      cs: "Malá elektrárna",
+      en: "Small Power Plant",
+    },
+    teasers: {
+      pl: "Produkuje 8 ⚡/h. Odblokujesz po 50 ⚡ lub kiedy postawisz Sklepik.",
+      uk: "Виробляє 8 ⚡/год. Відкриється після 50 ⚡ або коли збудуєш магазинчик.",
+      cs: "Produkuje 8 ⚡/h. Odemkne se po 50 ⚡ nebo když postavíš Obchůdek.",
+      en: "Produces 8 ⚡/h. Unlocks after 50 ⚡ earned OR once you build Corner Shop.",
     },
     mvpActive: true,
   },
@@ -535,21 +550,39 @@ export function yieldAtLevel(
 }
 
 /** True if player's cumulative ever-earned resources (per ledger) satisfy
- *  the unlock condition. Tier unlocks are gated later by player tier. */
+ *  the unlock condition. Tier unlocks are gated later by player tier.
+ *  V3.2: `buildings` optional; supplied for has-building + any-of. */
 export function isUnlocked(
   entry: BuildingCatalogEntry,
   lifetimeEarned: Resources,
   playerTier: number,
+  buildings: ReadonlyArray<{ catalogId: string }> = [],
 ): boolean {
-  switch (entry.unlock.kind) {
+  return evaluateUnlock(entry.unlock, {
+    lifetimeEarned,
+    playerTier,
+    buildings,
+  });
+}
+
+type UnlockCtx = {
+  lifetimeEarned: Resources;
+  playerTier: number;
+  buildings: ReadonlyArray<{ catalogId: string }>;
+};
+
+function evaluateUnlock(cond: UnlockCondition, ctx: UnlockCtx): boolean {
+  switch (cond.kind) {
     case "always":
       return true;
     case "lifetime-resource":
-      return (
-        (lifetimeEarned[entry.unlock.resource] ?? 0) >= entry.unlock.amount
-      );
+      return (ctx.lifetimeEarned[cond.resource] ?? 0) >= cond.amount;
     case "tier":
-      return playerTier >= entry.unlock.minTier;
+      return ctx.playerTier >= cond.minTier;
+    case "has-building":
+      return ctx.buildings.some((b) => b.catalogId === cond.catalogId);
+    case "any-of":
+      return cond.conditions.some((c) => evaluateUnlock(c, ctx));
   }
 }
 
