@@ -5,7 +5,8 @@ import { GAMES } from "@/lib/games";
 import { getSession } from "@/lib/session";
 import { getUserStats } from "@/lib/user-stats";
 import { userStats as leaderboardStats } from "@/lib/leaderboard";
-import { levelFromXP, titleForLevel } from "@/lib/level";
+import { levelFromXP } from "@/lib/level";
+import { cityLevelFromState } from "@/lib/city-level";
 import { Dashboard } from "@/components/dashboard";
 import { CityScene } from "@/components/city-scene";
 import { getPlayerState } from "@/lib/player";
@@ -44,7 +45,7 @@ export default async function Home() {
         xp={board.globalXP}
         rank={board.globalRank}
         level={level}
-        title={titleForLevel(level.level)}
+        title={cityLevelFromState(playerState).badgeLabel}
         stats={stats}
         top={top}
         dict={dict}
