@@ -55,11 +55,14 @@ export function CookieConsent({ lang }: { lang: Lang }) {
     },
   }[lang];
 
+  // Bottom offset: on <sm sit ABOVE BottomTabs (h-14 = 3.5rem + safe-area
+   // inset) so primary mobile nav stays reachable while the banner is up.
+   // On sm+ we don't render BottomTabs so bottom-0 is fine.
   return (
     <div
       role="dialog"
       aria-live="polite"
-      className="fixed bottom-0 inset-x-0 z-40 bg-[var(--background)] border-t-[3px] border-[var(--ink)] p-3 sm:p-4 text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+      className="fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom,0))] sm:bottom-0 inset-x-0 z-40 bg-[var(--background)] border-t-[3px] border-[var(--ink)] p-3 sm:p-4 text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2"
     >
       <p className="flex-1 text-zinc-300">{copy.body}</p>
       <div className="flex gap-2 flex-wrap">
