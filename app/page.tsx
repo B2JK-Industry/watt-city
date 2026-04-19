@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { globalLeaderboard } from "@/lib/leaderboard";
+import { topCities } from "@/lib/city-value";
 import { GAMES } from "@/lib/games";
 import { getSession } from "@/lib/session";
 import { getUserStats } from "@/lib/user-stats";
@@ -7,6 +8,7 @@ import { userStats as leaderboardStats } from "@/lib/leaderboard";
 import { levelFromXP, titleForLevel } from "@/lib/level";
 import { Dashboard } from "@/components/dashboard";
 import { CityScene } from "@/components/city-scene";
+import { getPlayerState } from "@/lib/player";
 import { listActiveAiGamesWithLazyRotation as listActiveAiGames } from "@/lib/ai-pipeline/lazy-rotation";
 import { xpCapForAnyLang } from "@/lib/ai-pipeline/types";
 import { dictFor } from "@/lib/i18n";
@@ -19,11 +21,12 @@ export default async function Home() {
   const dict = dictFor(lang);
 
   if (session) {
-    const [board, stats, top, aiGames] = await Promise.all([
+    const [board, stats, top, aiGames, playerState] = await Promise.all([
       leaderboardStats(session.username),
       getUserStats(session.username),
       globalLeaderboard(5),
       listActiveAiGames(),
+      getPlayerState(session.username),
     ]);
     const level = levelFromXP(board.globalXP);
     // Newest AI game first — city renders each as its own clickable building.
@@ -47,14 +50,26 @@ export default async function Home() {
         dict={dict}
         lang={lang}
         aiGames={cityAiGames}
+        player={playerState}
       />
     );
   }
 
-  const [entries, aiGames] = await Promise.all([
+  // V2 R3.1.2 — anonymous landing shows the top 3 CITY-VALUE ranks
+  // (BLOCKER-3 parallel ZSET). If the V2 leaderboard is empty during the
+  // rollout we fall back to the V1 XP ranking so early visitors still see
+  // social proof.
+  const [cities, entries, aiGames] = await Promise.all([
+    topCities(3),
     globalLeaderboard(5),
     listActiveAiGames(),
   ]);
+  // Drop entries from V1 leaderboard that have a V2 city-value entry so
+  // the anonymous landing never double-counts a user. `cities` ordering
+  // is authoritative when non-empty.
+  const cityUsernames = new Set(cities.map((c) => c.username));
+  const v1Fallback = entries.filter((e) => !cityUsernames.has(e.username));
+  const showCities = cities.length > 0;
   // Anonymous landing — no personal best. Still surface every live AI
   // building so visitors can see what's on offer before signing up.
   const cityAiGames = [...aiGames].reverse().map((g) => ({
@@ -142,13 +157,34 @@ export default async function Home() {
         </div>
         <div className="card p-6">
           <h2 className="text-sm uppercase tracking-wider text-zinc-400 mb-3">
-            {t.topTitle}
+            {showCities
+              ? { pl: "Trzy największe miasta", uk: "Три найбільші міста", cs: "Tři největší města", en: "Top 3 cities" }[lang]
+              : t.topTitle}
           </h2>
-          {entries.length === 0 ? (
+          {showCities ? (
+            <ol className="flex flex-col gap-2">
+              {cities.map((c, i) => (
+                <li
+                  key={c.username}
+                  className="flex items-center justify-between py-2 border-b border-[var(--border)]/60 last:border-b-0"
+                >
+                  <span className="flex items-center gap-3">
+                    <span className="w-6 text-center font-bold opacity-70">
+                      #{i + 1}
+                    </span>
+                    <span>{c.username}</span>
+                  </span>
+                  <span className="font-mono font-semibold text-[var(--neo-cyan)]">
+                    {Math.floor(c.xp).toLocaleString("pl-PL")} W$
+                  </span>
+                </li>
+              ))}
+            </ol>
+          ) : v1Fallback.length === 0 ? (
             <p className="text-zinc-400 text-sm">{t.topEmpty}</p>
           ) : (
             <ol className="flex flex-col gap-2">
-              {entries.map((e) => (
+              {v1Fallback.slice(0, 3).map((e) => (
                 <li
                   key={e.username}
                   className="flex items-center justify-between py-2 border-b border-[var(--border)]/60 last:border-b-0"

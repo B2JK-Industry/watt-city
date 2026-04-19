@@ -33,12 +33,14 @@ export function SiteNav({
 }: Props) {
   const pct = Math.round(levelProgress * 100);
   const t = dict.nav;
+  // V2 R3.3 — nav cleanup: fold "Sala sławy" into Ranking, drop duplicates.
+  // "Liga" keeps its existing dict key but visually reads as a city-first
+  // ranking (leaderboard page switches to topCities in R3.1.2).
   const navLinks: Array<{ href: string; label: string }> = [
     { href: "/miasto", label: t.city },
     { href: "/games", label: t.games },
     { href: "/duel", label: t.duel },
     { href: "/leaderboard", label: t.league },
-    { href: "/sin-slavy", label: t.hall },
     { href: "/o-platforme", label: t.about },
   ];
   return (

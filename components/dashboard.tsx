@@ -7,6 +7,8 @@ import type { LeaderboardEntry } from "@/lib/redis";
 import { CityScene, type CityGameState, type CityAiGame } from "@/components/city-scene";
 import { PlayerBuilding } from "@/components/player-building";
 import { DeleteAccountButton } from "@/components/delete-account-button";
+import { CityLevelCard } from "@/components/city-level-card";
+import type { PlayerState } from "@/lib/player";
 import type { Dict, Lang } from "@/lib/i18n";
 
 type Props = {
@@ -20,6 +22,10 @@ type Props = {
   dict: Dict;
   lang: Lang;
   aiGames?: CityAiGame[];
+  /** V2 R3.2 — player state snapshot for the city-level card. Optional
+   *  so older call sites keep rendering without a schema break while the
+   *  dashboard page threads it through. */
+  player?: Pick<PlayerState, "buildings" | "wattDeficitSince"> | null;
 };
 
 function timeAgo(ts: number, d: Dict["dashboard"]): string {
@@ -44,6 +50,7 @@ export function Dashboard({
   dict,
   lang,
   aiGames,
+  player,
 }: Props) {
   const d = dict.dashboard;
   const locale = lang === "pl" ? "pl-PL" : lang === "cs" ? "cs-CZ" : lang === "uk" ? "uk-UA" : "en-US";
@@ -72,6 +79,7 @@ export function Dashboard({
 
   return (
     <div className="flex flex-col gap-10 animate-slide-up">
+      {player && <CityLevelCard player={player} lang={lang} />}
       <section className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
         <div className="card p-6 sm:p-8 flex flex-col gap-5">
           <div className="flex items-center justify-between gap-4">
