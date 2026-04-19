@@ -12,6 +12,24 @@ import { refreshCityValue } from "@/lib/city-value";
 import { kvGet, sAdd, kvSet } from "@/lib/redis";
 import { SLOT_MAP, DOMEK_SLOT_ID } from "@/lib/building-catalog";
 import { ACHIEVEMENT_DEFS, type AchievementId } from "@/lib/achievements";
+import { awardXP } from "@/lib/leaderboard";
+import { recordRound } from "@/lib/user-stats";
+
+/* Per-game target scores used by the seed. 99 % of each game's cap so
+ * the seeded account shows "near-perfect" in every evergreen game and
+ * sweeps the global leaderboard against organic traffic. Caps mirror
+ * the `cap` field on BUILDING_PLAN in components/city-scene.tsx. */
+const DEMO_SCORES: Array<{ gameId: string; score: number }> = [
+  { gameId: "finance-quiz",   score:  99 },
+  { gameId: "stock-tap",      score: 218 },
+  { gameId: "memory-match",   score: 159 },
+  { gameId: "math-sprint",    score: 198 },
+  { gameId: "energy-dash",    score: 218 },
+  { gameId: "power-flip",     score: 179 },
+  { gameId: "currency-rush",  score: 178 },
+  { gameId: "budget-balance", score: 158 },
+  { gameId: "word-scramble",  score: 119 },
+];
 
 /* Demo-player seed — admin-only helper for PKO / school pitches.
  *
@@ -170,6 +188,18 @@ export async function POST(
   await Promise.all(allIds.map((id) => sAdd(setKey, id)));
   await kvSet(listKey, merged);
 
+  // 7. Game leaderboards — seed 99 % of cap in every evergreen game
+  //    so the demo account sweeps the global ZSET + shows up as the
+  //    top performer on /leaderboard and on each per-game league tab.
+  //    awardXP is best-score semantics (only moves up), so repeat
+  //    calls are no-ops once the ceiling is in place.
+  const scoredGames: Array<{ gameId: string; score: number }> = [];
+  for (const { gameId, score } of DEMO_SCORES) {
+    await awardXP(username, gameId, score);
+    await recordRound(username, gameId, score);
+    scoredGames.push({ gameId, score });
+  }
+
   return Response.json({
     ok: true,
     username,
@@ -178,6 +208,8 @@ export async function POST(
     loansCount: state.loans.length,
     creditScore: state.creditScore,
     achievementsGranted: allIds,
+    gameScores: scoredGames,
+    globalXp: DEMO_SCORES.reduce((s, g) => s + g.score, 0),
   });
 }
 
