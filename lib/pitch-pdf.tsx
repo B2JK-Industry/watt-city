@@ -93,9 +93,13 @@ const s = StyleSheet.create({
 function PitchDocument(opts: { locale: "pl" | "en" }): React.JSX.Element {
   const t = opts.locale === "pl" ? COPY.pl : COPY.en;
   const byArea = curriculumByArea();
-  const areas = Object.entries(byArea).map(
-    ([a, codes]) => ({ area: a, count: codes.length }),
-  );
+  // Ship only areas that actually cover ≥1 curriculum code. Printing
+  // "Ekonomia 0 kodów" next to a financial-literacy pitch is worse
+  // than not listing Ekonomia at all — and the total line below
+  // already reflects whatever areas are covered.
+  const areas = Object.entries(byArea)
+    .filter(([, codes]) => codes.length > 0)
+    .map(([a, codes]) => ({ area: a, count: codes.length }));
 
   return (
     <Document title={`Watt City school pitch — ${opts.locale}`}>
@@ -124,7 +128,7 @@ function PitchDocument(opts: { locale: "pl" | "en" }): React.JSX.Element {
             </Text>
           ))}
           <Text style={{ marginTop: 4, fontStyle: "italic" }}>
-            {t.coverageTotal(PODSTAWA_TOTAL())}
+            {t.coverageTotal(PODSTAWA_TOTAL(), areas.map((a) => a.area))}
           </Text>
         </View>
 
@@ -189,8 +193,8 @@ const COPY = {
     ],
     coverageTitle: "Podstawa programowa MEN",
     codeWord: "kodów",
-    coverageTotal: (n: number) =>
-      `Łącznie ${n} mapowanych kodów klas V-VIII (Ekonomia, Matematyka, WOS, EDB, Informatyka).`,
+    coverageTotal: (n: number, areas: readonly string[]) =>
+      `Łącznie ${n} mapowanych kodów klas V-VIII (${areas.join(", ")}).`,
     complianceTitle: "Compliance (one-liner dla rodzica)",
     compliance: [
       "GDPR-K: zgoda rodzica dla uczniów poniżej 16 lat (automatyczny flow).",
@@ -235,8 +239,8 @@ const COPY = {
     ],
     coverageTitle: "Curriculum alignment",
     codeWord: "codes",
-    coverageTotal: (n: number) =>
-      `Total: ${n} mapped curriculum codes across grades 5-8 (Economics, Maths, Civics, Safety, IT).`,
+    coverageTotal: (n: number, areas: readonly string[]) =>
+      `Total: ${n} mapped curriculum codes across grades 5-8 (${areas.join(", ")}).`,
     complianceTitle: "Compliance at a glance",
     compliance: [
       "GDPR-K: parental consent for under-16 users (automated flow).",

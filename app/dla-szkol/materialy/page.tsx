@@ -52,13 +52,15 @@ export default async function MaterialsPage() {
       <section className="card p-5 flex flex-col gap-3">
         <h2 className="brutal-heading text-lg">{t.coverageTitle}</h2>
         <ul className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-sm">
-          {Object.entries(byArea).map(([area, codes]) => (
-            <li key={area} className="card p-3 text-center">
-              <div className="text-xs opacity-60">{area}</div>
-              <div className="text-2xl font-black mt-1">{codes.length}</div>
-              <div className="text-[10px] opacity-60">{t.codes}</div>
-            </li>
-          ))}
+          {Object.entries(byArea)
+            .filter(([, codes]) => codes.length > 0)
+            .map(([area, codes]) => (
+              <li key={area} className="card p-3 text-center">
+                <div className="text-xs opacity-60">{area}</div>
+                <div className="text-2xl font-black mt-1">{codes.length}</div>
+                <div className="text-[10px] opacity-60">{t.codes}</div>
+              </li>
+            ))}
         </ul>
         <p className="text-xs italic opacity-80">
           {t.coverageTotal.replace("{n}", String(total))}
