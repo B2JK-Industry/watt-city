@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type Props = {
   validUntil: number;
@@ -16,6 +17,12 @@ type Props = {
 // server-side; this component hydrates and replaces the static text with a
 // live countdown. Used on every LIVE AI building so players see the 1h window
 // closing in real time.
+//
+// When the countdown hits 0 we call `router.refresh()` so the server
+// re-renders without the stale building. `listActiveAiGamesWithLazyRotation`
+// on the server filters out expired envelopes and schedules a real rotation
+// via `after()`. Otherwise players see "0s" stuck on a building that's past
+// its validUntil.
 export function LiveCountdown({
   validUntil,
   svg = true,
@@ -23,6 +30,8 @@ export function LiveCountdown({
   secondsThreshold = 60 * 60,
 }: Props) {
   const [now, setNow] = useState(() => Date.now());
+  const refreshedRef = useRef(false);
+  const router = useRouter();
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
@@ -30,9 +39,17 @@ export function LiveCountdown({
 
   const msLeft = Math.max(0, validUntil - now);
   const totalSec = Math.floor(msLeft / 1000);
+
+  // One-shot refresh trigger the moment the countdown expires.
+  useEffect(() => {
+    if (msLeft > 0 || refreshedRef.current) return;
+    refreshedRef.current = true;
+    router.refresh();
+  }, [msLeft, router]);
+
   const label =
     msLeft <= 0
-      ? "0s"
+      ? "EXPIRED"
       : totalSec < secondsThreshold
         ? `${Math.floor(totalSec / 60)}m ${totalSec % 60}s`
         : `${Math.floor(totalSec / 3600)}h ${Math.floor((totalSec % 3600) / 60)}m`;

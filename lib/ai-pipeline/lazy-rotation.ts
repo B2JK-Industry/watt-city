@@ -21,7 +21,13 @@ export async function listActiveAiGamesWithLazyRotation(): Promise<AiGame[]> {
   let games = await listActiveAiGames();
 
   const due = await rotationIsDue(games, now);
-  if (!due) return games;
+  if (!due) {
+    // Always filter out expired envelopes even on the happy path — the index
+    // can contain still-valid ids mixed with already-expired ones when the
+    // previous rotation partially pruned. Without this filter the city-scene
+    // renders an expired building with a "0s" countdown stuck on its chip.
+    return games.filter((g) => g.validUntil > now);
+  }
 
   const allExpiredOrEmpty =
     games.length === 0 || games.every((g) => g.validUntil <= now);
@@ -32,7 +38,7 @@ export async function listActiveAiGamesWithLazyRotation(): Promise<AiGame[]> {
     if (result.ok && result.published) {
       games = await listActiveAiGames();
     }
-    return games;
+    return games.filter((g) => g.validUntil > now);
   }
 
   // Happy path: already have something live; kick the refresh into after().
@@ -43,5 +49,5 @@ export async function listActiveAiGamesWithLazyRotation(): Promise<AiGame[]> {
   } catch {
     // after() is only valid in request scope — ignore outside (e.g. tests).
   }
-  return games;
+  return games.filter((g) => g.validUntil > now);
 }
