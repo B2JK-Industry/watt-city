@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CITY_TIERS } from "@/lib/level";
+import { LEVEL_UNLOCK_LADDER } from "@/lib/city-level";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
@@ -353,28 +353,32 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* -------- Progression -------- */}
+      {/* -------- Progression ladder (V3.1 — city-first) -------- */}
       <section className="flex flex-col gap-4">
         <h2 className="brutal-heading text-2xl">{t.tiersTitle}</h2>
-        <div className="grid grid-cols-3 sm:grid-cols-9 gap-2">
-          {CITY_TIERS.map((t) => (
-            <div
-              key={t.level}
-              className={`aspect-square rounded-xl border-[3px] border-[var(--ink)] shadow-[3px_3px_0_0_var(--ink)] ${t.accent} flex flex-col items-center justify-center text-center p-1`}
-              title={`Tier ${t.level}: ${t.full}`}
+        <ol className="flex flex-col gap-3">
+          {LEVEL_UNLOCK_LADDER.map((row) => (
+            <li
+              key={row.level}
+              className="card p-4 flex flex-col sm:flex-row gap-3 sm:items-start"
             >
-              <span className="text-2xl">{t.emoji}</span>
-              <span className="text-[9px] font-black uppercase text-[#0a0a0f] leading-tight mt-0.5">
-                T{t.level}
+              <span className="flex-shrink-0 w-14 h-14 rounded-xl border-[3px] border-[var(--ink)] bg-[var(--accent)] text-[#0a0a0f] font-black text-lg flex flex-col items-center justify-center shadow-[3px_3px_0_0_var(--ink)]">
+                <span className="text-[9px] uppercase leading-none">Lvl</span>
+                <span className="text-xl leading-none">{row.level}</span>
               </span>
-            </div>
+              <div className="flex flex-col gap-1">
+                <p className="font-bold text-base leading-tight">{row.title}</p>
+                <p className="text-sm text-zinc-300">
+                  <span className="opacity-60">Odblokowujesz: </span>
+                  <strong>{row.unlock}</strong>
+                </p>
+                <p className="text-[11px] text-zinc-400 italic leading-snug">
+                  💡 {row.eduMoment}
+                </p>
+              </div>
+            </li>
           ))}
-        </div>
-        <p className="text-xs text-zinc-400">
-          Drevená búda (Nikiszowiec) → Robotnícky dom → Rodinný dom →
-          Kamenica → Solárna činžovka → Kancelária → Mrakodrap → Altus Tower
-          (125 m) → <strong>Varso Tower</strong> (310 m, najvyššia v EÚ).
-        </p>
+        </ol>
       </section>
 
       {/* -------- Tech stack -------- */}
