@@ -7,6 +7,7 @@ import type { LevelInfo } from "@/lib/level";
 import type { LeaderboardEntry } from "@/lib/redis";
 import { CityScene, type CityGameState, type CityAiGame } from "@/components/city-scene";
 import { CitySkylineHero } from "@/components/city-skyline-hero";
+import { LoanSchedule } from "@/components/loan-schedule";
 import { DeleteAccountButton } from "@/components/delete-account-button";
 import { CityLevelCard } from "@/components/city-level-card";
 import type { PlayerState } from "@/lib/player";
@@ -26,7 +27,7 @@ type Props = {
   /** V2 R3.2 — player state snapshot for the city-level card. Optional
    *  so older call sites keep rendering without a schema break while the
    *  dashboard page threads it through. */
-  player?: Pick<PlayerState, "buildings" | "wattDeficitSince"> | null;
+  player?: Pick<PlayerState, "buildings" | "wattDeficitSince" | "loans"> | null;
 };
 
 function timeAgo(ts: number, d: Dict["dashboard"]): string {
@@ -193,6 +194,11 @@ export function Dashboard({
           <h2 className="brutal-heading text-xl sm:text-2xl">{d.yourBuildingTitle}</h2>
           <CitySkylineHero buildings={player.buildings} lang={lang} />
         </section>
+      )}
+
+      {/* V3.5 — loan schedule widget renders only when there's ≥1 active loan. */}
+      {player && player.loans.length > 0 && (
+        <LoanSchedule loans={player.loans} lang={lang} />
       )}
 
       <section className="flex flex-col gap-4">

@@ -258,6 +258,7 @@ export async function takeMortgage(
     monthsPaid: 0,
     missedConsecutive: 0,
     status: "active",
+    autoRepay: true, // V3.5 default — opt-out via /api/loans/[id]/auto-repay
   };
   state.loans.push(loan);
   // Credit the principal as cash.
@@ -345,7 +346,10 @@ export async function processLoanPayments(
       const owed = Math.ceil(payment);
       const cash = state.resources.cashZl ?? 0;
       const coins = state.resources.coins ?? 0;
-      if (cash + coins >= owed) {
+      // V3.5 — autoRepay off forces the miss path even with funds.
+      // Treat undefined as true (back-compat with pre-V3.5 loans).
+      const autoRepay = loan.autoRepay !== false;
+      if (autoRepay && cash + coins >= owed) {
         const fromCash = Math.min(cash, owed);
         const fromCoins = owed - fromCash;
         const delta: Partial<Resources> = {};
@@ -577,6 +581,7 @@ export async function takeLoan(
     monthsPaid: 0,
     missedConsecutive: 0,
     status: "active",
+    autoRepay: true, // V3.5 default
   };
   state.loans.push(loan);
   await creditResources(
@@ -833,6 +838,7 @@ export async function issueMentorHelp(
     monthsPaid: 0,
     missedConsecutive: 0,
     status: "active",
+    autoRepay: true,
   };
   state.loans.push(loan);
   state.mentorHelp = {
