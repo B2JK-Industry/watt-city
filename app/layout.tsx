@@ -15,7 +15,7 @@ import { buildHudBundle } from "@/lib/hud-data";
 import { resolveTheme } from "@/lib/theme";
 import { getSession } from "@/lib/session";
 import { userStats } from "@/lib/leaderboard";
-import { levelFromXP, tierForLevel } from "@/lib/level";
+import { levelFromXP } from "@/lib/level";
 import { cityLevelFromState } from "@/lib/city-level";
 import { dictFor, LANG_HTML } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
@@ -87,13 +87,14 @@ export default async function RootLayout({
   const xp = stats?.globalXP ?? 0;
   const level = levelFromXP(xp);
   // V3.1: nav badge shows city-level + grid state when flag is on; falls back
-  // to the legacy tier emoji + name for anyone the flag has flipped off.
+  // to a minimal "Level N" XP label when flipped off (no tier emojis — those
+  // were the XP-Arena legacy that V3 removes). Existing player data untouched.
   const navTitle = (() => {
     if (!session) return null;
     if (cityFirstEnabled && player) {
       return cityLevelFromState(player).badgeLabel;
     }
-    return `${tierForLevel(level.level).emoji} ${tierForLevel(level.level).name}`;
+    return `XP Lv ${level.level}`;
   })();
   return (
     <html
