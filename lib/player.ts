@@ -130,6 +130,19 @@ export type PlayerState = {
    *  Used to compute brownout severity and the BLOCKER-1 bankruptcy-gate
    *  grace window (72h). */
   wattDeficitSince?: number | null;
+  /** V2 R7.3 — classroom / teacher-mode flag (HIGH-8). When true,
+   *  bankruptcy-style seizure NEVER fires. Instead the UI shows a red-
+   *  alert "rebalance within 3 days" banner. Set by teacher-mode opt-in
+   *  during school deployments. */
+  classroomMode?: boolean;
+  /** V2 R7.3 — mentor help state. One-time 0% APR emergency loan
+   *  available after 2nd missed payment, re-available once per 30 days.
+   *  `lastUsedAt` is the ms timestamp the player last invoked
+   *  mentor-help; null/undefined = never used. */
+  mentorHelp?: {
+    lastUsedAt?: number | null;
+    usageCount?: number;
+  };
 };
 
 const STATE_KEY = (username: string) => `xp:player:${username}`;

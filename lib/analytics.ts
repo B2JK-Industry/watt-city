@@ -36,7 +36,9 @@ export type AnalyticsKind =
   | "class_joined"
   | "parent_linked"
   | "rotation_fired"
-  | "moderation_rejected";
+  | "moderation_rejected"
+  | "city_restructured"
+  | "mentor_help_issued";
 
 export type AnalyticsEvent = {
   ts: number;
