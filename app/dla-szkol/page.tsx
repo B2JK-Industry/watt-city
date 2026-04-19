@@ -1,221 +1,460 @@
 import Link from "next/link";
 import { getLang } from "@/lib/i18n-server";
 import type { Lang } from "@/lib/i18n";
+import { PODSTAWA_PROGRAMOWA, curriculumByArea } from "@/lib/curriculum";
 
-/* V4.1 — schools landing page. Marketing surface for the PKO pitch.
- * Entry point to the teacher signup wizard at /nauczyciel/signup.
+/* D1 — schools marketing landing page. Full content rewrite per demo-
+ * polish spec: hero + 3-audience value prop (kids/teachers/parents) +
+ * 4-step "how it works" + compliance badges + curriculum preview +
+ * screenshot placeholders + dual CTA (demo + teacher signup) + PDF
+ * download link.
  */
 
 export const metadata = {
-  title: "Watt City dla szkół · SKO 2.0 by PKO · partner-ready",
+  title: "Watt City dla szkół · gamifikowana edukacja finansowa",
   description:
-    "Gamifikowana edukacja finansowa dla klas V-VIII. Zgodna z podstawą programową MEN. Teacher dashboard · weekly PDF · parent digest.",
+    "Gamifikowana edukacja finansowa dla klas V-VIII zgodna z podstawą programową MEN. Teacher dashboard · weekly PDF · parent digest. Partner-ready dla PKO.",
 };
 
-const COPY: Record<
-  Lang,
-  {
-    hero: string;
-    tagline: string;
-    ctaSignup: string;
-    ctaBrochure: string;
-    valueTitle1: string;
-    valueBody1: string;
-    valueTitle2: string;
-    valueBody2: string;
-    valueTitle3: string;
-    valueBody3: string;
-    featsTitle: string;
-    feats: string[];
-    curriculumBadge: string;
-    compliance: string;
-    pricingNote: string;
-  }
-> = {
+type Copy = {
+  heroTitle: string;
+  heroSubtitle: string;
+  ctaDemo: string;
+  ctaSignup: string;
+  ctaBrochure: string;
+  audienceTitle: string;
+  audKidsTitle: string;
+  audKidsBody: string;
+  audTeachersTitle: string;
+  audTeachersBody: string;
+  audParentsTitle: string;
+  audParentsBody: string;
+  howTitle: string;
+  howStep1: string;
+  howStep2: string;
+  howStep3: string;
+  howStep4: string;
+  complianceTitle: string;
+  complianceItems: string[];
+  ppTitle: string;
+  ppLead: string;
+  ppAreaLabel: string;
+  ppGradeLabel: string;
+  ppMoreLabel: string;
+  screensTitle: string;
+  screen1: string;
+  screen2: string;
+  screen3: string;
+  downloadTitle: string;
+  downloadBody: string;
+  downloadCta: string;
+};
+
+const COPY: Record<Lang, Copy> = {
   pl: {
-    hero: "Watt City dla szkół",
-    tagline:
-      "SKO 2.0 partner-ready. Gamifikowana edukacja finansowa dla klas V-VIII, zgodna z podstawą programową MEN. Teacher dashboard · weekly PDF · parent digest.",
-    ctaSignup: "Zarejestruj szkołę",
-    ctaBrochure: "Materiały dla dyrekcji",
-    valueTitle1: "🎯 Engagement",
-    valueBody1:
-      "15+ gier minutowych, codzienne AI-wyzwania, cotygodniowa liga. Dzieci wracają nie dla obowiązku — dla nawyku.",
-    valueTitle2: "📚 Nauka",
-    valueBody2:
-      "Budżetowanie, kredyt, inwestycje, RRSO, oszczędzanie. Każda gra mapowana na konkretny kod podstawy programowej.",
-    valueTitle3: "🔒 Compliance",
-    valueBody3:
-      "GDPR-K + UODO + KNF disclaimers. EU hosting (Upstash Frankfurt). Zero danych sprzedawanych. Wszystko po polsku.",
-    featsTitle: "Co dostaniesz jako nauczyciel",
-    feats: [
-      "Panel klasy z listą uczniów + ich postępem",
-      "Cotygodniowy raport PDF dla dyrekcji",
-      "Wybór tematu tygodnia z podstawy programowej",
-      "Dashboard rodzica (obserwator)",
-      "Pełna prywatność — uczeń decyduje co pokazać rodzicowi",
-      "Tryb klasowy — bez bankructwa, bez pay-to-win",
+    heroTitle: "Watt City dla szkół · gamifikowana edukacja finansowa",
+    heroSubtitle:
+      "Zgodne z podstawą programową MEN V–VIII · partner-ready dla PKO. Uczniowie grają minigry i budują swoje miasto. Nauczyciel ma panel klasy i tygodniowy raport PDF. Rodzic obserwuje postępy — bez ingerencji.",
+    ctaDemo: "Wypróbuj demo",
+    ctaSignup: "Zapisz się jako nauczyciel",
+    ctaBrochure: "Pobierz broszurę (PDF, 2 strony)",
+    audienceTitle: "Dla kogo jest Watt City",
+    audKidsTitle: "🎮 Dla uczniów",
+    audKidsBody:
+      "Miasto, minigry, finansowe wyzwania. Kids actually play. Quiz finansowy, Sprint matematyczny, Kurs akcji — każda gra uczy innej umiejętności i daje zasoby na rozbudowę miasta.",
+    audTeachersTitle: "👩‍🏫 Dla nauczycieli",
+    audTeachersBody:
+      "Dashboard klasy, cotygodniowe tematy filtrowane po podstawie programowej, PDF raport do dziennika jednym kliknięciem. Zero admin overhead.",
+    audParentsTitle: "👨‍👩‍👧 Dla rodziców",
+    audParentsBody:
+      "Obserwuj postępy, zobacz co dziecko się uczy. Tygodniowy digest w aplikacji. Bez ingerencji — uczeń decyduje co udostępnia.",
+    howTitle: "Jak to działa — 4 kroki",
+    howStep1: "Nauczyciel zakłada klasę (1 minuta, formularz)",
+    howStep2: "Uczniowie dołączają 6-znakowym kodem",
+    howStep3: "Grają minigry i uczą się finansów w mieście",
+    howStep4: "Tygodniowy raport PDF do dziennika i rodzica",
+    complianceTitle: "Compliance",
+    complianceItems: [
+      "GDPR-K compliant · zgoda rodzica automatycznie pod 16 r.ż.",
+      "UODO aligned · polski organ nadzoru, DPO w aplikacji",
+      "KNF disclaimer na każdej stronie z kredytem",
+      "EU-hosted · Upstash Frankfurt + Vercel EU",
+      "First-party analytics only · żadnego GA, żadnego Meta Pixela",
     ],
-    curriculumBadge: "✅ Zgodne z podstawą programową MEN V-VIII",
-    compliance:
-      "GDPR-K · UODO · KNF disclaimers · EU hosting · audytowalne w 100%",
-    pricingNote: "Pilotaż bezpłatny · docelowo bundled z PKO SKO",
+    ppTitle: "Zgodne z podstawą programową MEN V–VIII",
+    ppLead: `Każda gra mapowana na konkretny kod podstawy programowej. Łącznie ${PODSTAWA_PROGRAMOWA.length} kodów w pięciu obszarach: Ekonomia, Matematyka, WOS, EDB, Informatyka.`,
+    ppAreaLabel: "obszar",
+    ppGradeLabel: "klasa",
+    ppMoreLabel: "… i więcej kodów w każdym obszarze",
+    screensTitle: "Jak wygląda produkt",
+    screen1: "📸 Panel klasy — top 10 uczniów, temat tygodnia, pobierz PDF",
+    screen2: "📸 Tygodniowy raport PDF — roster, XP, pokrycie programu",
+    screen3: "📸 Dashboard ucznia — city skyline, cashflow, loan calendar",
+    downloadTitle: "Materiały dla dyrekcji",
+    downloadBody:
+      "Jedna kartka A4, PL + EN. Wartość, mechanika, compliance, kontakt.",
+    downloadCta: "Pobierz broszurę (PDF)",
   },
   uk: {
-    hero: "Watt City для шкіл",
-    tagline:
-      "SKO 2.0 партнерська платформа. Фінансова освіта для V-VIII класу. Панель учителя · тижневий PDF · звіт для батьків.",
-    ctaSignup: "Зареєструвати школу",
-    ctaBrochure: "Матеріали для директора",
-    valueTitle1: "🎯 Залучення",
-    valueBody1:
-      "15+ швидких ігор, щоденні AI-виклики, тижнева ліга. Діти вертаються не з обов'язку — звично.",
-    valueTitle2: "📚 Навчання",
-    valueBody2:
-      "Бюджетування, кредит, RRSO, інвестиції. Кожна гра прив'язана до коду навчальної програми.",
-    valueTitle3: "🔒 Compliance",
-    valueBody3:
-      "GDPR-K + UODO + KNF дисклеймери. Хостинг у ЄС. Жодного продажу даних.",
-    featsTitle: "Що отримаєш як учитель",
-    feats: [
-      "Панель класу з учнями та їхнім прогресом",
-      "Тижневий PDF звіт для директора",
-      "Вибір теми тижня з навчальної програми",
-      "Панель батьків (спостерігач)",
-      "Повна приватність — учень вирішує що показувати батькам",
-      "Класний режим — без банкрутства, без pay-to-win",
+    heroTitle: "Watt City для шкіл · гейміфікована фінансова освіта",
+    heroSubtitle:
+      "Відповідає польській програмі MEN V–VIII. Учні грають у мінігри та будують місто. Вчитель має панель класу і тижневий PDF. Батьки спостерігають — без втручання.",
+    ctaDemo: "Спробувати демо",
+    ctaSignup: "Зареєструватись як учитель",
+    ctaBrochure: "Завантажити брошуру (PDF, 2 стор.)",
+    audienceTitle: "Для кого Watt City",
+    audKidsTitle: "🎮 Для учнів",
+    audKidsBody: "Місто, мінігри, фінансові виклики. Діти справді грають.",
+    audTeachersTitle: "👩‍🏫 Для вчителів",
+    audTeachersBody:
+      "Панель класу, щотижневі теми, PDF звіт. Жодного адміністративного навантаження.",
+    audParentsTitle: "👨‍👩‍👧 Для батьків",
+    audParentsBody:
+      "Спостерігай за прогресом. Тижневий digest в застосунку. Без втручання.",
+    howTitle: "Як це працює — 4 кроки",
+    howStep1: "Учитель створює клас (1 хв)",
+    howStep2: "Учні приєднуються 6-знаковим кодом",
+    howStep3: "Грають та вивчають фінанси",
+    howStep4: "Тижневий PDF для директора і батьків",
+    complianceTitle: "Compliance",
+    complianceItems: [
+      "GDPR-K · батьківська згода автоматично",
+      "UODO aligned · польський наглядач",
+      "KNF дисклеймери на кредитах",
+      "Хостинг у ЄС",
+      "Аналітика only first-party",
     ],
-    curriculumBadge: "✅ Узгоджено з польською навчальною програмою MEN V-VIII",
-    compliance:
-      "GDPR-K · UODO · KNF дисклеймери · Хостинг у ЄС · повна auditovateľnosť",
-    pricingNote: "Пілот безплатний · кінцево bundled з PKO SKO",
+    ppTitle: "Відповідає польській програмі MEN V–VIII",
+    ppLead: `Кожна гра прив'язана до конкретного коду. Разом ${PODSTAWA_PROGRAMOWA.length} кодів у 5 областях.`,
+    ppAreaLabel: "область",
+    ppGradeLabel: "клас",
+    ppMoreLabel: "… та більше",
+    screensTitle: "Як виглядає продукт",
+    screen1: "📸 Панель класу — топ 10",
+    screen2: "📸 Тижневий PDF звіт",
+    screen3: "📸 Дашборд учня",
+    downloadTitle: "Матеріали для директора",
+    downloadBody: "Одна A4 сторінка, PL + EN.",
+    downloadCta: "Завантажити (PDF)",
   },
   cs: {
-    hero: "Watt City pro školy",
-    tagline:
-      "SKO 2.0 partner-ready. Gamifikovaná finanční gramotnost pro V-VIII třídu. Učitelský panel · týdenní PDF · rodičovský digest.",
-    ctaSignup: "Zaregistrovat školu",
-    ctaBrochure: "Materiály pro vedení",
-    valueTitle1: "🎯 Engagement",
-    valueBody1:
-      "15+ minutových her, denní AI výzvy, týdenní liga. Děti se vrací z návyku, ne z povinnosti.",
-    valueTitle2: "📚 Učení",
-    valueBody2:
-      "Rozpočtování, úvěr, RRSO, investice. Každá hra mapovaná na kód učebního programu.",
-    valueTitle3: "🔒 Compliance",
-    valueBody3:
-      "GDPR-K + UODO + KNF disclaimery. EU hosting. Žádný prodej dat.",
-    featsTitle: "Co získáš jako učitel",
-    feats: [
-      "Panel třídy se studenty a jejich pokrokem",
-      "Týdenní PDF raport pro ředitelství",
-      "Výběr tématu týdne z programu",
-      "Rodičovský dashboard (observer)",
-      "Plné soukromí — student rozhoduje co ukázat rodiči",
-      "Třídní režim — bez bankrotu, bez pay-to-win",
+    heroTitle: "Watt City pro školy · gamifikovaná finanční gramotnost",
+    heroSubtitle:
+      "V souladu s polským učebním programem MEN V–VIII. Žáci hrají minihry a staví město. Učitel má panel třídy a týdenní PDF. Rodič pozoruje bez zásahu.",
+    ctaDemo: "Vyzkoušet demo",
+    ctaSignup: "Zaregistrovat se jako učitel",
+    ctaBrochure: "Stáhnout brožuru (PDF, 2 str.)",
+    audienceTitle: "Pro koho je Watt City",
+    audKidsTitle: "🎮 Pro žáky",
+    audKidsBody: "Město, minihry, finanční výzvy. Děti opravdu hrají.",
+    audTeachersTitle: "👩‍🏫 Pro učitele",
+    audTeachersBody:
+      "Panel třídy, týdenní témata, PDF raport. Žádná admin zátěž.",
+    audParentsTitle: "👨‍👩‍👧 Pro rodiče",
+    audParentsBody:
+      "Sleduj pokrok. Týdenní digest v aplikaci. Bez zásahu.",
+    howTitle: "Jak to funguje — 4 kroky",
+    howStep1: "Učitel vytvoří třídu (1 min)",
+    howStep2: "Žáci se připojí 6-znakovým kódem",
+    howStep3: "Hrají a učí se finance",
+    howStep4: "Týdenní PDF pro ředitele a rodiče",
+    complianceTitle: "Compliance",
+    complianceItems: [
+      "GDPR-K · automatický rodičovský souhlas",
+      "UODO aligned",
+      "KNF disclaimery",
+      "EU hosting",
+      "First-party analytika only",
     ],
-    curriculumBadge: "✅ V souladu s PL učebním programem MEN V-VIII",
-    compliance:
-      "GDPR-K · UODO · KNF disclaimery · EU hosting · plně auditovateľné",
-    pricingNote: "Pilot zdarma · finálně bundled s PKO SKO",
+    ppTitle: "V souladu s PL učebním programem MEN V–VIII",
+    ppLead: `Každá hra mapovaná na kód. Celkem ${PODSTAWA_PROGRAMOWA.length} kódů v 5 oblastech.`,
+    ppAreaLabel: "oblast",
+    ppGradeLabel: "třída",
+    ppMoreLabel: "… a více",
+    screensTitle: "Jak produkt vypadá",
+    screen1: "📸 Panel třídy — top 10",
+    screen2: "📸 Týdenní PDF",
+    screen3: "📸 Dashboard studenta",
+    downloadTitle: "Materiály pro ředitele",
+    downloadBody: "Jedna A4 stránka, PL + EN.",
+    downloadCta: "Stáhnout (PDF)",
   },
   en: {
-    hero: "Watt City for schools",
-    tagline:
-      "SKO 2.0 partner-ready. Financial literacy gamified for grades 5-8, aligned with the PL national curriculum. Teacher dashboard · weekly PDF · parent digest.",
-    ctaSignup: "Register your school",
-    ctaBrochure: "Materials for principals",
-    valueTitle1: "🎯 Engagement",
-    valueBody1:
-      "15+ quick games, daily AI challenges, weekly league. Kids come back from habit, not homework.",
-    valueTitle2: "📚 Learning",
-    valueBody2:
-      "Budgeting, credit, APR, savings, investments. Every game mapped to a specific curriculum code.",
-    valueTitle3: "🔒 Compliance",
-    valueBody3:
-      "GDPR-K + UODO + KNF disclaimers. EU-only hosting. No data sold. Auditable end-to-end.",
-    featsTitle: "What you get as a teacher",
-    feats: [
-      "Class dashboard with students and progress",
-      "Weekly PDF report for principals",
-      "Weekly theme picker from the national curriculum",
-      "Parent observer dashboard",
-      "Full privacy — students choose what to share",
-      "Classroom mode — no bankruptcy, no pay-to-win",
+    heroTitle: "Watt City for schools · financial literacy gamified",
+    heroSubtitle:
+      "Aligned with the Polish national curriculum (grades 5-8). Kids play minigames and build their own city. Teachers get a class dashboard + weekly PDF. Parents observe progress — no intervention needed.",
+    ctaDemo: "Try the demo",
+    ctaSignup: "Sign up as teacher",
+    ctaBrochure: "Download brochure (PDF, 2 pages)",
+    audienceTitle: "Who it's for",
+    audKidsTitle: "🎮 For students",
+    audKidsBody:
+      "City, minigames, financial challenges. Kids actually play. Finance quiz, Math sprint, Stock tap — each teaches a different skill and yields resources to build.",
+    audTeachersTitle: "👩‍🏫 For teachers",
+    audTeachersBody:
+      "Class dashboard, weekly themes filtered by curriculum code, one-click PDF report. Zero admin overhead.",
+    audParentsTitle: "👨‍👩‍👧 For parents",
+    audParentsBody:
+      "Observe progress, see what your kid is learning. Weekly digest in-app. No intervention — the student decides what to share.",
+    howTitle: "How it works — 4 steps",
+    howStep1: "Teacher creates a class (1 minute, form)",
+    howStep2: "Students join with a 6-character code",
+    howStep3: "They play minigames and learn finance in their city",
+    howStep4: "Weekly PDF report to principal and parents",
+    complianceTitle: "Compliance",
+    complianceItems: [
+      "GDPR-K compliant · auto parental consent under 16",
+      "UODO aligned · Polish supervisory authority, DPO in-app",
+      "KNF disclaimer on every loan surface",
+      "EU-hosted · Upstash Frankfurt + Vercel EU",
+      "First-party analytics only · no GA, no Meta Pixel",
     ],
-    curriculumBadge: "✅ PL national curriculum MEN grades 5-8 aligned",
-    compliance:
-      "GDPR-K · UODO · KNF disclaimers · EU hosting · 100% auditable",
-    pricingNote: "Pilot free · eventually bundled with PKO SKO",
+    ppTitle: "Aligned with Polish national curriculum (grades 5-8)",
+    ppLead: `Every game maps to a specific curriculum code. ${PODSTAWA_PROGRAMOWA.length} codes across 5 areas: Economics, Math, Civics, Safety, IT.`,
+    ppAreaLabel: "area",
+    ppGradeLabel: "grade",
+    ppMoreLabel: "… and more codes in every area",
+    screensTitle: "What it looks like",
+    screen1: "📸 Class dashboard — top 10 students, weekly theme, PDF download",
+    screen2: "📸 Weekly PDF report — roster, XP, curriculum coverage",
+    screen3: "📸 Student dashboard — city skyline, cashflow, loan calendar",
+    downloadTitle: "Materials for principals",
+    downloadBody:
+      "Single A4 page, PL + EN. Value prop, mechanics, compliance, contact.",
+    downloadCta: "Download brochure (PDF)",
   },
 };
 
 export default async function SchoolsLanding() {
   const lang = await getLang();
   const t = COPY[lang];
+  const areas = curriculumByArea();
+  // Top-10 curated codes for the landing preview (2 per area).
+  const preview = (["Ekonomia", "Matematyka", "WOS", "EDB", "Informatyka"] as const)
+    .flatMap((area) => areas[area].slice(0, 2));
 
   return (
-    <div className="flex flex-col gap-10 animate-slide-up">
+    <div className="flex flex-col gap-12 animate-slide-up">
+      {/* -------- Hero -------- */}
       <section className="flex flex-col gap-4">
         <div className="flex flex-wrap gap-2">
-          <span className="brutal-tag" style={{ background: "var(--neo-yellow)", color: "#0a0a0f" }}>
-            {t.curriculumBadge}
+          <span
+            className="brutal-tag"
+            style={{ background: "var(--neo-yellow)", color: "#0a0a0f" }}
+          >
+            ✅ MEN V–VIII
           </span>
-          <span className="brutal-tag" style={{ background: "var(--neo-cyan)", color: "#0a0a0f" }}>
+          <span
+            className="brutal-tag"
+            style={{ background: "var(--neo-cyan)", color: "#0a0a0f" }}
+          >
             PKO SKO 2.0
           </span>
+          <span
+            className="brutal-tag"
+            style={{ background: "var(--neo-lime)", color: "#0a0a0f" }}
+          >
+            GDPR-K
+          </span>
         </div>
-        <h1 className="brutal-heading text-4xl sm:text-6xl">{t.hero}</h1>
-        <p className="text-lg text-zinc-300 max-w-3xl">{t.tagline}</p>
-        <div className="flex flex-wrap gap-3">
-          <Link href="/nauczyciel/signup" className="btn btn-primary">
+        <h1 className="brutal-heading text-4xl sm:text-5xl leading-tight">
+          {t.heroTitle}
+        </h1>
+        <p className="text-lg text-zinc-300 max-w-3xl leading-relaxed">
+          {t.heroSubtitle}
+        </p>
+        <div className="flex flex-wrap gap-3 mt-2">
+          <Link href="/dla-szkol/demo" className="btn btn-primary text-base">
+            🎬 {t.ctaDemo}
+          </Link>
+          <Link
+            href="/nauczyciel/signup"
+            className="btn btn-cyan text-base"
+          >
             {t.ctaSignup}
           </Link>
-          <Link href="/dla-szkol/materialy" className="btn btn-ghost">
-            {t.ctaBrochure}
+          <Link
+            href="/api/dla-szkol/pitch?locale=pl"
+            className="btn btn-ghost text-base"
+            prefetch={false}
+          >
+            📄 {t.ctaBrochure}
           </Link>
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {[
-          { title: t.valueTitle1, body: t.valueBody1, accent: "var(--neo-yellow)" },
-          { title: t.valueTitle2, body: t.valueBody2, accent: "var(--neo-cyan)" },
-          { title: t.valueTitle3, body: t.valueBody3, accent: "var(--neo-pink)" },
-        ].map((col) => (
-          <div
-            key={col.title}
-            className="card p-5 flex flex-col gap-2"
-            style={{ borderTop: `4px solid ${col.accent}` }}
-          >
-            <h2 className="font-black text-lg">{col.title}</h2>
-            <p className="text-sm text-zinc-300">{col.body}</p>
-          </div>
-        ))}
+      {/* -------- 3-audience value prop -------- */}
+      <section className="flex flex-col gap-4">
+        <h2 className="brutal-heading text-2xl">{t.audienceTitle}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            {
+              title: t.audKidsTitle,
+              body: t.audKidsBody,
+              accent: "var(--neo-yellow)",
+            },
+            {
+              title: t.audTeachersTitle,
+              body: t.audTeachersBody,
+              accent: "var(--neo-cyan)",
+            },
+            {
+              title: t.audParentsTitle,
+              body: t.audParentsBody,
+              accent: "var(--neo-pink)",
+            },
+          ].map((col) => (
+            <div
+              key={col.title}
+              className="card p-5 flex flex-col gap-2"
+              style={{ borderTop: `4px solid ${col.accent}` }}
+            >
+              <h3 className="font-black text-lg">{col.title}</h3>
+              <p className="text-sm text-zinc-300 leading-relaxed">
+                {col.body}
+              </p>
+            </div>
+          ))}
+        </div>
       </section>
 
-      <section className="card p-5 flex flex-col gap-3">
-        <h2 className="brutal-heading text-xl">{t.featsTitle}</h2>
-        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-          {t.feats.map((line) => (
-            <li
-              key={line}
-              className="flex items-start gap-2 p-2 border-2 border-[var(--ink)]/30 rounded"
+      {/* -------- How it works (4-step diagram) -------- */}
+      <section className="flex flex-col gap-4">
+        <h2 className="brutal-heading text-2xl">{t.howTitle}</h2>
+        <ol className="grid grid-cols-1 md:grid-cols-4 gap-3">
+          {[t.howStep1, t.howStep2, t.howStep3, t.howStep4].map(
+            (step, i) => (
+              <li
+                key={i}
+                className="card p-4 flex flex-col gap-2 relative"
+              >
+                <span
+                  className="w-10 h-10 rounded-xl border-[3px] border-[var(--ink)] bg-[var(--accent)] text-[#0a0a0f] font-black text-xl flex items-center justify-center shadow-[3px_3px_0_0_var(--ink)]"
+                >
+                  {i + 1}
+                </span>
+                <p className="text-sm leading-relaxed">{step}</p>
+                {i < 3 && (
+                  <span
+                    aria-hidden
+                    className="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 text-[var(--accent)] text-2xl font-black"
+                  >
+                    →
+                  </span>
+                )}
+              </li>
+            ),
+          )}
+        </ol>
+      </section>
+
+      {/* -------- Screenshots (SVG placeholders) -------- */}
+      <section className="flex flex-col gap-4">
+        <h2 className="brutal-heading text-2xl">{t.screensTitle}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {[t.screen1, t.screen2, t.screen3].map((caption, i) => (
+            <div
+              key={i}
+              className="aspect-video rounded-xl border-[4px] border-[var(--ink)] shadow-[4px_4px_0_0_var(--ink)] p-6 flex items-center justify-center text-center"
+              style={{
+                background: `linear-gradient(135deg, var(--accent), var(--neo-cyan))`,
+                color: "#0a0a0f",
+              }}
             >
-              <span className="text-[var(--accent)]">✓</span>
+              <p className="font-black text-sm leading-relaxed">{caption}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* -------- Compliance badges row -------- */}
+      <section className="card p-5 flex flex-col gap-3 border-[var(--neo-lime)]">
+        <h2 className="brutal-heading text-lg">{t.complianceTitle}</h2>
+        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+          {t.complianceItems.map((line) => (
+            <li key={line} className="flex items-start gap-2">
+              <span className="text-[var(--neo-lime)] font-bold">✓</span>
               <span>{line}</span>
             </li>
           ))}
         </ul>
       </section>
 
-      <aside className="card p-5 flex flex-col gap-2 border-[var(--neo-lime)]">
-        <h2 className="font-black uppercase text-xs tracking-widest">
-          Compliance
-        </h2>
-        <p className="text-sm">{t.compliance}</p>
-        <p className="text-xs opacity-70">{t.pricingNote}</p>
+      {/* -------- Podstawa programowa preview -------- */}
+      <section className="flex flex-col gap-4">
+        <h2 className="brutal-heading text-2xl">{t.ppTitle}</h2>
+        <p className="text-sm text-zinc-300 max-w-3xl">{t.ppLead}</p>
+        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+          {preview.map((c) => (
+            <li
+              key={c.code}
+              className="border-2 border-[var(--ink)]/40 rounded p-3 flex flex-col gap-1"
+            >
+              <div className="flex items-center gap-2">
+                <code className="font-mono text-[10px] px-1.5 py-0.5 bg-[var(--surface-2)] rounded">
+                  {c.code}
+                </code>
+                <span className="text-[10px] opacity-70">
+                  {t.ppAreaLabel}: {c.area} · {t.ppGradeLabel}: {c.grade}
+                </span>
+              </div>
+              <p className="text-xs leading-snug">{c.description}</p>
+            </li>
+          ))}
+        </ul>
+        <p className="text-xs italic opacity-70">{t.ppMoreLabel}</p>
+      </section>
+
+      {/* -------- Download brochure -------- */}
+      <aside className="card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-[var(--neo-yellow)]">
+        <div className="flex flex-col gap-1">
+          <h2 className="brutal-heading text-lg">{t.downloadTitle}</h2>
+          <p className="text-sm text-zinc-300">{t.downloadBody}</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/api/dla-szkol/pitch?locale=pl"
+            className="btn btn-primary text-sm"
+            prefetch={false}
+          >
+            📄 PL
+          </Link>
+          <Link
+            href="/api/dla-szkol/pitch?locale=en"
+            className="btn btn-ghost text-sm"
+            prefetch={false}
+          >
+            📄 EN
+          </Link>
+          <Link
+            href="/dla-szkol/materialy"
+            className="btn btn-ghost text-sm"
+          >
+            HTML
+          </Link>
+        </div>
       </aside>
+
+      {/* -------- Bottom CTA (repeat primary actions) -------- */}
+      <section className="card p-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-[var(--surface-2)]">
+        <p className="text-sm sm:text-base font-bold">
+          {lang === "pl"
+            ? "Gotowy zobaczyć produkt?"
+            : lang === "uk"
+              ? "Готовий побачити продукт?"
+              : lang === "cs"
+                ? "Připraven vidět produkt?"
+                : "Ready to see the product?"}
+        </p>
+        <div className="flex flex-wrap gap-3">
+          <Link href="/dla-szkol/demo" className="btn btn-primary">
+            🎬 {t.ctaDemo}
+          </Link>
+          <Link href="/nauczyciel/signup" className="btn btn-cyan">
+            {t.ctaSignup}
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }
