@@ -59,7 +59,10 @@ export function TierUpToast({
   return (
     <div
       role="status"
-      className="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 w-[min(92vw,26rem)] card p-4 flex flex-col gap-2 shadow-[6px_6px_0_0_var(--ink)] bg-[var(--accent)] text-[#0a0a0f] border-[var(--ink)] motion-safe:animate-[tier-up-enter_420ms_cubic-bezier(0.2,0.9,0.2,1.2)]"
+      // Bottom offset: on mobile clear BottomTabs (3.5rem) + CashflowHud
+       // (~4.5rem of bottom strip) + 1rem breathing room. On sm+ the HUD
+       // moves to the top-right dock, so we can sit closer to the bottom.
+      className="fixed bottom-[calc(8.5rem+env(safe-area-inset-bottom,0))] sm:bottom-24 left-1/2 -translate-x-1/2 z-40 w-[min(92vw,26rem)] card p-4 flex flex-col gap-2 shadow-[6px_6px_0_0_var(--ink)] bg-[var(--accent)] text-[#0a0a0f] border-[var(--ink)] motion-safe:animate-[tier-up-enter_420ms_cubic-bezier(0.2,0.9,0.2,1.2)]"
     >
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <Confetti count={20} />
