@@ -25,27 +25,6 @@ type Props = {
   role?: "kid" | "teacher" | "parent" | "anon";
 };
 
-const SCHOOL_LABEL: Record<Lang, string> = {
-  pl: "Dla szkół",
-  uk: "Для шкіл",
-  cs: "Pro školy",
-  en: "For schools",
-};
-
-const TEACHER_CLASSES_LABEL: Record<Lang, string> = {
-  pl: "Moje klasy",
-  uk: "Мої класи",
-  cs: "Mé třídy",
-  en: "My classes",
-};
-
-const PARENT_KID_LABEL: Record<Lang, string> = {
-  pl: "Dziecko",
-  uk: "Дитина",
-  cs: "Dítě",
-  en: "My kid",
-};
-
 export function SiteNav({
   username,
   xp,
@@ -67,21 +46,23 @@ export function SiteNav({
   // ukazuje link; dict keys zachované pre back-compat ale nie sú
   // referencované.
   // Cleanup issue 5 — role-aware links so every V4 page has a nav
-  // entry point. Anonymous visitor gets the classroom landing CTA;
-  // logged-in teacher gets the class dashboard; logged-in parent
-  // (linked to a kid) gets the observer dashboard.
+  // entry point. Teachers see their class dashboard, parents linked
+  // to a kid see the observer dashboard, everyone else (anon + kid)
+  // sees the classroom landing so a parent browsing over a child's
+  // shoulder has a one-tap path without logging out. All labels read
+  // from the `nav` dict — no per-Lang lookup tables in this file.
   const navLinks: Array<{ href: string; label: string }> = [
     { href: "/miasto", label: t.city },
     { href: "/games", label: t.games },
     { href: "/leaderboard", label: t.league },
     { href: "/o-platforme", label: t.about },
   ];
-  if (role === "anon") {
-    navLinks.push({ href: "/dla-szkol", label: SCHOOL_LABEL[lang] });
-  } else if (role === "teacher") {
-    navLinks.push({ href: "/nauczyciel", label: TEACHER_CLASSES_LABEL[lang] });
+  if (role === "teacher") {
+    navLinks.push({ href: "/nauczyciel", label: t.teacherClasses });
   } else if (role === "parent") {
-    navLinks.push({ href: "/rodzic", label: PARENT_KID_LABEL[lang] });
+    navLinks.push({ href: "/rodzic", label: t.parentKid });
+  } else {
+    navLinks.push({ href: "/dla-szkol", label: t.school });
   }
   return (
     <header className="w-full border-b-[3px] border-[var(--ink)] sticky top-0 z-20 bg-[var(--background)]">

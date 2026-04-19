@@ -8,6 +8,9 @@ const en: typeof plDict = {
     league: "League",
     hall: "Hall of Fame",
     about: "About",
+    school: "For schools",
+    teacherClasses: "My classes",
+    parentKid: "My kid",
     login: "Log in",
     register: "Sign up",
     logout: "Log out",
@@ -481,6 +484,22 @@ const en: typeof plDict = {
     sponsorsThanks: "Thanks: PKO Bank Polski · Tauron · ETHWarsaw · AKMF · Katowicki.Hub.",
     footerHome: "Back to home",
     footerPrivacy: "Privacy",
+    web3Title: "Web3 · soulbound medals (optional)",
+    web3StatusLabel: "Status:",
+    web3StatusValue:
+      "For ETHSilesia 2026 · testnet deploy on Base Sepolia. Mainnet after audit (post-pilot).",
+    web3Body:
+      "Achievements earned in-game can be optionally recorded as soulbound NFTs (ERC-721) — a certificate, not a speculative asset. Medals are non-transferable (cannot be sold, delegated, or traded). Accounts under 16 need parental consent (V4.6 flow). Revoking consent burns every medal (GDPR Art. 17).",
+    web3TenetsTitle: "Four design tenets",
+    web3Tenets: [
+      "Soulbound — certificate, not trading card. Every transfer reverts with `Soulbound`.",
+      "Parent consent — hard-gated server-side. The client cannot bypass it.",
+      "Burn-on-revocation — withdrawing consent automatically burns medals on-chain.",
+      "Coinbase Smart Wallet (passkey) — Face ID instead of seedphrase. Kid-safe.",
+    ],
+    web3LinksLabel: "Full architecture writeup:",
+    web3SubmissionLinkLabel: "submission documentation",
+    web3PlanLinkLabel: "architecture plan",
   },
   privacyPage: {
     title: "Privacy",

@@ -8,6 +8,9 @@ const cs: typeof plDict = {
     league: "Liga",
     hall: "Síň slávy",
     about: "O platformě",
+    school: "Pro školy",
+    teacherClasses: "Mé třídy",
+    parentKid: "Dítě",
     login: "Přihlásit",
     register: "Registrace",
     logout: "Odhlásit",
@@ -480,6 +483,22 @@ const cs: typeof plDict = {
     sponsorsThanks: "Díky: PKO Bank Polski · Tauron · ETHWarsaw · AKMF · Katowicki.Hub.",
     footerHome: "Zpět na úvod",
     footerPrivacy: "Ochrana soukromí",
+    web3Title: "Web3 · soulbound medaile (volitelné)",
+    web3StatusLabel: "Stav:",
+    web3StatusValue:
+      "V rámci ETHSilesia 2026 · testnet deploy na Base Sepolia. Mainnet po auditu (post-pilot).",
+    web3Body:
+      "Úspěchy získané ve hře lze volitelně zapsat jako soulbound NFT (ERC-721) — certifikát, ne spekulativní aktivum. Medaile jsou nepřenosné (nelze je předat, prodat, delegovat). Pro účty pod 16 let je nutný souhlas rodiče (flow V4.6). Odvolání souhlasu = spálení medailí (GDPR Art. 17).",
+    web3TenetsTitle: "Čtyři designové zásady",
+    web3Tenets: [
+      "Soulbound — certifikát, ne trading card. Každý transfer revertuje s `Soulbound`.",
+      "Rodičovský souhlas — hard-gated na serveru. Klient ho nemůže obejít.",
+      "Burn-on-revocation — odvolání automaticky pálí medaile na blockchainu.",
+      "Coinbase Smart Wallet (passkey) — Face ID místo seedphrase. Bezpečné pro dítě.",
+    ],
+    web3LinksLabel: "Plný popis architektury:",
+    web3SubmissionLinkLabel: "submission dokumentace",
+    web3PlanLinkLabel: "plán architektury",
   },
   privacyPage: {
     title: "Ochrana soukromí",
@@ -529,6 +548,9 @@ const cs: typeof plDict = {
       "Platforma cílí na Gen Z (15–20 let). Pro osoby mladší než 16 (v PL práh GDPR pro souhlas) doporučujeme souhlas rodiče. Nesbíráme žádné osobní údaje, které by umožnily identifikovat dítě mimo hru.",
     disclaimerBody:
       "Watt City vznikla během ETHSilesia 2026 (17.–19. dubna 2026) v Katovicích. Jde o prototyp — finanční rady ve hrách nemají charakter investičního poradenství ve smyslu MiFID II. Obsah her je pro vzdělávací účely a ověřený proti veřejně dostupným zdrojům, ale nenahrazuje konzultaci s bankou, poradcem nebo KNF (Komisja Nadzoru Finansowego).",
+    web3Title: "Data on-chain (volitelné)",
+    web3Body:
+      "Pokud aktivuješ soulbound medaile v /profile (vyžaduje souhlas rodiče pro účty < 16 let), omezený set dat poputuje na veřejný blockchain (Base, L2 Ethereum): adresa tvé peněženky, deterministický tokenId (hash nicku + id úspěchu) a IPFS odkaz na metadata medaile (název úspěchu, ikona). Neposíláme e-mail, jméno, session ID ani žádná PII na blockchain. Medaile jsou nepřenosné (soulbound). Odvolání souhlasu spouští `burn(tokenId)` pro každou dříve mintovanou medaili — on-chain odkaz mizí (událost Transfer → 0x0 je veřejná). Opt-in, výchozí vypnuté. Detaily v `docs/web3/PLAN.md`.",
     version: "Verze 1.0 · 2026-04-18 ·",
     backHome: "Zpět na domov",
     dataFields: {
