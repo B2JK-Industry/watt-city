@@ -1,0 +1,57 @@
+version: 2
+
+# Phase 10.2.2 — weekly dep audits. Dependabot opens PRs against
+# watt-city (not main — main is frozen). Grouping minimises PR
+# volume: security patches always open individually; everything else
+# consolidates per package-manager.
+
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    target-branch: watt-city
+    schedule:
+      interval: weekly
+      day: monday
+      time: "07:00"
+      timezone: Europe/Warsaw
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      next:
+        patterns:
+          - "next"
+          - "eslint-config-next"
+          - "@next/*"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react*"
+      dev-tooling:
+        patterns:
+          - "vitest"
+          - "@playwright/test"
+          - "@axe-core/*"
+          - "typescript"
+          - "tailwindcss"
+          - "@tailwindcss/*"
+      anthropic:
+        patterns:
+          - "@anthropic-ai/sdk"
+    ignore:
+      # Node 22 LTS pin until Hardhat 3 lands stable for Next 16 + ESM
+      - dependency-name: "node"
+      # Major-version bumps require a manual upgrade-playbook walk
+      - dependency-name: "next"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    target-branch: watt-city
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "chore(ci)"
