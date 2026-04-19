@@ -65,6 +65,26 @@ export async function hasParentalConsent(username: string): Promise<boolean> {
   return Boolean(rec);
 }
 
+/** Phase 8 W6 — revoke a previously-granted parental consent record.
+ *  Idempotent; returns true if a record was actually removed. Callers
+ *  are expected to chain this with lib/web3/burn-all to honour the
+ *  on-chain side of the revocation. */
+export async function revokeParentalConsent(
+  username: string,
+): Promise<boolean> {
+  const existed = await hasParentalConsent(username);
+  if (!existed) return false;
+  const { kvDel } = await import("@/lib/redis");
+  await kvDel(CONSENT_GRANTED(username));
+  await appendConsentAudit(username, {
+    kind: "rejected",
+    parentEmail: "",
+    token: "",
+    ts: Date.now(),
+  });
+  return true;
+}
+
 // ---------------------------------------------------------------------------
 // PII validator (6.3.3)
 // ---------------------------------------------------------------------------

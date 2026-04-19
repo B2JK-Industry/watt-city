@@ -44,6 +44,18 @@ export async function deletionStatus(username: string): Promise<
 /** Full erase — runs on cron at end-of-grace OR immediately if the user
  *  asks for "delete now, no grace". Returns the list of keys wiped. */
 export async function hardErase(username: string): Promise<string[]> {
+  // Phase 8 W6 — GDPR Art. 17 on-chain mirror. Burn every minted medal
+  // before we wipe the mint log so a retry after a partial failure can
+  // still reach the on-chain entries. Best-effort: errors here don't
+  // block key cleanup; the burn log captures the failure for audit.
+  try {
+    const { burnAllForUser } = await import("@/lib/web3/burn-all");
+    await burnAllForUser(username);
+  } catch {
+    // NEXT_PUBLIC_WEB3_ENABLED may be off or the relayer config empty;
+    // either way, there's nothing to burn on-chain and we continue.
+  }
+
   const keys = [
     `xp:user:${username}`,
     `xp:user:${username}:role`,
@@ -70,6 +82,11 @@ export async function hardErase(username: string): Promise<string[]> {
     `xp:pko-mock:${username}`,
     `xp:pko-audit:${username}`,
     `xp:marketplace:history:${username}`,
+    // Phase 8 W6 — web3 state
+    `xp:web3:mint-log:${username}`,
+    `xp:web3:consent-revoked:${username}`,
+    `xp:consent-granted:${username}`,
+    `xp:parental-consent:${username}`,
     DELETED_AT(username),
   ];
   await Promise.all(keys.map((k) => kvDel(k)));

@@ -122,6 +122,12 @@ export type PlayerState = {
     tourSeen?: boolean;
     mortgageTutorialSeen?: boolean;
     firstGamePlayed?: boolean;
+    /** Phase 8 W6 — user opted into the on-chain medal flow. For 16+
+     *  users, toggled from /profile directly; for under-16 users, the
+     *  kid can set it only AFTER a linked parent toggled their own
+     *  approval via /rodzic/[kid]. Revoking (either side) triggers
+     *  burn-all-medals via lib/web3/burn-all.ts. */
+    web3OptIn?: boolean;
   };
   /** Profile — Phase 2.9.5. avatar is an id from a pre-made set; displayName
    *  is the kid-chosen render name (≠ username). */
