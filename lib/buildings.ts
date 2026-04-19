@@ -28,6 +28,7 @@ import {
   type ResourceKey,
 } from "@/lib/resources";
 import { refreshCityValue } from "@/lib/city-value";
+import { refreshWattDeficit } from "@/lib/watts";
 
 // ---------------------------------------------------------------------------
 // Cost/affordability checks
@@ -153,6 +154,8 @@ export async function placeBuilding(
     cumulativeCost: { ...entry.baseCost },
   };
   state.buildings.push(instance);
+  // R2.1: update deficit-since BEFORE save so the row persists atomically.
+  refreshWattDeficit(state);
   await savePlayerState(state);
   // R1.3: keep city-value leaderboard in sync on any mutation.
   await refreshCityValue(state.username, state.buildings);
@@ -196,6 +199,7 @@ export async function upgradeBuilding(
     const existing = b.cumulativeCost[k] ?? 0;
     b.cumulativeCost[k] = existing + v;
   }
+  refreshWattDeficit(state);
   await savePlayerState(state);
   await refreshCityValue(state.username, state.buildings);
   return { ok: true, state, building: b };
@@ -230,6 +234,7 @@ export async function demolishBuilding(
     { instanceId },
   );
   state.buildings = state.buildings.filter((x) => x.id !== instanceId);
+  refreshWattDeficit(state);
   await savePlayerState(state);
   await refreshCityValue(state.username, state.buildings);
   return { ok: true, state, refund };
@@ -253,6 +258,7 @@ export async function ensureSignupGift(state: PlayerState): Promise<PlayerState>
     cumulativeCost: {}, // free
   };
   state.buildings.push(instance);
+  refreshWattDeficit(state);
   await savePlayerState(state);
   await refreshCityValue(state.username, state.buildings);
   return state;

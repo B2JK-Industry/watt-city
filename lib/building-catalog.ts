@@ -35,6 +35,11 @@ export type BuildingCatalogEntry = {
   baseCost: Partial<Resources>;
   /** Primary yield per hour at level 1. Can be sparse — empty = civic/multiplier. */
   baseYieldPerHour: Partial<Resources>;
+  /** V2 R2.1 — signed watt upkeep at level 1. Positive = draws from grid,
+   *  negative = supplies to grid (energy buildings), 0 = irrelevant.
+   *  Scales per `upkeepAtLevel` (1.4× curve). Undefined treated as 0 for
+   *  pre-R2.1 catalog rows; every entry declares a value going forward. */
+  wattUpkeepPerHour?: number;
   /** Multiplier-type buildings: apply this % bonus to matching game-kind yields. */
   multiplier?: {
     target: "citywide-all" | "quiz-true-false" | "order-match" | "reflex";
@@ -61,6 +66,7 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     tier: 1,
     baseCost: {}, // free at signup
     baseYieldPerHour: { coins: 5 },
+    wattUpkeepPerHour: 0, // Domek is off-grid — no brownout exposure
     unlock: { kind: "always" },
     glyph: "🏠",
     roofColor: "#f59e0b",
@@ -85,6 +91,7 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     tier: 2,
     baseCost: { bricks: 80, coins: 50 },
     baseYieldPerHour: { watts: 8 },
+    wattUpkeepPerHour: -8, // produces 8 watts net to the grid
     unlock: { kind: "lifetime-resource", resource: "watts", amount: 50 },
     glyph: "⚡",
     roofColor: "#facc15",
@@ -109,6 +116,7 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     tier: 2,
     baseCost: { bricks: 60, coins: 80 },
     baseYieldPerHour: { coins: 6, bricks: 2 },
+    wattUpkeepPerHour: 3, // retail lights + POS
     unlock: { kind: "lifetime-resource", resource: "coins", amount: 50 },
     glyph: "🏪",
     roofColor: "#f472b6",
@@ -136,6 +144,7 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     tier: 3,
     baseCost: { bricks: 200, coins: 1500 },
     baseYieldPerHour: {},
+    wattUpkeepPerHour: 2, // modest office load
     unlock: { kind: "tier", minTier: 3 },
     glyph: "🏦",
     roofColor: "#0ea5e9",
@@ -160,6 +169,7 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     tier: 3,
     baseCost: { bricks: 250, coins: 1200, watts: 100 },
     baseYieldPerHour: { glass: 4 },
+    wattUpkeepPerHour: 12, // furnace draws hard
     unlock: { kind: "tier", minTier: 3 },
     glyph: "🪟",
     roofColor: "#22d3ee",
@@ -184,6 +194,7 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     tier: 3,
     baseCost: { bricks: 300, coins: 800 },
     baseYieldPerHour: {},
+    wattUpkeepPerHour: 2,
     multiplier: { target: "quiz-true-false", percent: 20 },
     unlock: { kind: "tier", minTier: 3 },
     glyph: "📚",
@@ -209,6 +220,7 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     tier: 4,
     baseCost: { bricks: 400, glass: 200, coins: 2000 },
     baseYieldPerHour: { steel: 3 },
+    wattUpkeepPerHour: 15, // heaviest industry draw in MVP catalog
     unlock: { kind: "tier", minTier: 4 },
     glyph: "🔩",
     roofColor: "#94a3b8",
@@ -233,6 +245,7 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     tier: 4,
     baseCost: { bricks: 350, coins: 1000, watts: 200 },
     baseYieldPerHour: {},
+    wattUpkeepPerHour: 4,
     multiplier: { target: "reflex", percent: 20 },
     unlock: { kind: "tier", minTier: 4 },
     glyph: "🏟️",
@@ -258,6 +271,7 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     tier: 4,
     baseCost: { bricks: 500, glass: 100, coins: 1500 },
     baseYieldPerHour: {},
+    wattUpkeepPerHour: 6,
     multiplier: { target: "order-match", percent: 20 },
     unlock: { kind: "tier", minTier: 4 },
     glyph: "🔬",
@@ -283,6 +297,7 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     tier: 5,
     baseCost: { bricks: 200, glass: 100, steel: 50, watts: 100 },
     baseYieldPerHour: { watts: 12, cashZl: 1 },
+    wattUpkeepPerHour: -12, // rooftop solar net-supplier
     unlock: { kind: "tier", minTier: 5 },
     glyph: "☀️",
     roofColor: "#eab308",
@@ -307,6 +322,7 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     tier: 6,
     baseCost: { bricks: 200, glass: 300, steel: 200, coins: 5000 },
     baseYieldPerHour: { code: 4, cashZl: 8 },
+    wattUpkeepPerHour: 10, // server racks + open-plan office
     unlock: { kind: "tier", minTier: 6 },
     glyph: "💻",
     roofColor: "#22c55e",
@@ -332,6 +348,7 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     tier: 2,
     baseCost: { bricks: 100, coins: 150 },
     baseYieldPerHour: {},
+    wattUpkeepPerHour: 1,
     unlock: { kind: "always" },
     glyph: "⛪",
     roofColor: "#eab308",
@@ -356,6 +373,7 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     tier: 1,
     baseCost: { bricks: 50, coins: 80 },
     baseYieldPerHour: {},
+    wattUpkeepPerHour: 0,
     unlock: { kind: "always" },
     glyph: "🌳",
     roofColor: "#22c55e",
@@ -380,6 +398,7 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     tier: 2,
     baseCost: { bricks: 80, coins: 120, glass: 30 },
     baseYieldPerHour: {},
+    wattUpkeepPerHour: 1,
     unlock: { kind: "always" },
     glyph: "⛲",
     roofColor: "#0ea5e9",
@@ -404,6 +423,7 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     tier: 8,
     baseCost: { bricks: 1500, glass: 1000, steel: 500, code: 200, coins: 20000 },
     baseYieldPerHour: {},
+    wattUpkeepPerHour: 8, // arena floodlights + hvac
     multiplier: { target: "citywide-all", percent: 5 },
     unlock: { kind: "tier", minTier: 8 },
     glyph: "🛸",

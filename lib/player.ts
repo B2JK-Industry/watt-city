@@ -119,6 +119,12 @@ export type PlayerState = {
     avatar?: string;
     displayName?: string;
   };
+  /** V2 R2.1 — timestamp when the current watt deficit began. null/undefined
+   *  means the city is balanced or in surplus. Set/cleared by
+   *  `refreshWattDeficit()` at every build/upgrade/demolish and tick entry.
+   *  Used to compute brownout severity and the BLOCKER-1 bankruptcy-gate
+   *  grace window (72h). */
+  wattDeficitSince?: number | null;
 };
 
 const STATE_KEY = (username: string) => `xp:player:${username}`;
@@ -143,6 +149,7 @@ export function emptyPlayerState(username: string, now = Date.now()): PlayerStat
     version: PLAYER_SCHEMA_VERSION,
     createdAt: now,
     acknowledgedTier: 1,
+    wattDeficitSince: null,
   };
 }
 
