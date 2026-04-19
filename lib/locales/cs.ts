@@ -480,6 +480,22 @@ const cs: typeof plDict = {
     sponsorsThanks: "Díky: PKO Bank Polski · Tauron · ETHWarsaw · AKMF · Katowicki.Hub.",
     footerHome: "Zpět na úvod",
     footerPrivacy: "Ochrana soukromí",
+    web3Title: "Web3 · soulbound medaile (volitelné)",
+    web3StatusLabel: "Stav:",
+    web3StatusValue:
+      "V rámci ETHSilesia 2026 · testnet deploy na Base Sepolia. Mainnet po auditu (post-pilot).",
+    web3Body:
+      "Úspěchy získané ve hře lze volitelně zapsat jako soulbound NFT (ERC-721) — certifikát, ne spekulativní aktivum. Medaile jsou nepřenosné (nelze je předat, prodat, delegovat). Pro účty pod 16 let je nutný souhlas rodiče (flow V4.6). Odvolání souhlasu = spálení medailí (GDPR Art. 17).",
+    web3TenetsTitle: "Čtyři designové zásady",
+    web3Tenets: [
+      "Soulbound — certifikát, ne trading card. Každý transfer revertuje s `Soulbound`.",
+      "Rodičovský souhlas — hard-gated na serveru. Klient ho nemůže obejít.",
+      "Burn-on-revocation — odvolání automaticky pálí medaile na blockchainu.",
+      "Coinbase Smart Wallet (passkey) — Face ID místo seedphrase. Bezpečné pro dítě.",
+    ],
+    web3LinksLabel: "Plný popis architektury:",
+    web3SubmissionLinkLabel: "submission dokumentace",
+    web3PlanLinkLabel: "plán architektury",
   },
   privacyPage: {
     title: "Ochrana soukromí",
