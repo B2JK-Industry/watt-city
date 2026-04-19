@@ -89,16 +89,18 @@ export function PostGameBreakdown({
   if (!mounted) return null;
 
   return (
+    // No backdrop-click dismiss. Kids routinely fat-fingered the dialog
+    // away before reading the multiplier ladder; the explicit OK button
+    // (autoFocused below) + Escape handler above are the only dismiss
+    // paths. Matches OnboardingTour's interaction pattern.
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="pgb-title"
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 motion-safe:animate-in motion-safe:fade-in"
-      onClick={onClose}
     >
       <div
         className="relative w-full max-w-md border-[3px] border-[var(--ink)] shadow-[6px_6px_0_0_var(--ink)] bg-[var(--surface)] p-5 flex flex-col gap-4"
-        onClick={(e) => e.stopPropagation()}
       >
         <h2
           id="pgb-title"
