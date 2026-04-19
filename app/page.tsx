@@ -14,6 +14,7 @@ import { listActiveAiGamesWithLazyRotation as listActiveAiGames } from "@/lib/ai
 import { xpCapForAnyLang } from "@/lib/ai-pipeline/types";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
+import { ComingSoonBanner } from "@/components/coming-soon-banner";
 
 export const dynamic = "force-dynamic";
 
@@ -89,6 +90,7 @@ export default async function Home() {
     .split(/(§WATTS§|§SINGLE§|§VARSO§)/g);
   return (
     <div className="flex flex-col gap-12 animate-slide-up">
+      <ComingSoonBanner lang={lang} />
       <section className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-8 items-center">
         <div className="flex flex-col gap-6">
           <div className="flex flex-wrap gap-2">

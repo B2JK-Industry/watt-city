@@ -11,6 +11,10 @@ import { listActiveAiGames } from "@/lib/ai-pipeline/publish";
 import { xpCapForAnyLang } from "@/lib/ai-pipeline/types";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
+import {
+  ComingSoonBanner,
+  ComingSoonGrid,
+} from "@/components/coming-soon-banner";
 
 export const dynamic = "force-dynamic";
 
@@ -123,6 +127,8 @@ export default async function GamesHubPage() {
           ))}
         </ul>
       </aside>
+      <ComingSoonBanner lang={lang} />
+      <ComingSoonGrid lang={lang} />
     </div>
   );
 }
