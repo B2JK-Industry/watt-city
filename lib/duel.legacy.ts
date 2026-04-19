@@ -1,3 +1,17 @@
+/* V3.6 — LEGACY, no longer mounted.
+ *
+ * /duel + /api/duel routes were removed in V3.6 because the feature
+ * was orphaned: 6-round math sprint with no ledger credit, no
+ * achievement, no feedback into city progression. Retained as
+ * `lib/duel.legacy.ts` for git history only — a future "Mądry Wybór"
+ * async scenario feature (see docs/decisions/001-v3-duel-removal-and-
+ * future.md) will design around the player-first finance lesson
+ * rather than reviving the speed-sprint frame.
+ *
+ * If this file is imported from anywhere outside a test/ADR, that's
+ * a regression — grep should only hit comments + this header.
+ */
+
 import { kvGet, kvSet } from "@/lib/redis";
 
 export const DUEL_TTL_SECONDS = 60 * 60 * 6; // 6 hours
