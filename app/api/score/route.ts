@@ -17,7 +17,7 @@ import {
 import { creditResources, getPlayerState } from "@/lib/player";
 import { readEconomy, dailyYieldKey, dayBucket } from "@/lib/economy";
 import { kvGet, kvSet } from "@/lib/redis";
-import { scoreMultiplier } from "@/lib/multipliers";
+import { scoreMultiplier, scoreMultiplierBreakdown } from "@/lib/multipliers";
 import { sweepAchievements } from "@/lib/achievements";
 import { recordEvent } from "@/lib/analytics";
 
@@ -88,13 +88,17 @@ export async function POST(request: NextRequest) {
   // exact transition can happen at most once per player.
   let resources = null as Awaited<ReturnType<typeof getPlayerState>>["resources"] | null;
   let capped = false;
+  // HIGH-4: expose the breakdown so the post-game modal can render the
+  // ladder; the final number the modal shows is guaranteed to match the
+  // credited amount because scoreMultiplier reads from this helper.
+  let multBreakdown: ReturnType<typeof scoreMultiplierBreakdown> | null = null;
   if (xpResult.delta > 0) {
     const y = yieldForGame(gameId, aiKind);
     if (y) {
       const state = await getPlayerState(session.username);
-      // Apply score-time kind multipliers (Biblioteka/Gimnazjum/Centrum/Spodek).
-      // Delta is in xp terms; multiplier scales resource yield on top.
-      const mult = scoreMultiplier(state.buildings, aiKind ?? gameId);
+      multBreakdown = scoreMultiplierBreakdown(state.buildings, aiKind ?? gameId);
+      const mult = multBreakdown.finalMultiplier;
+      void scoreMultiplier; // keep import for external callers unchanged
       const rawBase = resourceDeltaFromYield(xpResult.delta, y);
       const raw: Partial<Record<ResourceKey, number>> = {};
       for (const [k, v] of Object.entries(rawBase) as [ResourceKey, number][]) {
@@ -169,5 +173,6 @@ export async function POST(request: NextRequest) {
     gameStats: recorded.gameStats,
     resources,
     capped,
+    multBreakdown,
   });
 }
