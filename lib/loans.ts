@@ -320,6 +320,14 @@ export async function repayExtra(
 
 // Called from tick.ts (Phase 2: wire up). Walks every active loan, pays
 // whatever's due, marks misses, triggers default on 3 consecutive miss.
+//
+// V2 R2.2 — repayment priority:
+//   1) pay from cashZl (canonical cash resource)
+//   2) fall back to coins at 1:1 if cashZl falls short
+//   3) if combined cash+coins < payment → miss
+// Rationale: kids recognize "monety = mała gotówka, W$ = oszczędności";
+// letting tick-time cashflow convert draws them toward the emergency-
+// fund lesson rather than hard-failing the loan on the first low month.
 export async function processLoanPayments(
   state: PlayerState,
   now = Date.now(),
@@ -332,14 +340,25 @@ export async function processLoanPayments(
       const dueMonth = loan.monthsPaid + 1;
       const sourceId = `loan_payment:${loan.id}:${dueMonth}`;
       const payment = Math.min(loan.monthlyPayment, loan.outstanding);
-      if ((state.resources.cashZl ?? 0) >= payment) {
+      const owed = Math.ceil(payment);
+      const cash = state.resources.cashZl ?? 0;
+      const coins = state.resources.coins ?? 0;
+      if (cash + coins >= owed) {
+        const fromCash = Math.min(cash, owed);
+        const fromCoins = owed - fromCash;
+        const delta: Partial<Resources> = {};
+        if (fromCash > 0) delta.cashZl = -fromCash;
+        if (fromCoins > 0) delta.coins = -fromCoins;
         await creditResources(
           state,
           "loan_payment",
-          { cashZl: -Math.ceil(payment) },
-          `mortgage payment ${dueMonth}/${loan.termMonths} on ${loan.id}`,
+          delta,
+          `${loan.type} payment ${dueMonth}/${loan.termMonths} on ${loan.id}` +
+            (fromCoins > 0
+              ? ` (cashZl ${fromCash} + coins ${fromCoins} fallback)`
+              : ""),
           sourceId,
-          { loanId: loan.id, month: dueMonth },
+          { loanId: loan.id, month: dueMonth, fromCash, fromCoins },
         );
         loan.outstanding = Math.max(0, loan.outstanding - payment);
         loan.monthsPaid += 1;
@@ -359,7 +378,10 @@ export async function processLoanPayments(
           break;
         }
       } else {
-        // Missed payment — advance clock but don't credit/debit anything.
+        // Missed — record the month in latePayments so the pattern survives
+        // even after a future successful month resets missedConsecutive.
+        if (!loan.latePayments) loan.latePayments = [];
+        loan.latePayments.push(dueMonth);
         loan.missedConsecutive += 1;
         loan.nextPaymentDueAt += MONTH_MS;
         state.creditScore = clampScore(state.creditScore + SCORE_DELTA_MISSED);
@@ -399,6 +421,63 @@ export async function processLoanPayments(
     await savePlayerState(state);
   }
   return { processed, defaulted };
+}
+
+// ---------------------------------------------------------------------------
+// V2 R2.2 — "Kredit v ohrození" projection helper
+// ---------------------------------------------------------------------------
+
+/** Project combined cash+coins accrual over the next N days at the current
+ *  cashflow rate. R2.2.2 UI banner fires when this total is less than the
+ *  next monthly payment. Rate comes from monthlyCashflow converted from
+ *  monthly back to daily (÷30). */
+export function projectedCashflow(
+  state: PlayerState,
+  days: number,
+): number {
+  if (!Number.isFinite(days) || days <= 0) return 0;
+  const daily = monthlyCashflow(state) / DAYS_PER_MONTH;
+  return Math.floor(daily * days);
+}
+
+export type LoanRiskAlert = {
+  loanId: string;
+  monthsUntilDue: number;
+  projectedAvailable: number;
+  paymentDue: number;
+  shortfall: number;
+};
+
+/** All active loans whose next payment will likely miss given projected
+ *  cashflow + current balance. Consumed by R2.3 cashflow HUD's amber
+ *  banner. */
+export function activeLoanRisk(
+  state: PlayerState,
+  now = Date.now(),
+  horizonDays = 7,
+): LoanRiskAlert[] {
+  const alerts: LoanRiskAlert[] = [];
+  const projected =
+    (state.resources.cashZl ?? 0) +
+    (state.resources.coins ?? 0) +
+    projectedCashflow(state, horizonDays);
+  for (const loan of state.loans) {
+    if (loan.status !== "active") continue;
+    const msUntilDue = loan.nextPaymentDueAt - now;
+    if (msUntilDue > horizonDays * 24 * 60 * 60 * 1000) continue;
+    if (msUntilDue < 0) continue;
+    const owed = Math.ceil(Math.min(loan.monthlyPayment, loan.outstanding));
+    if (projected < owed) {
+      alerts.push({
+        loanId: loan.id,
+        monthsUntilDue: msUntilDue / MONTH_MS,
+        projectedAvailable: projected,
+        paymentDue: owed,
+        shortfall: owed - projected,
+      });
+    }
+  }
+  return alerts;
 }
 
 function clampScore(n: number): number {

@@ -92,6 +92,11 @@ export type Loan = {
   monthsPaid: number;
   missedConsecutive: number;
   status: LoanStatus;
+  /** V2 R2.2 — month indices (1..termMonths) where payment was missed.
+   *  Makes the payment-history pattern visible on the profile page even
+   *  after missedConsecutive resets on a later successful month. Optional
+   *  for legacy records; readers treat missing as []. */
+  latePayments?: number[];
 };
 
 export type PlayerState = {
