@@ -4,6 +4,8 @@ import { getSession } from "@/lib/session";
 import { getPlayerState } from "@/lib/player";
 import { upgradeBuilding } from "@/lib/buildings";
 import { rateLimit } from "@/lib/rate-limit";
+import { isBuildingLocked } from "@/lib/building-lock";
+import { isFlagEnabled } from "@/lib/feature-flags";
 
 const BodySchema = z.object({
   instanceId: z.string().min(1).max(64),
@@ -20,6 +22,15 @@ export async function POST(request: NextRequest) {
       { ok: false, error: "rate-limited", resetAt: rl.resetAt },
       { status: 429 },
     );
+  }
+  // V3.4 score-lock
+  if (await isFlagEnabled("v3_score_lock", session.username)) {
+    if (await isBuildingLocked(session.username)) {
+      return Response.json(
+        { ok: false, error: "score-in-progress" },
+        { status: 409 },
+      );
+    }
   }
   let body;
   try {

@@ -162,15 +162,37 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
     router.refresh();
   }, [router]);
 
+  // V3.4 — retry once after 500ms when server returns 409 "score-in-progress"
+  // so a concurrent /api/score POST that briefly held the building lock
+  // doesn't force the user to click the mutation button twice.
+  const postWithRetry = useCallback(
+    async (path: string, body: unknown): Promise<Response> => {
+      const res = await fetch(path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (res.status !== 409) return res;
+      const j = await res.clone().json().catch(() => null);
+      if (!j || j.error !== "score-in-progress") return res;
+      await new Promise((r) => setTimeout(r, 500));
+      return fetch(path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+    },
+    [],
+  );
+
   const doPlace = useCallback(
     async (slotId: number, catalogId: string) => {
       setBusy(true);
       setError(null);
       try {
-        const res = await fetch("/api/buildings/place", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ slotId, catalogId }),
+        const res = await postWithRetry("/api/buildings/place", {
+          slotId,
+          catalogId,
         });
         const j = await res.json();
         if (!j.ok) {
@@ -183,7 +205,7 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
         setBusy(false);
       }
     },
-    [refresh],
+    [refresh, postWithRetry],
   );
 
   const doUpgrade = useCallback(
@@ -191,10 +213,8 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
       setBusy(true);
       setError(null);
       try {
-        const res = await fetch("/api/buildings/upgrade", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ instanceId }),
+        const res = await postWithRetry("/api/buildings/upgrade", {
+          instanceId,
         });
         const j = await res.json();
         if (!j.ok) setError(j.error);
@@ -203,7 +223,7 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
         setBusy(false);
       }
     },
-    [refresh],
+    [refresh, postWithRetry],
   );
 
   const doDemolish = useCallback(
@@ -212,10 +232,8 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
       setBusy(true);
       setError(null);
       try {
-        const res = await fetch("/api/buildings/demolish", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ instanceId }),
+        const res = await postWithRetry("/api/buildings/demolish", {
+          instanceId,
         });
         const j = await res.json();
         if (!j.ok) setError(j.error);
@@ -224,7 +242,7 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
         setBusy(false);
       }
     },
-    [refresh],
+    [refresh, postWithRetry],
   );
 
   const selectedSlotDef = useMemo(() => {
