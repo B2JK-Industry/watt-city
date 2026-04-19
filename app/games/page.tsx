@@ -96,7 +96,7 @@ export default async function GamesHubPage() {
           })}
         </p>
       </header>
-      <CityScene games={cityGames} loggedIn={Boolean(session)} aiGames={cityAiGames} />
+      <CityScene games={cityGames} loggedIn={Boolean(session)} aiGames={cityAiGames} lang={lang} />
       <aside className="card p-5 flex flex-col gap-3 text-sm text-zinc-300">
         <h2 className="brutal-heading text-lg">{t.buildingsMap}</h2>
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-1.5">

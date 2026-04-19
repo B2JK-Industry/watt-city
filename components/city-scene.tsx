@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { type GameMeta } from "@/lib/games";
 import { LiveCountdown } from "@/components/live-countdown";
+import { type Lang, dictFor } from "@/lib/i18n";
 
 // Night panorama of Katowice — SVG viewBox is `VB_W x VB_H`. Buildings are
 // placed on a ground line at `GROUND`. Each game gets a unique silhouette.
@@ -35,6 +36,10 @@ type Props = {
   compact?: boolean;     // smaller height
   aiGame?: CityAiGame;   // deprecated: single-AI-game path — pass aiGames instead
   aiGames?: CityAiGame[]; // one entry per active AI game (newest first); up to 3 slots
+  /** Viewer language. Labels route through `lib/locales/${lang}.ts`
+   * — no hardcoded SVG aria-label. Defaults to pl so older callers
+   * keep rendering. */
+  lang?: Lang;
 };
 
 export function CityScene({
@@ -44,10 +49,12 @@ export function CityScene({
   compact = false,
   aiGame,
   aiGames,
+  lang = "pl",
 }: Props) {
   const activeAi: CityAiGame[] = aiGames ?? (aiGame ? [aiGame] : []);
   const map = new Map(games?.map((g) => [g.meta.id, g]) ?? []);
   const get = (id: string) => map.get(id);
+  const dict = dictFor(lang);
 
   return (
     <div
@@ -63,7 +70,7 @@ export function CityScene({
         preserveAspectRatio="xMidYMid meet"
         className="absolute inset-0 w-full h-full"
         role="img"
-        aria-label="Nočná panoráma Katowíc: 9 budov predstavujúcich minihry XP Arény"
+        aria-label={dict.hero.scenesTitle}
       >
         <defs>
           <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
