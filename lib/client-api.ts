@@ -20,6 +20,14 @@ export type ScoreSuccess = {
   isNewBest: boolean;
   previousBest: number;
   delta: number;
+  /** Cleanup issue 3 — post-game modal data. Server emits `multBreakdown`
+   *  when the `v2_post_game_modal` flag resolves true for the user; null
+   *  otherwise. RoundResult mounts PostGameBreakdown iff non-null. */
+  multBreakdown?: import("@/lib/multipliers").MultBreakdown | null;
+  /** Credited resource delta for this score (non-zero only on new best). */
+  resources?: Partial<Record<string, number>> | null;
+  /** True when the daily per-kind yield cap clipped. */
+  capped?: boolean;
 };
 
 export type ScoreFailure = { ok: false; error: string };

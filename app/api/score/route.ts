@@ -87,6 +87,14 @@ export async function POST(request: NextRequest) {
   const lockToken = lockEnabled
     ? await acquireBuildingLock(session.username)
     : null;
+  // Cleanup issue 3: server-side gate for the post-game modal. When the
+  // flag is off (or this user's percentile bucket misses) we drop
+  // `multBreakdown` from the response body so the client's RoundResult
+  // renders its minimal legacy view instead of mounting PostGameBreakdown.
+  const postGameModalEnabled = await isFlagEnabled(
+    "v2_post_game_modal",
+    session.username,
+  );
   let response: Response;
   try {
   const [xpResult, recorded] = await Promise.all([
@@ -185,7 +193,7 @@ export async function POST(request: NextRequest) {
     gameStats: recorded.gameStats,
     resources,
     capped,
-    multBreakdown,
+    multBreakdown: postGameModalEnabled ? multBreakdown : null,
   });
   } finally {
     if (lockToken) {
