@@ -450,6 +450,47 @@ export default async function AboutPage() {
         </div>
       </section>
 
+      {/* -------- Web3 (opt-in, ETHSilesia 2026) -------- */}
+      <section className="flex flex-col gap-3 card p-5 border-[var(--neo-cyan)]">
+        <div className="flex flex-wrap items-baseline gap-2">
+          <h2 className="brutal-heading text-2xl">{t.web3Title}</h2>
+          <span className="text-[10px] uppercase tracking-widest opacity-70">
+            {t.web3StatusLabel} {t.web3StatusValue}
+          </span>
+        </div>
+        <p className="text-sm text-zinc-300 leading-relaxed">{t.web3Body}</p>
+        <div className="flex flex-col gap-1">
+          <h3 className="text-xs uppercase tracking-widest font-black">
+            {t.web3TenetsTitle}
+          </h3>
+          <ul className="list-disc pl-6 space-y-1 text-sm text-zinc-300">
+            {t.web3Tenets.map((line, i) => (
+              <li key={i}>{line}</li>
+            ))}
+          </ul>
+        </div>
+        <p className="text-xs opacity-70">
+          {t.web3LinksLabel}{" "}
+          <a
+            href="https://github.com/B2JK-Industry/xp-arena-ETHSilesia2026/blob/main/docs/web3/SUBMISSION.md"
+            className="underline"
+            target="_blank"
+            rel="noreferrer"
+          >
+            {t.web3SubmissionLinkLabel}
+          </a>
+          {" · "}
+          <a
+            href="https://github.com/B2JK-Industry/xp-arena-ETHSilesia2026/blob/main/docs/web3/PLAN.md"
+            className="underline"
+            target="_blank"
+            rel="noreferrer"
+          >
+            {t.web3PlanLinkLabel}
+          </a>
+        </p>
+      </section>
+
       {/* -------- Roadmap -------- */}
       <section className="flex flex-col gap-4">
         <h2 className="brutal-heading text-2xl">{t.roadmapTitle}</h2>
