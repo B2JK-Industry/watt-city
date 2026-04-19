@@ -546,6 +546,9 @@ const en: typeof plDict = {
       "The platform targets Gen Z (15–20). For users under 16 (the PL GDPR consent threshold) we recommend parental consent. We don't collect any personal data that would identify a child outside the game.",
     disclaimerBody:
       "Watt City was built during ETHSilesia 2026 (April 17–19, 2026) in Katowice. It's a prototype — financial advice in the games does NOT constitute investment advice under MiFID II. Game content is for educational purposes and verified against publicly available sources, but doesn't replace a conversation with a bank, advisor, or KNF (Polish Financial Supervision Authority).",
+    web3Title: "On-chain data (optional)",
+    web3Body:
+      "If you activate soulbound medals in /profile (requires parental consent for accounts < 16), a limited dataset reaches a public blockchain (Base, Ethereum L2): your wallet address, a deterministic tokenId (hash of username + achievement id), and an IPFS link to medal metadata (achievement name, icon). We do not send email, name, session id, or any PII on-chain. Medals are non-transferable (soulbound). Revoking consent triggers `burn(tokenId)` for every previously minted medal — the on-chain link disappears (the Transfer → 0x0 event is public). Opt-in, off by default. Details in `docs/web3/PLAN.md`.",
     version: "Version 1.0 · 2026-04-18 ·",
     backHome: "Back to home",
     dataFields: {
