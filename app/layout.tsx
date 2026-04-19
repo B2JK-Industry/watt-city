@@ -161,7 +161,15 @@ export default async function RootLayout({
                   pl: "Awans!",
                   uk: "Підвищення!",
                   cs: "Povýšení!",
-                  en: "Tier up!",
+                  en: "Level up!",
+                }[lang]
+              }
+              levelWord={
+                {
+                  pl: "Poziom",
+                  uk: "Рівень",
+                  cs: "Úroveň",
+                  en: "Level",
                 }[lang]
               }
               dismissLabel={
@@ -172,17 +180,11 @@ export default async function RootLayout({
                   en: "Dismiss",
                 }[lang]
               }
-              titleByTier={{
-                1: { pl: "Drewniana chata", uk: "Хатинка", cs: "Dřevěná chata", en: "Wooden Shed" }[lang]!,
-                2: { pl: "Rodzinny dom", uk: "Сімейний дім", cs: "Rodinný dům", en: "Family Home" }[lang]!,
-                3: { pl: "Kamienica", uk: "Кам’яниця", cs: "Činžák", en: "Tenement" }[lang]!,
-                4: { pl: "Solarna kamienica", uk: "Сонячна кам’яниця", cs: "Solární dům", en: "Solar House" }[lang]!,
-                5: { pl: "Biurowiec", uk: "Офіс", cs: "Kancelář", en: "Office" }[lang]!,
-                6: { pl: "Mrakodrap", uk: "Хмарочос", cs: "Mrakodrap", en: "Skyscraper" }[lang]!,
-                7: { pl: "Altus Tower", uk: "Altus Tower", cs: "Altus Tower", en: "Altus Tower" }[lang]!,
-                8: { pl: "Spodek", uk: "Сподек", cs: "Spodek", en: "Spodek Arena" }[lang]!,
-                9: { pl: "Varso Tower — endgame", uk: "Varso Tower — ендгейм", cs: "Varso Tower — endgame", en: "Varso Tower — endgame" }[lang]!,
-              }}
+              /* Cleanup issue 2 — `titleByTier` map dropped. The V1 tier-
+                 name vocabulary leaked to every logged-in user on level-up.
+                 V3.1 city-first progression doesn't map 1-to-1 onto the
+                 tier API's 1-9 scale, so the toast shows just "Poziom N" —
+                 the concept the user sees on their nav badge + CityLevelCard. */
             />
           </>
         )}

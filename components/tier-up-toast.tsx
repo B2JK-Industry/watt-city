@@ -4,8 +4,14 @@ import { useEffect, useState } from "react";
 import { Confetti } from "@/components/confetti";
 
 type Props = {
-  titleByTier: Record<number, string>;
-  headline: string; // "Tier-up!" label
+  /** Optional map of tier → display title. Cleanup issue 2 dropped the
+   *  V1 tier-name table ("Drewniana chata" / "Altus Tower" etc.) that
+   *  leaked Polish+Slovak identity. Callers may still pass a custom
+   *  map; when omitted the toast shows just "Poziom {tier}". */
+  titleByTier?: Record<number, string>;
+  /** Localized fallback like "Poziom" / "Рівень" / "Úroveň" / "Level". */
+  levelWord?: string;
+  headline: string; // "Awans!" headline
   dismissLabel: string;
 };
 
@@ -14,7 +20,12 @@ type Props = {
 // acknowledgement so the same tier-up doesn't replay. The 20s interval lines
 // up with the ResourceBar render pattern — tier-up lands within one cycle
 // after the player's upgrade POST.
-export function TierUpToast({ titleByTier, headline, dismissLabel }: Props) {
+export function TierUpToast({
+  titleByTier,
+  levelWord,
+  headline,
+  dismissLabel,
+}: Props) {
   const [visible, setVisible] = useState(false);
   const [tier, setTier] = useState<number | null>(null);
 
@@ -42,7 +53,8 @@ export function TierUpToast({ titleByTier, headline, dismissLabel }: Props) {
   }, []);
 
   if (!visible || tier === null) return null;
-  const title = titleByTier[tier] ?? `Tier ${tier}`;
+  const word = levelWord ?? "Level";
+  const customTitle = titleByTier?.[tier];
 
   return (
     <div
@@ -60,7 +72,8 @@ export function TierUpToast({ titleByTier, headline, dismissLabel }: Props) {
           <div className="flex flex-col">
             <strong className="uppercase tracking-wider text-xs">{headline}</strong>
             <span className="text-sm font-black">
-              Tier {tier} — {title}
+              {word} {tier}
+              {customTitle ? ` — ${customTitle}` : ""}
             </span>
           </div>
         </div>
