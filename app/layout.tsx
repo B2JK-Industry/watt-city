@@ -16,6 +16,7 @@ import { resolveTheme } from "@/lib/theme";
 import { getSession } from "@/lib/session";
 import { userStats } from "@/lib/leaderboard";
 import { levelFromXP, tierForLevel } from "@/lib/level";
+import { cityLevelFromState } from "@/lib/city-level";
 import { dictFor, LANG_HTML } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 import { getPlayerState } from "@/lib/player";
@@ -73,15 +74,27 @@ export default async function RootLayout({
     const preState = await getPlayerState(session.username);
     await ensureSignupGift(preState);
   }
-  const [stats, player, hudEnabled] = await Promise.all([
+  const [stats, player, hudEnabled, cityFirstEnabled] = await Promise.all([
     session ? userStats(session.username) : Promise.resolve(null),
     session ? getPlayerState(session.username) : Promise.resolve(null),
     session
       ? isFlagEnabled("v2_cashflow_hud", session.username)
       : Promise.resolve(false),
+    session
+      ? isFlagEnabled("v3_city_first", session.username)
+      : Promise.resolve(true),
   ]);
   const xp = stats?.globalXP ?? 0;
   const level = levelFromXP(xp);
+  // V3.1: nav badge shows city-level + grid state when flag is on; falls back
+  // to the legacy tier emoji + name for anyone the flag has flipped off.
+  const navTitle = (() => {
+    if (!session) return null;
+    if (cityFirstEnabled && player) {
+      return cityLevelFromState(player).badgeLabel;
+    }
+    return `${tierForLevel(level.level).emoji} ${tierForLevel(level.level).name}`;
+  })();
   return (
     <html
       lang={LANG_HTML[lang]}
@@ -101,7 +114,7 @@ export default async function RootLayout({
           rank={stats?.globalRank ?? null}
           level={level.level}
           levelProgress={level.progress}
-          title={session ? `${tierForLevel(level.level).emoji} ${tierForLevel(level.level).name}` : null}
+          title={navTitle}
           lang={lang}
           dict={dict}
           resources={player?.resources ?? null}

@@ -67,6 +67,18 @@ export const DEFAULT_FLAGS: FlagsBundle = {
   // whose percentile bucket is below this. Defaults OFF — flipping
   // requires an explicit admin action.
   v2_migration_eligible: { mode: "off" },
+
+  // ---------------------------------------------------------------------------
+  // V3 refactor toggles. All default ON — the V3 surface is the one we want
+  // in prod. Kept as flags so ops can flip off per-user if a regression is
+  // reported without blocking the whole deploy.
+  // ---------------------------------------------------------------------------
+  v3_city_first: { mode: "on" }, // CITY_TIERS → city-first badge + dashboard
+  v3_starter_kit: { mode: "on" }, // 50 coins + 50 bricks at signup
+  v3_brownout_panel: { mode: "on" }, // watt-deficit banner + rescue CTA
+  v3_score_lock: { mode: "on" }, // building-mutation lock during /api/score
+  v3_loan_calendar: { mode: "on" }, // loan-schedule widget + auto-repay toggle
+  v3_loan_comparison: { mode: "on" }, // /loans/compare ladder
 };
 
 /** Compute the 0..99 percentile bucket for a stable userId hash. */
