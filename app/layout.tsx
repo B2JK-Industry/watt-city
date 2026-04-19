@@ -12,6 +12,8 @@ import { PwaRegister } from "@/components/pwa-register";
 import { BottomTabs } from "@/components/bottom-tabs";
 import { CashflowHud } from "@/components/cashflow-hud";
 import { buildHudBundle } from "@/lib/hud-data";
+import { WattDeficitPanel } from "@/components/watt-deficit-panel";
+import { deficitState } from "@/lib/watts";
 import { resolveTheme } from "@/lib/theme";
 import { getSession } from "@/lib/session";
 import { userStats } from "@/lib/leaderboard";
@@ -74,16 +76,20 @@ export default async function RootLayout({
     const preState = await getPlayerState(session.username);
     await ensureSignupGift(preState);
   }
-  const [stats, player, hudEnabled, cityFirstEnabled] = await Promise.all([
-    session ? userStats(session.username) : Promise.resolve(null),
-    session ? getPlayerState(session.username) : Promise.resolve(null),
-    session
-      ? isFlagEnabled("v2_cashflow_hud", session.username)
-      : Promise.resolve(false),
-    session
-      ? isFlagEnabled("v3_city_first", session.username)
-      : Promise.resolve(true),
-  ]);
+  const [stats, player, hudEnabled, cityFirstEnabled, brownoutPanelEnabled] =
+    await Promise.all([
+      session ? userStats(session.username) : Promise.resolve(null),
+      session ? getPlayerState(session.username) : Promise.resolve(null),
+      session
+        ? isFlagEnabled("v2_cashflow_hud", session.username)
+        : Promise.resolve(false),
+      session
+        ? isFlagEnabled("v3_city_first", session.username)
+        : Promise.resolve(true),
+      session
+        ? isFlagEnabled("v3_brownout_panel", session.username)
+        : Promise.resolve(false),
+    ]);
   const xp = stats?.globalXP ?? 0;
   const level = levelFromXP(xp);
   // V3.1: nav badge shows city-level + grid state when flag is on; falls back
@@ -109,6 +115,9 @@ export default async function RootLayout({
         <WebVitalsReporter />
         <PwaRegister lang={lang} />
         <CookieConsent lang={lang} />
+        {session && player && brownoutPanelEnabled && (
+          <WattDeficitPanel deficit={deficitState(player)} lang={lang} />
+        )}
         <SiteNav
           username={session?.username ?? null}
           xp={xp}

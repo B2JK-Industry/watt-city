@@ -133,3 +133,79 @@ export function isInWattRescueGrace(
   const h = deficitHoursAt(state, at);
   return h > 0 && h < RESCUE_GRACE_HOURS;
 }
+
+// ---------------------------------------------------------------------------
+// V3.3 — deficit state snapshot (surfaces UI-level milestones + rescue hints)
+// ---------------------------------------------------------------------------
+
+export type DeficitMilestone =
+  | "grace" // <24h (full yield)
+  | "50-percent-yield" // 24-48h
+  | "25-percent-yield" // 48-72h
+  | "bankruptcy-eligible"; // ≥72h
+
+export type DeficitState = {
+  inDeficit: boolean;
+  hoursInDeficit: number;
+  /** Label of the NEXT milestone the player is approaching. null at 72h+. */
+  nextMilestone: DeficitMilestone | null;
+  /** Hours until `nextMilestone` (positive number, fractional). null at 72h+. */
+  hoursToNextMilestone: number | null;
+  /** Absolute ms timestamp of the next milestone boundary. null at 72h+. */
+  nextMilestoneAt: number | null;
+  /** Current brownout multiplier (1 / 0.5 / 0.25). */
+  brownout: number;
+  /** True for the 72h rescue grace window — R7.3 restructuring blocked. */
+  rescueAvailable: boolean;
+};
+
+/** V3.3 — full deficit snapshot for the brownout panel. Wraps
+ *  `cityWattBalance` + `deficitHoursAt` + `brownoutFactor` into the
+ *  shape the UI needs so callers don't re-derive milestones. */
+export function deficitState(
+  state: Pick<PlayerState, "buildings" | "wattDeficitSince">,
+  now = Date.now(),
+): DeficitState {
+  const balance = cityWattBalance(state.buildings);
+  const hoursInDeficit = deficitHoursAt(state, now);
+  const brownout = brownoutFactor(hoursInDeficit);
+  if (!balance.inDeficit || state.wattDeficitSince == null) {
+    return {
+      inDeficit: false,
+      hoursInDeficit: 0,
+      nextMilestone: null,
+      hoursToNextMilestone: null,
+      nextMilestoneAt: null,
+      brownout: 1,
+      rescueAvailable: false,
+    };
+  }
+  let nextMilestone: DeficitMilestone | null;
+  let nextBoundary: number;
+  if (hoursInDeficit < DEFICIT_GRACE_HOURS) {
+    nextMilestone = "50-percent-yield";
+    nextBoundary = DEFICIT_GRACE_HOURS;
+  } else if (hoursInDeficit < DEFICIT_TIER2_HOURS) {
+    nextMilestone = "25-percent-yield";
+    nextBoundary = DEFICIT_TIER2_HOURS;
+  } else if (hoursInDeficit < RESCUE_GRACE_HOURS) {
+    nextMilestone = "bankruptcy-eligible";
+    nextBoundary = RESCUE_GRACE_HOURS;
+  } else {
+    nextMilestone = null;
+    nextBoundary = 0;
+  }
+  return {
+    inDeficit: true,
+    hoursInDeficit,
+    nextMilestone,
+    hoursToNextMilestone:
+      nextMilestone == null ? null : nextBoundary - hoursInDeficit,
+    nextMilestoneAt:
+      nextMilestone == null
+        ? null
+        : state.wattDeficitSince + nextBoundary * 60 * 60 * 1000,
+    brownout,
+    rescueAvailable: hoursInDeficit > 0 && hoursInDeficit < RESCUE_GRACE_HOURS,
+  };
+}
