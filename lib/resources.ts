@@ -1,6 +1,16 @@
 /* Watt City resource model. Single source of truth for resource types,
  * colors, labels, and game→yield mapping. Consumed by: ledger, score route,
  * building catalog, UI ResourceBar, backfill script. See docs/ECONOMY.md §1–2.
+ *
+ * V2 refactor (R1.1): the player-facing surface collapses from 7 resources
+ * to 4 (watts, coins, bricks, cashZl). The `glass`/`steel`/`code` keys
+ * remain in the TypeScript union + legacy dicts so that stored player
+ * state from V1 deserialises without shape loss — new writes never
+ * produce them, and the value-based migration in R9.1 converts residual
+ * balances into coins via ledger-derived rates (see REVIEW BLOCKER-2).
+ * `creditScore` stays on `PlayerState`, NOT on Resources (backlog R1.1.1
+ * mixed them but they're conceptually distinct — score is a derived
+ * trust metric, resources are earned currencies).
  */
 
 import { LANGS, type Lang } from "@/lib/i18n";
@@ -9,13 +19,15 @@ export type ResourceKey =
   | "watts"
   | "coins"
   | "bricks"
-  | "glass"
-  | "steel"
-  | "code"
+  | "glass" // deprecated: kept for V1 data compat, migrated to coins in R9.1
+  | "steel" // deprecated
+  | "code" // deprecated
   | "cashZl";
 
 export type Resources = Record<ResourceKey, number>;
 
+// All keys — used for clamp/add math so legacy stored values don't get
+// silently truncated before the R9.1 migration runs.
 export const RESOURCE_KEYS: ResourceKey[] = [
   "watts",
   "coins",
@@ -24,6 +36,21 @@ export const RESOURCE_KEYS: ResourceKey[] = [
   "steel",
   "code",
   "cashZl",
+];
+
+// Active surface — what the V2 player sees (ResourceBar, post-game modal,
+// daily cap). Games NEVER yield a deprecated key on the V2 path.
+export const ACTIVE_RESOURCE_KEYS: ResourceKey[] = [
+  "watts",
+  "coins",
+  "bricks",
+  "cashZl",
+];
+
+export const DEPRECATED_RESOURCE_KEYS: ResourceKey[] = [
+  "glass",
+  "steel",
+  "code",
 ];
 
 export const ZERO_RESOURCES: Resources = {
@@ -43,6 +70,9 @@ export type ResourceDef = {
   icon: string;
   color: string;
   mvpActive: boolean; // false → "Wkrótce" in Phase 1, unlocks in Phase 2
+  /** V2: deprecated means the key stays in storage for migration but no
+   *  new game/building ever produces it and the ResourceBar hides it. */
+  deprecated?: boolean;
   labels: Record<Lang, string>;
   descriptions: Record<Lang, string>; // hover tooltip: "how earned"
 };
@@ -106,7 +136,8 @@ export const RESOURCE_DEFS: Record<ResourceKey, ResourceDef> = {
     key: "glass",
     icon: "🪟",
     color: "#22d3ee",
-    mvpActive: true,
+    mvpActive: false,
+    deprecated: true,
     labels: {
       pl: "Szkło",
       uk: "Скло",
@@ -124,7 +155,8 @@ export const RESOURCE_DEFS: Record<ResourceKey, ResourceDef> = {
     key: "steel",
     icon: "🔩",
     color: "#94a3b8",
-    mvpActive: true,
+    mvpActive: false,
+    deprecated: true,
     labels: {
       pl: "Stal",
       uk: "Сталь",
@@ -142,7 +174,8 @@ export const RESOURCE_DEFS: Record<ResourceKey, ResourceDef> = {
     key: "code",
     icon: "💾",
     color: "#22c55e",
-    mvpActive: true,
+    mvpActive: false,
+    deprecated: true,
     labels: {
       pl: "Kod",
       uk: "Код",
@@ -188,7 +221,8 @@ export type ResourceYield = {
   secondaryRatio?: number;
 };
 
-// Evergreen game ids → their primary resource yield.
+// Evergreen game ids → their primary resource yield. V2: only 4-resource
+// set produced. Glass/steel/code yields from V1 now route to coins.
 export const EVERGREEN_YIELDS: Record<string, ResourceYield> = {
   "energy-dash": { primary: "watts", primaryRatio: 1 },
   "power-flip": { primary: "watts", primaryRatio: 1, secondary: "coins", secondaryRatio: 0.5 },
@@ -201,26 +235,28 @@ export const EVERGREEN_YIELDS: Record<string, ResourceYield> = {
   "word-scramble": { primary: "bricks", primaryRatio: 1 },
 };
 
-// AI game kinds → yields (ECONOMY.md §2 matrix, proportional to xp delta).
+// AI game kinds → yields. V2: glass/steel/code redirected to coins at
+// 0.8× (reflects review BLOCKER-2 rationale — those kinds generally
+// produced smaller numbers per xp unit than coins games).
 export const AI_KIND_YIELDS: Record<string, ResourceYield> = {
   quiz: { primary: "coins", primaryRatio: 1 },
   scramble: { primary: "bricks", primaryRatio: 1 },
-  "price-guess": { primary: "glass", primaryRatio: 1, secondary: "coins", secondaryRatio: 0.5 },
+  "price-guess": { primary: "coins", primaryRatio: 0.8, secondary: "bricks", secondaryRatio: 0.4 },
   "true-false": { primary: "coins", primaryRatio: 1 },
-  "match-pairs": { primary: "bricks", primaryRatio: 1, secondary: "glass", secondaryRatio: 0.5 },
-  order: { primary: "glass", primaryRatio: 1 },
+  "match-pairs": { primary: "bricks", primaryRatio: 1, secondary: "coins", secondaryRatio: 0.4 },
+  order: { primary: "coins", primaryRatio: 0.8, secondary: "bricks", secondaryRatio: 0.4 },
   memory: { primary: "bricks", primaryRatio: 1 },
   "fill-in-blank": { primary: "bricks", primaryRatio: 1, secondary: "coins", secondaryRatio: 0.5 },
   "calc-sprint": { primary: "watts", primaryRatio: 1 },
-  "portfolio-pick": { primary: "glass", primaryRatio: 1, secondary: "coins", secondaryRatio: 0.5 },
+  "portfolio-pick": { primary: "coins", primaryRatio: 1, secondary: "cashZl", secondaryRatio: 0.5 },
   "budget-allocate": { primary: "coins", primaryRatio: 1, secondary: "cashZl", secondaryRatio: 0.5 },
-  "what-if": { primary: "steel", primaryRatio: 1 },
+  "what-if": { primary: "coins", primaryRatio: 0.8, secondary: "bricks", secondaryRatio: 0.4 },
   dialog: { primary: "coins", primaryRatio: 1 },
-  "chart-read": { primary: "glass", primaryRatio: 1 },
-  negotiate: { primary: "code", primaryRatio: 1 },
-  "timeline-build": { primary: "steel", primaryRatio: 1 },
+  "chart-read": { primary: "coins", primaryRatio: 0.8, secondary: "bricks", secondaryRatio: 0.4 },
+  negotiate: { primary: "coins", primaryRatio: 1 },
+  "timeline-build": { primary: "coins", primaryRatio: 0.8, secondary: "bricks", secondaryRatio: 0.4 },
   "invest-sim": { primary: "watts", primaryRatio: 1, secondary: "coins", secondaryRatio: 0.5 },
-  "tax-fill": { primary: "code", primaryRatio: 1 },
+  "tax-fill": { primary: "coins", primaryRatio: 1 },
 };
 
 // Resolve a yield for any gameId. Evergreen ids match directly; AI games

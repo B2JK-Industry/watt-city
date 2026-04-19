@@ -52,14 +52,20 @@ describe("capDailyYield", () => {
   });
 });
 
-describe("glass/steel/code flipped to mvpActive after Phase 2.3", () => {
-  it("glass is now active", () => {
-    expect(RESOURCE_DEFS.glass.mvpActive).toBe(true);
+// V2 refactor R1.1: glass/steel/code are now deprecated keys —
+// preserved in storage for migration but never produced by the yield
+// pipeline. The V1 "flipped to mvpActive" invariant is inverted.
+describe("V2 resource refactor — glass/steel/code deprecated", () => {
+  it("glass is deprecated + mvpActive=false", () => {
+    expect(RESOURCE_DEFS.glass.mvpActive).toBe(false);
+    expect(RESOURCE_DEFS.glass.deprecated).toBe(true);
   });
-  it("steel is now active", () => {
-    expect(RESOURCE_DEFS.steel.mvpActive).toBe(true);
+  it("steel is deprecated + mvpActive=false", () => {
+    expect(RESOURCE_DEFS.steel.mvpActive).toBe(false);
+    expect(RESOURCE_DEFS.steel.deprecated).toBe(true);
   });
-  it("code is now active", () => {
-    expect(RESOURCE_DEFS.code.mvpActive).toBe(true);
+  it("code is deprecated + mvpActive=false", () => {
+    expect(RESOURCE_DEFS.code.mvpActive).toBe(false);
+    expect(RESOURCE_DEFS.code.deprecated).toBe(true);
   });
 });
