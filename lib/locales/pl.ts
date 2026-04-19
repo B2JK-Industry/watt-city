@@ -21,9 +21,9 @@ const pl = {
     titleHouse: "dom",
     titleIn: "w Katowicach.",
     body:
-      "Gamifikowana edukacja finansowa i energetyczna dla Gen Z. Każdy poprawny tap generuje {watts} — a twój {single} w Katowicach rośnie od górniczej chaty w Nikiszowcu do {varso} (310 m, najwyższy w UE). 9 gier evergreen, codzienne wyzwanie AI, pojedynek na kod.",
+      "Gamifikowana edukacja finansowa i energetyczna dla Gen Z. Każdy poprawny tap generuje {watts}, z których budujesz {single} w Katowicach — od pierwszego Domka po {varso} (310 m, najwyższy w UE). 9 gier evergreen, codzienne wyzwanie AI, panel klasy dla szkół V-VIII.",
     bodyWatts: "Waty",
-    bodySingle: "twoje miasto",
+    bodySingle: "swoje Watt City",
     bodyVarso: "Varso Tower",
     ctaRegister: "Załóż konto",
     ctaAbout: "Jak to działa",
@@ -54,12 +54,12 @@ const pl = {
     errorNetwork: "Błąd sieci. Spróbuj jeszcze raz.",
   },
   dashboard: {
-    welcome: "Elektryczna/y burmistrz/yni",
-    level: "Tier",
+    welcome: "Miasto gracza",
+    level: "Poziom",
     totalWatts: "Waty łącznie",
     rank: "Pozycja",
     plays: "Rozegrane rundy",
-    toNext: "Do następnego tieru",
+    toNext: "Do następnego poziomu",
     max: "max",
     ctaFirstGame: "Zagraj pierwszą grę",
     ctaTryNew: "Wypróbuj nową grę",
@@ -103,7 +103,7 @@ const pl = {
     gamesHubBody:
       "9 budynków = 9 mini-gier. Jeśli jeszcze żadnej nie zagrałeś, budynek stoi w ciemności. Po wyniku {light} i neon.",
     gamesHubBodyLight: "zapali mu się okna",
-    gamesHubDuelLink: "",
+    gamesHubDuelLink: "Sprawdź rankingi graczy",
     buildingsMap: "Mapa budynków",
     back: "← Wróć do gier",
     maxLabel: "max",
@@ -567,7 +567,7 @@ const pl = {
   },
   footer: {
     body:
-      "Każdy Wat zbuduje kawałek twojego śląskiego domu — od kopalnianej chaty do Varso Tower. Zbudowane w Katowicach podczas {event} (17–19 kwietnia) dla kategorii {track} — gamifikacja edukacji finansowej i energetycznej dla Gen Z.",
+      "Graj, buduj swoje Watt City w Katowicach i ucz się finansów bez ryzyka. Zbudowane w Katowicach podczas {event} (17–19 kwietnia) dla kategorii {track} — gamifikacja edukacji finansowej i energetycznej dla Gen Z.",
     track: "PKO XP: Gaming",
     event: "ETHSilesia 2026",
     sponsors:
