@@ -2,10 +2,11 @@ import Link from "next/link";
 import { GAMES, localizedTitle } from "@/lib/games";
 import type { UserStats } from "@/lib/user-stats";
 import type { LevelInfo } from "@/lib/level";
-import { CITY_TIERS, tierForLevel } from "@/lib/level";
+// V3.1: CITY_TIERS/tierForLevel no longer imported — replaced by
+// CityLevelCard + CitySkylineHero which derive from buildings, not XP.
 import type { LeaderboardEntry } from "@/lib/redis";
 import { CityScene, type CityGameState, type CityAiGame } from "@/components/city-scene";
-import { PlayerBuilding } from "@/components/player-building";
+import { CitySkylineHero } from "@/components/city-skyline-hero";
 import { DeleteAccountButton } from "@/components/delete-account-button";
 import { CityLevelCard } from "@/components/city-level-card";
 import type { PlayerState } from "@/lib/player";
@@ -68,9 +69,6 @@ export function Dashboard({
   const progressPct = Math.round(level.progress * 100);
   const circumference = 2 * Math.PI * 52;
   const dashOffset = circumference * (1 - level.progress);
-  const currentTier = tierForLevel(level.level);
-  const nextTier =
-    level.level < CITY_TIERS.length ? tierForLevel(level.level + 1) : null;
   const cityGames: CityGameState[] = GAMES.map((g) => ({
     meta: g,
     plays: stats.games[g.id]?.plays ?? 0,
@@ -90,14 +88,11 @@ export function Dashboard({
               <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight">
                 {username}
               </h1>
-              <p className="text-zinc-300 mt-1 text-sm">
-                <span className="text-xl">{currentTier.emoji}</span>{" "}
-                <strong className="text-[var(--accent)]">{currentTier.full}</strong>{" "}
-                <span className="opacity-70">· {d.level} {level.level}</span>
-              </p>
+              {/* V3.1: city identity lives in CityLevelCard above the hero;
+                  hero now surfaces XP progression only as a secondary ring. */}
             </div>
             <div className="relative">
-              <svg width="120" height="120" viewBox="0 0 120 120" aria-hidden>
+              <svg width="96" height="96" viewBox="0 0 120 120" aria-hidden>
                 <circle
                   cx="60"
                   cy="60"
@@ -126,8 +121,10 @@ export function Dashboard({
                 </defs>
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-2xl">{currentTier.emoji}</span>
-                <span className="text-2xl font-black leading-none">{level.level}</span>
+                <span className="text-[10px] text-zinc-400 uppercase">
+                  XP
+                </span>
+                <span className="text-xl font-black leading-none">{level.level}</span>
                 <span className="text-[10px] text-zinc-400">{progressPct}%</span>
               </div>
             </div>
@@ -189,71 +186,14 @@ export function Dashboard({
         </div>
       </section>
 
-      <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-xl sm:text-2xl">{d.yourBuildingTitle}</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-5">
-          <PlayerBuilding level={level.level} progress={level.progress} />
-          <div className="card p-5 flex flex-col gap-4">
-            <div className="flex items-center gap-3">
-              <span className="text-4xl">{currentTier.emoji}</span>
-              <div>
-                <p className="text-[10px] uppercase tracking-widest font-black text-[var(--accent)]">
-                  {d.level} {level.level}
-                </p>
-                <p className="text-xl font-black uppercase tracking-tight">
-                  {currentTier.full}
-                </p>
-              </div>
-            </div>
-            <p className="text-sm text-zinc-300 leading-relaxed">
-              {currentTier.story}
-            </p>
-            {nextTier && (
-              <div className="flex flex-col gap-1 rounded-xl border-[3px] border-[var(--ink)] bg-[var(--surface-2)] p-3">
-                <p className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold">
-                  {d.nextLabel}
-                </p>
-                <p className="font-semibold">
-                  {nextTier.emoji} {nextTier.full}
-                </p>
-                <p className="text-xs text-zinc-400">
-                  {d.unlocksLabel}{" "}
-                  <strong className="text-zinc-200">{nextTier.unlocks}</strong>
-                </p>
-                {level.xpToNext > 0 && (
-                  <p className="text-xs">
-                    {d.stillLabel}{" "}
-                    <strong className="text-[var(--accent)]">
-                      {level.xpToNext} W
-                    </strong>
-                    .
-                  </p>
-                )}
-              </div>
-            )}
-            <div className="grid grid-cols-9 gap-1">
-              {CITY_TIERS.map((t) => {
-                const unlocked = level.level >= t.level;
-                const current = level.level === t.level;
-                return (
-                  <div
-                    key={t.level}
-                    title={`Tier ${t.level}: ${t.full}`}
-                    className={`aspect-square rounded-md border-2 border-[var(--ink)] flex items-center justify-center text-xs ${
-                      unlocked ? `${t.accent}` : "bg-[var(--surface-2)] opacity-40"
-                    } ${current ? "ring-2 ring-[var(--neo-pink)]" : ""}`}
-                  >
-                    {unlocked ? t.emoji : "🔒"}
-                  </div>
-                );
-              })}
-            </div>
-            <p className="text-[11px] text-zinc-500 leading-snug">
-              {d.pathCaption}
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* V3.1 — City skyline replaces the PlayerBuilding tree + tier gallery.
+          Players see their actual 20-slot city, not a single growing avatar. */}
+      {player && (
+        <section className="flex flex-col gap-4">
+          <h2 className="brutal-heading text-xl sm:text-2xl">{d.yourBuildingTitle}</h2>
+          <CitySkylineHero buildings={player.buildings} lang={lang} />
+        </section>
+      )}
 
       <section className="flex flex-col gap-4">
         <div className="flex items-end justify-between">
