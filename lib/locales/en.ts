@@ -25,7 +25,7 @@ const en: typeof plDict = {
     body:
       "Gamified financial & energy literacy for Gen Z. Every correct tap generates {watts} — and your {single} in Katowice grows from a miner's shed in Nikiszowiec all the way to {varso} (310 m, tallest in the EU). 9 evergreen mini-games, a daily AI challenge, and code-based duels.",
     bodyWatts: "Watts",
-    bodySingle: "single building",
+    bodySingle: "your own city",
     bodyVarso: "Varso Tower",
     ctaRegister: "Create account",
     ctaAbout: "How it works",

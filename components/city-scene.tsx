@@ -251,7 +251,7 @@ type DrawProps = {
 const BUILDING_PLAN: Plan[] = [
   {
     gameId: "finance-quiz",
-    title: "Finančný kvíz",
+    title: "Quiz finansowy",
     buildingName: "Biblioteka Śląska",
     x: 40,
     w: 180,
@@ -261,7 +261,7 @@ const BUILDING_PLAN: Plan[] = [
   },
   {
     gameId: "stock-tap",
-    title: "Stock Tap",
+    title: "Kurs akcji",
     buildingName: "PKO Tower",
     x: 240,
     w: 110,
@@ -271,7 +271,7 @@ const BUILDING_PLAN: Plan[] = [
   },
   {
     gameId: "memory-match",
-    title: "Pamäťové páry",
+    title: "Gra pamięciowa",
     buildingName: "Muzeum Śląskie",
     x: 370,
     w: 150,
@@ -281,7 +281,7 @@ const BUILDING_PLAN: Plan[] = [
   },
   {
     gameId: "math-sprint",
-    title: "Matematický šprint",
+    title: "Sprint matematyczny",
     buildingName: "Instytut Matematyki",
     x: 540,
     w: 140,
@@ -291,7 +291,7 @@ const BUILDING_PLAN: Plan[] = [
   },
   {
     gameId: "energy-dash",
-    title: "Energy Dash",
+    title: "Energetyczny sprint",
     buildingName: "Silesia Solar Farm",
     x: 700,
     w: 220,
@@ -301,7 +301,7 @@ const BUILDING_PLAN: Plan[] = [
   },
   {
     gameId: "power-flip",
-    title: "Power Flip",
+    title: "Przełącznik mocy",
     buildingName: "Dom LED",
     x: 940,
     w: 90,
@@ -311,7 +311,7 @@ const BUILDING_PLAN: Plan[] = [
   },
   {
     gameId: "currency-rush",
-    title: "Kurzový šprint",
+    title: "Pary walutowe",
     buildingName: "Kantor Rynek",
     x: 1050,
     w: 70,
@@ -321,7 +321,7 @@ const BUILDING_PLAN: Plan[] = [
   },
   {
     gameId: "budget-balance",
-    title: "Budget Balance",
+    title: "Budżet domowy",
     buildingName: "PKO Oddział",
     x: 1140,
     w: 120,
@@ -331,7 +331,7 @@ const BUILDING_PLAN: Plan[] = [
   },
   {
     gameId: "word-scramble",
-    title: "Premiešané slová",
+    title: "Litery w chaosie",
     buildingName: "Drukarnia",
     x: 1260,
     w: 100,
@@ -359,8 +359,8 @@ function aiPlanFor(index: number, total: number): Plan {
   const x = zoneStart + gap + index * (AI_SLOT_W + gap);
   return {
     gameId: `__ai-slot-${index}__`,
-    title: "AI výzva",
-    buildingName: "Stavenisko",
+    title: "Wyzwanie AI",
+    buildingName: "Plac budowy",
     x,
     w: AI_SLOT_W,
     h: AI_SLOT_HEIGHTS[index % AI_SLOT_HEIGHTS.length],
@@ -373,8 +373,8 @@ function aiPlanFor(index: number, total: number): Plan {
 // site so the city has something in that zone instead of a void).
 const CONSTRUCTION: Plan = {
   gameId: "__coming-soon__",
-  title: "AI výzva dňa",
-  buildingName: "Stavenisko",
+  title: "Wyzwanie AI dnia",
+  buildingName: "Plac budowy",
   x: AI_ZONE_X + (AI_ZONE_W - AI_SLOT_W) / 2,
   w: AI_SLOT_W,
   h: 220,
@@ -998,11 +998,11 @@ function ConstructionSlot({
   if (!interactive) return <g>{slot}</g>;
   const href = aiGame ? `/games/ai/${aiGame.id}` : "/sin-slavy";
   const label = aiGame
-    ? `AI výzva dňa — ${aiGame.title}`
-    : "AI výzva dňa — coming soon";
+    ? `Wyzwanie AI dnia — ${aiGame.title}`
+    : "Wyzwanie AI dnia — wkrótce";
   const title = aiGame
-    ? `AI výzva dňa · hrateľná — ${aiGame.title}`
-    : "AI výzva dňa · zatiaľ vo výstavbe";
+    ? `Wyzwanie AI dnia · dostępne — ${aiGame.title}`
+    : "Wyzwanie AI dnia · w budowie";
   return (
     <Link href={href} aria-label={label}>
       <g className="building-link" data-powered={live}>

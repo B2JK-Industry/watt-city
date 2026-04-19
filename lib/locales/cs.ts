@@ -25,7 +25,7 @@ const cs: typeof plDict = {
     body:
       "Gamifikovaná finanční a energetická gramotnost pro Gen Z. Každý správný tap vygeneruje {watts} — a tvůj {single} v Katovicích roste od hornické chatrče v Nikiszowci po {varso} (310 m, nejvyšší v EU). 9 evergreen miniher, denní AI výzva, duel kódem.",
     bodyWatts: "Watty",
-    bodySingle: "jediná budova",
+    bodySingle: "tvoje město",
     bodyVarso: "Varso Tower",
     ctaRegister: "Vytvořit účet",
     ctaAbout: "Jak to funguje",
