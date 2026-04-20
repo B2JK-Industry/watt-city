@@ -6,7 +6,7 @@ bypass that spams the Claude API are all treated as P0/P1 incidents.
 
 ## Reporting a vulnerability
 
-- **Preferred**: [GitHub Security Advisory](https://github.com/B2JK-Industry/xp-arena-ETHSilesia2026/security/advisories/new)
+- **Preferred**: [GitHub Security Advisory](https://github.com/B2JK-Industry/watt-city/security/advisories/new)
   (private, encrypted).
 - **Fallback**: email `security@watt-city.example` (rotate as needed).
 - Please include: reproduction steps, impact assessment, and whether you

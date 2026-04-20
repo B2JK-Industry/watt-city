@@ -115,9 +115,9 @@ Sources:
 
 ## Submission requirements (assumed; confirm onsite)
 
-- Public GitHub repo: ✅ [B2JK-Industry/xp-arena-ETHSilesia2026](https://github.com/B2JK-Industry/xp-arena-ETHSilesia2026)
-- Live deployment URL: ✅ https://xp-arena-ethsilesia2026.vercel.app
-- README explaining what the project is: ✅ (would benefit from a SKO/Watt City pivot section once branch merges)
+- Public GitHub repo: ✅ [B2JK-Industry/watt-city](https://github.com/B2JK-Industry/watt-city)
+- Live deployment URL: ✅ https://xp-arena-ethsilesia2026.vercel.app (domain rename pending — see OPERATIONS.md)
+- README explaining what the project is: ✅
 - Demo video (often required): TODO — record 2-min walkthrough
 - Slide deck (often required): TODO
 

@@ -580,7 +580,7 @@ const pl = {
     minorsTitle: "Dzieci i młodzież",
     disclaimerTitle: "Hackathon disclaimer",
     whoBody:
-      "Administratorem danych w rozumieniu GDPR art. 4 ust. 7 jest zespół B2JK-Industry (hackathonowy zespół ETHSilesia 2026, Katowice, PL). Kontakt do spraw prawnych: e-mail w README repo. Publiczny kod źródłowy: github.com/B2JK-Industry/xp-arena-ETHSilesia2026.",
+      "Administratorem danych w rozumieniu GDPR art. 4 ust. 7 jest zespół B2JK-Industry (hackathonowy zespół ETHSilesia 2026, Katowice, PL). Kontakt do spraw prawnych: e-mail w README repo. Publiczny kod źródłowy: github.com/B2JK-Industry/watt-city.",
     whatIntro: "Przechowujemy minimum — każde pole z konkretnym celem i terminem.",
     whatNotStored:
       "Czego NIE przechowujemy: e-mail, telefon, prawdziwe imię, adres IP, lokalizacja, fingerprint analityczny, third-party cookies, tagi remarketingowe. Nie używamy Google Analytics, Meta Pixel, Hotjar ani ekwiwalentów.",

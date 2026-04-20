@@ -4,9 +4,13 @@ Gamified financial education for kids (ages 9–14). Play minigames to earn
 resources, build your city, take a mortgage, learn about RRSO/APR without
 touching real money. Pitched to PKO BP as an SKO 2.0 partnership prototype.
 
-ETHSilesia 2026 entry. Watt City lives on the `watt-city` branch; the
-original XP Arena demo (9 evergreen games + AI rotation) lives on `main`
-and is frozen. See `docs/BRANCHING.md` for the rationale.
+**🏆 1st place — PKO Gaming track, ETHSilesia 2026.** Post-hackathon
+development continues here on `main`; partnership path with PKO BP is
+active.
+
+> The original XP Arena prototype (9 evergreen games + AI rotation) is
+> preserved at the `xp-arena-final-v1.0` tag. Pre-merge feature branches
+> are preserved under `archive/*` tags — see "Repo history" below.
 
 ## Phase-1 MVP — what's in (2026-04-18)
 
@@ -180,3 +184,19 @@ cap, amortization formula, default after 3 misses).
 - `docs/OPERATIONS.md` — deploy, monitor, recover
 - `docs/decisions/` — ADRs
 - `docs/progress/<date>.md` — agent session logs
+
+## Repo history
+
+Single-branch workflow (`main` only) since 2026-04-20. Pre-merge state is
+preserved in git tags:
+
+| Tag | What |
+|---|---|
+| `xp-arena-final-v1.0` | XP Arena prototype final commit (`f1b294a`) before Watt City merge |
+| `archive/watt-city-v3` | 21 commits of V3.1..V3.7 development trail |
+| `archive/watt-city-cleanup` | 7 commits of UX-audit cleanup |
+| `archive/watt-city-refactor` | V2 critical polish + feature-flag admin |
+| `archive/ux-fixes-2026-04-19` | 12 commits of UX fixes (cashflow-hud, onboarding-tour, toasts, cookie-consent) |
+| `archive/ux-audit-2026-04-19` | UX audit gap matrix + 6 personas |
+
+Recover any archive: `git checkout archive/<name>`.

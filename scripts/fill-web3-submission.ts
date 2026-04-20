@@ -83,7 +83,7 @@ function resolveTokens(): TokenMap {
     VIDEO_URL: arg("video-url") ?? process.env.WEB3_VIDEO_URL ?? "",
     CONTACT_EMAIL:
       arg("contact") ?? process.env.WEB3_CONTACT_EMAIL ?? "",
-    REPO_URL: "https://github.com/B2JK-Industry/xp-arena-ETHSilesia2026",
+    REPO_URL: "https://github.com/B2JK-Industry/watt-city",
   };
 
   // Merge in precedence order: chain < deployment-doc < operator/CLI.

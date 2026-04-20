@@ -227,7 +227,7 @@ export default async function AboutPage() {
           <p className="text-xs text-zinc-500">
             Source of truth:{" "}
             <a
-              href="https://github.com/B2JK-Industry/xp-arena-ETHSilesia2026/tree/main/lib/ai-pipeline"
+              href="https://github.com/B2JK-Industry/watt-city/tree/main/lib/ai-pipeline"
               className="underline text-[var(--accent)]"
               target="_blank"
               rel="noreferrer"
@@ -236,7 +236,7 @@ export default async function AboutPage() {
             </a>
             {" · "}
             <a
-              href="https://github.com/B2JK-Industry/xp-arena-ETHSilesia2026/blob/main/app/api/cron/daily-game/route.ts"
+              href="https://github.com/B2JK-Industry/watt-city/blob/main/app/api/cron/daily-game/route.ts"
               className="underline text-[var(--accent)]"
               target="_blank"
               rel="noreferrer"
@@ -245,7 +245,7 @@ export default async function AboutPage() {
             </a>
             {" · "}
             <a
-              href="https://github.com/B2JK-Industry/xp-arena-ETHSilesia2026/blob/main/vercel.json"
+              href="https://github.com/B2JK-Industry/watt-city/blob/main/vercel.json"
               className="underline text-[var(--accent)]"
               target="_blank"
               rel="noreferrer"
@@ -375,7 +375,7 @@ export default async function AboutPage() {
         <p className="text-xs opacity-70">
           {t.web3LinksLabel}{" "}
           <a
-            href="https://github.com/B2JK-Industry/xp-arena-ETHSilesia2026/blob/main/docs/web3/SUBMISSION.md"
+            href="https://github.com/B2JK-Industry/watt-city/blob/main/docs/web3/SUBMISSION.md"
             className="underline"
             target="_blank"
             rel="noreferrer"
@@ -384,7 +384,7 @@ export default async function AboutPage() {
           </a>
           {" · "}
           <a
-            href="https://github.com/B2JK-Industry/xp-arena-ETHSilesia2026/blob/main/docs/web3/PLAN.md"
+            href="https://github.com/B2JK-Industry/watt-city/blob/main/docs/web3/PLAN.md"
             className="underline"
             target="_blank"
             rel="noreferrer"
@@ -408,7 +408,7 @@ export default async function AboutPage() {
         <Link href="/" className="underline">Späť na domov</Link>
         <Link href="/ochrana-sukromia" className="underline">Ochrana súkromia</Link>
         <a
-          href="https://github.com/B2JK-Industry/xp-arena-ETHSilesia2026"
+          href="https://github.com/B2JK-Industry/watt-city"
           className="underline"
           target="_blank"
           rel="noreferrer"

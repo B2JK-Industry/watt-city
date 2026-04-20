@@ -524,7 +524,7 @@ const uk: typeof plDict = {
     minorsTitle: "Діти і молодь",
     disclaimerTitle: "Хакатон disclaimer",
     whoBody:
-      "Розпорядником даних за GDPR ст. 4 п. 7 є команда B2JK-Industry (хакатонна команда ETHSilesia 2026, Катовіце, PL). Контакт для правових питань: email у README репо. Публічний сирцевий код: github.com/B2JK-Industry/xp-arena-ETHSilesia2026.",
+      "Розпорядником даних за GDPR ст. 4 п. 7 є команда B2JK-Industry (хакатонна команда ETHSilesia 2026, Катовіце, PL). Контакт для правових питань: email у README репо. Публічний сирцевий код: github.com/B2JK-Industry/watt-city.",
     whatIntro: "Зберігаємо мінімум — кожне поле з конкретною метою та терміном.",
     whatNotStored:
       "Що НЕ зберігаємо: email, телефон, реальне ім'я, IP-адресу, розташування, аналітичний fingerprint, third-party cookies, ремаркетингові теги. Не використовуємо Google Analytics, Meta Pixel, Hotjar чи еквіваленти.",

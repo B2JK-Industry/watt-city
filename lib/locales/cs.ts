@@ -524,7 +524,7 @@ const cs: typeof plDict = {
     minorsTitle: "Děti a mládež",
     disclaimerTitle: "Hackathon disclaimer",
     whoBody:
-      "Správcem údajů podle GDPR čl. 4 odst. 7 je tým B2JK-Industry (hackathonový tým ETHSilesia 2026, Katovice, PL). Kontakt pro právní otázky: e-mail v README repa. Veřejný zdrojový kód: github.com/B2JK-Industry/xp-arena-ETHSilesia2026.",
+      "Správcem údajů podle GDPR čl. 4 odst. 7 je tým B2JK-Industry (hackathonový tým ETHSilesia 2026, Katovice, PL). Kontakt pro právní otázky: e-mail v README repa. Veřejný zdrojový kód: github.com/B2JK-Industry/watt-city.",
     whatIntro: "Ukládáme minimum — každé pole s konkrétním účelem a dobou uchování.",
     whatNotStored:
       "Co NEUKLÁDÁME: e-mail, telefon, reálné jméno, IP adresu, polohu, analytický fingerprint, third-party cookies, remarketingové tagy. Nepoužíváme Google Analytics, Meta Pixel, Hotjar ani ekvivalenty.",

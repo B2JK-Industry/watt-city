@@ -526,25 +526,13 @@ For Hobby tier: only daily cron available natively. Strategies:
 
 ## 12. Deployment topology
 
-### XP Arena (legacy)
-- Branch: `main`
-- Project: `xp-arena-ethsilesia2026` on Vercel
-- Domain: `xp-arena-ethsilesia2026.vercel.app`
+Single-branch workflow since 2026-04-20. `watt-city` was fast-forward-merged into `main`; both branches are gone. Pre-merge XP Arena state is preserved at tag `xp-arena-final-v1.0`; pre-merge feature branches are preserved under `archive/*` tags (see README "Repo history").
+
+- Branch: `main` (only)
+- Project: `xp-arena-ethsilesia2026` on Vercel (pending rename per operator)
+- Domain: `xp-arena-ethsilesia2026.vercel.app` (custom domain migration TBD — e.g. `watt-city.vercel.app`)
 - Redis: existing Upstash
-- Status: frozen, bug fixes only
-
-### Watt City (new)
-- Branch: `watt-city`
-- Project: TBD — separate Vercel project recommended
-- Domain: TBD — `watt-city.vercel.app` or `wattcity.vercel.app` if domain free
-- Redis: separate Upstash instance recommended (clean slate)
-- Status: active development
-
-### Cut-over (when Watt City stable)
-- Domain swap: point original URL at Watt City
-- XP Arena archive: move to `xp-arena-archive.vercel.app`
-- Tag XP Arena final: `git tag xp-arena-final-v1.0`
-- Merge `watt-city` → `main` as squash commit
+- Status: active development (PKO Gaming track 1st place, ETHSilesia 2026 — partnership path live)
 
 ## 13. Observability
 

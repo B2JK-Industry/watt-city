@@ -1,7 +1,8 @@
 # Watt City — documentation
 
 > Watt City = the Phase-1+ pivot from XP Arena. SKO 2.0 = pitch context for PKO partnership.
-> See [`BRANCHING.md`](./BRANCHING.md) for what's on `main` (XP Arena, frozen) vs `watt-city` (active).
+> **1st place, PKO Gaming track, ETHSilesia 2026** (2026-04-19).
+> Single-branch workflow (`main` only) since 2026-04-20. Pre-merge state lives at `xp-arena-final-v1.0` and `archive/*` tags — see the README "Repo history" section.
 
 ## Read in this order
 
@@ -15,8 +16,7 @@
 | 6 | [`GAMES-DETAIL.md`](./GAMES-DETAIL.md) | Engineer adding a new kind | Full per-kind spec: zod, prompts, scoring, edge cases |
 | 7 | [`SECURITY-AND-COMPLIANCE.md`](./SECURITY-AND-COMPLIANCE.md) | Engineer, lawyer | Threat model, GDPR, GDPR-K, KNF, content moderation |
 | 8 | [`OPERATIONS.md`](./OPERATIONS.md) | DevOps, on-call | Deploy, monitor, incident playbooks, cost |
-| 9 | [`BRANCHING.md`](./BRANCHING.md) | Engineer | Why two branches, how to switch |
-| 10 | [`TARGET-BOUNTIES.md`](./TARGET-BOUNTIES.md) | PM, founder | ETHSilesia 2026 hackathon prize tracks we target |
+| 9 | [`TARGET-BOUNTIES.md`](./TARGET-BOUNTIES.md) | PM, founder | ETHSilesia 2026 hackathon prize tracks we target |
 
 ## Decisions resolved (so far)
 

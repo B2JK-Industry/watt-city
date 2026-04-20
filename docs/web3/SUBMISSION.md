@@ -76,7 +76,7 @@ For ETHSilesia we submit against **Base Sepolia** (chainId 84532). Base mainnet 
 |---|---|
 | **Live app** | {{DEMO_URL}} |
 | **2-min video walkthrough** | {{VIDEO_URL}} |
-| **GitHub** | https://github.com/B2JK-Industry/xp-arena-ETHSilesia2026 |
+| **GitHub** | https://github.com/B2JK-Industry/watt-city |
 | **Contact** | {{CONTACT_EMAIL}} |
 
 ### What the video shows (60-90s)

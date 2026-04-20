@@ -525,7 +525,7 @@ const en: typeof plDict = {
     minorsTitle: "Minors",
     disclaimerTitle: "Hackathon disclaimer",
     whoBody:
-      "Data controller under GDPR Art. 4(7) is the B2JK-Industry team (ETHSilesia 2026 hackathon team, Katowice, PL). Legal contact: email in the repo README. Public source code: github.com/B2JK-Industry/xp-arena-ETHSilesia2026.",
+      "Data controller under GDPR Art. 4(7) is the B2JK-Industry team (ETHSilesia 2026 hackathon team, Katowice, PL). Legal contact: email in the repo README. Public source code: github.com/B2JK-Industry/watt-city.",
     whatIntro: "We store the minimum — every field with a concrete purpose and retention.",
     whatNotStored:
       "What we do NOT store: email, phone, real name, IP address, location, analytics fingerprint, third-party cookies, remarketing tags. We don't use Google Analytics, Meta Pixel, Hotjar, or equivalents.",

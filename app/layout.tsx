@@ -316,7 +316,7 @@ export default async function RootLayout({
                   {dict.nav.hall}
                 </a>
                 <a
-                  href="https://github.com/B2JK-Industry/xp-arena-ETHSilesia2026"
+                  href="https://github.com/B2JK-Industry/watt-city"
                   className="hover:text-[var(--accent)]"
                   target="_blank"
                   rel="noreferrer"

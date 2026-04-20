@@ -8,17 +8,16 @@ How to deploy, monitor, debug, recover. Day-2 stuff.
 |---|---|---|---|---|
 | **dev (local)** | http://localhost:3000 | any | uses `.env.local` (defaults to prod Upstash, can override) | `pnpm dev` |
 | **preview (Vercel)** | per-PR auto URL | any non-`main` | inherits production env vars | `vercel deploy` (no --prod) |
-| **prod XP Arena** | https://xp-arena-ethsilesia2026.vercel.app | `main` | XP Arena Upstash | frozen — bug fixes only |
-| **prod Watt City** | TBD (e.g. https://watt-city.vercel.app) | `watt-city` | separate Watt City Upstash (recommended) | active development |
+| **prod** | https://xp-arena-ethsilesia2026.vercel.app (domain rename TBD — e.g. `watt-city.vercel.app`) | `main` | Watt City Upstash | active development |
 
 ## 2. Deploy procedure
 
-### Standard deploy (Watt City)
+### Standard deploy
 
 ```bash
 # 1. Verify branch + clean working tree
 git status
-git checkout watt-city
+git checkout main
 git pull --rebase
 
 # 2. Local pre-flight
@@ -409,9 +408,8 @@ curl -X POST "https://watt-city.vercel.app/api/admin/leaderboard" \
 ### From scratch
 
 ```bash
-git clone https://github.com/B2JK-Industry/xp-arena-ETHSilesia2026.git
-cd xp-arena-ETHSilesia2026
-git checkout watt-city
+git clone https://github.com/B2JK-Industry/watt-city.git
+cd watt-city
 pnpm install
 
 # Pull env from Vercel (sensitive values may be empty)
