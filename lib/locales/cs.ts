@@ -471,6 +471,9 @@ const cs: typeof plDict = {
       { name: "Publish + archive", details: ["Envelope `xp:ai-games:<id>` trvalé.","Index capnut na 3 aktivní hry; přeplněné stále hratelné přes /games/ai/<id>.","Archive record pro Síň slávy."] },
       { name: "UI rollout", details: ["Unikátní SVG vizuál hashovaný z game id (768 kombinací).","Renderer vybere spec podle lang cookie (fallback na PL).","Medaile za top 3 zůstávají natrvalo."] },
     ],
+    pipelineSecurityLabel: "Bezpečnost:",
+    pipelineSecurityBody:
+      "Cron endpoint je chráněn hlavičkou Bearer <CRON_SECRET>; Vercel Cron podepisuje volání automaticky. Žádná osobní data uživatelů neopouštějí Upstash (Claude vidí jen téma, ne data hráče).",
     securityNote: "Cron endpoint je chráněn hlavičkou Bearer <CRON_SECRET>. Žádné PII uživatele neopustí Upstash.",
     securityNoteLabel: "Bezpečnost:",
     sourceTitle: "Zdroj pravdy:",

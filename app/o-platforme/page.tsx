@@ -114,16 +114,13 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* -------- AI pipeline -------- */}
+      {/* -------- AI pipeline — dict-driven (t.pipelineIntro /
+          t.pipelineSteps / t.pipelineSecurity). No Slovak / locale
+          leak in this file anymore. */}
       <section className="flex flex-col gap-4">
         <h2 className="brutal-heading text-2xl">{t.pipelineTitle}</h2>
         <div className="card p-6 flex flex-col gap-5 text-zinc-300">
-          <p>
-            Kostra pipelinu je v commite už teraz — produkčný spúšťač čaká
-            iba na aktiváciu <code>ANTHROPIC_API_KEY</code>. Pri hackathon
-            demo beží deterministický fallback, aby judge mohol odsledovať
-            celý cyklus bez billingu.
-          </p>
+          <p>{t.pipelineIntro}</p>
 
           <div className="rounded-2xl border-[3px] border-[var(--ink)] bg-[var(--surface-2)] p-5 sm:p-6">
             <ol className="flex flex-wrap gap-x-3 gap-y-4 text-xs sm:text-sm">
@@ -162,66 +159,18 @@ export default async function AboutPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <PipelineStep
-              n="1"
-              name="Research"
-              detail={[
-                "lib/ai-pipeline/research.ts",
-                "16 tém × 4 konkrétnych uhlov × 3 obtiažnosti — daily bucket vyberie (téma, angle, difficulty).",
-                "Každá téma je viazaná na 1 kind (quiz / scramble / price-guess).",
-              ]}
-            />
-            <PipelineStep
-              n="2"
-              name="Generate (Sonnet PL)"
-              detail={[
-                "lib/ai-pipeline/generate.ts",
-                "Claude Sonnet 4.6 produkuje PL spec podľa kind-specific schémy (anyOf/$defs sa vyhýbame).",
-                "Prompt caching na systémovom prompte; user prompt má date + theme + angle + difficulty.",
-              ]}
-            />
-            <PipelineStep
-              n="3"
-              name="Translate (Haiku ×3)"
-              detail={[
-                "Claude Haiku 4.5 preloží PL spec paralelne do UK / CS / EN.",
-                "Numerické invarianty (correctIndex, truth, tolerancePct, xpPer*, unit) sú lock-ed z PL — translator nesmie meniť.",
-                "PL-native termíny (zł, BLIK, NBP, RRSO, IKE/IKZE) sú chránené v prompte.",
-              ]}
-            />
-            <PipelineStep
-              n="4"
-              name="Validate"
-              detail={[
-                "zod schémy: QuizItem / ScrambleItem / PriceGuessItem / LocalizedSpec (pl/uk/cs/en) / AiGame envelope.",
-                "Portfolio diversity gate: ak hra s rovnakou témou už je live, odmietneme.",
-              ]}
-            />
-            <PipelineStep
-              n="5"
-              name="Publish + archive"
-              detail={[
-                "Envelope `xp:ai-games:<id>` — trvalé (bez TTL), hra ostáva playable naveky.",
-                "Index `xp:ai-games:index` capnutý na 3 aktívne hry; pretečené sa iba odstránia z indexu, ale stále sa dajú hrať cez /games/ai/<id>.",
-                "Archive record `xp:ai-games:archive:<id>` — minimálna kópia pre Hall of Fame.",
-              ]}
-            />
-            <PipelineStep
-              n="6"
-              name="UI rollout"
-              detail={[
-                "CityScene: unikátny SVG vizuál hashnutý z game id (768 kombinácií) + WattMeter.",
-                "Renderer `/games/ai/[id]` vyberie spec podľa užívateľovho lang cookie (fallback na PL).",
-                "Medaile za top 3 ostávajú permanentne (leaderboard ZSET bez TTL).",
-              ]}
-            />
+            {t.pipelineSteps.map((step, i) => (
+              <PipelineStep
+                key={step.name}
+                n={String(i + 1)}
+                name={step.name}
+                detail={step.details}
+              />
+            ))}
           </div>
 
           <div className="rounded-xl border-2 border-[var(--neo-pink)] bg-[color-mix(in_oklab,var(--neo-pink)_12%,transparent)] p-4 text-sm">
-            <strong>Bezpečnosť:</strong> Cron endpoint je strážený{" "}
-            <code>Bearer &lt;CRON_SECRET&gt;</code> hlavičkou; Vercel Cron
-            podpisuje volania automaticky. Žiadne user PII nikdy neopúšťa
-            Upstash (Claude vidí iba zadanie témy, nie user data).
+            <strong>{t.pipelineSecurityLabel}</strong> {t.pipelineSecurityBody}
           </div>
 
           <p className="text-xs text-zinc-500">

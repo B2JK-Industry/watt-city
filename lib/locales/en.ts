@@ -472,6 +472,9 @@ const en: typeof plDict = {
       { name: "Publish + archive", details: ["Envelope `xp:ai-games:<id>` is permanent.","Index capped at 3 active games; evicted games stay playable via /games/ai/<id>.","Archive record for the Hall of Fame."] },
       { name: "UI rollout", details: ["Unique SVG visual hashed from game id (768 combinations).","Renderer picks spec by lang cookie (PL fallback).","Top-3 medals stay forever."] },
     ],
+    pipelineSecurityLabel: "Security:",
+    pipelineSecurityBody:
+      "The cron endpoint is guarded by a Bearer <CRON_SECRET> header; Vercel Cron signs calls automatically. No user PII ever leaves Upstash (Claude sees only the theme prompt, not player data).",
     securityNote: "Cron endpoint is guarded by Bearer <CRON_SECRET>. No user PII ever leaves Upstash.",
     securityNoteLabel: "Security:",
     sourceTitle: "Source of truth:",

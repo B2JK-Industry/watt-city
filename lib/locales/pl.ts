@@ -527,6 +527,9 @@ const pl = {
         "Medale za top 3 zostają na zawsze (leaderboard ZSET bez TTL).",
       ] },
     ],
+    pipelineSecurityLabel: "Bezpieczeństwo:",
+    pipelineSecurityBody:
+      "Endpoint cron jest chroniony nagłówkiem Bearer <CRON_SECRET>; Vercel Cron podpisuje wywołania automatycznie. Żadne dane osobowe użytkowników nie opuszczają Upstash (Claude widzi tylko temat zadania, nie dane gracza).",
     securityNote: "Endpoint cron jest chroniony nagłówkiem Bearer <CRON_SECRET>; Vercel Cron podpisuje wywołania automatycznie. Żadne PII użytkownika nigdy nie opuszczają Upstash (Claude widzi tylko zadanie tematu, nie dane użytkownika).",
     securityNoteLabel: "Bezpieczeństwo:",
     sourceTitle: "Źródło prawdy:",

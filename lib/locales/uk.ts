@@ -471,6 +471,9 @@ const uk: typeof plDict = {
       { name: "Publish + archive", details: ["Envelope `xp:ai-games:<id>` постійний.","Index capнут на 3 активні ігри; виштовхані ігри залишаються грабельними через /games/ai/<id>.","Archive record для Зали Слави."] },
       { name: "UI rollout", details: ["Унікальний SVG візуал hashed з game id (768 комбінацій).","Renderer вибере spec за lang cookie (PL fallback).","Медалі за топ-3 залишаються назавжди."] },
     ],
+    pipelineSecurityLabel: "Безпека:",
+    pipelineSecurityBody:
+      "Endpoint cron захищений заголовком Bearer <CRON_SECRET>; Vercel Cron підписує виклики автоматично. Жодні персональні дані користувачів не покидають Upstash (Claude бачить лише тему, не дані гравця).",
     securityNote: "Cron endpoint захищено заголовком Bearer <CRON_SECRET>. Жодне PII користувача не покидає Upstash.",
     securityNoteLabel: "Безпека:",
     sourceTitle: "Джерело правди:",
