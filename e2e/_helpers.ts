@@ -1,4 +1,4 @@
-import type { Page } from "@playwright/test";
+import type { APIRequestContext, BrowserContext, Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
 /* Shared helpers for the E2E specs — keep logic here so smoke.spec.ts
@@ -20,6 +20,80 @@ export function randomAlphaSuffix(len = 10): string {
     out += alphabet[Math.floor(Math.random() * alphabet.length)];
   }
   return out;
+}
+
+/** Read the `wc_csrf` cookie from a browser context so tests can echo it
+ *  as the `x-csrf-token` header on mutating requests — the same thing
+ *  `lib/client-api.ts#postJson` does in the app. Without this every
+ *  POST lands in 403 csrf-failed (by design, defense-in-depth). Returns
+ *  an empty object if the cookie hasn't been seeded yet — the caller is
+ *  responsible for first issuing a GET that triggers the middleware. */
+export async function csrfHeaders(
+  context: BrowserContext,
+): Promise<Record<string, string>> {
+  const cookies = await context.cookies();
+  const token = cookies.find((c) => c.name === "wc_csrf")?.value;
+  return token ? { "x-csrf-token": token } : {};
+}
+
+/** Ensure the CSRF cookie is present on `page.context()` by hitting the
+ *  landing page once; the Edge middleware seeds the cookie on any HTML
+ *  request that lacks it. Safe + idempotent. */
+export async function primeCsrf(page: Page): Promise<void> {
+  const cookies = await page.context().cookies();
+  if (cookies.some((c) => c.name === "wc_csrf")) return;
+  // Use fetch via the same context — the HTML response's Set-Cookie
+  // lands in the browser jar automatically.
+  await page.context().request.get("/");
+}
+
+/** Drop-in mutating-POST helper that primes the CSRF cookie and adds
+ *  the header — for tests that want the "real browser" behaviour
+ *  without duplicating that dance in every spec. */
+export async function postJson(
+  page: Page,
+  path: string,
+  body: unknown,
+): Promise<{ status: number; body: unknown }> {
+  await primeCsrf(page);
+  const headers = await csrfHeaders(page.context());
+  const r = await page.request.post(path, {
+    data: body as never,
+    headers: { "content-type": "application/json", ...headers },
+    failOnStatusCode: false,
+  });
+  const text = await r.text();
+  let parsed: unknown = text;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    // leave as raw text
+  }
+  return { status: r.status(), body: parsed };
+}
+
+/** Same-context variant for when you hold an APIRequestContext directly
+ *  (e.g. in `page.request` or a freshly-created context). */
+export async function postJsonVia(
+  ctx: APIRequestContext,
+  csrfSource: BrowserContext,
+  path: string,
+  body: unknown,
+): Promise<{ status: number; body: unknown }> {
+  const headers = await csrfHeaders(csrfSource);
+  const r = await ctx.post(path, {
+    data: body as never,
+    headers: { "content-type": "application/json", ...headers },
+    failOnStatusCode: false,
+  });
+  const text = await r.text();
+  let parsed: unknown = text;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    /* keep raw */
+  }
+  return { status: r.status(), body: parsed };
 }
 
 /** Wait for every running CSS animation / Web-Animation on the document

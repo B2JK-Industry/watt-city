@@ -42,5 +42,17 @@ export default defineConfig({
           url: "http://localhost:3000",
           reuseExistingServer: !process.env.CI,
           timeout: 120_000,
+          // Run the dev server under test-only secrets so the cron /
+          // admin auth paths behave the way they would in prod — no
+          // NODE_ENV-gated bypass. The API contract sweep relies on
+          // anonymous callers being rejected, not silently allowed.
+          env: {
+            CRON_SECRET:
+              process.env.E2E_CRON_SECRET ?? "e2e-cron-secret-not-for-production",
+            ADMIN_SECRET:
+              process.env.E2E_ADMIN_SECRET ?? "e2e-admin-secret-not-for-production",
+            SESSION_SECRET:
+              process.env.E2E_SESSION_SECRET ?? "e2e-session-secret-16char",
+          },
         },
 });

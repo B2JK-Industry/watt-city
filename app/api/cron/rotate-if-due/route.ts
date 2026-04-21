@@ -3,30 +3,20 @@ import { rotateIfDue } from "@/lib/ai-pipeline/publish";
 import { sendAlert } from "@/lib/ops-alerts";
 import { kvSet } from "@/lib/redis";
 import { recordEvent } from "@/lib/analytics";
+import { isCronAuthorised, cronAuthFailure } from "@/lib/cron-auth";
 
 // Pipeline budget: Sonnet PL gen (~10–20s) + 3× Haiku translate (~10–20s parallel).
 // Cron + external pinger both hit this — single-flight lock in rotateIfDue
 // collapses concurrent calls to one publish.
 export const maxDuration = 60;
 
-// Shared auth: CRON_SECRET (for Vercel Cron / external pinger) OR ADMIN_SECRET.
-// Either secret unlocks a manual trigger; in local dev neither is required.
-function authorized(request: NextRequest): boolean {
-  const cron = process.env.CRON_SECRET;
-  const admin = process.env.ADMIN_SECRET;
-  const header = request.headers.get("authorization") ?? "";
-  const token = header.startsWith("Bearer ") ? header.slice(7) : "";
-  const isVercelCron = request.headers.get("x-vercel-cron") === "1";
-  if (!cron && !admin) return true; // dev open
-  if (isVercelCron) return true;
-  if (cron && token === cron) return true;
-  if (admin && token === admin) return true;
-  return false;
-}
+// Auth: CRON_SECRET (Vercel Cron / external pinger) OR ADMIN_SECRET
+// (manual ops trigger). Dev bypass is NODE_ENV-gated. See
+// `lib/cron-auth.ts` for the full rule matrix.
 
 export async function POST(request: NextRequest) {
-  if (!authorized(request)) {
-    return Response.json({ ok: false, error: "unauthorized" }, { status: 401 });
+  if (!isCronAuthorised(request, { allowAdminBearer: true })) {
+    return cronAuthFailure();
   }
   const started = Date.now();
   const result = await rotateIfDue(started);

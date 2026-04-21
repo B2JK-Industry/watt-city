@@ -31,8 +31,12 @@ export async function POST(request: NextRequest) {
   try {
     body = BodySchema.parse(await request.json());
   } catch {
-    // Shallow-fail on bad vitals payload — never block user because of it.
-    return Response.json({ ok: false }, { status: 204 });
+    // Shallow-fail on bad vitals payload — never block the user for a
+    // stray beacon. Must be a `204 No Content` with *empty* body — HTTP
+    // forbids a body on 204, and Next 16's runtime rejects a JSON-laden
+    // 204 as malformed, surfacing as a 500 to the client (caught by the
+    // Phase 2 contract sweep 2026-04-21).
+    return new Response(null, { status: 204 });
   }
   const day = dayBucket();
   const base = `xp:perf:${day}:${body.route}:${body.name}`;

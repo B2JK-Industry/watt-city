@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { kvGet, kvSet, kvDel } from "@/lib/redis";
 import { runPipeline } from "@/lib/ai-pipeline/publish";
+import { requireAdmin } from "@/lib/admin";
 import {
   listResearchSeeds,
   pickSeedByIndex,
@@ -20,22 +21,15 @@ export const maxDuration = 60;
 // Pass either the theme name (from listResearchSeeds) or its pool index.
 // Useful for demoing all four rotation themes without waiting 4 days.
 //
-// Auth: if ADMIN_SECRET is set, requires matching Bearer token. Otherwise
-// accepts any caller (dev / small-team hackathon ergonomics).
+// Auth: delegated to `requireAdmin` (session role=admin OR ADMIN_SECRET
+// bearer). The same helper gates GET, so an anonymous GET can't enumerate
+// `themes[]` — that was an information-disclosure regression caught by
+// the Phase 2 API contract sweep (2026-04-21).
 const INDEX_KEY = "xp:ai-games:index";
 
 export async function POST(request: NextRequest) {
-  const expected = process.env.ADMIN_SECRET;
-  if (expected) {
-    const header = request.headers.get("authorization") ?? "";
-    const token = header.startsWith("Bearer ") ? header.slice(7) : "";
-    if (token !== expected) {
-      return Response.json(
-        { ok: false, error: "unauthorized" },
-        { status: 401 },
-      );
-    }
-  }
+  const block = await requireAdmin(request);
+  if (block) return block;
 
   // Optional theme override — accept from either JSON body or `?theme=` query.
   let seedOverride: ResearchSeed | undefined;
@@ -102,17 +96,19 @@ export async function POST(request: NextRequest) {
   });
 }
 
-export async function GET() {
-  return Response.json(
-    {
-      ok: false,
-      error: "use POST",
-      themes: listResearchSeeds().map((s, i) => ({
-        index: i,
-        theme: s.theme,
-        kind: s.kind,
-      })),
-    },
-    { status: 405 },
-  );
+// GET returns the current theme pool for admin tooling (the POST handler's
+// `?theme=` override is easier to use when you can see the names).
+// Behind `requireAdmin` — an anonymous caller sees only the 401 gate,
+// never the theme list itself.
+export async function GET(request: NextRequest) {
+  const block = await requireAdmin(request);
+  if (block) return block;
+  return Response.json({
+    ok: true,
+    themes: listResearchSeeds().map((s, i) => ({
+      index: i,
+      theme: s.theme,
+      kind: s.kind,
+    })),
+  });
 }

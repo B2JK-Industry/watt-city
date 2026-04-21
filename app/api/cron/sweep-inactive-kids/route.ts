@@ -6,35 +6,27 @@ import {
   readAgeBucket,
 } from "@/lib/gdpr-k";
 import { getPlayerState } from "@/lib/player";
+import { isCronAuthorised, cronAuthFailure } from "@/lib/cron-auth";
 
 export const maxDuration = 60;
 
 /* 6.3.4 Inactive-kid auto-delete cron.
  *
- * Walk users with an age-bucket flag (<16) whose last activity is older
- * than 12 months. Flag each for soft-delete (re-using the Phase 6.2.4
- * path). The regular `/api/cron/sweep-deletions` will hard-erase after
- * the 30-day grace.
+ * Walks users with an age-bucket flag (<16) whose last activity is
+ * older than 12 months and flags each for soft-delete (re-using the
+ * Phase 6.2.4 path). The regular `/api/cron/sweep-deletions` will
+ * hard-erase after the 30-day grace.
  *
- * Auth: CRON_SECRET bearer or Vercel cron header.
+ * Auth: `lib/cron-auth.ts#isCronAuthorised` — CRON_SECRET bearer or
+ * Vercel's cron header. Dev bypass is NODE_ENV-gated.
  */
-function authorised(request: NextRequest): boolean {
-  const cron = process.env.CRON_SECRET;
-  const header = request.headers.get("authorization") ?? "";
-  const token = header.startsWith("Bearer ") ? header.slice(7) : "";
-  const isVercelCron = request.headers.get("x-vercel-cron") === "1";
-  if (!cron) return true;
-  if (isVercelCron) return true;
-  return token === cron;
-}
 
 export async function GET(request: NextRequest) {
   return POST(request);
 }
 
 export async function POST(request: NextRequest) {
-  if (!authorised(request))
-    return Response.json({ ok: false, error: "unauthorized" }, { status: 401 });
+  if (!isCronAuthorised(request)) return cronAuthFailure();
 
   const rows = await zTopN("xp:leaderboard:global", 10_000);
   const usernames = rows.map((r) => r.username);

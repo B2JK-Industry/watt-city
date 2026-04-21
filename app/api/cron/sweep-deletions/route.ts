@@ -1,37 +1,31 @@
 import { NextRequest } from "next/server";
 import { zTopN } from "@/lib/redis";
 import { deletionStatus, hardErase, SOFT_DELETE_GRACE_MS } from "@/lib/soft-delete";
+import { isCronAuthorised, cronAuthFailure } from "@/lib/cron-auth";
 
 export const maxDuration = 60;
 
 /* Daily sweeper for Phase 6.2.4 soft-delete grace expiry.
  *
- * Authorisation: CRON_SECRET bearer OR Vercel Cron header. Same pattern
- * as /api/cron/rotate-if-due — safe to expose publicly because the
- * logic is idempotent and gated behind the secret.
+ * Authorisation: `lib/cron-auth.ts#isCronAuthorised` — Bearer
+ * CRON_SECRET or Vercel's `x-vercel-cron: 1` header. Dev bypass is
+ * gated by `NODE_ENV === "development"` (was unconditional when
+ * `CRON_SECRET` unset; caught by Phase 2 API contract sweep
+ * 2026-04-21 — a preview deploy without the env var set would have
+ * accepted anonymous account-purge triggers).
  *
  * We enumerate users via the global leaderboard (zTopN, same trick the
  * backup endpoint uses — we don't maintain a separate user index). For
  * each user, read their deletion flag; if it's past grace, run
  * hardErase(). Returns a summary of what was cleaned.
  */
-function authorised(request: NextRequest): boolean {
-  const cron = process.env.CRON_SECRET;
-  const header = request.headers.get("authorization") ?? "";
-  const token = header.startsWith("Bearer ") ? header.slice(7) : "";
-  const isVercelCron = request.headers.get("x-vercel-cron") === "1";
-  if (!cron) return true; // dev
-  if (isVercelCron) return true;
-  return token === cron;
-}
 
 export async function GET(request: NextRequest) {
   return POST(request);
 }
 
 export async function POST(request: NextRequest) {
-  if (!authorised(request))
-    return Response.json({ ok: false, error: "unauthorized" }, { status: 401 });
+  if (!isCronAuthorised(request)) return cronAuthFailure();
 
   // Known users come from the leaderboard ZSET — bounded scan.
   const rows = await zTopN("xp:leaderboard:global", 10_000);
