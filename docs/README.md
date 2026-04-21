@@ -58,3 +58,4 @@ See `ARCHITECTURE.md` § 17 for architecture-level open questions.
 ## Recent sessions
 
 - [`progress/2026-04-21-review-fix.md`](./progress/2026-04-21-review-fix.md) — post-merge convergence pass: fixed 3/3 E2E failures (footer a11y, register button regex, PII-regex-hostile test username), 5 genuine lint errors, relaxed two React 19.2 strict rules that produced false positives. End state: 618/618 vitest, 0 lint errors, 3/3 Playwright.
+- [`progress/2026-04-21-prod-smoke.md`](./progress/2026-04-21-prod-smoke.md) — read-only prod smoke suite (`e2e/prod-smoke.spec.ts`) caught three classes of real a11y regressions on https://watt-city.vercel.app: sub-AA `text-zinc-500` on card surfaces (64 occurrences swept), opacity-keyframed slide-up/stagger-in that flagged transient mid-frame low contrast, and `<svg role="img">` with focusable children. Plus an inline-link-in-text contrast rule. End state: 17/17 prod-smoke green.
