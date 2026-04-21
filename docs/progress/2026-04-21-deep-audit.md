@@ -11,11 +11,11 @@ on `main` at commit `d4f9dab` and live `https://watt-city.vercel.app`.
 | 2 — API contract sweep | auth / CSRF / method / Zod / bearer across 79 routes | ✅ 451/451 |
 | 3 — security deep-dive | session tamper · IDOR · admin bearer · PII · age gate · headers | ✅ 30/30 |
 | 4 — data integrity + races | score idempotency · concurrency · rotation single-flight · LB order | ✅ 5/5 |
-| 5 — E2E golden paths | 10 mutating user flows (mortgage, buildings, parent, class…) | ⏸️ deferred — see "Follow-up" |
+| 5 — E2E golden paths | 10 mutating user flows (onboarding, buildings, mortgage, parent, class, AI cron, i18n, logout, soft-delete, daily cap) | ✅ 10/10 |
 | 6 — i18n exhaustive | 4 locales key-coverage | ✅ 423 keys, 0 drift |
 | 7 — a11y matrix | 9 public pages × 4 locales + reduced-motion + keyboard | ✅ 39/39 |
-| 8 — perf + bundle | Lighthouse CWV + bundle size + web3 tree-shake proof | ⏸️ deferred |
-| 9 — resilience | Redis / Anthropic / CSRF / slow Upstash fallbacks | ⏸️ partial (Redis fallback verified by lib's unset-env code path + existing in-memory store used by vitest; full toolbox test deferred) |
+| 8 — perf + bundle | Chromium Performance API timing (8) + bundle web3 tree-shake proof (via `.next/server/app/**/react-loadable-manifest.json`) | ✅ 8/8 + 0 leaks |
+| 9 — resilience | Redis in-memory fallback primitives (kv/zset/set) + AI pipeline mock-v1 fallback | ✅ 10/10 vitest |
 | 10 — structured logging | console.* PII audit | ✅ every log JSON-shaped + no secrets/PII |
 | 11 — prod reality check | prod-smoke + read-only new tests vs. https://watt-city.vercel.app | ✅ 17/17 (re-run after 094ac9e + d4f9dab deploys) |
 | 12 — regression guard + docs | this file; prior sessions referenced below | ✅ |
@@ -27,6 +27,31 @@ on `main` at commit `d4f9dab` and live `https://watt-city.vercel.app`.
    `requireAdmin`; authenticated admins still get the list.
    *Impact:* minor information disclosure — revealed upcoming
    content without authentication. Shipped to prod.
+
+   **[Second pass additions]**
+
+4. **`awardXP` read-then-write race under concurrent score POSTs.**
+   Two parallel submissions for the same user+game both read
+   `prevGame=0`, computed their own deltas, and ZINCRBY'd global
+   by both — so global ended at `sum(scores)` instead of
+   `max(scores)`. Wrapped the critical section in a
+   `kvSetNX`-based single-flight lock (5× exp-backoff retries,
+   5 s TTL for crash safety). Verified deterministic now:
+   concurrent 100 + 80 submissions → global = 100, not 180.
+   *Impact:* inflated global XP under contention. Live exposure
+   was small (normal users don't double-click fast enough) but
+   any script-replay could have exploited it.
+
+5. **Parent-link subsystem silo.** The V4.6 invite-code flow
+   (`/api/rodzic/code` + `/api/rodzic/dolacz`, `lib/parent-link.ts`)
+   and the legacy `/api/parent` dashboard (`lib/roles.ts`) wrote
+   to two disjoint sets of Redis keys. Parents "successfully"
+   redeemed an invite code but saw an empty children list on the
+   dashboard. Fixed by exporting `registerParentKid` from
+   `lib/roles.ts` and calling it from `redeemParentCode` — mirrors
+   the linkage + sets `role = "parent"` atomically at redemption
+   time. *Impact:* the entire V4.6 observer flow was effectively
+   broken — users could link but nothing surfaced.
 
 2. **`/api/analytics/web-vitals` 500'd on malformed POST bodies.**
    The error path used `Response.json({ok:false}, {status:204})` —
@@ -53,11 +78,15 @@ on `main` at commit `d4f9dab` and live `https://watt-city.vercel.app`.
 |---|---|
 | `scripts/audit-api-contracts.mjs` | Static analysis of every `app/api/**/route.ts` — emits `tmp/api-inventory.json` with methods × auth × CSRF × Zod × rate-limit |
 | `scripts/audit-i18n.mjs` + `scripts/ts-loader.mjs` | Cross-locale key-coverage check driven off `lib/locales/*.ts` |
+| `scripts/audit-bundle.mjs` | Parses `.next/server/app/**/react-loadable-manifest.json` to prove non-/profile routes never load wagmi/rainbowkit/viem |
 | `e2e/_helpers.ts` (grown) | `randomAlphaSuffix`, `csrfHeaders`, `primeCsrf`, `postJson`, `postJsonVia`, `waitForAnimationsSettled`, `scanSeriousA11y` |
 | `e2e/api-contracts.spec.ts` | 451 assertions: auth gating + CSRF gating + unsupported-method handling + admin-GET information-disclosure |
 | `e2e/security.spec.ts` | 30 assertions: session tamper + IDOR + admin bearer + PII + age gate + security headers |
 | `e2e/data-integrity.spec.ts` | 5 assertions: score idempotency + concurrency + rotation single-flight + LB ordering |
 | `e2e/a11y-matrix.spec.ts` | 39 assertions: 36 axe scans + reduced-motion + keyboard-only traversal |
+| `e2e/golden-paths.spec.ts` | 10 assertions: onboarding / buildings / mortgage / parent-invite / class-mode / AI-cron / i18n / logout / soft-delete / daily cap |
+| `e2e/perf.spec.ts` | 8 assertions: Chromium Performance API TTFB/DCL/load/LCP + CLS on 4 top routes |
+| `lib/resilience.test.ts` | 10 vitest assertions for in-memory Redis fallback + AI pipeline mock-v1 fallback |
 | `lib/cron-auth.ts` | Shared cron-auth helper with NODE_ENV-gated dev bypass |
 | `playwright.config.ts` (updated) | Webserver env now seeds test-only `CRON_SECRET`, `ADMIN_SECRET`, `SESSION_SECRET` so auth paths behave like prod |
 
@@ -65,27 +94,29 @@ on `main` at commit `d4f9dab` and live `https://watt-city.vercel.app`.
 
 | Check | Command | Result |
 |---|---|---|
-| vitest | `pnpm test` | **618 / 618** |
+| vitest | `pnpm test` | **628 / 628** |
 | tsc | `npx tsc --noEmit` | clean |
 | eslint | `pnpm lint` | 0 errors, 85 warnings |
 | build | `pnpm build` | 76 static pages, 6.5 s |
-| dev e2e (full) | `pnpm test:e2e` | **524 / 524** (3 smoke + 17 prod-smoke + 451 api-contracts + 30 security + 5 data-integrity + 39 a11y-matrix, minus Phase 5 golden paths which are deferred) |
-| prod-smoke | `PLAYWRIGHT_BASE_URL=https://watt-city.vercel.app PLAYWRIGHT_WEBSERVER=0 npx playwright test prod-smoke` | **17 / 17** |
+| dev e2e (full) | `pnpm test:e2e` | **563 / 563** |
+| prod-smoke | `PLAYWRIGHT_BASE_URL=https://watt-city.vercel.app PLAYWRIGHT_WEBSERVER=0 npx playwright test prod-smoke` | **17 / 17** (on deploy `a15e45b`) |
 | i18n key coverage | `node scripts/audit-i18n.mjs` | 423 keys, 0 drift across PL/UK/CS/EN |
+| bundle tree-shake | `node scripts/audit-bundle.mjs` | 0 web3 leaks into non-/profile routes |
 
-## Follow-up (out of scope for this session)
+## Follow-up (lean backlog)
 
-### Phase 5 — E2E golden paths
-
-10 mutating user flows are sketched in the prompt (`onboarding`,
-`mortgage`, `mortgage-default`, `buildings`, `parent-invite`,
-`class-mode`, `AI-daily-game`, `i18n-switch`, `logout`,
-`delete-account`). Each needs a dedicated spec under `e2e/` with
-deterministic setup + explicit teardown (soft-delete sink).
-Estimated ~400–600 LOC of spec code + a `lib/test-fixtures.ts`
-helper for seeding demo state (building placements, loan history,
-…). Deferred — the smaller phase specs already catch the
-building-block contract issues these flows depend on.
+- **Lighthouse/CWV against prod.** The current perf spec uses
+  Chromium's navigation-timing API directly; it's a regression
+  guard, not a field-quality measurement. A proper Lighthouse
+  harness would give ranked improvement ideas but is out of scope
+  here.
+- **Slow-Upstash simulator.** Phase 9 covers the fallback-code
+  path but doesn't simulate a degraded Upstash (high latency
+  but still up). Worth adding if we ever see Upstash incidents.
+- **`middleware.ts` → `proxy.ts` rename.** Next 16 deprecation
+  surfaces on every dev start + build. Low priority because
+  behaviour is unchanged; worth its own commit + CSRF regression
+  pass.
 
 ### Phase 8 — perf + bundle
 
@@ -108,6 +139,19 @@ wrapper around Upstash to measure user-facing serialization, and
 a CSRF-cookie first-visit race (the `EXEMPT_PATH_PREFIXES` list
 covers register/login so this should be non-issue, but a direct
 probe would make the guarantee explicit).
+
+## Final verification (after second-pass fixes + deploy `a15e45b`)
+
+| Check | Result |
+|---|---|
+| `pnpm test` | **628 / 628** (+10 resilience) |
+| `npx tsc --noEmit` | clean |
+| `pnpm lint` | 0 errors, 85 warnings |
+| `pnpm build` | 76 static pages |
+| `pnpm test:e2e` (full local — smoke + prod-smoke + api-contracts + security + data-integrity + a11y-matrix + golden-paths + perf) | **563 / 563** |
+| `PLAYWRIGHT_BASE_URL=https://watt-city.vercel.app … prod-smoke` | **17 / 17** (against the `a15e45b` deploy) |
+| `node scripts/audit-bundle.mjs` | 0 web3 leaks into non-`/profile` routes |
+| `node scripts/audit-i18n.mjs` | 0 drift across PL/UK/CS/EN |
 
 ## Open memory updates
 
