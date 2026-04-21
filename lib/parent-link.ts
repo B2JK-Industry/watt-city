@@ -7,6 +7,7 @@
  */
 
 import { kvGet, kvSet, kvDel, sAdd, sMembers, sRem } from "@/lib/redis";
+import { registerParentKid } from "@/lib/roles";
 
 export const PARENT_CODE_TTL_SECONDS = 24 * 60 * 60; // 24h
 export const PARENT_CODE_KEY = (code: string) => `xp:parent-code:${code}`;
@@ -61,6 +62,13 @@ export async function redeemParentCode(
   await sAdd(PARENT_LINKS_KEY(kid), parentUsername);
   await kvSet(KID_OF_PARENT_KEY(parentUsername), kid);
   await kvDel(PARENT_CODE_KEY(code.toUpperCase())); // one-shot
+  // Mirror the V4.6 linkage into the legacy roles-based store so the
+  // /api/parent dashboard (which reads listChildren / listParents from
+  // lib/roles.ts) sees the newly-linked kid. Without this the two
+  // parent-link subsystems drift — the V4.6 flow "succeeds" but the
+  // dashboard shows an empty children list. See docs/progress/
+  // 2026-04-21-deep-audit.md Phase 5 for the original regression.
+  await registerParentKid(parentUsername, kid);
   return { ok: true, kidUsername: kid };
 }
 

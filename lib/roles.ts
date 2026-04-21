@@ -189,6 +189,28 @@ export async function linkParent(
   return { ok: true, child: rec.child };
 }
 
+/** Mirror a parent↔kid linkage into the roles-based store. Idempotent:
+ *  repeat calls don't duplicate the child in PARENT_CHILDREN nor the
+ *  parent in CHILD_PARENTS. Used by lib/parent-link.ts#redeemParentCode
+ *  so the V4.6 invite-code flow populates the legacy dashboard view —
+ *  the two parent-link subsystems used to drift (V4.6 succeeded but
+ *  /api/parent returned empty children). See docs/progress/
+ *  2026-04-21-deep-audit.md Phase 5. */
+export async function registerParentKid(
+  parent: string,
+  kid: string,
+): Promise<void> {
+  await setRole(parent, "parent");
+  const pList = (await kvGet<string[]>(PARENT_CHILDREN(parent))) ?? [];
+  if (!pList.includes(kid)) {
+    await kvSet(PARENT_CHILDREN(parent), [...pList, kid]);
+  }
+  const cList = (await kvGet<string[]>(CHILD_PARENTS(kid))) ?? [];
+  if (!cList.includes(parent)) {
+    await kvSet(CHILD_PARENTS(kid), [...cList, parent]);
+  }
+}
+
 export async function listChildren(parent: string): Promise<string[]> {
   return (await kvGet<string[]>(PARENT_CHILDREN(parent))) ?? [];
 }
