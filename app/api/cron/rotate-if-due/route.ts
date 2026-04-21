@@ -35,7 +35,6 @@ export async function POST(request: NextRequest) {
   if (!result.ok) {
     // 409 for contention — client should back off, not retry immediately
     const status = result.contended ? 409 : 500;
-    // eslint-disable-next-line no-console
     console.log(
       JSON.stringify({
         event: "rotation.failed",
@@ -57,7 +56,6 @@ export async function POST(request: NextRequest) {
   // Telemetry: single structured log line per rotation outcome. Vercel captures
   // stdout as searchable logs; a later tap (1.1.10) can forward these to a
   // metrics backend.
-  // eslint-disable-next-line no-console
   console.log(
     JSON.stringify({
       event: "rotation.fired",

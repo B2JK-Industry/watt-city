@@ -47,7 +47,6 @@ export async function sendPush(
   // add a runtime fetch against the push service without careful JWT
   // signing + payload encryption; shipping a half-working version here
   // could cause subscribers to drop silently.
-  // eslint-disable-next-line no-console
   console.log(
     JSON.stringify({
       event: "push.would-send",

@@ -49,7 +49,7 @@ export default async function ParentPage() {
       <h1 className="brutal-heading text-3xl">{copy.heading}</h1>
       <ParentClient
         role={role}
-        children={children}
+        kids={children}
         parents={parents}
         privacy={privacy}
         copy={copy}

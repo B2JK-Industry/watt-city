@@ -20,7 +20,7 @@ async function reset(u: string) {
 }
 
 async function withCashflow(username: string): Promise<void> {
-  let state = await getPlayerState(username);
+  const state = await getPlayerState(username);
   state.buildings.push({
     id: "b-test",
     slotId: 7,

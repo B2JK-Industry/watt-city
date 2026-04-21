@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 export function ConsentClient({ token }: { token: string }) {
@@ -34,12 +35,12 @@ export function ConsentClient({ token }: { token: string }) {
         <p className="text-lg font-black text-emerald-400">Dziękujemy ✓</p>
         <p className="text-sm">
           Zgoda została zapisana. {child && <>Konto <strong>{child}</strong> jest aktywne.</>}
-          Rodzic może łączyć się z kontem dziecka przez stronę <a
+          Rodzic może łączyć się z kontem dziecka przez stronę <Link
             href="/parent"
             className="underline text-[var(--accent)]"
           >
             /parent
-          </a>.
+          </Link>.
         </p>
       </div>
     );

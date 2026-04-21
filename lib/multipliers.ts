@@ -154,10 +154,13 @@ export function ladderSummary(
  *  keeps new buildings renderable without requiring a same-PR dict bump. */
 export function resolveFactorLabel(
   factor: MultFactor,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   lang: Lang,
   dict: Record<string, unknown> = {},
 ): string {
+  // `lang` is accepted for API stability — existing callers pass it and
+  // future labelKey schemes may select per-locale dict branches — even
+  // though this implementation resolves purely from `dict`.
+  void lang;
   const keys = factor.labelKey.split(".");
   let node: unknown = dict;
   for (const k of keys) {

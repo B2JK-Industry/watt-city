@@ -83,7 +83,7 @@ describe("takeMortgage + repayment flow", () => {
 
   async function setupPlayerWithCashflow() {
     // Put a lucrative building so monthlyCashflow > 0 → eligibility passes.
-    let state = await getPlayerState(u);
+    const state = await getPlayerState(u);
     state.buildings.push({
       id: "b-test",
       slotId: 7,
@@ -171,7 +171,7 @@ describe("V2 R2.2 — payment fallback (cashZl → coins) + risk projection", ()
   beforeEach(() => reset(u));
 
   async function setupCashflow() {
-    let state = await getPlayerState(u);
+    const state = await getPlayerState(u);
     state.buildings.push({
       id: "b-r22",
       slotId: 7,

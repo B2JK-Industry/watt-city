@@ -128,7 +128,6 @@ export async function runPipeline(
   // parent will flag.
   const findings = moderateSpec(specParse.data);
   if (findings.length > 0) {
-    // eslint-disable-next-line no-console
     console.log(
       JSON.stringify({
         event: "moderation.rejected",

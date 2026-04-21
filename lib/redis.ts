@@ -25,7 +25,6 @@ function hasUpstash(): boolean {
 const upstash: Redis | null = hasUpstash() ? Redis.fromEnv() : null;
 
 if (!upstash && process.env.NODE_ENV !== "production") {
-  // eslint-disable-next-line no-console
   console.warn(
     "[redis] UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN not set — falling back to in-memory store (dev only, data lost on restart).",
   );

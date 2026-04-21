@@ -300,7 +300,7 @@ export default async function RootLayout({
                 </div>
               </div>
             )}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs text-zinc-500 pt-2">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs text-zinc-400 pt-2">
               <span>{dict.footer.sponsors}</span>
               <span className="flex flex-wrap gap-3">
                 <a href="/o-platforme" className="hover:text-[var(--accent)]">

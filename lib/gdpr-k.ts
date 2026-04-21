@@ -155,7 +155,6 @@ export async function openConsentRequest(
     ts: now,
   });
   // Mock SMTP: log a structured "sent" line. Real SMTP would dispatch here.
-  // eslint-disable-next-line no-console
   console.log(
     JSON.stringify({
       event: "parental-consent.dispatched",

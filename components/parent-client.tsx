@@ -23,16 +23,16 @@ type Copy = {
 
 type Props = {
   role: Role;
-  children: string[];
+  kids: string[];
   parents: string[];
   privacy: ChildParentPrivacy;
   copy: Copy;
 };
 
-export function ParentClient({ role: initialRole, children: initialChildren, parents, privacy: initialPrivacy, copy }: Props) {
+export function ParentClient({ role: initialRole, kids: initialKids, parents, privacy: initialPrivacy, copy }: Props) {
   const router = useRouter();
   const [role, setRole] = useState(initialRole);
-  const [children, setChildren] = useState(initialChildren);
+  const [kids, setKids] = useState(initialKids);
   const [privacy, setPrivacy] = useState(initialPrivacy);
   const [code, setCode] = useState<string | null>(null);
   const [linkCode, setLinkCode] = useState("");
@@ -44,7 +44,7 @@ export function ParentClient({ role: initialRole, children: initialChildren, par
     const j = await r.json();
     if (j.ok) {
       setRole(j.role);
-      setChildren(j.children);
+      setKids(j.children);
       setPrivacy(j.privacy);
     }
     router.refresh();
@@ -127,11 +127,11 @@ export function ParentClient({ role: initialRole, children: initialChildren, par
         </div>
       </section>
 
-      {role === "parent" && children.length > 0 && (
+      {role === "parent" && kids.length > 0 && (
         <section className="card p-4 flex flex-col gap-2">
           <h2 className="text-sm font-black uppercase">{copy.children}</h2>
           <ul className="flex flex-col gap-1">
-            {children.map((c) => (
+            {kids.map((c) => (
               <li key={c} className="flex items-center justify-between">
                 <span>{c}</span>
                 <Link href={`/parent/${encodeURIComponent(c)}`} className="btn btn-ghost text-xs">

@@ -109,7 +109,6 @@ export async function POST(request: NextRequest) {
     const state = await getPlayerState(result.user.username);
     await ensureSignupGift(state);
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.error(
       JSON.stringify({
         event: "v3.2.register-gift-failed",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Lang } from "@/lib/i18n";
 
 /* Cleanup issue 4 — /profile affordance to generate a 24h parent-invite
@@ -111,10 +111,21 @@ export function ParentInviteCard({ lang }: { lang: Lang }) {
     }
   }
 
-  const hoursLeft =
-    expiresAt != null
-      ? Math.max(0, Math.ceil((expiresAt - Date.now()) / (60 * 60 * 1000)))
-      : null;
+  // Drive hoursLeft off an interval instead of Date.now() in render: avoids
+  // hydration drift (initial SSR and client first-render would disagree) and
+  // ticks the countdown live without a manual refresh.
+  const [hoursLeft, setHoursLeft] = useState<number | null>(null);
+  useEffect(() => {
+    if (expiresAt == null) {
+      setHoursLeft(null);
+      return;
+    }
+    const compute = () =>
+      setHoursLeft(Math.max(0, Math.ceil((expiresAt - Date.now()) / (60 * 60 * 1000))));
+    compute();
+    const id = setInterval(compute, 60_000);
+    return () => clearInterval(id);
+  }, [expiresAt]);
 
   return (
     <section className="card p-5 flex flex-col gap-3">

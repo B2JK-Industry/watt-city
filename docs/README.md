@@ -54,3 +54,7 @@ See `ARCHITECTURE.md` § 17 for architecture-level open questions.
 6. Test (unit + manual smoke)
 7. PR to `watt-city`
 8. After merge, update CHANGELOG + relevant doc if behaviour changed
+
+## Recent sessions
+
+- [`progress/2026-04-21-review-fix.md`](./progress/2026-04-21-review-fix.md) — post-merge convergence pass: fixed 3/3 E2E failures (footer a11y, register button regex, PII-regex-hostile test username), 5 genuine lint errors, relaxed two React 19.2 strict rules that produced false positives. End state: 618/618 vitest, 0 lint errors, 3/3 Playwright.

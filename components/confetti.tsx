@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 const COLORS = [
   "var(--accent)",
@@ -11,6 +11,31 @@ const COLORS = [
 ];
 
 type Props = { count?: number; className?: string };
+
+type Particle = {
+  key: number;
+  left: number;
+  size: number;
+  color: string;
+  delay: number;
+  duration: number;
+  isSquare: boolean;
+};
+
+function makeParticles(count: number): Particle[] {
+  return Array.from({ length: count }, (_, i) => {
+    const isSquare = Math.random() < 0.4;
+    return {
+      key: i,
+      left: Math.random() * 100,
+      size: 6 + Math.random() * 8,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      delay: Math.random() * 250,
+      duration: 1100 + Math.random() * 700,
+      isSquare,
+    };
+  });
+}
 
 /* D6 polish — respects `prefers-reduced-motion`. When reduced, renders
  * nothing (confetti is purely decorative — there's no informational
@@ -31,22 +56,20 @@ function useReducedMotion(): boolean {
 
 export function Confetti({ count = 28, className = "" }: Props) {
   const reduced = useReducedMotion();
-  const particles = useMemo(() => {
-    return Array.from({ length: count }, (_, i) => {
-      const isSquare = Math.random() < 0.4;
-      return {
-        key: i,
-        left: Math.random() * 100,
-        size: 6 + Math.random() * 8,
-        color: COLORS[Math.floor(Math.random() * COLORS.length)],
-        delay: Math.random() * 250,
-        duration: 1100 + Math.random() * 700,
-        isSquare,
-      };
-    });
-  }, [count]);
+  // Particles are generated post-mount (initial state is null) to avoid
+  // SSR/client hydration drift — Math.random() produces different values
+  // on server vs. client render passes.
+  const [particles, setParticles] = useState<Particle[] | null>(null);
+  useEffect(() => {
+    if (reduced) {
+      setParticles(null);
+      return;
+    }
+    setParticles(makeParticles(count));
+  }, [count, reduced]);
 
   if (reduced) return null;
+  if (!particles) return null;
 
   return (
     <div
