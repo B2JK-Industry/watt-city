@@ -181,7 +181,7 @@ export function BudgetBalanceClient({
                   <span className="flex items-center gap-2">
                     <span>{tgt.emoji}</span>
                     <strong>{tgt.label}</strong>
-                    <span className="text-zinc-500 text-xs">· {tgt.hint}</span>
+                    <span className="text-zinc-400 text-xs">· {tgt.hint}</span>
                   </span>
                   <span
                     className={`font-mono ${
@@ -209,7 +209,7 @@ export function BudgetBalanceClient({
                     }}
                   />
                 </div>
-                <div className="text-[11px] text-zinc-500">
+                <div className="text-[11px] text-zinc-400">
                   {t.recommendation
                     .replace("{min}", String(tgt.min))
                     .replace("{max}", String(tgt.max))}

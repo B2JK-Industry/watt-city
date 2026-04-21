@@ -69,7 +69,7 @@ export default async function PrivacyPage() {
             retention={f.sessionTtl}
           />
         </div>
-        <p className="text-xs text-zinc-500 mt-2">{t.whatNotStored}</p>
+        <p className="text-xs text-zinc-400 mt-2">{t.whatNotStored}</p>
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
@@ -179,7 +179,7 @@ export default async function PrivacyPage() {
         </ul>
       </section>
 
-      <footer className="text-xs text-zinc-500 border-t-2 border-[var(--ink)]/30 pt-4">
+      <footer className="text-xs text-zinc-400 border-t-2 border-[var(--ink)]/30 pt-4">
         {t.version}{" "}
         <Link href="/" className="underline">
           {t.backHome}
@@ -209,12 +209,12 @@ function DataRow({
       </p>
       <p className="text-xs font-mono text-zinc-300 mt-1">{value}</p>
       <p className="text-xs text-zinc-400 mt-2">
-        <span className="text-zinc-500">Retention:</span> {retention}
+        <span className="text-zinc-400">Retention:</span> {retention}
       </p>
       <p className="text-xs text-zinc-400">
-        <span className="text-zinc-500">Purpose:</span> {purpose}
+        <span className="text-zinc-400">Purpose:</span> {purpose}
       </p>
-      {note && <p className="text-[11px] text-zinc-500 mt-1 italic">{note}</p>}
+      {note && <p className="text-[11px] text-zinc-400 mt-1 italic">{note}</p>}
     </div>
   );
 }

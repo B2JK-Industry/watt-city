@@ -100,7 +100,7 @@ export function PkoMirrorClient({ initialAccount, initialAudit, wattCityCashZl, 
         <p className="text-3xl font-mono font-black">
           {account.balancePln.toLocaleString("pl-PL")} PLN
         </p>
-        <p className="text-xs text-zinc-500">{account.childName}</p>
+        <p className="text-xs text-zinc-400">{account.childName}</p>
       </section>
 
       <section className="card p-4 flex flex-col gap-3">
@@ -152,7 +152,7 @@ export function PkoMirrorClient({ initialAccount, initialAudit, wattCityCashZl, 
       <section className="card p-4 flex flex-col gap-2">
         <h2 className="text-sm font-black uppercase">{copy.history}</h2>
         {audit.length === 0 ? (
-          <p className="text-xs text-zinc-500">{copy.empty}</p>
+          <p className="text-xs text-zinc-400">{copy.empty}</p>
         ) : (
           <ul className="flex flex-col gap-1 text-xs font-mono">
             {audit.map((t) => (

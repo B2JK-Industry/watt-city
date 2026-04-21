@@ -78,7 +78,7 @@ export function GameComments({ gameId, currentUser, labels }: Props) {
       </div>
       {error && <p className="text-rose-400 text-xs">{error}</p>}
       {comments.length === 0 ? (
-        <p className="text-xs text-zinc-500">{labels.empty}</p>
+        <p className="text-xs text-zinc-400">{labels.empty}</p>
       ) : (
         <ul className="flex flex-col gap-2 text-sm">
           {comments.map((c) => (

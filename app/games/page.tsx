@@ -115,7 +115,7 @@ export default async function GamesHubPage() {
                   <span className="font-semibold truncate">
                     {g.meta.building.name}
                   </span>
-                  <span className="text-zinc-500 truncate">
+                  <span className="text-zinc-400 truncate">
                     — {localizedTitle(g.meta, dict)}
                   </span>
                 </span>

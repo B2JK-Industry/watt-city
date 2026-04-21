@@ -269,7 +269,7 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
             <span className="font-mono">{state.creditScore}/100</span>
           </span>
         </div>
-        <p className="text-[11px] uppercase tracking-wider text-zinc-500 max-w-md">
+        <p className="text-[11px] uppercase tracking-wider text-zinc-400 max-w-md">
           {dict.disclaimer}
         </p>
       </header>
@@ -702,7 +702,7 @@ function MortgageCard({
       <div className="mt-2">
         <h3 className="text-sm font-black uppercase mb-1">{dict.loansTitle}</h3>
         {activeLoans.length === 0 ? (
-          <p className="text-xs text-zinc-500">{dict.noLoans}</p>
+          <p className="text-xs text-zinc-400">{dict.noLoans}</p>
         ) : (
           <ul className="flex flex-col gap-1 text-xs font-mono">
             {activeLoans.map((l) => (

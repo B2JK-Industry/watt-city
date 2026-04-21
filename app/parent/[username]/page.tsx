@@ -94,7 +94,7 @@ export default async function ParentChildView({
       <section className="card p-4 flex flex-col gap-2">
         <h2 className="text-sm font-black uppercase">{copy.buildings}</h2>
         {privacy.hideBuildings ? (
-          <p className="text-xs text-zinc-500">🔒 {copy.hidden}</p>
+          <p className="text-xs text-zinc-400">🔒 {copy.hidden}</p>
         ) : (
           <ul className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm">
             {state.buildings.map((b) => (
@@ -109,7 +109,7 @@ export default async function ParentChildView({
       <section className="card p-4 flex flex-col gap-2">
         <h2 className="text-sm font-black uppercase">{copy.ledger}</h2>
         {privacy.hideLedger ? (
-          <p className="text-xs text-zinc-500">🔒 {copy.hidden}</p>
+          <p className="text-xs text-zinc-400">🔒 {copy.hidden}</p>
         ) : (
           <ul className="flex flex-col gap-1 text-xs font-mono">
             {ledger.slice(0, 12).map((e) => (

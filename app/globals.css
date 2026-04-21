@@ -75,6 +75,19 @@
   }
 }
 
+/* Inline-text link affordance (WCAG 1.4.1 / axe `link-in-text-block`).
+ * Tailwind v4's preflight strips the browser-default <a> underline, so
+ * a yellow/cyan link inside a gray <p> body ends up distinguished from
+ * the surrounding text by color alone — below the 3:1 contrast cue
+ * threshold for link-vs-prose text. Reinstating the underline inside
+ * text-block containers restores a non-colour distinguishing feature.
+ * `.btn`/`.btn-*`/`.chip` and nav/footer/header links sit outside a
+ * text block so they are unaffected. */
+:where(p, li, blockquote, dd) a:not([class*="btn"]):not(.chip) {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 
 :root {
   --background: #0a0a0f;
@@ -335,9 +348,16 @@ body {
   100% { transform: scale(1); opacity: 1; }
 }
 
+/* slide-up: transform-only. The previous opacity 0→1 component caused
+ * transient low text-contrast during the 320 ms fade (axe flagged
+ * brutal-tag, brutal-heading, .chip and text-zinc-500 as serious
+ * WCAG 1.4.3 violators mid-animation, because the partially-opaque
+ * foreground blended with the dark page body). Sliding-only keeps the
+ * entrance feel without ever hiding text. `prefers-reduced-motion`
+ * still short-circuits via the global reset up top. */
 @keyframes slide-up {
-  from { transform: translateY(10px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from { transform: translateY(10px); }
+  to { transform: translateY(0); }
 }
 
 @keyframes fx-rise {
@@ -368,9 +388,14 @@ body {
   100% { transform: translateY(360px) rotate(720deg) scale(1); opacity: 0; }
 }
 
+/* stagger-in: transform-only for the same reason slide-up is — an
+ * opacity-0 starting frame produces sub-WCAG contrast on the fading-in
+ * text for the first ~100–200 ms of each staggered child, which axe
+ * flags as a serious violation when it samples the page mid-animation.
+ * Slide-only keeps the cascade feel without ever hiding content. */
 @keyframes stagger-in {
-  from { transform: translate(10px, 10px); opacity: 0; }
-  to { transform: translate(0, 0); opacity: 1; }
+  from { transform: translate(10px, 10px); }
+  to { transform: translate(0, 0); }
 }
 
 @keyframes glow-ring {

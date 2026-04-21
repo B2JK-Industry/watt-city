@@ -93,7 +93,7 @@ export function ThemeProposalsClient({
       <section className="card p-4 flex flex-col gap-2">
         <h2 className="text-sm font-black uppercase">{copy.ranking}</h2>
         {proposals.length === 0 ? (
-          <p className="text-xs text-zinc-500">{copy.empty}</p>
+          <p className="text-xs text-zinc-400">{copy.empty}</p>
         ) : (
           <ul className="flex flex-col gap-1">
             {proposals.map((p) => (
@@ -103,7 +103,7 @@ export function ThemeProposalsClient({
               >
                 <div className="flex flex-col">
                   <span className="text-sm">{p.text}</span>
-                  <span className="text-[11px] text-zinc-500">
+                  <span className="text-[11px] text-zinc-400">
                     {p.author} · {p.voteCount} 👍
                   </span>
                 </div>

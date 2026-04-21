@@ -68,7 +68,7 @@ export default async function ClassDetailPage({
       <section className="card p-4 flex flex-col gap-3">
         <h2 className="text-lg font-black uppercase">{copy.leaderboard}</h2>
         <ol className="flex flex-col gap-1 text-sm">
-          {rows.length === 0 && <li className="text-xs text-zinc-500">—</li>}
+          {rows.length === 0 && <li className="text-xs text-zinc-400">—</li>}
           {rows.map((r, i) => (
             <li
               key={r.username}
@@ -89,14 +89,14 @@ export default async function ClassDetailPage({
       <section className="card p-4 flex flex-col gap-1">
         <h2 className="text-sm font-black uppercase">{copy.qofweek}</h2>
         <p className="text-sm">
-          {cls.qOfWeekTheme ?? <span className="text-zinc-500">{copy.noQ}</span>}
+          {cls.qOfWeekTheme ?? <span className="text-zinc-400">{copy.noQ}</span>}
         </p>
       </section>
 
       <section className="card p-4 flex flex-col gap-1">
         <h2 className="text-sm font-black uppercase">{copy.curriculum}</h2>
         {cls.curriculum.length === 0 ? (
-          <p className="text-xs text-zinc-500">—</p>
+          <p className="text-xs text-zinc-400">—</p>
         ) : (
           <div className="flex flex-wrap gap-1">
             {cls.curriculum.map((t) => (

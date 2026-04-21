@@ -194,7 +194,7 @@ export function EnergyDashClient({ dict }: { dict: Dict }) {
             <p className="text-zinc-400 mt-2">{t.readyBody}</p>
           </div>
           <div className="flex-1 min-w-[220px] flex flex-col gap-2 text-sm text-zinc-300">
-            <span className="text-xs uppercase tracking-wider text-zinc-500">
+            <span className="text-xs uppercase tracking-wider text-zinc-400">
               {t.comboBonus}
             </span>
             <div className="grid grid-cols-3 gap-2 text-center">
@@ -283,7 +283,7 @@ export function EnergyDashClient({ dict }: { dict: Dict }) {
         })}
         <FloatingFxLayer items={fxItems} />
       </div>
-      <p className="text-xs text-zinc-500">{t.footNote}</p>
+      <p className="text-xs text-zinc-400">{t.footNote}</p>
     </div>
   );
 }

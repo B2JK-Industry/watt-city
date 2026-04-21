@@ -120,7 +120,7 @@ export function OnboardingTour({ lang }: Props) {
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 motion-safe:animate-[fade-in_200ms_ease-out]"
     >
       <div className="card p-6 w-[min(92vw,28rem)] flex flex-col gap-4 shadow-[6px_6px_0_0_var(--ink)] motion-safe:animate-[pop-in_220ms_cubic-bezier(0.34,1.56,0.64,1)]">
-        <div className="flex items-center justify-between text-xs text-zinc-500">
+        <div className="flex items-center justify-between text-xs text-zinc-400">
           <span>
             {index + 1}/{steps.length}
           </span>

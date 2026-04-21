@@ -134,7 +134,7 @@ export function AiMatchPairsClient({
 
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-2">
-          <p className="text-[10px] uppercase font-bold text-zinc-500 tracking-widest">{spec.leftLabel}</p>
+          <p className="text-[10px] uppercase font-bold text-zinc-400 tracking-widest">{spec.leftLabel}</p>
           {leftItems.map((it) => {
             const m = matched[it.key];
             const sel = pickedLeft === it.key;
@@ -162,7 +162,7 @@ export function AiMatchPairsClient({
         </div>
 
         <div className="flex flex-col gap-2">
-          <p className="text-[10px] uppercase font-bold text-zinc-500 tracking-widest">{spec.rightLabel}</p>
+          <p className="text-[10px] uppercase font-bold text-zinc-400 tracking-widest">{spec.rightLabel}</p>
           {rightItems.map((it) => {
             const m = matched[it.key];
             const sel = pickedRight === it.key;

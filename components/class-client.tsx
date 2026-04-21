@@ -128,7 +128,7 @@ export function ClassClient({
       <section className="flex flex-col gap-2">
         <h2 className="text-sm font-black uppercase">{copy.yourClasses}</h2>
         {classes.length === 0 ? (
-          <p className="text-xs text-zinc-500">—</p>
+          <p className="text-xs text-zinc-400">—</p>
         ) : (
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {classes.map((cls) => (

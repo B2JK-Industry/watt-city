@@ -111,7 +111,7 @@ export function MarketplaceClient({
       <section className="card p-4 flex flex-col gap-3">
         <h2 className="text-lg font-black uppercase">{copy.yourBuildings}</h2>
         {sellable.length === 0 ? (
-          <p className="text-xs text-zinc-500">{copy.empty}</p>
+          <p className="text-xs text-zinc-400">{copy.empty}</p>
         ) : (
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {sellable.map((b) => {
@@ -130,7 +130,7 @@ export function MarketplaceClient({
                     <strong>{entry?.labels.pl ?? b.catalogId}</strong>
                     <span className="text-xs">L{b.level}</span>
                   </div>
-                  <span className="text-[11px] text-zinc-500">slot #{b.slotId} · T{entry?.tier}</span>
+                  <span className="text-[11px] text-zinc-400">slot #{b.slotId} · T{entry?.tier}</span>
                 </li>
               );
             })}
@@ -160,7 +160,7 @@ export function MarketplaceClient({
           {copy.listings} · {listings.length}
         </h2>
         {listings.length === 0 ? (
-          <p className="text-xs text-zinc-500">{copy.empty}</p>
+          <p className="text-xs text-zinc-400">{copy.empty}</p>
         ) : (
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {listings.map((l) => {
@@ -178,7 +178,7 @@ export function MarketplaceClient({
                     </strong>
                     <span className="font-mono text-sm">{l.askPrice} W$</span>
                   </div>
-                  <span className="text-[11px] text-zinc-500">
+                  <span className="text-[11px] text-zinc-400">
                     {copy.sellerLabel}: {l.sellerId} {own ? ` ${copy.ownListing}` : ""}
                   </span>
                   {own ? (
@@ -208,7 +208,7 @@ export function MarketplaceClient({
       <section className="card p-4 flex flex-col gap-2">
         <h2 className="text-sm font-black uppercase">{copy.historyLabel}</h2>
         {history.length === 0 ? (
-          <p className="text-xs text-zinc-500">{copy.empty}</p>
+          <p className="text-xs text-zinc-400">{copy.empty}</p>
         ) : (
           <ul className="flex flex-col gap-1 text-xs font-mono">
             {history.map((h, i) => (

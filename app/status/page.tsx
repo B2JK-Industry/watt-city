@@ -28,7 +28,7 @@ export default async function StatusPage() {
     <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex flex-col gap-2">
         <h1 className="brutal-heading text-3xl">Watt City — status</h1>
-        <p className="text-xs text-zinc-500">
+        <p className="text-xs text-zinc-400">
           Public status page. Generated {new Date(now).toISOString()}.
         </p>
       </header>
@@ -58,7 +58,7 @@ export default async function StatusPage() {
           <li>✅ Static assets: Vercel CDN</li>
         </ul>
       </section>
-      <p className="text-xs text-zinc-500">
+      <p className="text-xs text-zinc-400">
         Szczegóły dla on-call: <a href="/admin" className="underline">/admin</a>
         . W razie incydentu zobacz <a href="/admin/health" className="underline">/admin/health</a>.
       </p>

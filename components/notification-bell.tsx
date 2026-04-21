@@ -95,7 +95,7 @@ export function NotificationBell({ labels }: Props) {
           </header>
           <ul className="flex flex-col max-h-96 overflow-y-auto divide-y divide-[var(--ink)]/20">
             {(data?.entries ?? []).length === 0 && (
-              <li className="p-3 text-sm text-zinc-500">{labels.empty}</li>
+              <li className="p-3 text-sm text-zinc-400">{labels.empty}</li>
             )}
             {(data?.entries ?? []).map((e) => {
               const isUnread = e.ts > (data?.seenAt ?? 0);
@@ -111,7 +111,7 @@ export function NotificationBell({ labels }: Props) {
                       </p>
                       <p className="text-xs text-zinc-400">{e.body}</p>
                       {e.silent && (
-                        <p className="text-[10px] text-zinc-500 mt-0.5">
+                        <p className="text-[10px] text-zinc-400 mt-0.5">
                           🌙 {labels.quietActive}
                         </p>
                       )}

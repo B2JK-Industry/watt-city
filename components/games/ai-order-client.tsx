@@ -112,7 +112,7 @@ export function AiOrderClient({
     <div className="flex flex-col gap-5">
       <div className="card p-4 flex flex-col gap-2">
         <p className="text-base font-semibold leading-snug">{spec.prompt}</p>
-        <p className="text-xs text-zinc-500">
+        <p className="text-xs text-zinc-400">
           {spec.direction === "ascending" ? t.orderAscHint : t.orderDescHint}
         </p>
       </div>
@@ -129,7 +129,7 @@ export function AiOrderClient({
             <div className="flex-1 min-w-0">
               <p className="font-semibold truncate">{it.label}</p>
               {it.hint && (
-                <p className="text-[11px] text-zinc-500 truncate">{it.hint}</p>
+                <p className="text-[11px] text-zinc-400 truncate">{it.hint}</p>
               )}
             </div>
             <div className="flex flex-col gap-1">

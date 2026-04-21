@@ -129,7 +129,7 @@ export function AiPriceGuessClient({
 
       <div className="card p-6 flex flex-col gap-4">
         <p className="text-lg font-semibold">{current.prompt}</p>
-        <p className="text-xs text-zinc-500">
+        <p className="text-xs text-zinc-400">
           {t.guessHint.replace(
             "{pct}",
             String(Math.round(current.tolerancePct * 100)),

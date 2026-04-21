@@ -110,7 +110,7 @@ export function AiFillBlankClient({
           />
           {parts[1] ?? ""}
         </p>
-        <p className="text-xs text-zinc-500">💡 {current.hint}</p>
+        <p className="text-xs text-zinc-400">💡 {current.hint}</p>
         {phase === "reveal" && (
           <div
             className={`rounded-xl p-3 border ${

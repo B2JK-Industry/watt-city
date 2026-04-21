@@ -107,7 +107,7 @@ export default async function HallOfFamePage() {
                       </span>
                     </div>
                     <p className="text-xs text-zinc-400">{g.theme}</p>
-                    <p className="text-xs text-zinc-500">
+                    <p className="text-xs text-zinc-400">
                       {g.model} · {specKind(g.spec)}
                     </p>
                   </Link>
@@ -126,7 +126,7 @@ export default async function HallOfFamePage() {
                           className={`flex items-center justify-between rounded-lg border-2 border-[var(--ink)] px-2.5 py-1.5 ${
                             entry
                               ? `${tone} text-[#0a0a0f]`
-                              : "bg-[var(--surface-2)] text-zinc-500"
+                              : "bg-[var(--surface-2)] text-zinc-400"
                           } ${
                             entry && entry.username === session?.username
                               ? "ring-2 ring-[var(--neo-pink)]"
@@ -216,10 +216,10 @@ export default async function HallOfFamePage() {
                         <p className="font-black uppercase tracking-tight truncate">
                           {record.title}
                         </p>
-                        <p className="text-[11px] text-zinc-500 font-semibold truncate">
+                        <p className="text-[11px] text-zinc-400 font-semibold truncate">
                           {record.theme}
                         </p>
-                        <p className="text-[10px] text-zinc-600 font-mono">
+                        <p className="text-[10px] text-zinc-400 font-mono">
                           {date.toLocaleDateString(lang === "en" ? "en-US" : "pl-PL")}{" "}
                           · {record.model} · {record.kind}
                         </p>
@@ -241,7 +241,7 @@ export default async function HallOfFamePage() {
                           className={`flex items-center justify-between rounded-lg border-2 border-[var(--ink)] px-2.5 py-1.5 ${
                             entry
                               ? `${tone} text-[#0a0a0f]`
-                              : "bg-[var(--surface-2)] text-zinc-500"
+                              : "bg-[var(--surface-2)] text-zinc-400"
                           } ${
                             entry && entry.username === session?.username
                               ? "ring-2 ring-[var(--neo-pink)]"
@@ -296,7 +296,7 @@ export default async function HallOfFamePage() {
                     <p className="font-black uppercase tracking-tight">
                       {localizedTitle(game, dict)}
                     </p>
-                    <p className="text-[11px] text-zinc-500 font-semibold">
+                    <p className="text-[11px] text-zinc-400 font-semibold">
                       {game.building.name}
                     </p>
                   </div>
@@ -323,7 +323,7 @@ export default async function HallOfFamePage() {
                       className={`flex items-center justify-between rounded-lg border-2 border-[var(--ink)] px-2.5 py-1.5 ${
                         entry
                           ? `${tone} text-[#0a0a0f]`
-                          : "bg-[var(--surface-2)] text-zinc-500"
+                          : "bg-[var(--surface-2)] text-zinc-400"
                       } ${
                         entry && entry.username === session?.username
                           ? "ring-2 ring-[var(--neo-pink)]"

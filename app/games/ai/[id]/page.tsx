@@ -92,7 +92,7 @@ export default async function AiGamePage({
         </div>
         <h1 className="text-3xl font-bold">{game.title}</h1>
         <p className="text-zinc-300">{game.tagline}</p>
-        <p className="text-sm text-zinc-500">{game.description}</p>
+        <p className="text-sm text-zinc-400">{game.description}</p>
       </header>
 
       {spec.kind === "quiz" && (

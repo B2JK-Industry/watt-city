@@ -62,9 +62,19 @@ export function CityScene({
         viewBox={`0 0 ${VB_W} ${VB_H}`}
         preserveAspectRatio="xMidYMid meet"
         className="absolute inset-0 w-full h-full"
-        role="img"
-        aria-label="Nočná panoráma Katowíc: 9 budov predstavujúcich minihry XP Arény"
+        /* No `role="img"` / `aria-label` on the outer SVG. When
+         * `interactive` is true the scene contains focusable <a>
+         * children (the per-building Links), which makes `role=img`
+         * a WCAG violation (axe rule `nested-interactive` — an img
+         * landmark must not contain tabbable descendants). The <title>
+         * element below is the correct equivalent — it provides an
+         * accessible name without asserting the whole tree is a
+         * single image. */
+        aria-labelledby="city-scene-title"
       >
+        <title id="city-scene-title">
+          Nočná panoráma Katowíc: 9 budov predstavujúcich minihry XP Arény
+        </title>
         <defs>
           <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#02021a" />

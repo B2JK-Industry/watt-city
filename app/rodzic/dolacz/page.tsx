@@ -61,7 +61,7 @@ export default function ParentJoinPage() {
         <button type="submit" disabled={busy} className="btn btn-primary disabled:opacity-50">
           {busy ? "Łączę…" : "Zacznij obserwować"}
         </button>
-        <p className="text-[11px] text-zinc-500 leading-snug mt-2">
+        <p className="text-[11px] text-zinc-400 leading-snug mt-2">
           Twój dostęp jest tylko do odczytu (tryb obserwatora). Nie możesz
           edytować konta dziecka. Dziecko kontroluje, co widzisz, w swoich
           ustawieniach prywatności.

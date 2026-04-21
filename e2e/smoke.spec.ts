@@ -1,16 +1,5 @@
 import { test, expect } from "@playwright/test";
-import AxeBuilder from "@axe-core/playwright";
-
-// Unique, lowercase-alpha suffix. Avoids triggering the PII validator's
-// phone regex (≥7 digit run) or name-pair regex (two capitalised words).
-function randomAlphaSuffix(len = 10): string {
-  const alphabet = "abcdefghijkmnopqrstuvwxyz";
-  let out = "";
-  for (let i = 0; i < len; i++) {
-    out += alphabet[Math.floor(Math.random() * alphabet.length)];
-  }
-  return out;
-}
+import { randomAlphaSuffix, scanSeriousA11y } from "./_helpers";
 
 /* Phase 6.7.3 — smoke E2E.
  *
@@ -28,14 +17,11 @@ test.describe("smoke — landing + auth + city", () => {
   test("landing page loads + passes axe accessibility scan", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("h1").first()).toBeVisible();
-    const a11y = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa"])
-      .analyze();
-    // Phase 6.4 fixed the high-impact issues; assert no new regressions.
-    const critical = a11y.violations.filter(
-      (v) => v.impact === "critical" || v.impact === "serious",
-    );
-    expect(critical, JSON.stringify(critical, null, 2)).toEqual([]);
+    // scanSeriousA11y waits for animations to settle first — otherwise
+    // axe samples a mid-fade frame of `animate-slide-up` and flags
+    // transient low contrast on the page's entrance animation.
+    const findings = await scanSeriousA11y(page);
+    expect(findings, JSON.stringify(findings, null, 2)).toEqual([]);
   });
 
   test("register flow creates a fresh account", async ({ page }) => {

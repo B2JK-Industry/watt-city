@@ -17,7 +17,7 @@ export default async function AboutPage() {
     <div className="flex flex-col gap-10 animate-slide-up max-w-4xl">
       <header className="flex flex-col gap-3">
         {lang !== "pl" && (
-          <p className="text-xs text-zinc-500 italic">{t.note}</p>
+          <p className="text-xs text-zinc-400 italic">{t.note}</p>
         )}
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="brutal-heading text-3xl sm:text-5xl">
@@ -173,7 +173,7 @@ export default async function AboutPage() {
             <strong>{t.pipelineSecurityLabel}</strong> {t.pipelineSecurityBody}
           </div>
 
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-zinc-400">
             Source of truth:{" "}
             <a
               href="https://github.com/B2JK-Industry/watt-city/tree/main/lib/ai-pipeline"
@@ -260,7 +260,7 @@ export default async function AboutPage() {
               <p className="font-black uppercase text-lg tracking-tight">
                 B2JK-Industry
               </p>
-              <p className="text-xs text-zinc-500">
+              <p className="text-xs text-zinc-400">
                 Hackathonový tím · ETHSilesia 2026 · Katowice
               </p>
             </div>
@@ -295,7 +295,7 @@ export default async function AboutPage() {
               /ochrana-sukromia
             </Link>
           </p>
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-zinc-400">
             Vďaka: PKO Bank Polski · Tauron · ETHWarsaw · AKMF ·
             Katowicki.Hub.
           </p>
@@ -353,7 +353,7 @@ export default async function AboutPage() {
         </ul>
       </section>
 
-      <footer className="text-xs text-zinc-500 border-t-2 border-[var(--ink)]/30 pt-4 flex flex-wrap gap-4">
+      <footer className="text-xs text-zinc-400 border-t-2 border-[var(--ink)]/30 pt-4 flex flex-wrap gap-4">
         <Link href="/" className="underline">Späť na domov</Link>
         <Link href="/ochrana-sukromia" className="underline">Ochrana súkromia</Link>
         <a

@@ -153,7 +153,7 @@ function GalleryInner({
       )}
 
       {isConnected && medals.length === 0 && !loading && !error && (
-        <p className="text-xs text-zinc-500">{strings.noMedalsYet}</p>
+        <p className="text-xs text-zinc-400">{strings.noMedalsYet}</p>
       )}
 
       {medals.length > 0 && (
@@ -169,7 +169,7 @@ function GalleryInner({
               <span className="text-[11px] font-bold">
                 {achievementLabels[m.achievementId] ?? m.achievementId}
               </span>
-              <span className="text-[10px] text-zinc-500">
+              <span className="text-[10px] text-zinc-400">
                 {m.alive ? strings.minted : strings.burned}
               </span>
               {m.explorerUrl && (

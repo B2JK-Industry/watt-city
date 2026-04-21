@@ -61,7 +61,7 @@ export default async function PublicProfilePage({
           · {owned.length}/{status.length}
         </h2>
         {owned.length === 0 ? (
-          <p className="text-zinc-500 text-sm">
+          <p className="text-zinc-400 text-sm">
             {{
               pl: "Jeszcze żadnych odznak.",
               uk: "Ще немає значків.",

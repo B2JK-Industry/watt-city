@@ -244,7 +244,7 @@ export function StockTapClient({ dict }: { dict: Dict }) {
       >
         <div className="flex items-end justify-between">
           <div className="flex flex-col">
-            <span className="text-xs uppercase tracking-wider text-zinc-500">
+            <span className="text-xs uppercase tracking-wider text-zinc-400">
               {t.price}
             </span>
             <span className="font-mono text-3xl sm:text-4xl font-bold">
@@ -253,7 +253,7 @@ export function StockTapClient({ dict }: { dict: Dict }) {
           </div>
           {position !== null && (
             <div className="flex flex-col items-end text-sm">
-              <span className="text-xs uppercase tracking-wider text-zinc-500">
+              <span className="text-xs uppercase tracking-wider text-zinc-400">
                 {t.openPos}
               </span>
               <span className="font-mono">
@@ -334,7 +334,7 @@ export function StockTapClient({ dict }: { dict: Dict }) {
             {t.sell} @ {price.toFixed(1)}
           </button>
         </div>
-        <p className="text-xs text-zinc-500">{t.tip}</p>
+        <p className="text-xs text-zinc-400">{t.tip}</p>
       </div>
     </div>
   );

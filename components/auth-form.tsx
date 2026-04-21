@@ -130,7 +130,7 @@ export function AuthForm({ mode, dict }: Props) {
         {pending ? "…" : mode === "login" ? t.submitLogin : t.submitRegister}
       </button>
       {mode === "register" && (
-        <p className="text-[11px] text-zinc-500 leading-snug">
+        <p className="text-[11px] text-zinc-400 leading-snug">
           {t.consent}{" "}
           <Link
             href="/ochrana-sukromia"
