@@ -417,6 +417,69 @@ const uk: typeof plDict = {
     howTitle: "Як це працює",
     pipelineTitle: "Pipeline AI · щоденно",
     tiersTitle: "9 тірів зростаючого будинку",
+    tiersUnlockLabel: "Розблоковуєш:",
+    ladder: [
+      {
+        title: "Старт",
+        unlock: "Domek (старт)",
+        eduMoment:
+          "Твоє місто починається з одного будинку. Кожна гра = ресурси → кожна будівля = вищий рівень міста.",
+      },
+      {
+        title: "Перші сервіси",
+        unlock: "Sklepik osiedlowy + Mała elektrownia",
+        eduMoment:
+          "Sklepik дає пасивні монети. Електростанція живить мережу — без неї фабрики перестануть заробляти.",
+      },
+      {
+        title: "Локальний банкінг",
+        unlock: "Bank lokalny (5% APR) + Biblioteka + Huta szkła",
+        eduMoment:
+          "Локальний банк дає кращі умови кредиту (5% замість 8%). У реалі: локальний банкінг + добра історія = нижчі виплати.",
+      },
+      {
+        title: "Промисловість і наука",
+        unlock: "Walcownia stali + Centrum nauki + Gimnazjum sportowe",
+        eduMoment:
+          "Civic-будівлі (бібліотека, спортзал, центр науки) дають бонус до конкретних типів ігор. Спеціалізуйся.",
+      },
+      {
+        title: "Зелена енергія",
+        unlock: "Фотовольтаїка з накопичувачем",
+        eduMoment:
+          "Фотовольтаїка виробляє вати і трохи cashZl. У реалі: ВДЕ = нижчі рахунки + надлишок на продаж.",
+      },
+      {
+        title: "Tech і сервіси",
+        unlock: "Software house + Вітрова ферма",
+        eduMoment:
+          "Software house — перша будівля, що виробляє cashZl (банківські гроші). Tech = велика маржа, великі витрати на енергію.",
+      },
+      {
+        title: "Хмарочос",
+        unlock: "Rafineria + Wieżowiec + Biurowiec",
+        eduMoment:
+          "Хмарочоси — це endgame residential. Велику нерухомість фінансуєш кредитом — порівняй APR різних продуктів.",
+      },
+      {
+        title: "Лендмарк",
+        unlock: "Spodek (лендмарк) + Ratusz",
+        eduMoment:
+          "Лендмарк дає +5% до кожного yield у місті. Перший справжній passive-income бустер.",
+      },
+      {
+        title: "Велика інфра",
+        unlock: "Газова електростанція + Centrum eventowe",
+        eduMoment:
+          "На цьому рівні твоя енергомережа має бути величезною. Диверсифікуй джерела — сонце + вітер + газ.",
+      },
+      {
+        title: "Endgame",
+        unlock: "Varso Residence + Tauron Plant + Katowice Industry Hub",
+        eduMoment:
+          "Рівень 10 = твоє місто є еталоном. Тепер фокусуєшся на погашенні кредитів, оптимізації cashflow, допомозі іншим.",
+      },
+    ],
     stackTitle: "Тех стек",
     teamTitle: "Команда",
     sponsorsTitle: "Спонсори і категорії",

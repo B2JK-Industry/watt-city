@@ -417,6 +417,69 @@ const cs: typeof plDict = {
     howTitle: "Jak to funguje",
     pipelineTitle: "AI pipeline · denně",
     tiersTitle: "9 tierů rostoucí budovy",
+    tiersUnlockLabel: "Odemykáš:",
+    ladder: [
+      {
+        title: "Start",
+        unlock: "Domek (start)",
+        eduMoment:
+          "Tvoje město začíná jedním domem. Každá hra = zdroje → každá stavba = vyšší úroveň města.",
+      },
+      {
+        title: "První služby",
+        unlock: "Sklepik osiedlowy + Mała elektrownia",
+        eduMoment:
+          "Sklepik dává pasivní mince. Elektrárna napájí síť — bez ní továrny přestanou vydělávat.",
+      },
+      {
+        title: "Lokální bankovnictví",
+        unlock: "Bank lokalny (5% APR) + Biblioteka + Huta szkła",
+        eduMoment:
+          "Lokální banka dává lepší podmínky úvěru (5% místo 8%). V realitě: lokální bankovnictví + dobrá historie = nižší splátky.",
+      },
+      {
+        title: "Průmysl a věda",
+        unlock: "Walcownia stali + Centrum nauki + Gimnazjum sportowe",
+        eduMoment:
+          "Civic budovy (knihovna, gymnázium, centrum vědy) dávají bonus ke konkrétním typům her. Specializuj se.",
+      },
+      {
+        title: "Zelená energie",
+        unlock: "Fotovoltaika s úložištěm",
+        eduMoment:
+          "Fotovoltaika vyrábí watty a trochu cashZl. V realitě: OZE = nižší účty + přebytek na prodej.",
+      },
+      {
+        title: "Tech a služby",
+        unlock: "Software house + Větrná farma",
+        eduMoment:
+          "Software house je první budova vyrábějící cashZl (peníze banky). Tech = velká marže, velké náklady na energii.",
+      },
+      {
+        title: "Mrakodrap",
+        unlock: "Rafineria + Wieżowiec + Biurowiec",
+        eduMoment:
+          "Mrakodrapy jsou endgame residential. Velkou nemovitost financuješ úvěrem — porovnej APR různých produktů.",
+      },
+      {
+        title: "Landmark",
+        unlock: "Spodek (landmark) + Ratusz",
+        eduMoment:
+          "Landmark dává +5% ke každému yield ve městě. První opravdový passive-income booster.",
+      },
+      {
+        title: "Velká infra",
+        unlock: "Plynová elektrárna + Centrum eventowe",
+        eduMoment:
+          "Na této úrovni tvoje energetická síť musí být obrovská. Diverzifikuj zdroje — slunce + vítr + plyn.",
+      },
+      {
+        title: "Endgame",
+        unlock: "Varso Residence + Tauron Plant + Katowice Industry Hub",
+        eduMoment:
+          "Úroveň 10 = tvoje město je vzor. Teď se soustředíš na splácení úvěrů, optimalizaci cashflow, pomoc ostatním.",
+      },
+    ],
     stackTitle: "Tech stack",
     teamTitle: "Tým",
     sponsorsTitle: "Sponzoři a kategorie",

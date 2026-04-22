@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { LEVEL_UNLOCK_LADDER } from "@/lib/city-level";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 import { getSession } from "@/lib/session";
@@ -216,19 +215,19 @@ export default async function AboutPage() {
       <section className="flex flex-col gap-4">
         <h2 className="brutal-heading text-2xl">{t.tiersTitle}</h2>
         <ol className="flex flex-col gap-3">
-          {LEVEL_UNLOCK_LADDER.map((row) => (
+          {t.ladder.map((row, i) => (
             <li
-              key={row.level}
+              key={i}
               className="card p-4 flex flex-col sm:flex-row gap-3 sm:items-start"
             >
               <span className="flex-shrink-0 w-14 h-14 rounded-xl border-[3px] border-[var(--ink)] bg-[var(--accent)] text-[#0a0a0f] font-black text-lg flex flex-col items-center justify-center shadow-[3px_3px_0_0_var(--ink)]">
                 <span className="text-[9px] uppercase leading-none">Lvl</span>
-                <span className="text-xl leading-none">{row.level}</span>
+                <span className="text-xl leading-none">{i + 1}</span>
               </span>
               <div className="flex flex-col gap-1">
                 <p className="font-bold text-base leading-tight">{row.title}</p>
                 <p className="text-sm text-zinc-300">
-                  <span className="opacity-60">Odblokowujesz: </span>
+                  <span className="opacity-60">{t.tiersUnlockLabel} </span>
                   <strong>{row.unlock}</strong>
                 </p>
                 <p className="text-[11px] text-zinc-400 italic leading-snug">

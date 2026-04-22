@@ -417,6 +417,69 @@ const en: typeof plDict = {
     howTitle: "How it works",
     pipelineTitle: "AI pipeline · daily",
     tiersTitle: "9 tiers of the growing building",
+    tiersUnlockLabel: "Unlocks:",
+    ladder: [
+      {
+        title: "Start",
+        unlock: "Domek (starter house)",
+        eduMoment:
+          "Your city starts with a single house. Every game = resources → every build = higher city level.",
+      },
+      {
+        title: "First services",
+        unlock: "Sklepik (corner shop) + Mała elektrownia (small power plant)",
+        eduMoment:
+          "The corner shop yields passive coins. The power plant feeds the grid — without it, factories stop earning.",
+      },
+      {
+        title: "Local banking",
+        unlock: "Local bank (5% APR) + Library + Glassworks",
+        eduMoment:
+          "A local bank gives better loan terms (5% instead of 8%). Real world: local banking + good history = lower repayments.",
+      },
+      {
+        title: "Industry & science",
+        unlock: "Steel rolling mill + Science centre + Sports gymnasium",
+        eduMoment:
+          "Civic buildings (library, gym, science centre) give a bonus to specific game types. Specialise.",
+      },
+      {
+        title: "Green energy",
+        unlock: "Solar PV with battery storage",
+        eduMoment:
+          "Solar PV produces watts and a bit of cash ($). Real world: RES = lower bills + surplus you can sell.",
+      },
+      {
+        title: "Tech & services",
+        unlock: "Software house + Wind farm",
+        eduMoment:
+          "The software house is your first building that produces cash ($, bank money). Tech = big margin, big energy costs.",
+      },
+      {
+        title: "Skyscraper",
+        unlock: "Refinery + Tower block + Office building",
+        eduMoment:
+          "Skyscrapers are endgame residential. You finance big real estate with a loan — compare APR across products.",
+      },
+      {
+        title: "Landmark",
+        unlock: "Spodek (landmark) + Town hall",
+        eduMoment:
+          "A landmark gives +5% to every yield in the city. Your first real passive-income booster.",
+      },
+      {
+        title: "Big infra",
+        unlock: "Gas power plant + Event centre",
+        eduMoment:
+          "At this level your grid has to be huge. Diversify sources — sun + wind + gas.",
+      },
+      {
+        title: "Endgame",
+        unlock: "Varso Residence + Tauron Plant + Katowice Industry Hub",
+        eduMoment:
+          "Level 10 = your city is a role model. Now you focus on repaying loans, optimising cashflow, helping others.",
+      },
+    ],
     stackTitle: "Tech stack",
     teamTitle: "Team",
     sponsorsTitle: "Sponsors & categories",

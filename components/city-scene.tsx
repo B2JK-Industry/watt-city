@@ -1235,8 +1235,16 @@ function LiveAiBuilding({
   const r = recipeFor(aiGame.id);
   return (
     <g>
-      {/* live countdown chip above roof — client-ticks every second */}
-      <g transform={`translate(${x + w / 2 - 22}, ${top - 52})`}>
+      {/* Pillar layout above the roof — stacked vertically with explicit
+          gaps so the countdown chip + title banner never touch. Prior
+          layout (countdown at top-52, banner at top-34) left only a
+          4-px SVG gap that collapsed at render scale, producing the
+          visible overlap reported by user. New layout gives each
+          element ≥10-px breathing room and keeps the antenna long
+          enough to reach the roof. */}
+
+      {/* live countdown chip — client-ticks every second */}
+      <g transform={`translate(${x + w / 2 - 22}, ${top - 70})`}>
         <rect
           x={0}
           y={0}
@@ -1250,15 +1258,16 @@ function LiveAiBuilding({
         <LiveCountdown validUntil={aiGame.validUntil} color={r.roofColor} />
       </g>
 
-      {/* banner with title */}
-      <g transform={`translate(${x + w / 2 - 44}, ${top - 34})`}>
+      {/* banner with title — 42 px below countdown top (countdown bottom
+          at top-56, banner top at top-46 → 10 px clear gap) */}
+      <g transform={`translate(${x + w / 2 - 44}, ${top - 46})`}>
         <rect x={0} y={0} width={88} height={18} fill="#fde047" stroke="#0a0a0f" strokeWidth={2} rx={2} />
         <text x={44} y={12} textAnchor="middle" fontSize={8} fontWeight={900} fill="#0a0a0f">
           🤖 {short.toUpperCase()}
         </text>
       </g>
 
-      {/* antenna */}
+      {/* antenna — extends from the roof up to just below the banner */}
       <line x1={x + w / 2} y1={top - 10} x2={x + w / 2} y2={top - 28} stroke="#0a0a0f" strokeWidth={3} />
       <circle cx={x + w / 2} cy={top - 30} r={4} fill={r.roofColor} />
 

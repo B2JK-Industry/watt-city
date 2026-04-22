@@ -182,7 +182,13 @@ export default async function RootLayout({
           {children}
         </main>
         {session && player && hudEnabled && (
-          <CashflowHud hud={buildHudBundle(player)} lang={lang} />
+          <CashflowHud
+            hud={buildHudBundle(player, Date.now(), {
+              brownoutBannerActive:
+                brownoutPanelEnabled && deficitState(player).inDeficit,
+            })}
+            lang={lang}
+          />
         )}
         {session && <BottomTabs lang={lang} />}
         {session && (

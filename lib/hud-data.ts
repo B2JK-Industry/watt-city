@@ -12,6 +12,8 @@ import {
   cityWattBalance,
   deficitHoursAt,
   isInWattRescueGrace,
+  deficitState,
+  type DeficitMilestone,
 } from "@/lib/watts";
 import { activeLoanRisk, type LoanRiskAlert } from "@/lib/loans";
 import { getCatalogEntry, yieldAtLevel } from "@/lib/building-catalog";
@@ -36,6 +38,13 @@ export type HudBundle = {
     brownout: number;
     /** True if the 72h rescue grace window is still open. */
     inRescueGrace: boolean;
+    /** Next deficit milestone (50%/25%/bankruptcy) or null at 72h+. */
+    nextMilestone: DeficitMilestone | null;
+    /** Hours (ceiling) until `nextMilestone` or null. Matches the exact
+     *  value rendered by WattDeficitPanel so the two widgets speak one
+     *  language — a user reading "23h to brownout 50%" in the banner
+     *  shouldn't also see "71h rescue window" in the HUD. */
+    hoursToNextMilestone: number | null;
   };
   /** Loans at risk of missing their next payment in the next 7 days. */
   loanRisk: LoanRiskAlert[];
@@ -45,6 +54,17 @@ export type HudBundle = {
    *  (deficit, loan risk, or stale >5min). Client uses to enable banner. */
   alertLevel: "none" | "info" | "warn" | "critical";
   alertReason: string | null;
+  /** True when the dedicated WattDeficitPanel (sticky top banner under
+   *  nav) is ALREADY rendering this user's deficit state. The HUD hides
+   *  its own deficit sub-banner in that case so the user sees one
+   *  source of truth. */
+  brownoutBannerActive: boolean;
+};
+
+export type BuildHudOpts = {
+  /** Passed from `app/layout.tsx` after resolving the `v3_brownout_panel`
+   *  flag + deficit state. Drives HUD deficit-banner suppression. */
+  brownoutBannerActive?: boolean;
 };
 
 const STALE_THRESHOLD_MS = 5 * 60 * 1000;
@@ -52,10 +72,12 @@ const STALE_THRESHOLD_MS = 5 * 60 * 1000;
 export function buildHudBundle(
   state: PlayerState,
   now = Date.now(),
+  opts: BuildHudOpts = {},
 ): HudBundle {
   const watts = cityWattBalance(state.buildings);
   const dh = deficitHoursAt(state, now);
   const brownout = brownoutFactor(dh);
+  const ds = deficitState(state, now);
 
   // Projected hourly yield: sum every building's non-watts production at
   // current level scaled by brownout. Watts production is grid-relevant
@@ -99,10 +121,16 @@ export function buildHudBundle(
       deficitHours: dh,
       brownout,
       inRescueGrace: isInWattRescueGrace(state, now),
+      nextMilestone: ds.nextMilestone,
+      hoursToNextMilestone:
+        ds.hoursToNextMilestone == null
+          ? null
+          : Math.max(1, Math.ceil(ds.hoursToNextMilestone)),
     },
     loanRisk,
     msSinceTick,
     alertLevel,
     alertReason,
+    brownoutBannerActive: Boolean(opts.brownoutBannerActive),
   };
 }

@@ -28,11 +28,26 @@ import { usePathname } from "next/navigation";
 import type { Lang } from "@/lib/i18n";
 import type { HudBundle } from "@/lib/hud-data";
 
-type Copy = Record<
-  "balance" | "perHour" | "brownoutTier2" | "brownoutSustained" | "rescueBuild" | "loanRisk" | "stale" | "refresh" | "dismiss" | "deficitTitle" | "rescueGraceLabel",
-  string
->;
+type CopyKey =
+  | "balance"
+  | "perHour"
+  | "brownoutTier2"
+  | "brownoutSustained"
+  | "rescueBuild"
+  | "loanRisk"
+  | "stale"
+  | "refresh"
+  | "dismiss"
+  | "deficitTitle"
+  | "nextMilestone50"
+  | "nextMilestone25"
+  | "nextMilestoneBankruptcy";
 
+type Copy = Record<CopyKey, string>;
+
+// Copy is intentionally parallel with COPY in components/watt-deficit-panel.tsx
+// so a user reading both widgets in one viewport gets a single timeline
+// narrative (e.g. "-50% in 23h") rather than two conflicting countdowns.
 const COPY: Record<Lang, Copy> = {
   pl: {
     balance: "Saldo",
@@ -45,7 +60,9 @@ const COPY: Record<Lang, Copy> = {
     refresh: "Odśwież",
     dismiss: "Ukryj",
     deficitTitle: "Niedobór Watów",
-    rescueGraceLabel: "Okno ratunkowe",
+    nextMilestone50: "Za {h}h produkcja spadnie do 50%",
+    nextMilestone25: "Za {h}h produkcja spadnie do 25%",
+    nextMilestoneBankruptcy: "Za {h}h restrukturyzacja",
   },
   uk: {
     balance: "Баланс",
@@ -58,7 +75,9 @@ const COPY: Record<Lang, Copy> = {
     refresh: "Оновити",
     dismiss: "Приховати",
     deficitTitle: "Дефіцит ват",
-    rescueGraceLabel: "Вікно порятунку",
+    nextMilestone50: "Через {h}г виробництво впаде до 50%",
+    nextMilestone25: "Через {h}г виробництво впаде до 25%",
+    nextMilestoneBankruptcy: "Через {h}г реструктуризація",
   },
   cs: {
     balance: "Zůstatek",
@@ -71,7 +90,9 @@ const COPY: Record<Lang, Copy> = {
     refresh: "Obnovit",
     dismiss: "Skrýt",
     deficitTitle: "Nedostatek wattů",
-    rescueGraceLabel: "Záchranné okno",
+    nextMilestone50: "Za {h}h výroba klesne na 50%",
+    nextMilestone25: "Za {h}h výroba klesne na 25%",
+    nextMilestoneBankruptcy: "Za {h}h restrukturalizace",
   },
   en: {
     balance: "Balance",
@@ -84,7 +105,9 @@ const COPY: Record<Lang, Copy> = {
     refresh: "Refresh",
     dismiss: "Hide",
     deficitTitle: "Watt shortfall",
-    rescueGraceLabel: "Rescue window",
+    nextMilestone50: "Output drops to 50% in {h}h",
+    nextMilestone25: "Output drops to 25% in {h}h",
+    nextMilestoneBankruptcy: "Restructuring in {h}h",
   },
 };
 
@@ -222,8 +245,13 @@ export function CashflowHud({ hud, lang }: Props) {
           )}
         </div>
 
-        {/* Deficit banner + rescue CTA (BLOCKER-1 one-tap rescue) */}
-        {inDeficit && (
+        {/* Deficit banner + rescue CTA. Hidden when the dedicated
+            WattDeficitPanel is already rendering at the top of the
+            viewport — two widgets showing two different countdowns for
+            the same deficit state confused users (banner said "-50%
+            in 23h", HUD said "rescue window 71h"; both technically true
+            but narrative-incompatible). Single source of truth. */}
+        {inDeficit && !hud.brownoutBannerActive && (
           <div
             className="px-2 py-2 sm:px-3 border-t-2 border-[var(--ink)]"
             style={{ background: severityColor + "30" }}
@@ -235,12 +263,24 @@ export function CashflowHud({ hud, lang }: Props) {
                   ? copy.brownoutTier2
                   : copy.deficitTitle}
             </div>
-            {hud.watts.inRescueGrace && (
-              <div className="text-[10px] opacity-70 mt-0.5">
-                {copy.rescueGraceLabel}:{" "}
-                {Math.max(0, 72 - Math.floor(hud.watts.deficitHours))}h
-              </div>
-            )}
+            {hud.watts.hoursToNextMilestone != null &&
+              hud.watts.nextMilestone != null && (
+                <div className="text-[10px] opacity-70 mt-0.5">
+                  {(() => {
+                    const h = String(hud.watts.hoursToNextMilestone);
+                    switch (hud.watts.nextMilestone) {
+                      case "50-percent-yield":
+                        return copy.nextMilestone50.replace("{h}", h);
+                      case "25-percent-yield":
+                        return copy.nextMilestone25.replace("{h}", h);
+                      case "bankruptcy-eligible":
+                        return copy.nextMilestoneBankruptcy.replace("{h}", h);
+                      default:
+                        return null;
+                    }
+                  })()}
+                </div>
+              )}
             <Link
               href="/miasto?build=mala-elektrownia"
               className="mt-1 inline-flex items-center gap-1 px-2 py-1 border-2 border-[var(--ink)] bg-[var(--neo-yellow,#fde047)] font-bold text-[11px] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[2px_2px_0_0_var(--ink)] transition-transform"
