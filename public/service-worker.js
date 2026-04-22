@@ -7,7 +7,7 @@
  * coexist with future offline-shell caching (Phase 7.1.2).
  */
 
-self.addEventListener("install", (event) => {
+self.addEventListener("install", (_event) => {
   self.skipWaiting();
 });
 

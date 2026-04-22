@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useCallback, useEffect } from "react";
+import { useMemo, useState, useCallback } from "react";
 import type { QuizQuestion } from "@/lib/content/finance-quiz";
 import { XP_PER_CORRECT } from "@/lib/content/finance-quiz";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
@@ -38,10 +38,6 @@ export function FinanceQuizClient({ questions, dict }: Props) {
     setSubmitting(false);
   }, [dict.auth.errorGeneric]);
 
-  useEffect(() => {
-    if (phase === "done") submit(correctCount * XP_PER_CORRECT);
-  }, [phase, correctCount, submit]);
-
   function choose(optionIdx: number) {
     if (phase !== "playing") return;
     setChosen(optionIdx);
@@ -58,6 +54,7 @@ export function FinanceQuizClient({ questions, dict }: Props) {
       setPhase("playing");
     } else {
       setPhase("done");
+      void submit(correctCount * XP_PER_CORRECT);
     }
   }
 

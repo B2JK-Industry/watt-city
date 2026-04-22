@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import type { z } from "zod";
 import type { TrueFalseSpecSchema } from "@/lib/ai-pipeline/types";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
@@ -45,10 +45,6 @@ export function AiTrueFalseClient({
     [gameId, dict.auth.errorGeneric],
   );
 
-  useEffect(() => {
-    if (phase === "done") submit(correct * xpPer);
-  }, [phase, correct, xpPer, submit]);
-
   function choose(value: boolean) {
     if (phase !== "playing") return;
     setChosen(value);
@@ -59,6 +55,7 @@ export function AiTrueFalseClient({
   function nextStep() {
     if (index + 1 >= total) {
       setPhase("done");
+      void submit(correct * xpPer);
       return;
     }
     setIndex((i) => i + 1);

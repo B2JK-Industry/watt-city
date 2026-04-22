@@ -12,7 +12,7 @@ export const maxDuration = 60;
 // would 500 instead of 401 for an anonymous dev caller because the
 // pipeline tried to run without a key — caught by the Phase 2
 // API-contract sweep).
-export async function GET(request: NextRequest) {
+async function handle(request: NextRequest): Promise<Response> {
   if (!isCronAuthorised(request)) return cronAuthFailure();
 
   const result = await runPipeline();
@@ -33,4 +33,15 @@ export async function GET(request: NextRequest) {
     validUntil: result.game.validUntil,
     evicted: result.evicted,
   });
+}
+
+// Both GET + POST land on the same handler so Vercel Cron (issues GET)
+// and the sibling `/api/cron/rotate-if-due` pattern (POST) can share
+// operator muscle memory. Deep-audit Phase 1 backlog #3.
+export async function GET(request: NextRequest): Promise<Response> {
+  return handle(request);
+}
+
+export async function POST(request: NextRequest): Promise<Response> {
+  return handle(request);
 }

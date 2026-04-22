@@ -5,7 +5,7 @@
  * it protects so failures point directly at the design doc.
  */
 import { describe, it, expect, beforeEach } from "vitest";
-import { kvDel, kvGet, zTopN } from "@/lib/redis";
+import { kvDel, zTopN } from "@/lib/redis";
 import {
   getPlayerState,
   savePlayerState,

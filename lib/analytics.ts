@@ -97,7 +97,7 @@ export async function recordEvent(
  *  hundreds of users. Scale-up path: precompute in a nightly job. */
 export async function retentionSummary(
   sampleUsers: string[],
-  now = Date.now(),
+  _now = Date.now(),
 ): Promise<{ cohortDays: string[]; d1: number; d7: number; d30: number }> {
   const stats = { d1: 0, d7: 0, d30: 0 };
   const cohorts = new Set<string>();

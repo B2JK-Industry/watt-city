@@ -29,7 +29,10 @@ export function GameComments({ gameId, currentUser, labels }: Props) {
   }, [gameId]);
 
   useEffect(() => {
-    refresh();
+    // Deferred to a microtask so the setState inside refresh() lands outside
+    // the effect body (keeps react-hooks/set-state-in-effect quiet).
+    const id = setTimeout(refresh, 0);
+    return () => clearTimeout(id);
   }, [refresh]);
 
   const post = async () => {

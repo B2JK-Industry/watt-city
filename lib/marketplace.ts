@@ -31,7 +31,7 @@ import {
   type BuildingInstance,
   type PlayerState,
 } from "@/lib/player";
-import { getCatalogEntry, costAtLevel } from "@/lib/building-catalog";
+import { getCatalogEntry } from "@/lib/building-catalog";
 import { computePlayerTier } from "@/lib/buildings";
 import { readEconomy } from "@/lib/economy";
 

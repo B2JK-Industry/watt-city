@@ -1,9 +1,8 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { kvDel, kvGet } from "@/lib/redis";
+import { kvDel } from "@/lib/redis";
 import {
   getPlayerState,
   savePlayerState,
-  creditResources,
 } from "@/lib/player";
 import {
   migrateUser,

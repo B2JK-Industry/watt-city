@@ -303,21 +303,21 @@ export default async function RootLayout({
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs text-zinc-400 pt-2">
               <span>{dict.footer.sponsors}</span>
               <span className="flex flex-wrap gap-3">
-                <a href="/o-platforme" className="hover:text-[var(--accent)]">
+                <a href="/o-platforme" className="tap-target hover:text-[var(--accent)]">
                   {dict.nav.about}
                 </a>
                 <a
                   href="/ochrana-sukromia"
-                  className="hover:text-[var(--accent)]"
+                  className="tap-target hover:text-[var(--accent)]"
                 >
                   {dict.nav.privacy}
                 </a>
-                <a href="/sin-slavy" className="hover:text-[var(--accent)]">
+                <a href="/sin-slavy" className="tap-target hover:text-[var(--accent)]">
                   {dict.nav.hall}
                 </a>
                 <a
                   href="https://github.com/B2JK-Industry/watt-city"
-                  className="hover:text-[var(--accent)]"
+                  className="tap-target hover:text-[var(--accent)]"
                   target="_blank"
                   rel="noreferrer"
                 >

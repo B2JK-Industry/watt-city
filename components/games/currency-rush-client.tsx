@@ -79,6 +79,12 @@ export function CurrencyRushClient({ dict }: { dict: Dict }) {
     setSubmitting(false);
   }, [dict.auth.errorGeneric]);
 
+  // Latest xp for the timer callback without re-creating the interval.
+  const xpRef = useRef(0);
+  useEffect(() => {
+    xpRef.current = xp;
+  }, [xp]);
+
   useEffect(() => {
     if (phase !== "running") return;
     const id = setInterval(() => {
@@ -86,17 +92,14 @@ export function CurrencyRushClient({ dict }: { dict: Dict }) {
         if (s <= 1) {
           clearInterval(id);
           setPhase("done");
+          void submit(Math.min(xpRef.current, XP_CAP));
           return 0;
         }
         return s - 1;
       });
     }, 1000);
     return () => clearInterval(id);
-  }, [phase]);
-
-  useEffect(() => {
-    if (phase === "done") submit(Math.min(xp, XP_CAP));
-  }, [phase, submit, xp]);
+  }, [phase, submit]);
 
   function start() {
     setPhase("running");

@@ -2,8 +2,6 @@ import Link from "next/link";
 import { GAMES, localizedTitle } from "@/lib/games";
 import { getSession } from "@/lib/session";
 import { getUserStats } from "@/lib/user-stats";
-import { userStats } from "@/lib/leaderboard";
-import { levelFromXP } from "@/lib/level";
 import { getPlayerState } from "@/lib/player";
 import { cityLevelFromState } from "@/lib/city-level";
 import { CityScene, type CityGameState } from "@/components/city-scene";
@@ -21,8 +19,6 @@ export const dynamic = "force-dynamic";
 export default async function GamesHubPage() {
   const session = await getSession();
   const stats = session ? await getUserStats(session.username) : null;
-  const lb = session ? await userStats(session.username) : null;
-  const level = lb ? levelFromXP(lb.globalXP) : null;
   // V3.1: replace tier label with city-level badge
   const player = session ? await getPlayerState(session.username) : null;
   const cityBadge = player ? cityLevelFromState(player).badgeLabel : null;

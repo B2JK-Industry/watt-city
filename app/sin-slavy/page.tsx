@@ -87,9 +87,12 @@ export default async function HallOfFamePage() {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {liveAiWithTop.map(({ game: g, top }) => {
+              // Server component evaluated per-request (force-dynamic):
+              // Date.now() is intentional — remaining hours reflect request time.
+              const nowMs = Date.now();
               const hoursLeft = Math.max(
                 0,
-                Math.round((g.validUntil - Date.now()) / (60 * 60 * 1000)),
+                Math.round((g.validUntil - nowMs) / (60 * 60 * 1000)),
               );
               return (
                 <div key={g.id} className="card p-4 flex flex-col gap-3">

@@ -7,7 +7,6 @@ import {
   readDayStream,
 } from "@/lib/analytics";
 import { dayBucket } from "@/lib/economy";
-import { kvGet } from "@/lib/redis";
 
 export async function GET(request: NextRequest) {
   const block = await requireAdmin(request);

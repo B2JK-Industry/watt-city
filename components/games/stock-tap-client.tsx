@@ -36,8 +36,8 @@ export function StockTapClient({ dict }: { dict: Dict }) {
   const [position, setPosition] = useState<number | null>(null);
   const [cash, setCash] = useState(0);
   const [trades, setTrades] = useState(0);
-  const [greenTrades, setGreenTrades] = useState(0);
-  const [redTrades, setRedTrades] = useState(0);
+  const [, setGreenTrades] = useState(0);
+  const [, setRedTrades] = useState(0);
   const [xp, setXp] = useState(0);
   const [combo, setCombo] = useState(0);
   const [bestCombo, setBestCombo] = useState(0);
@@ -63,22 +63,6 @@ export function StockTapClient({ dict }: { dict: Dict }) {
     return () => window.clearInterval(id);
   }, [phase]);
 
-  // timer
-  useEffect(() => {
-    if (phase !== "running") return;
-    const id = window.setInterval(() => {
-      setSecondsLeft((s) => {
-        if (s <= 1) {
-          window.clearInterval(id);
-          setPhase("done");
-          return 0;
-        }
-        return s - 1;
-      });
-    }, 1000);
-    return () => window.clearInterval(id);
-  }, [phase]);
-
   const submit = useCallback(async (finalXp: number) => {
     setSubmitting(true);
     setSubmitError(null);
@@ -88,9 +72,28 @@ export function StockTapClient({ dict }: { dict: Dict }) {
     setSubmitting(false);
   }, [dict.auth.errorGeneric]);
 
+  // Latest xp for the timer callback without re-creating the interval.
+  const xpRef = useRef(0);
   useEffect(() => {
-    if (phase === "done") submit(Math.min(xp, XP_CAP));
-  }, [phase, xp, submit]);
+    xpRef.current = xp;
+  }, [xp]);
+
+  // timer
+  useEffect(() => {
+    if (phase !== "running") return;
+    const id = window.setInterval(() => {
+      setSecondsLeft((s) => {
+        if (s <= 1) {
+          window.clearInterval(id);
+          setPhase("done");
+          void submit(Math.min(xpRef.current, XP_CAP));
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, [phase, submit]);
 
   function clickPct(e: React.MouseEvent<HTMLElement>): { x: number; y: number } {
     const rect = chartRef.current?.getBoundingClientRect();

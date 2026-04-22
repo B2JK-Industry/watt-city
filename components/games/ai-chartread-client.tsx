@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import type { z } from "zod";
 import type { ChartReadSpecSchema } from "@/lib/ai-pipeline/types";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
@@ -117,10 +117,6 @@ export function AiChartReadClient({
     [gameId, dict.auth.errorGeneric],
   );
 
-  useEffect(() => {
-    if (done) submit(isCorrect ? spec.xpPerCorrect : 0);
-  }, [done, isCorrect, spec.xpPerCorrect, submit]);
-
   if (done) {
     return (
       <RoundResult
@@ -179,7 +175,13 @@ export function AiChartReadClient({
               </p>
               <p className="text-sm text-zinc-300">{spec.explanation}</p>
             </div>
-            <button className="btn btn-primary self-end" onClick={() => setDone(true)}>
+            <button
+              className="btn btn-primary self-end"
+              onClick={() => {
+                setDone(true);
+                void submit(isCorrect ? spec.xpPerCorrect : 0);
+              }}
+            >
               {t.finish}
             </button>
           </div>

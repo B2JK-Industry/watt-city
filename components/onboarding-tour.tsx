@@ -79,10 +79,7 @@ export function OnboardingTour({ lang }: Props) {
   const steps = stepsFor(lang);
 
   useEffect(() => {
-    if (!onHome) {
-      setNeedsTour(false);
-      return;
-    }
+    if (!onHome) return;
     let cancelled = false;
     fetch("/api/me/profile")
       .then((r) => r.json())

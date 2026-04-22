@@ -83,29 +83,25 @@ export function MemoryMatchClient({ pairs, dict }: { pairs: MemoryPair[]; dict: 
     return () => clearInterval(id);
   }, [completed, startedAt]);
 
-  // auto-finish when all matched
-  useEffect(() => {
-    if (!completed && matchedCount === deck.length && deck.length > 0) {
+  const finishRound = useCallback(
+    (finalMismatches: number) => {
+      if (submittedRef.current) return;
+      submittedRef.current = true;
       setCompleted(true);
-    }
-  }, [matchedCount, deck.length, completed]);
-
-  // submit once completed
-  useEffect(() => {
-    if (!completed || submittedRef.current) return;
-    submittedRef.current = true;
-    const finalSeconds = Math.floor((Date.now() - startedAt) / 1000);
-    setElapsed(finalSeconds);
-    const xp = scoreFor(finalSeconds, mismatches);
-    setSubmitting(true);
-    submitScore(GAME_ID, xp)
-      .then((res) => {
-        if (res.ok) setResult(res);
-        else setSubmitError(res.error ?? dict.auth.errorGeneric);
-      })
-      .catch(() => setSubmitError(dict.auth.errorNetwork))
-      .finally(() => setSubmitting(false));
-  }, [completed, startedAt, mismatches]);
+      const finalSeconds = Math.floor((Date.now() - startedAt) / 1000);
+      setElapsed(finalSeconds);
+      const xp = scoreFor(finalSeconds, finalMismatches);
+      setSubmitting(true);
+      submitScore(GAME_ID, xp)
+        .then((res) => {
+          if (res.ok) setResult(res);
+          else setSubmitError(res.error ?? dict.auth.errorGeneric);
+        })
+        .catch(() => setSubmitError(dict.auth.errorNetwork))
+        .finally(() => setSubmitting(false));
+    },
+    [startedAt, dict.auth.errorGeneric, dict.auth.errorNetwork],
+  );
 
   const flip = useCallback(
     (id: string) => {
@@ -133,14 +129,14 @@ export function MemoryMatchClient({ pairs, dict }: { pairs: MemoryPair[]; dict: 
       const isMatch = first.pairId === card.pairId && first.side !== card.side;
 
       if (isMatch) {
-        setDeck((cur) =>
-          cur.map((c) =>
-            c.pairId === card.pairId
-              ? { ...c, matched: true, revealed: true }
-              : c,
-          ),
+        const nextDeck = deck.map((c) =>
+          c.pairId === card.pairId ? { ...c, matched: true, revealed: true } : c,
         );
+        setDeck(nextDeck);
         setSelected(null);
+        if (nextDeck.every((c) => c.matched)) {
+          finishRound(mismatches);
+        }
         return;
       }
 
@@ -163,7 +159,7 @@ export function MemoryMatchClient({ pairs, dict }: { pairs: MemoryPair[]; dict: 
         setBusy(false);
       }, 900);
     },
-    [busy, completed, deck, selected],
+    [busy, completed, deck, selected, finishRound, mismatches],
   );
 
   if (completed) {

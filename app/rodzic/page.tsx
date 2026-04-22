@@ -36,7 +36,10 @@ export default async function ParentDashboard() {
   const city = cityLevelFromBuildings(state.buildings);
   const cityValue = computeBuildingValue(state.buildings);
   const recent = await recentLedger(kid, 30);
-  const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  // Server component evaluated per-request (force-dynamic): Date.now() yields
+  // the request time, which anchors the rolling weekly window.
+  const nowMs = Date.now();
+  const weekAgo = nowMs - 7 * 24 * 60 * 60 * 1000;
   const thisWeek = recent.filter((e) => e.ts >= weekAgo);
 
   const scoresThisWeek = thisWeek.filter((e) => e.kind === "score").length;

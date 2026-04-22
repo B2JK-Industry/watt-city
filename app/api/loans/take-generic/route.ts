@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { z } from "zod";
 import { getSession } from "@/lib/session";
 import { getPlayerState } from "@/lib/player";
-import { takeLoan, LOAN_CONFIGS, quoteLoan } from "@/lib/loans";
+import { takeLoan, LOAN_CONFIGS } from "@/lib/loans";
 import { rateLimit } from "@/lib/rate-limit";
 
 const BodySchema = z.object({

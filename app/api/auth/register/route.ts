@@ -11,8 +11,18 @@ import {
 } from "@/lib/gdpr-k";
 import { getPlayerState } from "@/lib/player";
 import { ensureSignupGift } from "@/lib/buildings";
+import { rateLimit } from "@/lib/rate-limit";
+import { clientIp } from "@/lib/client-ip";
 
 const CURRENT_YEAR = new Date().getUTCFullYear();
+
+/* Anti-abuse: cap new-account creation per source IP per minute.
+ * Register is in EXEMPT_PATH_PREFIXES (has to be — anonymous users
+ * have no CSRF cookie yet), so this is the narrowest layer available.
+ * `REGISTER_IP_RATE` and `REGISTER_IP_WINDOW_MS` are overridable via
+ * env for abuse-response tuning without a redeploy. */
+const REGISTER_IP_LIMIT = Number(process.env.REGISTER_IP_LIMIT ?? 5);
+const REGISTER_IP_WINDOW_MS = Number(process.env.REGISTER_IP_WINDOW_MS ?? 60_000);
 
 const BodySchema = z.object({
   username: z.string().min(1).max(64),
@@ -29,6 +39,23 @@ const BodySchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  // IP-based rate limit runs BEFORE body parsing so a flood of
+  // malformed payloads can't use up DB CPU on scrypt hashing. 429 is
+  // the conventional anti-bot response; the client should show a
+  // "try again later" hint.
+  const ip = clientIp(request);
+  const rl = await rateLimit(
+    `register-ip:${ip}`,
+    REGISTER_IP_LIMIT,
+    REGISTER_IP_WINDOW_MS,
+  );
+  if (!rl.ok) {
+    return Response.json(
+      { ok: false, error: "rate-limited", resetAt: rl.resetAt },
+      { status: 429 },
+    );
+  }
+
   let parsed;
   try {
     const json = await request.json();

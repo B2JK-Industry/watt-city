@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { z } from "zod";
 import type { BudgetSpecSchema } from "@/lib/ai-pipeline/types";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
@@ -47,10 +47,6 @@ export function AiBudgetClient({
     },
     [gameId, dict.auth.errorGeneric],
   );
-
-  useEffect(() => {
-    if (submitted) submit(score);
-  }, [submitted, score, submit]);
 
   if (submitted) {
     return (
@@ -121,7 +117,10 @@ export function AiBudgetClient({
       <button
         className="btn btn-primary self-start"
         disabled={total !== 100}
-        onClick={() => setSubmitted(true)}
+        onClick={() => {
+          setSubmitted(true);
+          void submit(score);
+        }}
       >
         {t.finish}
       </button>

@@ -8,8 +8,6 @@ import {
 import {
   takeMortgage,
   processLoanPayments,
-  MONTH_MS,
-  CREDIT_SCORE_START,
   SCORE_DELTA_MISSED,
 } from "@/lib/loans";
 

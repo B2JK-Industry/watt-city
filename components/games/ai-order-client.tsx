@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { z } from "zod";
 import type { OrderSpecSchema } from "@/lib/ai-pipeline/types";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
@@ -80,18 +80,15 @@ export function AiOrderClient({
     [gameId, dict.auth.errorGeneric],
   );
 
-  function check() {
-    setSubmitted(true);
-  }
-
   // Score: count of items in correct position (Spearman-light).
   const correctCount = sequence.filter(
     (it, i) => it.label === sortedTruth[i].label,
   ).length;
 
-  useEffect(() => {
-    if (submitted) submit(Math.min(xpCap, correctCount * xpPer));
-  }, [submitted, correctCount, xpPer, xpCap, submit]);
+  function check() {
+    setSubmitted(true);
+    void submit(Math.min(xpCap, correctCount * xpPer));
+  }
 
   if (submitted) {
     return (

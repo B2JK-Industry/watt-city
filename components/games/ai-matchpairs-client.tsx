@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { z } from "zod";
 import type { MatchPairsSpecSchema } from "@/lib/ai-pipeline/types";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
@@ -65,21 +65,22 @@ export function AiMatchPairsClient({
     [gameId, dict.auth.errorGeneric],
   );
 
-  useEffect(() => {
-    if (!done) return;
-    // Score: every match gives xpPer, but penalize for wrong tries:
-    //   (matched × xpPer) − (wrongTries × xpPer/4), floor 0
-    const wrongs = Math.max(0, tries - total);
-    const raw = matchedCount * xpPer - Math.floor((wrongs * xpPer) / 4);
-    submit(Math.max(0, Math.min(xpCap, raw)));
-  }, [done, matchedCount, tries, xpPer, xpCap, total, submit]);
-
   function tryMatch(leftKey: number, rightKey: number) {
-    setTries((t) => t + 1);
+    const nextTries = tries + 1;
+    setTries(nextTries);
     if (leftKey === rightKey) {
-      setMatched((m) => ({ ...m, [leftKey]: true }));
+      const nextMatched = { ...matched, [leftKey]: true };
+      setMatched(nextMatched);
       setPickedLeft(null);
       setPickedRight(null);
+      const nextMatchedCount = Object.values(nextMatched).filter(Boolean).length;
+      if (nextMatchedCount === total) {
+        // Score: every match gives xpPer, but penalize for wrong tries:
+        //   (matched × xpPer) − (wrongTries × xpPer/4), floor 0
+        const wrongs = Math.max(0, nextTries - total);
+        const raw = nextMatchedCount * xpPer - Math.floor((wrongs * xpPer) / 4);
+        void submit(Math.max(0, Math.min(xpCap, raw)));
+      }
     } else {
       setWrongFlash({ l: leftKey, r: rightKey });
       window.setTimeout(() => {

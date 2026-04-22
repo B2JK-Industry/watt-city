@@ -1,13 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { Lang } from "@/lib/i18n";
 import {
   RESOURCE_DEFS,
   RESOURCE_KEYS,
   type Resources,
-  type ResourceKey,
 } from "@/lib/resources";
 import {
   SLOT_MAP,
@@ -83,7 +82,7 @@ export type WattCityBootstrap = {
 
 function formatResourceDelta(
   delta: Partial<Resources>,
-  lang: Lang,
+  _lang: Lang,
 ): string {
   const parts: string[] = [];
   for (const k of RESOURCE_KEYS) {
@@ -117,33 +116,25 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
   const router = useRouter();
   const searchParams = useSearchParams();
   const [state, setState] = useState(bootstrap);
-  const [selected, setSelected] = useState<SelectedState>(null);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const { dict, lang } = state;
-
-  // V2 fix: HUD rescue CTA links `/miasto?build=mala-elektrownia`. Honour the
-  // param by auto-selecting the first empty compatible slot so the catalog
-  // picker opens pre-filtered. Runs once per pathname landing; subsequent
-  // setSelected calls by the user take priority.
-  const buildParamHandled = useRef(false);
-  useEffect(() => {
-    if (buildParamHandled.current) return;
+  // V2 fix: HUD rescue CTA links `/miasto?build=mala-elektrownia`. Resolve the
+  // param once during initial state to pre-select a compatible free slot — doing
+  // this in the useState initializer avoids a mount-time effect.
+  const [selected, setSelected] = useState<SelectedState>(() => {
     const wanted = searchParams?.get("build");
-    if (!wanted) return;
-    const catalogEntry = state.catalog.find((c) => c.entry.id === wanted);
-    if (!catalogEntry) return;
+    if (!wanted) return null;
+    const catalogEntry = bootstrap.catalog.find((c) => c.entry.id === wanted);
+    if (!catalogEntry) return null;
     const targetCategory = catalogEntry.entry.category;
-    const freeSlot = state.slots.find(
+    const freeSlot = bootstrap.slots.find(
       (s) =>
         !s.building &&
         (s.slot.category === targetCategory || s.slot.category === "decorative"),
     );
-    if (freeSlot) {
-      setSelected({ kind: "slot", slotId: freeSlot.slot.id });
-      buildParamHandled.current = true;
-    }
-  }, [searchParams, state.catalog, state.slots]);
+    return freeSlot ? { kind: "slot", slotId: freeSlot.slot.id } : null;
+  });
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { dict, lang } = state;
 
   const refresh = useCallback(async () => {
     const r = await fetch("/api/buildings", { cache: "no-store" });
@@ -541,9 +532,9 @@ function CatalogList({
 }
 
 function MortgageCard({
-  resources,
+  resources: _resources,
   loans,
-  creditScore,
+  creditScore: _creditScore,
   onChange,
   dict,
   lang,

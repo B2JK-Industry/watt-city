@@ -13,7 +13,7 @@
  * Symmetry is enforced at write time; we don't trust either side alone.
  */
 
-import { kvGet, kvSet, sAdd, sHas } from "@/lib/redis";
+import { kvGet, kvSet, sAdd } from "@/lib/redis";
 import { pushNotification } from "@/lib/notifications";
 
 type FriendSetKind = "friends" | "requests" | "inbox";

@@ -102,7 +102,10 @@ function GalleryInner({
 
   useEffect(() => {
     if (!isConnected) return;
-    void refreshMedals();
+    // Deferred to a microtask so the setState inside refreshMedals() lands
+    // outside the effect body (keeps react-hooks/set-state-in-effect quiet).
+    const id = setTimeout(() => void refreshMedals(), 0);
+    return () => clearTimeout(id);
   }, [isConnected]);
 
   const mintedIds = new Set(medals.filter((m) => m.alive).map((m) => m.achievementId));

@@ -15,7 +15,10 @@ export default async function BudgetBalancePage() {
   const dict = dictFor(lang);
   const t = dict.budget;
   const pool = budgetScenariosFor(lang);
-  const pick = pool[Math.floor(Math.random() * pool.length)];
+  // Server component evaluated per-request (force-dynamic): random scenario selection
+  // is intentional — each page load gets a fresh scenario from the pool.
+  const scenarioIndex = Math.floor(Math.random() * pool.length);
+  const pick = pool[scenarioIndex];
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">

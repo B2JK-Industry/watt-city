@@ -42,21 +42,6 @@ export function PowerFlipClient({ rounds, dict }: { rounds: PowerRound[]; dict: 
 
   const current = rounds[index % rounds.length];
 
-  useEffect(() => {
-    if (phase !== "running") return;
-    const id = window.setInterval(() => {
-      setSecondsLeft((s) => {
-        if (s <= 1) {
-          window.clearInterval(id);
-          setPhase("done");
-          return 0;
-        }
-        return s - 1;
-      });
-    }, 1000);
-    return () => window.clearInterval(id);
-  }, [phase]);
-
   const submit = useCallback(async (finalXp: number) => {
     setSubmitting(true);
     setSubmitError(null);
@@ -66,9 +51,27 @@ export function PowerFlipClient({ rounds, dict }: { rounds: PowerRound[]; dict: 
     setSubmitting(false);
   }, [dict.auth.errorGeneric]);
 
+  // Latest xp for the timer callback without re-creating the interval.
+  const xpRef = useRef(0);
   useEffect(() => {
-    if (phase === "done") submit(Math.min(xp, XP_CAP));
-  }, [phase, xp, submit]);
+    xpRef.current = xp;
+  }, [xp]);
+
+  useEffect(() => {
+    if (phase !== "running") return;
+    const id = window.setInterval(() => {
+      setSecondsLeft((s) => {
+        if (s <= 1) {
+          window.clearInterval(id);
+          setPhase("done");
+          void submit(Math.min(xpRef.current, XP_CAP));
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, [phase, submit]);
 
   function pct(e: React.MouseEvent<HTMLElement>): { x: number; y: number } {
     const rect = boardRef.current?.getBoundingClientRect();

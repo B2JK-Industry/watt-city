@@ -31,6 +31,7 @@ export async function ClassDashboard({ cls, role, viewerUsername }: Props) {
   // D3 — build observed themes/games sets from the last 100 ledger
   // entries per student, restricted to the current week window. Same
   // scan logic as the PDF route so the chart matches the PDF exactly.
+  // Server component: Date.now() and recentLedger() run per-request; intentional.
   const observedThemes = new Set<string>();
   const observedGames = new Set<string>();
   const weekStart = cls.weeklyThemeStart ?? Date.now() - 7 * 24 * 60 * 60 * 1000;

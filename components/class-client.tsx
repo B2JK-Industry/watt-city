@@ -19,7 +19,7 @@ type Copy = {
 };
 
 export function ClassClient({
-  username,
+  username: _username,
   initialClasses,
   initialRole,
   copy,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import type { z } from "zod";
 import type { WhatIfSpecSchema } from "@/lib/ai-pipeline/types";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
@@ -43,10 +43,6 @@ export function AiWhatIfClient({
     [gameId, dict.auth.errorGeneric],
   );
 
-  useEffect(() => {
-    if (phase === "done") submit(correctCount * spec.xpPerCorrect);
-  }, [phase, correctCount, spec.xpPerCorrect, submit]);
-
   function pick(i: number) {
     if (phase !== "playing") return;
     setChosen(i);
@@ -57,6 +53,7 @@ export function AiWhatIfClient({
   function next() {
     if (index + 1 >= total) {
       setPhase("done");
+      void submit(correctCount * spec.xpPerCorrect);
     } else {
       setIndex((i) => i + 1);
       setChosen(null);

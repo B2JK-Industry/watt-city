@@ -5,13 +5,10 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { kvDel } from "@/lib/redis";
 import {
   getPlayerState,
-  savePlayerState,
-  creditResources,
 } from "@/lib/player";
 import {
   ensureSignupGift,
   upgradeBuilding,
-  canAfford,
 } from "@/lib/buildings";
 import {
   getCatalogEntry,

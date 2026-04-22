@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { z } from "zod";
 import type { MemorySpecSchema } from "@/lib/ai-pipeline/types";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
@@ -54,30 +54,6 @@ export function AiMemoryClient({
   const [done, setDone] = useState(false);
   const [matchCount, setMatchCount] = useState(0);
 
-  const onPick = (card: Card) => {
-    if (lock) return;
-    if (matched[card.id] || revealed[card.id]) return;
-    setRevealed((r) => ({ ...r, [card.id]: true }));
-    if (!firstPick) {
-      setFirstPick(card);
-      return;
-    }
-    if (firstPick.id === card.id) return;
-    if (firstPick.pairId === card.pairId) {
-      // match
-      setMatched((m) => ({ ...m, [firstPick.id]: true, [card.id]: true }));
-      setMatchCount((c) => c + 1);
-      setFirstPick(null);
-    } else {
-      setLock(true);
-      setTimeout(() => {
-        setRevealed((r) => ({ ...r, [firstPick.id]: false, [card.id]: false }));
-        setFirstPick(null);
-        setLock(false);
-      }, 900);
-    }
-  };
-
   const submit = useCallback(
     async (xp: number) => {
       setSubmitting(true);
@@ -90,12 +66,34 @@ export function AiMemoryClient({
     [gameId, dict.auth.errorGeneric],
   );
 
-  useEffect(() => {
-    if (matchCount === spec.pairs.length && !done) {
-      setDone(true);
-      submit(matchCount * spec.xpPerMatch);
+  const onPick = (card: Card) => {
+    if (lock) return;
+    if (matched[card.id] || revealed[card.id]) return;
+    setRevealed((r) => ({ ...r, [card.id]: true }));
+    if (!firstPick) {
+      setFirstPick(card);
+      return;
     }
-  }, [matchCount, spec.pairs.length, spec.xpPerMatch, done, submit]);
+    if (firstPick.id === card.id) return;
+    if (firstPick.pairId === card.pairId) {
+      // match
+      setMatched((m) => ({ ...m, [firstPick.id]: true, [card.id]: true }));
+      const nextCount = matchCount + 1;
+      setMatchCount(nextCount);
+      setFirstPick(null);
+      if (nextCount === spec.pairs.length) {
+        setDone(true);
+        void submit(nextCount * spec.xpPerMatch);
+      }
+    } else {
+      setLock(true);
+      setTimeout(() => {
+        setRevealed((r) => ({ ...r, [firstPick.id]: false, [card.id]: false }));
+        setFirstPick(null);
+        setLock(false);
+      }, 900);
+    }
+  };
 
   if (done) {
     return (

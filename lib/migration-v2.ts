@@ -21,7 +21,6 @@ import {
   getPlayerState,
   savePlayerState,
   creditResources,
-  type PlayerState,
 } from "@/lib/player";
 import {
   DEPRECATED_RESOURCE_KEYS,

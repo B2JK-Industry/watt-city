@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CSRF_COOKIE, CSRF_HEADER, isExemptPath } from "@/lib/csrf-shared";
 
-/* Edge middleware — Phase 6.1.3 + 6.1.4.
+/* Edge proxy — Phase 6.1.3 + 6.1.4 (renamed from middleware.ts for
+ * Next 16; `middleware` is deprecated and logs a warning on every
+ * dev/build until the file is moved to `proxy.ts`). Behaviour is
+ * identical to the pre-rename file; the single function export is
+ * now named `proxy` per the Next 16 convention.
  *
  * Responsibilities:
  *  1. Issue a `wc_csrf` cookie on every HTML response so the client can
@@ -27,7 +31,7 @@ function randomToken(len = 24): string {
     .replace(/=+$/g, "");
 }
 
-export function middleware(request: NextRequest): NextResponse {
+export function proxy(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl;
   const cookieToken = request.cookies.get(CSRF_COOKIE)?.value;
 
@@ -62,7 +66,7 @@ export function middleware(request: NextRequest): NextResponse {
   return res;
 }
 
-// Limit middleware to app routes + API; skip Next internals + static.
+// Limit proxy to app routes + API; skip Next internals + static.
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico|icons/|service-worker.js).*)"],
 };

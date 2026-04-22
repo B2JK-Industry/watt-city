@@ -28,7 +28,16 @@ export function PwaRegister({ lang }: { lang: Lang }) {
   const [promptEvent, setPromptEvent] = useState<BeforeInstallPromptEvent | null>(
     null,
   );
-  const [dismissed, setDismissed] = useState(true);
+  // Lazy-init from localStorage. SSR returns `true` so the banner stays hidden
+  // until hydration, then flips to the real persisted value on the client.
+  const [dismissed, setDismissed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+    try {
+      return Boolean(localStorage.getItem(DISMISS_KEY));
+    } catch {
+      return false;
+    }
+  });
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -38,13 +47,6 @@ export function PwaRegister({ lang }: { lang: Lang }) {
       .catch(() => {
         // Best-effort. Failing to register SW isn't a user-facing error.
       });
-
-    try {
-      const acked = localStorage.getItem(DISMISS_KEY);
-      setDismissed(Boolean(acked));
-    } catch {
-      setDismissed(false);
-    }
 
     const handler = (e: Event) => {
       e.preventDefault();

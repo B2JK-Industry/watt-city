@@ -13,6 +13,30 @@
   }
 }
 
+/* Deep-audit 2026-04-22 backlog #4 — `.tap-target` utility for nav +
+ * footer links (plain `<a>` without `.btn`). Apply via `<a className=
+ * "tap-target">` on nav + footer links.
+ *
+ * Applied unconditionally (no @media wrapper) because WebKit in
+ * Playwright refused to apply it under either `max-width` or
+ * `min-width` scoped forms — the served CSS looked right but the
+ * computed box stayed `display: inline, min-height: 0`. Desktop
+ * picks up a 44×44 floor too, which is a no-op for most nav links
+ * (already 80-100 px wide from the text) and only visibly widens
+ * short labels like "Gry" (36 → 44 px). Acceptable trade for
+ * cross-engine reliability. */
+/* Doubled selector bumps specificity to 0-2-0 so Tailwind v4's
+ * layered anchor resets (which win against a flat `.tap-target` on
+ * some WebKit builds in Playwright) can't suppress us. Identical
+ * effect on Chromium/Firefox. */
+.tap-target.tap-target {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* 7.3.3 — city scene SVG allows native pinch-zoom + pan while blocking
  * double-tap-to-zoom (Safari default) on the page chrome. */
 .city-scene-viewport {

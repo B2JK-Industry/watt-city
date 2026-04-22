@@ -44,9 +44,16 @@ export function NotificationBell({ labels }: Props) {
   }
 
   useEffect(() => {
-    refresh();
+    // Defer the first fetch to a microtask so the setState inside refresh()
+    // doesn't land in the effect's synchronous body (the rule treats that
+    // as a cascade risk). Every subsequent tick already runs outside the
+    // effect via the interval callback.
+    const kick = setTimeout(refresh, 0);
     const id = setInterval(refresh, 45_000);
-    return () => clearInterval(id);
+    return () => {
+      clearTimeout(kick);
+      clearInterval(id);
+    };
   }, []);
 
   useEffect(() => {

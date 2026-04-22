@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { BudgetScenario, BudgetTarget } from "@/lib/content/budget-balance";
 import { XP_CAP } from "@/lib/content/budget-balance";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
@@ -72,10 +72,6 @@ export function BudgetBalanceClient({
     setSubmitting(false);
   }, [dict.auth.errorGeneric]);
 
-  useEffect(() => {
-    if (locked) submit(projectedXp);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [locked]);
 
   function change(id: BudgetTarget["id"], next: number) {
     if (locked) return;
@@ -230,7 +226,10 @@ export function BudgetBalanceClient({
         <button
           type="button"
           className="btn btn-primary"
-          onClick={() => setLocked(true)}
+          onClick={() => {
+            setLocked(true);
+            void submit(projectedXp);
+          }}
           disabled={!isValid || locked}
         >
           {locked ? t.submitting : t.submit}

@@ -2,8 +2,6 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { kvDel } from "@/lib/redis";
 import {
   getPlayerState,
-  savePlayerState,
-  type PlayerState,
 } from "@/lib/player";
 import {
   ensureSignupGift,

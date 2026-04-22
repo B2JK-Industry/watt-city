@@ -7,7 +7,6 @@
 
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { pathToFileURL } from "node:url";
 import { register } from "node:module";
 
 // Register a TS loader so we can import .ts files directly from Node.

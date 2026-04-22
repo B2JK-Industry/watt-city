@@ -3,7 +3,6 @@ import { kvDel } from "@/lib/redis";
 import {
   getPlayerState,
   savePlayerState,
-  creditResources,
 } from "@/lib/player";
 import {
   quoteLoan,

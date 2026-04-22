@@ -23,6 +23,14 @@ import nextTs from "eslint-config-next/typescript";
 const RELAXED_REACT_19_STRICT_RULES = {
   "react-hooks/purity": "warn",
   "react-hooks/set-state-in-effect": "warn",
+  // Conventional: underscore-prefixed params/vars are intentionally unused
+  // (API route handlers always receive `req` even when not read, browser
+  // callbacks like `SyncEvent` pass `event`, etc.). Align the rule with the
+  // convention so we don't have to touch every route signature.
+  "@typescript-eslint/no-unused-vars": [
+    "warn",
+    { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+  ],
 };
 
 const eslintConfig = defineConfig([

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import type { z } from "zod";
 import type { QuizSpecSchema } from "@/lib/ai-pipeline/types";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
@@ -45,10 +45,6 @@ export function AiQuizClient({
     [gameId, dict.auth.errorGeneric],
   );
 
-  useEffect(() => {
-    if (phase === "done") submit(correctCount * xpPer);
-  }, [phase, correctCount, xpPer, submit]);
-
   function choose(i: number) {
     if (phase !== "playing") return;
     setChosen(i);
@@ -58,7 +54,9 @@ export function AiQuizClient({
 
   function nextStep() {
     if (index + 1 >= total) {
+      // correctCount already reflects the latest choose() because reveal has rendered.
       setPhase("done");
+      void submit(correctCount * xpPer);
       return;
     }
     setIndex((i) => i + 1);

@@ -894,7 +894,7 @@ function BankBranch({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
   );
 }
 
-function ConstructionSite({ x, w, h, name }: DrawProps) {
+function ConstructionSite({ x, w, h, name: _name }: DrawProps) {
   // AI-generated "game of the day" placeholder. Scaffolding, caution tape,
   // crane, AI badge. Click leads to /sin-slavy (today's challenge).
   const top = GROUND - h;

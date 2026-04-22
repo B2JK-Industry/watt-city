@@ -65,9 +65,12 @@ export default async function AiGamePage({
   const dict = dictFor(lang);
   const spec = resolveSpecForLang(game.spec, lang);
 
+  // Server component evaluated per-request (force-dynamic): reading Date.now() here
+  // is intentional — hoursLeft reflects the time the page was rendered.
+  const nowMs = Date.now();
   const hoursLeft = Math.max(
     0,
-    Math.round((game.validUntil - Date.now()) / (60 * 60 * 1000)),
+    Math.round((game.validUntil - nowMs) / (60 * 60 * 1000)),
   );
 
   return (

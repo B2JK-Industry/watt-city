@@ -797,7 +797,7 @@ export function pickResearchSeed(nowMs: number): ResearchSeed {
 // All available themes — useful for admin endpoints that want to force a
 // specific pool entry instead of today's calendar-deterministic pick.
 export function listResearchSeeds(): ResearchSeed[] {
-  return ROTATION_POOL.map((base, i) => ({
+  return ROTATION_POOL.map((base) => ({
     ...base,
     notes: `${base.notes}\nAngle: ${base.angles[0]}`,
     difficulty: "medium" as SeedDifficulty,

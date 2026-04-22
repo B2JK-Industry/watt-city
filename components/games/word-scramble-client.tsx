@@ -76,19 +76,18 @@ export function WordScrambleClient({ words, dict }: { words: ScrambleWord[]; dic
     if (!done) inputRef.current?.focus();
   }, [index, done]);
 
-  useEffect(() => {
-    if (done) {
-      submit(Math.min(correct * XP_PER_WORD, XP_CAP));
-    }
-  }, [done, correct, submit]);
+  function finishWith(finalCorrect: number) {
+    setDone(true);
+    void submit(Math.min(finalCorrect * XP_PER_WORD, XP_CAP));
+  }
 
-  function next() {
+  function next(finalCorrect = correct) {
     if (index + 1 < total) {
       setIndex((i) => i + 1);
       setAnswer("");
       setFlash(null);
     } else {
-      setDone(true);
+      finishWith(finalCorrect);
     }
   }
 
@@ -98,9 +97,10 @@ export function WordScrambleClient({ words, dict }: { words: ScrambleWord[]; dic
     const trimmed = normalize(answer);
     if (!trimmed) return;
     if (trimmed === current.word) {
-      setCorrect((c) => c + 1);
+      const nextCorrect = correct + 1;
+      setCorrect(nextCorrect);
       setFlash("ok");
-      setTimeout(next, 400);
+      setTimeout(() => next(nextCorrect), 400);
     } else {
       setFlash("bad");
     }

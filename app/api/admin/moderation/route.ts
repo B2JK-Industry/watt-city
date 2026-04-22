@@ -7,7 +7,6 @@ import {
   adminUnban,
   listComments,
 } from "@/lib/community";
-import { kvGet } from "@/lib/redis";
 
 // Fetches comments across any game + reported count overlay. The "reported"
 // queue view filters server-side to entries with reportCount > 0.

@@ -35,21 +35,6 @@ export function AiCalcSprintClient({
   const [result, setResult] = useState<ScoreResponse | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  useEffect(() => {
-    if (done) return;
-    const id = setInterval(() => {
-      setSecondsLeft((s) => {
-        if (s <= 1) {
-          clearInterval(id);
-          setDone(true);
-          return 0;
-        }
-        return s - 1;
-      });
-    }, 1000);
-    return () => clearInterval(id);
-  }, [done]);
-
   const submit = useCallback(
     async (xp: number) => {
       setSubmitting(true);
@@ -62,9 +47,27 @@ export function AiCalcSprintClient({
     [gameId, dict.auth.errorGeneric],
   );
 
+  // Keep latest correctCount available to the timer without re-creating the interval.
+  const correctRef = useRef(0);
   useEffect(() => {
-    if (done) submit(correctCount * spec.xpPerCorrect);
-  }, [done, correctCount, spec.xpPerCorrect, submit]);
+    correctRef.current = correctCount;
+  }, [correctCount]);
+
+  useEffect(() => {
+    if (done) return;
+    const id = setInterval(() => {
+      setSecondsLeft((s) => {
+        if (s <= 1) {
+          clearInterval(id);
+          setDone(true);
+          void submit(correctRef.current * spec.xpPerCorrect);
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  }, [done, submit, spec.xpPerCorrect]);
 
   const current = spec.items[index % spec.items.length];
 

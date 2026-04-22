@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import type { z } from "zod";
 import type { FillBlankSpecSchema } from "@/lib/ai-pipeline/types";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
@@ -49,10 +49,6 @@ export function AiFillBlankClient({
     [gameId, dict.auth.errorGeneric],
   );
 
-  useEffect(() => {
-    if (phase === "done") submit(correctCount * spec.xpPerCorrect);
-  }, [phase, correctCount, spec.xpPerCorrect, submit]);
-
   function check() {
     if (isAcceptable(input, current.answer, current.alternatives)) {
       setCorrectCount((c) => c + 1);
@@ -62,7 +58,9 @@ export function AiFillBlankClient({
 
   function next() {
     if (index + 1 >= total) {
+      // correctCount already reflects the previous check() because the reveal-phase render has committed.
       setPhase("done");
+      void submit(correctCount * spec.xpPerCorrect);
     } else {
       setIndex((i) => i + 1);
       setInput("");

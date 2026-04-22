@@ -154,16 +154,29 @@ export async function openConsentRequest(
     token,
     ts: now,
   });
-  // Mock SMTP: log a structured "sent" line. Real SMTP would dispatch here.
+
+  // Real send via env-configured provider (Resend / SendGrid) with a
+  // structured log-only fallback for dev + unconfigured prod. Consent
+  // URL is absolute — the parent clicks it from an email client with
+  // no shared cookie context. `APP_BASE_URL` env overrides the host.
+  const base = process.env.APP_BASE_URL ?? "https://watt-city.vercel.app";
+  const { sendMail, buildParentalConsentMessage } = await import("./mailer");
+  const send = await sendMail(
+    buildParentalConsentMessage({
+      childUsername,
+      parentEmail,
+      consentUrl: `${base}/consent/${token}`,
+      expiresAt: now + CONSENT_TOKEN_TTL_MS,
+    }),
+  );
   console.log(
     JSON.stringify({
       event: "parental-consent.dispatched",
       childUsername,
       parentEmailDomain: parentEmail.split("@")[1] ?? "?",
       tokenHashPrefix: token.slice(0, 6),
-      note: process.env.SMTP_HOST
-        ? "SMTP configured — real email sent"
-        : "SMTP not configured — would send in prod",
+      provider: send.provider,
+      ok: send.ok,
     }),
   );
   return rec;

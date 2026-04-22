@@ -81,10 +81,6 @@ export function AiScrambleClient({
   );
 
   useEffect(() => {
-    if (done) submit(Math.min(correct * xpPer, xpCap));
-  }, [done, correct, xpPer, xpCap, submit]);
-
-  useEffect(() => {
     inputRef.current?.focus();
   }, [index]);
 
@@ -92,8 +88,14 @@ export function AiScrambleClient({
     if (ok) setCorrect((c) => c + 1);
     else setSkipped((s) => s + 1);
     setAnswer("");
-    if (index + 1 >= total) setDone(true);
-    else setIndex((i) => i + 1);
+    if (index + 1 >= total) {
+      setDone(true);
+      // Include the current round's result in the final submission.
+      const finalCorrect = correct + (ok ? 1 : 0);
+      void submit(Math.min(finalCorrect * xpPer, xpCap));
+    } else {
+      setIndex((i) => i + 1);
+    }
   }
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {

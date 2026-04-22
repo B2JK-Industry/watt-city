@@ -63,10 +63,6 @@ export function AiPriceGuessClient({
   );
 
   useEffect(() => {
-    if (phase === "done") submit(Math.min(correct * xpPer, xpCap));
-  }, [phase, correct, xpPer, xpCap, submit]);
-
-  useEffect(() => {
     if (phase === "playing") inputRef.current?.focus();
   }, [index, phase]);
 
@@ -84,6 +80,7 @@ export function AiPriceGuessClient({
   function nextStep() {
     if (index + 1 >= total) {
       setPhase("done");
+      void submit(Math.min(correct * xpPer, xpCap));
       return;
     }
     setIndex((i) => i + 1);

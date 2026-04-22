@@ -23,14 +23,37 @@ export default defineConfig({
     screenshot: "only-on-failure",
     video: "retain-on-failure",
   },
+  /* Four projects; running the full matrix is opt-in via `--project`.
+   * `pnpm test:e2e` without a filter uses chromium only (CI-fast).
+   * Cross-browser probes live in `*.cross.spec.ts` files; mobile
+   * probes in `*.mobile.spec.ts`. Keep the production-level spec set
+   * (smoke, prod-smoke, api-contracts, …) on chromium so CI time
+   * stays predictable; run the cross-browser + mobile matrix before
+   * a release. */
   projects: [
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+      testIgnore: [/.*\.mobile\.spec\.ts/, /.*\.cross\.spec\.ts/],
+    },
+    {
+      name: "firefox",
+      use: { ...devices["Desktop Firefox"] },
+      testMatch: /.*\.cross\.spec\.ts/,
+    },
+    {
+      name: "webkit",
+      use: { ...devices["Desktop Safari"] },
+      testMatch: /.*\.cross\.spec\.ts/,
     },
     {
       name: "mobile-safari",
       use: { ...devices["iPhone 13"] },
+      testMatch: /.*\.mobile\.spec\.ts/,
+    },
+    {
+      name: "mobile-chrome",
+      use: { ...devices["Pixel 7"] },
       testMatch: /.*\.mobile\.spec\.ts/,
     },
   ],

@@ -15,7 +15,6 @@ import {
   getClass,
   setWeeklyTheme,
   deleteClass,
-  type SchoolClass,
 } from "@/lib/class";
 import {
   creditResources,

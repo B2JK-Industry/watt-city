@@ -117,11 +117,13 @@ function LoanRow({
 }) {
   const [autoRepay, setAutoRepay] = useState(loan.autoRepay !== false);
   const [pending, startTransition] = useTransition();
+  // Snapshot "now" once per render; the widget re-renders on any state change anyway.
+  const [nowMs] = useState(() => Date.now());
   const daysUntilDue = Math.max(
     0,
-    Math.ceil((loan.nextPaymentDueAt - Date.now()) / (24 * 60 * 60 * 1000)),
+    Math.ceil((loan.nextPaymentDueAt - nowMs) / (24 * 60 * 60 * 1000)),
   );
-  const overdue = loan.nextPaymentDueAt < Date.now();
+  const overdue = loan.nextPaymentDueAt < nowMs;
   const missedInARow = loan.missedConsecutive ?? 0;
   const statusLabel = overdue
     ? copy.statusOverdue
