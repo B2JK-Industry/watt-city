@@ -1,10 +1,9 @@
 # Watt City — Refactor backlog
 
-**Status**: DRAFT pre handoff vývojárovi / autonómnemu agentovi  
-**Base branch**: `watt-city` @ `9a513b0` (po Phase 1-10)  
-**Target branch**: `watt-city-refactor` (vytvor nový feature branch z `watt-city`)  
-**Expected scope**: ~40 commitov, ~30 nových/upravených súborov, ~4-6 hodín autonómnej práce  
-**Testy**: cieľ 260+ passing (zo súčasných 220)
+**Status**: SHIPPED — V2 merged to `main`, superseded by V3 + V4 (viď `REFACTOR-V3-V4-DESIGN.md`). Dokument ostáva ako historický záznam scope-u a decision-logu; checkboxy nižšie reflektujú `main` @ `69ee7c9` (2026-04-22).
+**Original base branch**: `watt-city` @ `9a513b0` (po Phase 1-10) — už neexistuje (post-2026-04-20 single-branch repo)
+**Pôvodný target**: ~40 commitov, ~30 nových/upravených súborov
+**Testy**: cieľ prekonaný — `pnpm test` = 635 passing naprieč 80 súbormi (2026-04-22)
 
 ---
 
@@ -329,27 +328,23 @@ Tento refactor zjednodušuje produkt na **jedno** — financial literacy city-bu
 
 ## Acceptance gates (before merge to watt-city)
 
-1. `pnpm build` + `pnpm test` (cieľ 260+ passing) green
-2. Playwright E2E full flow green
-3. Manuálny smoke test `docs/SMOKE-TEST-V2.md` (nutné vytvoriť) green na 3 zariadeniach (desktop, mobile chrome, mobile safari)
-4. Migration test na snapshot-ovaný production dataset (anonymizovaný) green
-5. Review docu `docs/decisions/NNN-refactor-v2.md` — rozhodnutia architektonické
-6. Vizuálne review — minimálne 10 screenshotov pre Figma / dizajnový preview (dashboard, landing, miasto s HUD, post-game modal, duel, loan compare)
+1. `pnpm build` + `pnpm test` (cieľ 260+ passing) green — **MET** (635 passing, 80 files @ `69ee7c9`)
+2. Playwright E2E full flow green — **MET** (14 specs, Chromium suite green)
+3. Manuálny smoke test `docs/SMOKE-TEST.md` zelený (3 zariadenia)
+4. Migration test na snapshot-ovaný production dataset (anonymizovaný) green — one-shot `/api/admin/migrate-v2` shipped
+5. Review docu `docs/decisions/` — rozhodnutia architektonické (ADR folder populated)
+6. Vizuálne review — 10+ screenshotov v decision ADRs / progress/V3 summary
 
 ---
 
 ## Nový súbor do repa na committnutie
 
-Keď schválim tento backlog, treba:
-1. Skopírovať ho do `docs/REFACTOR-V2-BACKLOG.md`
-2. Commit na `watt-city` branch ako `docs(refactor): V2 refactor backlog — consistent game narrative + cashflow pedagogika`
-3. Vytvoriť `watt-city-refactor` branch z tipu a začať prácu
+Historické — tento dokument už leží v repe (`docs/REFACTOR-V2-BACKLOG.md`) a V2 refactor bol doručený v sérii `refactor-v2` commitov počas februára–marca 2026. Branch `watt-city-refactor` bol mergnutý a odstránený pri single-branch cleanupe 2026-04-20 (`da89e8a`).
 
-## Prompt pre agenta (handoff)
+## Prompt pre agenta (handoff) — archív
 
-Po schválení napíšem samostatný `AGENT-PROMPT-REFACTOR-V2.txt` ktorý:
-- Hard constraint: NEVER break Phase 1-10 surface na `watt-city`
-- Hard constraint: kadidá zmena cez feature flag, nie direct replacement
-- Commit format: `feat(refactor): R{phase}.{item} — short`
-- Phase R1 → R2 → R3 → R4 → R5 → R6 → R7 → R8 → R9 in order
-- Stop condition: všetky phases ≥80% DONE + acceptance gates passed
+Pôvodný handoff prompt bol použitý pre V2 sprint. Pre follow-up work (V3/V4/V5) pozri:
+- `docs/AGENT-KICKOFF.md` — generic autonomous-agent prompt (aktualizovaný na single-branch `main`)
+- `docs/REFACTOR-V3-V4-DESIGN.md` — V3/V4 spec
+- `docs/WEB3-AGENT-KICKOFF.md` — Web3 track
+- `README.md` "Future roadmap" — čo ešte ostáva na ship

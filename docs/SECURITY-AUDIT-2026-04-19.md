@@ -86,3 +86,18 @@ Out of scope for this self-audit. Recommended path:
 `SECURITY.md` committed at repo root with scope, severity tiers, response
 times, and credit policy. GitHub Security Advisories path documented.
 Enable the Security tab on the GitHub repo settings once deployed.
+
+## Follow-up (2026-04-22)
+
+- E2E-pollution class-of-problem eliminated: `playwright.config.ts`
+  blanks Upstash credentials before `next dev` starts, forcing the
+  in-memory fallback for tests; `POST /api/admin/purge-e2e-accounts`
+  (admin-secret gated) cleans any historical leakage of `gp_*`, `pr_*`,
+  `rl_*`, `bp_*` usernames. See `docs/UPSTASH-SCALING.md` for the
+  runbook section added alongside.
+- `/api/score` hot-path parallelised (`f124349`): feature-flag reads +
+  state reads concurrent; `sweepAchievements` + `recordEvent`
+  fire-and-forget. No new exposure — the lock and idempotency guards
+  still run synchronously before mutations.
+- Notification-bell popover is opt-in client-side UI; no new API
+  surface. Existing session + CSRF guards cover every bell action.

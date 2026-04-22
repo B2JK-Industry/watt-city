@@ -38,8 +38,32 @@ drives engineering choices.
 - Grace window: 30 days (`SOFT_DELETE_GRACE_MS` in `lib/soft-delete.ts`).
 - Within grace: login clears the flag automatically (user returns).
 - After grace: `/api/cron/sweep-deletions` calls `hardErase()` which
-  deletes every per-user Redis key listed above and removes the user
-  from every leaderboard.
+  deletes every per-user Redis key listed above, removes the user
+  from every leaderboard, AND best-effort burns any on-chain Web3
+  medals via `lib/web3/burn-all.ts#burnAllForUser` (errors logged,
+  never block key cleanup).
+
+### Admin erasure surfaces
+
+Any admin endpoint that needs to remove a user MUST route through
+`hardErase()` so the full GDPR Art. 17 cascade (per-user keys +
+leaderboard ZSETs + on-chain medal burns) runs atomically. Current
+surfaces:
+
+- `/api/cron/sweep-deletions` — soft-delete grace expiry; this is the
+  canonical `hardErase()` invoker.
+- `/api/cron/sweep-inactive-kids` — 12-month inactive-kid sweep; this
+  route only calls `flagForDeletion()`, then the 30-day grace window
+  runs and sweep-deletions picks the account up for `hardErase()`.
+- `/api/admin/purge-e2e-accounts` (added 2026-04-22) — retroactively
+  cleans historic E2E test accounts (`gp_*`, `pr_*`, `rl_*`, `lb\d+_*`,
+  etc.) that leaked into the production leaderboard before
+  `playwright.config.ts` was hardened to blank `UPSTASH_REDIS_REST_*`
+  for the webServer env. Default `dryRun: true`; admin bearer required;
+  matched usernames go through `hardErase()` so web3 medals tied to
+  those accounts are also burned. The upstream fix (blanking Upstash
+  for tests) stops the leak at its source; the admin route cleans the
+  accumulated historic noise. See `app/api/admin/purge-e2e-accounts/route.ts`.
 
 ## Inactive-account retention (Phase 6.3.4 — kids only)
 

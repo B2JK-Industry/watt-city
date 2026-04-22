@@ -327,6 +327,39 @@ curl -X POST "https://watt-city.vercel.app/api/admin/leaderboard" \
   -d '{"action":"award","gameId":"finance-quiz","username":"<user>","xp":100}'
 ```
 
+### Purge leaked E2E test accounts (bulk cleanup)
+
+```bash
+# Dry run — list every candidate without erasing
+curl -X POST "https://watt-city.vercel.app/api/admin/purge-e2e-accounts" \
+  -H "Authorization: Bearer $ADMIN_SECRET" \
+  -H "content-type: application/json" \
+  -d '{"dryRun":true}'
+
+# Actual purge (default prefix list: gp_*, pr_*, rl_*, bot_*, ghost_*,
+# smoke*, db_*, di_*, sec_*, kid_*, lb<digits>_*, okuser*)
+curl -X POST "https://watt-city.vercel.app/api/admin/purge-e2e-accounts" \
+  -H "Authorization: Bearer $ADMIN_SECRET" \
+  -H "content-type: application/json" \
+  -d '{"dryRun":false}'
+
+# Include the aggressive single-letter prefixes (k_/p_/t_/s_/a_/b_/f_).
+# DO NOT run this without first confirming the dry-run output only
+# contains E2E-shaped usernames — a real kid could have registered
+# as e.g. `a_zzzzzzz`.
+curl -X POST "https://watt-city.vercel.app/api/admin/purge-e2e-accounts" \
+  -H "Authorization: Bearer $ADMIN_SECRET" \
+  -H "content-type: application/json" \
+  -d '{"dryRun":false,"includeSingleLetter":true}'
+```
+
+Uses `hardErase()` under the hood, so every per-user key (player
+state, ledger, stats, notifications, any web3 medal record) is wiped
+— not just the `xp:leaderboard:global` ZSET entry. Needed once in
+anger after the pre-`f124349` Playwright config leaked test runs to
+production Upstash; future E2E runs blank the Upstash envs at
+webServer startup so the hole is closed at the source.
+
 ### Remove a user from a game leaderboard (test cleanup)
 
 ```bash
@@ -571,6 +604,26 @@ The 13-item production-readiness backlog closed in commits `91139f3` +
   double-credit the global leaderboard.
 - **`proxy.ts`** — renamed from `middleware.ts` (Next 16 deprecation);
   CSRF behaviour unchanged.
+
+### Addendum — commit `f124349` (2026-04-22)
+
+UX-fix batch + E2E leaderboard pollution hardening:
+
+- **`/api/admin/purge-e2e-accounts`** — new one-shot cleanup for E2E
+  users leaked into production Upstash before today's config fix.
+  Default-dry-run, admin bearer-gated. See §7 "Purge leaked E2E test
+  accounts (bulk cleanup)" for the curl recipes.
+- **E2E env isolation** — `playwright.config.ts` webServer now forces
+  `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` to empty
+  strings so `pnpm test:e2e` always falls back to the in-memory
+  store. `.env.local` can no longer accidentally send test runs at
+  production Redis. Opt into a dedicated test project via
+  `E2E_UPSTASH_URL` / `E2E_UPSTASH_TOKEN`.
+- **`/api/score` tail latency** — feature-flag reads, state /
+  economy reads, and per-resource daily-yield reads now run in
+  parallel; `sweepAchievements` + `recordEvent` are fire-and-forget.
+  No operational change, but post-game p95 should drop; watch the
+  `api-score` Vercel timings panel after the next deploy.
 
 ---
 

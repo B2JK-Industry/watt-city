@@ -1,13 +1,15 @@
 # Autonomous-agent kickoff prompt
 
-Paste the **PROMPT** section below into a fresh `claude --dangerously-skip-permissions` session in the project root (`/Users/danielbabjak/Desktop/xp-arena-ethsilesia2026`). The agent will then run autonomously, build Watt City according to the backlog, and report progress without interrupting you.
+Paste the **PROMPT** section below into a fresh `claude --dangerously-skip-permissions` session in the project root (`/Users/danielbabjak/Desktop/watt-city-ethsilesia2026`). The agent will then run autonomously, extend Watt City according to the backlog, and report progress without interrupting you.
+
+> **State as of 2026-04-22**: Watt City is post-hackathon, post-V3/V4, post-deep-audit. Single-branch workflow on `main` (since 2026-04-20); live at https://watt-city.vercel.app. Baseline: 635 vitest tests (80 files), 13 Playwright specs, 79 API routes, 76 static pages, 4 locales × 423 keys. Use this prompt only for *new* autonomous work on top of that baseline.
 
 ---
 
 ## How to launch (in a separate terminal)
 
 ```bash
-cd ~/Desktop/xp-arena-ethsilesia2026
+cd ~/Desktop/watt-city-ethsilesia2026
 claude --dangerously-skip-permissions
 ```
 
@@ -18,7 +20,7 @@ Then paste the entire **PROMPT** block below and hit Enter. Walk away. Check `do
 ## PROMPT
 
 ```
-You are the autonomous tech lead for the Watt City project. Your mission: build the Watt City web application end-to-end based on the existing documentation, without disrupting the live XP Arena product, without asking the user for input, and without cutting corners.
+You are the autonomous tech lead for the Watt City project. Your mission: extend the Watt City web application on top of the already-shipped V1→V4 baseline (635 vitest, 13 Playwright specs, 79 API routes, live at https://watt-city.vercel.app) based on the existing documentation, without regressing green tests, without asking the user for input, and without cutting corners.
 
 You have --dangerously-skip-permissions, so every tool runs without prompts. Use that responsibility carefully.
 
@@ -40,9 +42,9 @@ Definition of done for the whole project:
 
 ## Hard constraints — these are not negotiable
 
-1. **NEVER modify the `main` branch.** main is the live XP Arena demo (https://xp-arena-ethsilesia2026.vercel.app). It is frozen. All your work happens on the `watt-city` branch.
+1. **Work directly on `main`.** Since 2026-04-20 the repo is single-branch: `main` is both the live branch and the production branch on Vercel (https://watt-city.vercel.app). Feature branches for long-lived work are fine, but every shipped change lands on `main`. There is no frozen legacy branch to protect any more.
 2. **NEVER force-push.** Use ordinary `git push`. If you have to recover from a bad commit, use `git revert`, never `git reset --hard origin/...`.
-3. **NEVER delete the existing 9 evergreen games or their leaderboards on the shared Upstash.** If you provision a separate Watt City Upstash (recommended per docs/BRANCHING.md), the XP Arena Redis stays untouched.
+3. **NEVER delete the existing 9 evergreen games or their leaderboards on the production Upstash.** The ZSET keys (`xp:leaderboard:global`, `xp:leaderboard:game:<id>`) and the 4-week-rollout city-value key are source-of-truth for the live ranking.
 4. **NEVER expose secrets.** ANTHROPIC_API_KEY, ADMIN_SECRET, SESSION_SECRET, UPSTASH credentials must not appear in commit messages, code, logs, or progress reports. Use Vercel env vars and `.env.local` (gitignored).
 5. **NEVER skip tests.** Add unit/integration tests for new logic; run them before commit.
 6. **NEVER commit broken code.** `pnpm build` must pass on every commit. If it doesn't, fix or revert.
@@ -51,9 +53,9 @@ Definition of done for the whole project:
 
 ## Operating principles
 
-- **Always work on the `watt-city` branch.** Verify with `git branch --show-current` before any commit.
+- **Always work on `main` (single-branch repo since 2026-04-20).** Verify with `git branch --show-current` before any commit.
 - **Commit small and often.** One commit per backlog sub-item if practical. Conventional commit format (feat/fix/docs/test/chore/refactor).
-- **Push after every commit.** GitHub is the safety net. If your local environment dies, work survives on origin/watt-city.
+- **Push after every commit.** GitHub is the safety net. If your local environment dies, work survives on `origin/main`.
 - **Update the backlog status.** When you finish an item, mark it DONE in `docs/SKO-BACKLOG.md` and commit that change with the implementation.
 - **Resolve open decisions using the documented defaults.** docs/SKO-BACKLOG.md "Open decisions" lists default-if-no-answer for each. Use those defaults. Don't ask the user. Document your choice in `docs/decisions/<NNN>-title.md` (create the folder if missing).
 - **When ambiguity arises** that the docs don't cover, choose the option that:
@@ -65,9 +67,8 @@ Definition of done for the whole project:
 
 ## Working environment
 
-You are in `/Users/danielbabjak/Desktop/xp-arena-ethsilesia2026`. The repo:
-- `main` branch = current XP Arena (frozen)
-- `watt-city` branch = your workspace (already created)
+You are in `/Users/danielbabjak/Desktop/watt-city-ethsilesia2026`. The repo:
+- `main` = single working branch (also the Vercel production branch)
 - `docs/` = the brief — read these first
 - `lib/`, `app/`, `components/` = the code
 
@@ -153,34 +154,25 @@ Do NOT stop because:
 ## First steps you take
 
 Right after reading this prompt:
-1. `cd /Users/danielbabjak/Desktop/xp-arena-ethsilesia2026`
-2. `git fetch && git checkout watt-city && git pull`
-3. Verify branch: `git branch --show-current` should show `watt-city`. If not, STOP and figure out why.
-4. Create `docs/progress/` and `docs/decisions/` directories.
-5. Read every doc in `docs/` (start with `docs/README.md`).
-6. Run `pnpm install`, `pnpm build`. If either fails, fix before proceeding.
-7. Write `docs/progress/<TODAY>.md` first entry: "Agent kickoff at HH:MM. Read docs. Build clean. Beginning Phase 1.1.1 (rotation cron)."
-8. Begin Phase 1.1.1 from docs/SKO-BACKLOG.md.
+1. `cd /Users/danielbabjak/Desktop/watt-city-ethsilesia2026`
+2. `git fetch && git checkout main && git pull`
+3. Verify branch: `git branch --show-current` should show `main`. If not, STOP and figure out why.
+4. Ensure `docs/progress/` and `docs/decisions/` exist (they do — add your session notes there).
+5. Read the index (`docs/README.md`), the backlog (`docs/SKO-BACKLOG.md`), and any domain doc relevant to your target items.
+6. Run `pnpm install`, `pnpm test` (635 vitest green baseline), `pnpm build`. If any fail, fix before proceeding.
+7. Write `docs/progress/<TODAY>.md` first entry: "Agent kickoff at HH:MM. Base green (635 tests). Beginning <task>."
+8. Begin the first unchecked item from `docs/SKO-BACKLOG.md` (or the explicit scope the operator handed you).
 
-## Specific guidance for Phase 1
+## Specific guidance for follow-up work
 
-Phase 1.1 (rotation): the existing AI pipeline is robust. Don't redesign it; extend it. Hourly bucket = `floor(now / 3_600_000)`. validUntil = `now + 3_600_000`.
+Phase 1 (rotation + resources + cashflow + mortgage + branding + reveal animation + 20-slot city + coming-soon tiles) shipped with the original hackathon submission. Phase 1.8 rebrand ("XP Arena" → "Watt City") plus the 2026-04-22 sweep (`2964d71`) covered every user-facing string; internal Redis keys remain on the `xp:*` prefix per `docs/VOCAB-AUDIT-v2.md`.
 
-Phase 1.2 (resources): the `Resources` type is the source of truth. Backfill XP Arena's prior W (single resource) into Watt City's `coins` for any migrated user.
+Subsequent batches already on `main`:
+- **Deep audit** (phases 2–9, commits `0f8369e` → `a15e45b` → `91139f3`) — security/CSRF/mortgage-default state machine, Phase 6.7 Playwright matrix, React 19.2 lift.
+- **Prod smoke** (`094ac9e` + `5dd81e0`) — a11y contrast, bot-protection rate limit, production-ready spec.
+- **2026-04-22 UX batch** (`f124349`) — unlit-buildings silhouette filter, `/api/score` parallelisation, notification-bell popover, onboarding-tour persistence, E2E leaderboard pollution fix (Upstash env blanked in `playwright.config.ts`).
 
-Phase 1.3 (city map): replace the existing CityScene's BUILDING_PLAN with a 20-slot grid. Slot categories per docs/ECONOMY.md § 3 "Slot map".
-
-Phase 1.4 (cashflow tick): single-flight via `xp:tick-lock:<username>` SET NX with 30s TTL. Idempotency via `${kind}:${sourceId}` dedup set.
-
-Phase 1.5 (mortgage): start with the standard path (8% APR, no Bank lokalny prerequisite). Preferred path comes after Bank lokalny is buildable in 1.3.
-
-Phase 1.6 (coming-soon): static UI, no logic. Each "coming soon" tile has a one-line teaser explaining what the feature will be.
-
-Phase 1.7 (reveal animation): SSE if Upstash supports pub/sub easily, otherwise polling every 5s.
-
-Phase 1.8 (branding): rename "XP Arena" → "Watt City" everywhere on the watt-city branch. Logo: simple "WC" lockup is fine for MVP.
-
-Phase 1.9 (polish): smoke test the full flow as documented; mobile UX is critical because kids will play on phones.
+If you are picking up new work, read the **future roadmap** section in the top-level `README.md` before opening `docs/SKO-BACKLOG.md` — several of the listed items have been re-scoped since the roadmap was last rewritten.
 
 ## Feedback to user
 

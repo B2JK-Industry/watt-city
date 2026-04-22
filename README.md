@@ -15,7 +15,7 @@ active.
 ## Current state (2026-04-22)
 
 Production on https://watt-city.vercel.app. 635 / 635 vitest across 80
-files, 13 Playwright specs (~600 E2E assertions), 79 API routes,
+files, 14 Playwright specs (~600 E2E assertions), 81 API routes,
 76 static pages, 4 locales (423 keys each, zero drift).
 
 **Shipped core loop**
@@ -245,7 +245,7 @@ ledger dedupe, building place/upgrade/demolish, tick catch-up with 30-day
 cap, amortization formula, default after 3 misses, cron auth matrix,
 rate-limit keying, mailer fallback, awardXP lock, parent-link redeem).
 
-Playwright E2E (13 specs): `pnpm test:e2e` covers smoke, prod-smoke,
+Playwright E2E (14 specs): `pnpm test:e2e` covers smoke, prod-smoke,
 api-contracts, security, data-integrity, a11y-matrix, golden-paths,
 perf, production-ready, rate-limits, bot-protection (opt-in), pwa,
 smoke.mobile, smoke.cross.

@@ -144,3 +144,22 @@
 8. Replace duel speed-bonus with "read carefully" curve
 9. GDPR-K legal review as launch gate
 10. Criteria-based V1 sunset (5 criteria), not 4-week timer
+
+---
+
+## Follow-up (2026-04-22)
+
+V2 refactor shipped, then extended by V3 + V4. Item-by-item status:
+
+1. **Watt-deficit brownout** — shipped (V3.3, `lib/watts.ts` + `components/watt-deficit-panel.tsx`; rescue loan at `app/api/loans/rescue/route.ts`). Bankruptcy gated while deficit active.
+2. **Value-based resource migration** — shipped via `app/api/admin/migrate-v2/route.ts` + `app/api/admin/backfill-resources/route.ts` (value-weighted, per-user ledger emitted, sentinel idempotent).
+3. **Parallel leaderboard keys** — shipped: `xp:leaderboard:global` retained read-only; V2 writes `xp:leaderboard:city-value`. See `lib/leaderboard.ts` + `lib/city-value.ts`.
+4. **Multiplier cap + breakdown** — shipped (`lib/multipliers.ts` + post-game breakdown in `components/post-game-modal.tsx`; cap enforced in `app/api/score/route.ts`).
+5. **Duel version-pinning** — obsoleted. V3.6 removed `/duel` entirely (`lib/duel.legacy.ts`; ADR in `docs/decisions/`). No in-flight migration needed because the surface was deleted.
+6. **Scenario moderation** — N/A after duel removal. AI content moderation still runs via `lib/ai-pipeline/moderation.ts` (content-hash + denylist + locale-per-language Haiku translator).
+7. **Scope cut** — executed exactly as recommended: R1, R2, R3.2, core R6 shipped in V2; R5 dropped; loan-comparison deferred then shipped in V3.7 (`app/loans/compare/page.tsx`).
+8. **Duel speed-bonus** — N/A (duel removed).
+9. **GDPR-K legal review** — partial. Consent flow + retention in `lib/gdpr-k.ts`; v3/v4 gates in `app/profile/page.tsx`. Human legal sign-off still outstanding per README roadmap.
+10. **Criteria-based sunset** — moot post-single-branch merge (2026-04-20, `da89e8a`). The V1↔V2 dual-render ended when `watt-city` branch was collapsed into `main`; V1 code is gone from the tree.
+
+Remaining debt: the "stacked multipliers" post-game breakdown is covered at the API layer but the visual ladder in the modal is compact (2 lines, not 5) — documented as a polish item on the V5 roadmap, not a functional gap.

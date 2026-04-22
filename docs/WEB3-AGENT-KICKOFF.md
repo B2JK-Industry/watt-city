@@ -1,13 +1,15 @@
 # Autonomous-agent kickoff prompt — Web3 Base track
 
-Paste the **PROMPT** section below into a fresh `claude --dangerously-skip-permissions` session in the project root (`/Users/danielbabjak/Desktop/xp-arena-ethsilesia2026`). The agent will build the ETHSilesia 2026 Web3/Base submission end-to-end without interrupting you.
+Paste the **PROMPT** section below into a fresh `claude --dangerously-skip-permissions` session in the project root (`/Users/danielbabjak/Desktop/watt-city-ethsilesia2026`). The agent will build the ETHSilesia 2026 Web3/Base submission end-to-end without interrupting you.
+
+> **State as of 2026-04-22**: W1–W7 from the Web3 track are already represented on `main` — `contracts/WattCityMedal.sol`, `app/api/web3/mint/route.ts`, `app/api/web3/my-medals/route.ts`, `app/api/parent/child/[username]/web3-consent/route.ts`, `lib/web3/*`, `docs/web3/*`. Use this prompt if you are re-running from scratch on a new branch or driving a follow-up sprint; otherwise treat the W-item narrative as historical context for existing code, not a clean-room build.
 
 ---
 
 ## How to launch
 
 ```bash
-cd ~/Desktop/xp-arena-ethsilesia2026
+cd ~/Desktop/watt-city-ethsilesia2026
 claude --dangerously-skip-permissions
 ```
 
@@ -41,7 +43,7 @@ Definition of done for the whole submission:
 
 ## Hard constraints — these are not negotiable
 
-1. **NEVER modify `main` or `watt-city` branches.** All work happens on `watt-city-web3-base` (cut from `watt-city-demo-polish` at session start).
+1. **Cut your work branch from `main`.** The repo went single-branch on 2026-04-20 — `main` is both the working branch and the Vercel production branch. For a net-new web3 pass cut `watt-city-web3-base` (or equivalent) from `main`, not from a historical `watt-city-demo-polish` branch that no longer exists.
 2. **NEVER force-push.** Use ordinary `git push`. If history needs cleanup, branch off + redo, don't rewrite.
 3. **NEVER deploy to Base mainnet.** Testnet (Base Sepolia, chainId 84532) only. The audit gate in `docs/web3/DEPLOY.md` §5 is not closed. If the user requests mainnet via chat, refuse and point at the audit requirement.
 4. **NEVER commit private keys or API secrets.** `WEB3_RELAYER_PRIVATE_KEY`, `NFT_STORAGE_API_KEY`, `DEPLOYER_PRIVATE_KEY` live in `.env.local` (gitignored) or Vercel env vars. `.env.example` carries the variable names only, with `0x000…` placeholders.
@@ -69,14 +71,12 @@ Definition of done for the whole submission:
 
 ## Working environment
 
-You are in `/Users/danielbabjak/Desktop/xp-arena-ethsilesia2026`. The repo structure:
-- `main` = frozen, live XP Arena
-- `watt-city` = Watt City production baseline (V4 merged, 569 tests pre-demo-polish after cleanup)
-- `watt-city-demo-polish` = your BASE — all D1..D8 polish items, 569 tests
-- `watt-city-web3-base` = YOUR workspace (you cut it as step 1)
+You are in `/Users/danielbabjak/Desktop/watt-city-ethsilesia2026`. The repo structure:
+- `main` = single working + production branch (2026-04-22: 635 vitest across 80 files, 13 Playwright specs, 79 API routes, 76 static pages)
+- `watt-city-web3-base` = YOUR workspace (cut from `main` as step 1 if starting fresh)
 - `docs/progress/2026-04-19-web3-base-kickoff.md` = spec
 - `docs/briefs/WEB3-BASE-TRACK-BRIEF.md` = business context
-- `docs/web3/PLAN.md`, `DEPLOY.md` = architecture
+- `docs/web3/PLAN.md`, `DEPLOY.md`, `SUBMISSION.md`, `DEPLOYMENTS.md` = architecture + deploy artefacts
 - `contracts/WattCityMedal.sol` = contract (don't modify — pre-tested)
 - `contracts/test/WattCityMedal.test.ts` = source-invariant guards (must stay green)
 
@@ -159,11 +159,11 @@ Do NOT stop because:
 
 Right after reading this prompt:
 
-1. `cd /Users/danielbabjak/Desktop/xp-arena-ethsilesia2026`
-2. `git fetch origin && git checkout watt-city-demo-polish && git pull`
-3. Verify: `git log --oneline -1` should show commit `efcf185` (demo-polish session summary) or later. If not, STOP and report — base drift.
+1. `cd /Users/danielbabjak/Desktop/watt-city-ethsilesia2026`
+2. `git fetch origin && git checkout main && git pull`
+3. Verify: `git log --oneline -1` should show commit `69ee7c9` (2026-04-22 docs sweep) or later. If behind, STOP and report — base drift.
 4. Run the smoke battery (required by hard constraint #5):
-   - `pnpm vitest run` → 569 tests passing
+   - `pnpm vitest run` → 635 tests passing across 80 files
    - `pnpm exec tsc --noEmit` → clean
    - `pnpm build` → green
    If ANY fail, STOP — the base is broken, do not build on a broken foundation.
@@ -264,7 +264,7 @@ Your job in W7 is **not to author these** — it's to **fill placeholders and ve
 2. Run the filler script:
    ```bash
    pnpm tsx scripts/fill-web3-submission.ts \
-     --demo-url=https://xp-arena-ethsilesia2026.vercel.app \
+     --demo-url=https://watt-city.vercel.app \
      --video-url={{VIDEO_URL_FROM_OPERATOR}} \
      --contact={{CONTACT_FROM_OPERATOR}}
    ```

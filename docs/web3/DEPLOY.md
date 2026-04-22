@@ -111,6 +111,22 @@ on-chain medals, the relayer calls `burn(tokenId)` for each medal.
 Document in `docs/legal/DATA-RETENTION.md` that on-chain burns are
 best-effort (the transaction log itself is public).
 
+Entry points that reach this path (all route through
+`lib/soft-delete.ts#hardErase` → `lib/web3/burn-all.ts#burnAllForUser`):
+
+- `DELETE /api/me` — user-initiated erasure; flags for soft-delete,
+  then sweep-deletions finalises via `hardErase()` after the 30-day
+  grace window.
+- `/api/cron/sweep-deletions` — soft-delete grace expiry; the canonical
+  direct `hardErase()` caller.
+- `/api/cron/sweep-inactive-kids` — 12-month inactive-kid auto-flag;
+  reaches `hardErase()` transitively once the grace window runs.
+- `/api/admin/purge-e2e-accounts` (added 2026-04-22) — admin cleanup
+  of historic E2E leakage in the production leaderboard. Default
+  `dryRun: true`; with `dryRun: false` each matched username goes
+  through the full `hardErase` path, so any on-chain medals tied to
+  those test accounts are burned as a side-effect.
+
 ## 8. Audit budget (operator)
 
 - Static analysis (Slither / Mythril): free, run by the operator.

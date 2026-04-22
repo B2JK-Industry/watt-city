@@ -58,16 +58,18 @@ namespace not visible to users. Cost ≫ benefit.
 
 ### 2.1 Redirect (move to V2 city-\* equivalents)
 
-| Symbol | Location | V2 redirect | When |
+Status reflected 2026-04-22 against `main` @ `69ee7c9`:
+
+| Symbol | Location | V2 redirect | Status |
 |---|---|---|---|
-| `titleForLevel` | `lib/level.ts` | DELETE — V2 uses `cityLevelFromBuildings.currentUnlocks` | after R3.2 dashboard swap |
-| `tierForLevel` | `lib/level.ts` | DELETE (same as above) | after R3.2 |
-| `CITY_TIERS` | `lib/level.ts` | → `LEVEL_UNLOCKS` in `lib/city-level.ts` | after R3.2 |
-| `levelFromXP` | `lib/level.ts` | Keep as `v1LevelFromXP` for backward-compat util only; never called in V2 paths | after R3.2 |
-| `formatWatts` | `lib/level.ts` | Rename to `formatCoins` when the "Watts = primary resource" framing is dropped | after vocabulary sweep |
-| `AwardResult.isNewBest` | `lib/leaderboard.ts` | KEEP — "new best" is a natural term |  |
-| `dashboard.tsx` "Waty łącznie" / "Pozycja" | `components/dashboard.tsx` | → V2 dashboard replaces with "City Level" card | R3.2 |
-| `TierUpToast` component | `components/tier-up-toast.tsx` | Rename to `LevelUpToast` + update dict keys | R3.4 |
+| `titleForLevel` | ~~`lib/level.ts`~~ | V2 uses `cityLevelFromBuildings.currentUnlocks` | **DELETED** (V3.1) |
+| `tierForLevel` | ~~`lib/level.ts`~~ | same | **DELETED** (V3.1) |
+| `CITY_TIERS` | ~~`lib/level.ts`~~ | → `LEVEL_UNLOCKS` in `lib/city-level.ts` | **DELETED** (V3.1) — guarded by `lib/tier-names-purge.test.ts` |
+| `levelFromXP` | `lib/level.ts` | Kept; now the XP ring helper on the dashboard + leaderboard formatter, not the primary progression | **KEPT** — see header comment in `lib/level.ts` |
+| `formatWatts` | `lib/level.ts` | Still in use for leaderboard rows (display-only) | **KEPT** for now — rename deferred |
+| `AwardResult.isNewBest` | `lib/leaderboard.ts` | natural term | **KEPT** |
+| `dashboard.tsx` "Waty łącznie" / "Pozycja" | `components/dashboard.tsx` | replaced with "City Level" card | **DONE** (V3.1) |
+| `TierUpToast` component | `components/tier-up-toast.tsx` | renamed → `LevelUpToast` + dict keys swept | **DONE** (file still named `tier-up-toast.tsx` for import stability; component export is the new one) |
 
 ### 2.2 Keep (internal mechanics — not user-facing)
 
@@ -100,16 +102,16 @@ Remaining occurrences:
 
 ---
 
-## 3. Specific cleanups shipped as part of V2 (none yet)
-
-Track each redirect as it gets implemented:
+## 3. Specific cleanups shipped as part of V2 + V3
 
 | Date | Symbol | Commit | Result |
 |---|---|---|---|
-| _(pending)_ | `titleForLevel` → `LEVEL_UNLOCKS[level]` | R3.2 | — |
-| _(pending)_ | `tierForLevel` → `cityLevelFromBuildings()` | R3.2 | — |
-| _(pending)_ | `TierUpToast` → `LevelUpToast` | R3.4 | — |
-| _(pending)_ | `lib/ai-pipeline/generate.ts` prompt | vocab-cleanup follow-up | — |
+| V3.1 sprint | `titleForLevel` → removed; unlock list now lives in `LEVEL_UNLOCKS[level]` | V3.1 batch | DONE |
+| V3.1 sprint | `tierForLevel` → `cityLevelFromBuildings()` | V3.1 batch | DONE |
+| V3.1 sprint | `CITY_TIERS` array deleted; guarded by `lib/tier-names-purge.test.ts` | V3.1 batch | DONE |
+| V3.1 sprint | `TierUpToast` renamed to level-up semantics; file kept for import continuity | V3.1 batch | DONE |
+| 2026-04-22 `2964d71` | user-facing "XP Arena" strings (landing, o-platforme, emails) swept → "Watt City" | `fix(brand)` | DONE |
+| pending | `lib/ai-pipeline/generate.ts` system prompt says "XP Arena" in one place | vocab-cleanup follow-up | TODO (low priority per §2.3) |
 
 ---
 

@@ -189,7 +189,7 @@ Processing: legitimate interest (gameplay) + explicit consent (notifications, ma
 |---|---|
 | 15 — Access | `GET /api/me` returns full state |
 | 16 — Rectification | Display name + avatar editable; username immutable (re-register if needed) |
-| 17 — Erasure | `DELETE /api/me` purges everything: user record, stats, all leaderboard entries, ledger, dedup set |
+| 17 — Erasure | `DELETE /api/me` purges everything: user record, stats, all leaderboard entries, ledger, dedup set. Same `hardErase()` path is reused by `/api/admin/purge-e2e-accounts` for operator-initiated bulk cleanup. |
 | 18 — Restriction | Currently no logged-in account can be restricted; out of scope |
 | 20 — Portability | `GET /api/me/export` returns JSON dump (Phase 6.2.3) |
 | 21 — Objection | "Cofnięcie zgody" via account deletion |
@@ -419,6 +419,31 @@ CSP allowlist:
 - Logs retained 30 days (Vercel default)
 - Application logs go to stderr; Vercel captures
 - Critical events (deploy, secret rotation, admin actions) go to a separate audit log: `xp:audit:<YYYY-MM-DD>` Redis list
+
+## 13.1. Test-environment data hygiene
+
+E2E fixture users (`gp_*`, `pr_*`, `rl_*`, `bot_*`, `ghost_*`, `smoke*`,
+`db_*`, `di_*`, `sec_*`, `kid_*`, `lb\d+_*`, `okuser*`) must never leak
+into production data stores. Two layers enforce this:
+
+1. **Config-level isolation** (commit `f124349`). `playwright.config.ts`
+   blanks `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` on the
+   webServer boot env. Next.js reads `process.env` before `.env.local`,
+   so the explicit empty string wins and `lib/redis.ts` falls down the
+   in-memory path — regardless of what an operator has in `.env.local`.
+   Operators who genuinely want a dedicated test Redis set
+   `E2E_UPSTASH_URL` / `E2E_UPSTASH_TOKEN` instead.
+2. **Cleanup endpoint** (admin bearer). `/api/admin/purge-e2e-accounts`
+   enumerates `xp:leaderboard:global` via `zAllMembers()`, regex-filters
+   candidates against the documented prefix set, and runs each match
+   through the same `hardErase()` routine used by GDPR Art. 17. Default
+   `dryRun: true`; single-letter prefixes gated behind an explicit flag
+   to prevent collisions with real short handles.
+
+Historical leaks from runs predating `f124349` were cleaned with this
+endpoint. No PII was involved — these are synthetic accounts created by
+the suite itself — but leaderboard integrity is a stated product
+invariant, so the cleanup is still a P2.
 
 ## 14. Backup & disaster recovery
 

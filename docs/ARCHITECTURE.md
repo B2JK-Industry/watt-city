@@ -298,6 +298,7 @@ type Listing = {
 | POST | `/api/admin/rotate-ai` | `{theme?}` | full game | admin secret |
 | POST | `/api/admin/leaderboard` | `{action, gameId, username, xp?}` | top entries | admin secret |
 | POST | `/api/admin/archive-cleanup` | — | `{purgedCount, keptCount, purged, kept}` | admin secret |
+| POST | `/api/admin/purge-e2e-accounts` | `{dryRun?, prefixes?, includeSingleLetter?, minSuffixLen?}` | `{ok, dryRun, total, matched, candidates OR erased+failed}` | admin bearer |
 
 ### 4.6 SSE / events
 
@@ -555,6 +556,39 @@ Single-branch workflow since 2026-04-20. `watt-city` was fast-forward-merged int
 > Follow-on doc work: §3 (Redis key map) needs entries for
 > `xp:ratelimit:…` buckets (already in use) and `xp:parental-consent:*`
 > (Phase 6.3.5) once the consent record shape settles.
+
+> **Addendum (2026-04-22, commit `f124349`).** UX-fix batch + E2E
+> leaderboard-pollution hardening:
+>
+> - **`/api/admin/purge-e2e-accounts`** (POST, admin bearer) cleans up
+>   leaked E2E test users from `xp:leaderboard:global`. Username regex
+>   keys on documented prefixes (`gp_*`, `pr_*`, `rl_*`, `bot_*`,
+>   `ghost_*`, `smoke*`, `db_*`, `di_*`, `sec_*`, `kid_*`, `lb\d+_*`,
+>   `okuser*`); single-letter prefixes (`k_`/`p_`/`t_`/`s_`/`a_`/`b_`/
+>   `f_`) are gated behind `includeSingleLetter: true` to avoid
+>   catching real users. Matched accounts go through `hardErase()` so
+>   the cleanup runs on the GDPR Art. 17 path (every per-user key +
+>   any web3 medals, not just the ZSET entry). `dryRun: true` by
+>   default.
+> - **`lib/redis.ts` · `zAllMembers(zkey)`** — new helper for unbounded
+>   `ZRANGE 0..-1`. Used by the purge endpoint to enumerate the global
+>   leaderboard (a few hundred members in practice, no pagination
+>   needed). Single Upstash call; memory-fallback path iterates the
+>   local `zsets` map.
+> - **`/api/score` hot-path parallelisation** — feature-flag reads
+>   (`v3_score_lock`, `v2_post_game_modal`), `getPlayerState` +
+>   `readEconomy`, and per-resource daily-yield counters all run under
+>   `Promise.all`. `sweepAchievements` + `recordEvent` fire-and-forget
+>   after the response so terminal side-effects never inflate
+>   post-game tail latency. Errors are JSON-logged per callsite; a
+>   background failure never fails the score request.
+> - **E2E environment isolation** — `playwright.config.ts` webServer
+>   now blanks `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`
+>   so every `pnpm test:e2e` falls back to the in-memory Redis store
+>   regardless of what's in `.env.local`. `E2E_UPSTASH_URL` /
+>   `E2E_UPSTASH_TOKEN` override for a dedicated test project. This
+>   closes the pollution path that required the purge endpoint in the
+>   first place.
 
 ## 13. Observability
 

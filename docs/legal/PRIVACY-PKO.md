@@ -82,7 +82,9 @@ route to [DPO EMAIL — TBD].
   During this period, parent-linked accounts can restore via the parent
   dashboard.
 - After 30 days the username is permanently released and all ledger /
-  building / loan data is hard-deleted.
+  building / loan data is hard-deleted via `lib/soft-delete.ts#hardErase`.
+  The same function burns any on-chain Web3 medals (best-effort) so
+  Art. 17 erasure extends to the blockchain surface.
 - PKO audit log is NOT deleted — financial-record retention obligations
   override the erasure request.
 

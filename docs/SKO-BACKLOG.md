@@ -2,6 +2,29 @@
 
 Complete scope from current XP Arena state to a production-grade, multi-market, partner-ready SKO product. No time-boxing — every item exists somewhere on this list whether it's "do it day one" or "do it in year two".
 
+> **Status banner 2026-04-22** — Live on https://watt-city.vercel.app.
+> 635/635 vitest (80 files), 79 API routes, 76 static pages, 13 Playwright
+> specs, 4 locales × 423 keys (zero drift). 1st place PKO Gaming track,
+> ETHSilesia 2026. Main branch only since 2026-04-20; latest commit
+> `69ee7c9`.
+>
+> **Phase 1 MVP**: DONE end-to-end. The "~95%" banner in the Phase 1
+> section below is stale — most of the deferred items are now live.
+>
+> **Phase 2 AI kinds (2.1)**: 6 of 12 planned kinds shipped (memory,
+> fill-in-blank, calc-sprint, budget-allocate, chart-read, what-if); the
+> pivot-era 6 stay. Target reached. Outstanding: portfolio-pick, dialog,
+> negotiate, timeline-build, invest-sim, tax-fill.
+>
+> **Phase 3 social/schools/parents**: parent observer flow (V4.6),
+> teacher/class flow, friends, marketplace placeholder all live.
+>
+> **Phase 6 GDPR-K / security**: shipped (rate limits, CSRF, parent
+> consent, soft-delete, age gating).
+>
+> **Phase 8 web3 (opt-in)**: W1–W7 done on Base Sepolia; mainnet +
+> audit still outstanding.
+
 Effort scale (rough engineering days, single dev):
 - **XS** = ≤ 2 h
 - **S** = ½ day
@@ -52,21 +75,20 @@ Each item lists: ID · title · effort · acceptance criteria · dependencies ·
 | 0.11 | Admin endpoints: rotate-ai (with theme override), leaderboard award/remove, archive-cleanup | DONE | `app/api/admin/*` |
 | 0.12 | Vercel cron daily | DONE | `vercel.json` |
 | 0.13 | Multi-lang AI specs (LocalizedSpec pl/uk/cs/en) | DONE | `lib/ai-pipeline/types.ts` |
-| 0.14 | Duel mode (2-player code-based PvP, currency-rush + math-sprint) | DONE | `app/duel/*`, `lib/duel.ts` |
-| 0.15 | Account deletion (GDPR Art. 17) | DONE | `DELETE /api/me` |
+| 0.14 | Duel mode (2-player PvP) | REMOVED | rolled out in V3 redesign; see `lib/duel.legacy.ts` + `lib/v3-duel-removal.test.ts` |
+| 0.15 | Account deletion (GDPR Art. 17) | DONE | `DELETE /api/me` + soft-delete grace (`lib/soft-delete.ts`); extended with web3 medal burn-on-revoke |
 
 ---
 
 ## Phase 1 — MVP
 
-**Goal:** demoable end-to-end city builder with hourly AI rotation + 3 buildings + mortgage.
+**Goal:** demoable end-to-end city builder with hourly AI rotation + buildings + mortgage.
 
-> **STATUS 2026-04-18 — Phase 1 MVP: ~95% DONE** (70/74 items; 4 deferred
-> items require human/browser intervention). See
-> [`progress/SESSION-SUMMARY.md`](./progress/SESSION-SUMMARY.md) for the
-> per-section breakdown. Net commits on `watt-city`:
-> `af21c67..c7a8bbd` (10 commits). All `pnpm test` green (49 tests);
-> `pnpm build` green.
+> **STATUS 2026-04-22 — Phase 1 MVP: DONE, live on prod.**
+> Every MVP slice below ships on https://watt-city.vercel.app. The
+> "must earn everything" promise (D4) is enforced by
+> `lib/building-catalog.ts` unlock gates. 635 vitest green; 13 Playwright
+> specs covering the golden-path register → play → build → mortgage flow.
 
 ### 1.1 Hourly rotation cron + lazy fallback
 
@@ -166,14 +188,14 @@ Each item lists: ID · title · effort · acceptance criteria · dependencies ·
 
 ### 1.8 Branding pivot
 
-| ID | Item | Effort | Acceptance | Notes |
+| ID | Item | Effort | Status | Notes |
 |---|---|---|---|---|
-| 1.8.1 | Choose codename | DECISION | answer recorded in vision doc | suggest "Watt City" or "Watt Kingdom" |
-| 1.8.2 | Update logo (XP block) → SKO 2.0 lockup or new mark | M | nav, footer, favicon | |
-| 1.8.3 | Update meta description across all routes | XS | | |
-| 1.8.4 | Update primary accent color toward PKO blue (or keep neo-brutalist, decide pitch direction) | DECISION | | |
-| 1.8.5 | Mascot integration: include or replace giraffe Żyrafa | DECISION | | |
-| 1.8.6 | Add legal disclaimer on every page footer: "GRA EDUKACYJNA — to nie są prawdziwe pieniądze" | XS | visible always | required for kid app |
+| 1.8.1 | Choose codename | DONE | Watt City (D1 resolved) |
+| 1.8.2 | Update logo + favicon | M | DONE | commit `2964d71` final sweep of lingering "XP Arena" strings |
+| 1.8.3 | Update meta description across all routes | XS | DONE | |
+| 1.8.4 | Primary accent + optional PKO skin | M | DONE | neo-brutalist kept; PKO skin layered via `lib/theme.ts` + `/pko` route |
+| 1.8.5 | Mascot integration | DECISION | DEFERRED — D7 still open |
+| 1.8.6 | Legal disclaimer "GRA EDUKACYJNA — to nie są prawdziwe pieniądze" | XS | DONE | visible on every page footer |
 
 ### 1.9 MVP polish & test
 
@@ -271,43 +293,47 @@ Each item lists: ID · title · effort · acceptance criteria · dependencies ·
 
 ### 2.7 Notifications
 
-> **Infra note 2026-04-22**: SMTP adapter shipped at `lib/mailer.ts`
-> (Resend / SendGrid / log backends) — ✅ done in `5dd81e0`.
-> Unblocks 2.7.5 (weekly digest job) and any other email-triggered flow.
+> **Status 2026-04-22**: in-app notification centre live (bell dropdown
+> in `components/notification-bell.tsx` — tier-up + mortgage-missed
+> events, unread badge). Quiet-hours push gate live. Mailer (Resend →
+> SendGrid → log) shipped at `lib/mailer.ts` in commit `5dd81e0`. Push
+> still server-side-only — Web Push subscription flow is wired in
+> `lib/web-push.ts` but user-facing enable toggle is TODO.
 
-| ID | Item | Effort |
-|---|---|---|
-| 2.7.1 | PWA push notifications: T-5min before new AI hra | M |
-| 2.7.2 | Push: cashflow tick (when resources increase by ≥ 10% since last visit) | M |
-| 2.7.3 | Push: mortgage payment due in 24h | M |
-| 2.7.4 | Push: friend invited you to duel | M |
-| 2.7.5 | Email weekly digest (parent-facing) | L |
-| 2.7.6 | In-app notification center: history of all events | M |
-| 2.7.7 | Notification settings: per-channel opt-in (push/email/in-app) | M |
-| 2.7.8 | "Quiet hours" (no notifs 21:00–08:00 by default) | S |
+| ID | Item | Effort | Status |
+|---|---|---|---|
+| 2.7.1 | PWA push notifications: T-5min before new AI hra | M | TODO — server infra ready, UI toggle missing |
+| 2.7.2 | Push: cashflow tick (when resources increase by ≥ 10% since last visit) | M | TODO |
+| 2.7.3 | Push: mortgage payment due in 24h | M | TODO |
+| 2.7.4 | Push: friend invited you to duel | M | REMOVED — duel feature cut in V3 |
+| 2.7.5 | Email weekly digest (parent-facing) | L | TODO — mailer unblocked |
+| 2.7.6 | In-app notification center: history of all events | M | DONE (`notification-bell.tsx`) |
+| 2.7.7 | Notification settings: per-channel opt-in (push/email/in-app) | M | WIP — in-app default on, push/email need toggles |
+| 2.7.8 | "Quiet hours" (no notifs 21:00–08:00 by default) | S | DONE |
 
 ### 2.8 Achievements
 
-| ID | Item | Effort |
-|---|---|---|
-| 2.8.1 | Achievement system: definitions, claim mechanic, badge in profile | M |
-| 2.8.2 | "First mortgage paid off" achievement | XS |
-| 2.8.3 | "All 9 evergreen games top-3" | XS |
-| 2.8.4 | "10 AI medals" / "100 AI medals" | XS |
-| 2.8.5 | "Built T7 building" / "All 20 slots filled" | XS |
-| 2.8.6 | "Credit score 100" achievement | XS |
-| 2.8.7 | "1-month daily streak" | XS |
-| 2.8.8 | Achievement gallery on profile + public share link | S |
+| ID | Item | Effort | Status |
+|---|---|---|---|
+| 2.8.1 | Achievement system: definitions, claim mechanic, badge in profile | M | DONE (`lib/achievements.ts`, `/api/me/achievements`) |
+| 2.8.2 | "First mortgage paid off" achievement | XS | DONE |
+| 2.8.3 | "All 9 evergreen games top-3" | XS | DONE |
+| 2.8.4 | "10 AI medals" / "100 AI medals" | XS | DONE |
+| 2.8.5 | "Built T7 building" / "All 20 slots filled" | XS | DONE |
+| 2.8.6 | "Credit score 100" achievement | XS | DONE |
+| 2.8.7 | "1-month daily streak" | XS | DONE |
+| 2.8.8 | Achievement gallery on profile + public share link | S | DONE (`/profile/[username]`) |
 
 ### 2.9 Onboarding
 
-| ID | Item | Effort |
-|---|---|---|
-| 2.9.1 | First-time user tour: 4-step modal (welcome → resources → buildings → first game) | M |
-| 2.9.2 | ~~Sample resources for new account~~ — **REJECTED**: per D4, players start with 0 resources and must earn everything | — |
-| 2.9.3 | Force-played first game = easiest quiz (no admin rotate needed for new joiners) | M |
-| 2.9.4 | Tutorial mortgage walkthrough (skippable) | M |
-| 2.9.5 | Profile setup: optional avatar (10 pre-made), display name (≠ username) | M |
+| ID | Item | Effort | Status |
+|---|---|---|---|
+| 2.9.1 | First-time user tour (welcome → resources → buildings → first game) | M | DONE (`components/onboarding-tour.tsx` + keepalive LS short-circuit from 2026-04-22 UX batch) |
+| 2.9.2 | ~~Sample resources for new account~~ — REJECTED per D4 | — | — |
+| 2.9.3 | Force-played first game = easiest quiz (no admin rotate needed for new joiners) | M | DONE |
+| 2.9.4 | Tutorial mortgage walkthrough (skippable) | M | DONE |
+| 2.9.5 | Profile setup: optional avatar (10 pre-made), display name (≠ username) | M | DONE (`lib/avatars.ts`) |
+| 2.9.6 | Manual tour replay via `OpenTutorialButton` on `/o-platforme` | XS | DONE (2026-04-22) |
 
 ---
 
@@ -315,58 +341,62 @@ Each item lists: ID · title · effort · acceptance criteria · dependencies ·
 
 ### 3.1 Friend system
 
-| ID | Item | Effort |
-|---|---|---|
-| 3.1.1 | Add friend by username (no email), friend request accept/reject | M |
-| 3.1.2 | Friend list page | S |
-| 3.1.3 | Friend leaderboard (subset of global, just your friends) | S |
-| 3.1.4 | "Visit friend's city" — read-only view of their map + buildings | M |
-| 3.1.5 | Privacy controls: hide profile from non-friends, hide cashflow numbers | M |
+| ID | Item | Effort | Status |
+|---|---|---|---|
+| 3.1.1 | Add friend by username (no email), friend request accept/reject | M | DONE (`lib/friends.ts`, `/api/friends/*`) |
+| 3.1.2 | Friend list page | S | DONE (`app/friends/page.tsx`) |
+| 3.1.3 | Friend leaderboard (subset of global, just your friends) | S | DONE |
+| 3.1.4 | "Visit friend's city" — read-only view of their map + buildings | M | DONE (`app/friends/[username]/page.tsx`) |
+| 3.1.5 | Privacy controls: hide profile from non-friends, hide cashflow numbers | M | TODO — profile is currently public-by-default |
 
 ### 3.2 Player-to-player trade (T7+ feature)
 
-| ID | Item | Effort |
-|---|---|---|
-| 3.2.1 | Trade offer schema: `{seller, buyer?, building, price, expiresAt}` | M |
-| 3.2.2 | Marketplace page: list active offers, filter by building type | L |
-| 3.2.3 | "Buy now" instant trade flow | M |
-| 3.2.4 | Counter-offer / negotiation thread (simple) | L |
-| 3.2.5 | Transaction fee (5%) → goes to "skarb miasta" pot | S |
-| 3.2.6 | Anti-abuse: rate limit, min-tier gating, market-rate sanity checks | M |
-| 3.2.7 | Trade history per player | S |
+| ID | Item | Effort | Status |
+|---|---|---|---|
+| 3.2.1 | Trade offer schema: `{seller, buyer?, building, price, expiresAt}` | M | DONE (`lib/marketplace.ts`) |
+| 3.2.2 | Marketplace page: list active offers, filter by building type | L | DONE (`app/marketplace/page.tsx`, `/api/market/*`) |
+| 3.2.3 | "Buy now" instant trade flow | M | WIP — placeholder UI, full trade logic gated on D10 |
+| 3.2.4 | Counter-offer / negotiation thread (simple) | L | TODO |
+| 3.2.5 | Transaction fee (5%) → goes to "skarb miasta" pot | S | TODO |
+| 3.2.6 | Anti-abuse: rate limit, min-tier gating, market-rate sanity checks | M | TODO |
+| 3.2.7 | Trade history per player | S | TODO |
 
 ### 3.3 Class / school mode
 
-| ID | Item | Effort |
-|---|---|---|
-| 3.3.1 | Teacher signup (separate role flag, requires admin approval initially) | L |
-| 3.3.2 | "Klasa" workspace: teacher creates class, gets 30 join codes | M |
-| 3.3.3 | Class leaderboard (separate from global) | M |
-| 3.3.4 | Teacher dashboard: see each kid's progress (anonymized to parents) | L |
-| 3.3.5 | Q-of-the-week: teacher picks one game theme that becomes class focus | M |
-| 3.3.6 | Class export to PDF: weekly progress report | M |
-| 3.3.7 | Curriculum alignment: tag games to PL "podstawa programowa" topics | L |
+| ID | Item | Effort | Status |
+|---|---|---|---|
+| 3.3.1 | Teacher signup (separate role flag, requires admin approval initially) | L | DONE (`/nauczyciel/signup`, `lib/roles.ts`) |
+| 3.3.2 | "Klasa" workspace: teacher creates class, gets N join codes | M | DONE (`lib/class.ts`, `/api/nauczyciel/class`, `/api/klasa/*`) |
+| 3.3.3 | Class leaderboard (separate from global) | M | DONE (`lib/class-leaderboard.ts`) |
+| 3.3.4 | Teacher dashboard: see each kid's progress | L | DONE (`/nauczyciel`) |
+| 3.3.5 | Q-of-the-week: teacher picks one game theme that becomes class focus | M | TODO |
+| 3.3.6 | Class export to PDF: weekly progress report | M | DONE (`lib/pdf-report.tsx`) |
+| 3.3.7 | Curriculum alignment: tag games to PL "podstawa programowa" topics | L | DONE (`lib/curriculum.ts`) |
+| 3.3.8 | Teacher onboarding tour | M | DONE (`components/teacher-onboarding-tour.tsx`) |
+| 3.3.9 | Landing page for schools (`/dla-szkol`) + materials | M | DONE |
+| 3.3.10 | Demo-school seeder (`/api/admin/seed-demo-school`) | XS | DONE |
 
 ### 3.4 Parent dashboard
 
-| ID | Item | Effort |
-|---|---|---|
-| 3.4.1 | Parent role: signup, link to child via shared code | M |
-| 3.4.2 | Read-only kid progress view | M |
-| 3.4.3 | Weekly email digest: top games played, medals earned, what concepts covered | M |
-| 3.4.4 | Privacy controls: kid can hide certain data from parent (per GDPR-K guidance) | M |
-| 3.4.5 | "Mirror to PKO Junior" CTA: "Twoje dziecko zaoszczędziło 100 zł w grze. Top up real account?" | M |
-| 3.4.6 | Optional weekly real-money allowance suggestion based on game performance | M |
+| ID | Item | Effort | Status |
+|---|---|---|---|
+| 3.4.1 | Parent role: signup, link to child via shared code (V4.6 parent-link bridge) | M | DONE (`lib/parent-link.ts`, `/api/rodzic/*`, `/api/parent/*`) |
+| 3.4.2 | Read-only kid progress view | M | DONE (`/rodzic`, `/parent/[username]`) |
+| 3.4.3 | Weekly email digest: top games played, medals earned, what concepts covered | M | TODO — mailer infra ready |
+| 3.4.4 | Privacy controls: kid can hide certain data from parent (per GDPR-K guidance) | M | TODO |
+| 3.4.5 | "Mirror to PKO Junior" CTA | M | WIP — mock at `lib/pko-junior-mock.ts`, real API blocked on partnership |
+| 3.4.6 | Optional weekly real-money allowance suggestion based on game performance | M | TODO |
+| 3.4.7 | Invite-code + consent flow (GDPR-K under-16 gate) | M | DONE (`/consent`, `lib/gdpr-k.ts`) |
 
 ### 3.5 Community features
 
-| ID | Item | Effort |
-|---|---|---|
-| 3.5.1 | Profile page (public): username, avatar, achievements, top buildings, top games | M |
-| 3.5.2 | Cheer/encourage button: send "🎉" reactions to friends after their wins | S |
-| 3.5.3 | Comments on archived AI games: "Tej hry nie da się wygrać bez znajomości IKE!" | L |
-| 3.5.4 | Moderation tooling for comments (flag, hide, ban) | L |
-| 3.5.5 | Profile customization: pick city background, music | M |
+| ID | Item | Effort | Status |
+|---|---|---|---|
+| 3.5.1 | Profile page (public): username, avatar, achievements, top buildings, top games | M | DONE (`app/profile/[username]/page.tsx`) |
+| 3.5.2 | Cheer/encourage button: send reactions to friends after their wins | S | DONE (`lib/community.ts`, `/api/community/*`) |
+| 3.5.3 | Comments on archived AI games | L | TODO |
+| 3.5.4 | Moderation tooling for comments (flag, hide, ban) | L | TODO — pipeline moderation exists (`lib/ai-pipeline/moderation.ts`), comment moderation TODO |
+| 3.5.5 | Profile customization: pick city background, music | M | TODO |
 
 ---
 
@@ -419,16 +449,23 @@ Each item lists: ID · title · effort · acceptance criteria · dependencies ·
 
 ### 5.1 Admin tooling
 
-| ID | Item | Effort |
-|---|---|---|
-| 5.1.1 | Admin dashboard at `/admin` (auth-gated, role flag on user) | M |
-| 5.1.2 | View any player's resource ledger / state | M |
-| 5.1.3 | Force-rotate AI game (already in API, add UI) | XS |
-| 5.1.4 | Edit theme pool, add/remove themes from rotation | M |
-| 5.1.5 | Review pending Sonnet outputs before publish (optional moderator queue) | L |
-| 5.1.6 | Manually grant resources to players (apology / bug compensation) | S |
-| 5.1.7 | Suspend/unsuspend account | S |
-| 5.1.8 | View support tickets / user reports | L |
+| ID | Item | Effort | Status |
+|---|---|---|---|
+| 5.1.1 | Admin dashboard at `/admin` (auth-gated, role flag on user) | M | DONE — bearer-secret gated |
+| 5.1.2 | View any player's resource ledger / state | M | DONE (`/api/admin/player`) |
+| 5.1.3 | Force-rotate AI game | XS | DONE (`/api/admin/rotate-ai`) |
+| 5.1.4 | Edit theme pool, add/remove themes from rotation | M | DONE (`/api/admin/themes`, `/api/admin/rotate-themes`) |
+| 5.1.5 | Review pending Sonnet outputs before publish (moderator queue) | L | DONE (`/api/admin/moderation`, `lib/ai-pipeline/moderation.ts`) |
+| 5.1.6 | Manually grant resources to players (boost-user) | S | DONE (`scripts/boost-user.sh`) |
+| 5.1.7 | Suspend/unsuspend account | S | TODO |
+| 5.1.8 | View support tickets / user reports | L | TODO |
+| 5.1.9 | Seed demo player + demo school (pitch / demo prep) | S | DONE (`/api/admin/seed-demo-player`, `/api/admin/seed-demo-school`) |
+| 5.1.10 | Purge E2E-polluted accounts from prod leaderboard | S | DONE 2026-04-22 (`/api/admin/purge-e2e-accounts` + `scripts/purge-e2e-accounts.sh`) |
+| 5.1.11 | Analytics endpoint | M | DONE (`/api/admin/analytics`) |
+| 5.1.12 | Backfill resources migration | M | DONE (`/api/admin/backfill-resources`) |
+| 5.1.13 | Backup + engine-check + rotation-status + health | M | DONE |
+| 5.1.14 | Feature-flag toggles | M | DONE (`/api/admin/feature-flags`, `lib/feature-flags.ts`) |
+| 5.1.15 | Market admin (multi-market migration) | M | DONE (`/api/admin/market`, `/api/admin/migrate-to-multimarket`, `/api/admin/migrate-v2`) |
 
 ### 5.2 Content moderation (AI generation safety)
 
@@ -480,81 +517,81 @@ Each item lists: ID · title · effort · acceptance criteria · dependencies ·
 
 ### 6.1 Security
 
-| ID | Item | Effort |
-|---|---|---|
-| 6.1.1 | Penetration test (external) | L | external |
-| 6.1.2 | OWASP top 10 audit | M |
-| 6.1.3 | Rate limiting on all endpoints | M | ✅ done in `5dd81e0` — per-user buckets + IP-based auth limits (`REGISTER_IP_LIMIT`, `LOGIN_IP_LIMIT`) |
-| 6.1.4 | CSRF tokens on state-changing forms | M |
-| 6.1.5 | Content Security Policy headers | S |
-| 6.1.6 | Subresource Integrity for any 3rd-party CDN | S |
-| 6.1.7 | Sensitive data encryption at rest (passwords already, expand to anything new) | S |
-| 6.1.8 | Bug bounty program (small, GitHub Security Advisory based) | S |
+| ID | Item | Effort | Status |
+|---|---|---|---|
+| 6.1.1 | Penetration test (external) | L | TODO |
+| 6.1.2 | OWASP top 10 audit | M | DONE — internal audit 2026-04-19 (`docs/SECURITY-AUDIT-2026-04-19.md`) |
+| 6.1.3 | Rate limiting on all endpoints | M | DONE — `lib/rate-limit.ts`, per-user buckets + per-IP auth limits |
+| 6.1.4 | CSRF tokens on state-changing forms | M | DONE — double-submit via `proxy.ts` + `CsrfBootstrap` (`lib/csrf.ts`) |
+| 6.1.5 | Content Security Policy headers | S | DONE — verified in `e2e/security.spec.ts` |
+| 6.1.6 | Subresource Integrity for any 3rd-party CDN | S | N/A — no 3rd-party CDN assets |
+| 6.1.7 | Sensitive data encryption at rest | S | DONE — scrypt passwords, HMAC sessions |
+| 6.1.8 | Bug bounty program | S | TODO |
 
 ### 6.2 Privacy & GDPR
 
-| ID | Item | Effort |
-|---|---|---|
-| 6.2.1 | Cookie consent banner (only essential cookies for now) | M |
-| 6.2.2 | Privacy policy page in 4 langs | M |
-| 6.2.3 | Data export endpoint (GDPR Art. 20) — JSON dump of player data | M |
-| 6.2.4 | Account deletion already exists; add "soft delete" 30-day grace | M |
-| 6.2.5 | Data retention policy doc | S |
-| 6.2.6 | DPO contact info, breach notification plan | S |
+| ID | Item | Effort | Status |
+|---|---|---|---|
+| 6.2.1 | Cookie consent banner (only essential cookies for now) | M | DONE |
+| 6.2.2 | Privacy policy page in 4 langs | M | DONE (`/ochrana-sukromia`) |
+| 6.2.3 | Data export endpoint (GDPR Art. 20) — JSON dump of player data | M | DONE (`/api/me/export`) |
+| 6.2.4 | Soft-delete 30-day grace | M | DONE (`lib/soft-delete.ts`, `/api/cron/sweep-deletions`) |
+| 6.2.5 | Data retention policy doc | S | DONE (`docs/legal/`) |
+| 6.2.6 | DPO contact info, breach notification plan | S | DONE |
 
 ### 6.3 GDPR-K (children's data protection)
 
-| ID | Item | Effort |
-|---|---|---|
-| 6.3.1 | Age check at signup (PL: GDPR-K applies under 16) | S |
-| 6.3.2 | Parental consent flow if under 16 (email confirmation) | L |
-| 6.3.3 | No real-name PII collection from kids | XS |
-| 6.3.4 | Limit data retention for inactive kid accounts (12 mo → auto-delete) | M |
-| 6.3.5 | Audit trail of all parental consent grants | M |
+| ID | Item | Effort | Status |
+|---|---|---|---|
+| 6.3.1 | Age check at signup (PL: GDPR-K applies under 16) | S | DONE (`lib/gdpr-k.ts`) |
+| 6.3.2 | Parental consent flow if under 16 (email confirmation) | L | DONE (`/consent`, parent-link bridge) |
+| 6.3.3 | No real-name PII collection from kids | XS | DONE — username-only |
+| 6.3.4 | Limit data retention for inactive kid accounts (auto-delete) | M | DONE (`/api/cron/sweep-inactive-kids`) |
+| 6.3.5 | Audit trail of all parental consent grants | M | DONE |
 
 ### 6.4 Accessibility (WCAG 2.1 AA)
 
-| ID | Item | Effort |
-|---|---|---|
-| 6.4.1 | Keyboard navigation throughout (no mouse-only interactions) | M |
-| 6.4.2 | Screen reader labels on all interactive elements | M |
-| 6.4.3 | Color contrast 4.5:1 minimum | M |
-| 6.4.4 | Focus indicators visible | S |
-| 6.4.5 | Skip-to-content link | XS |
-| 6.4.6 | Lighthouse a11y score 95+ on all pages | M |
-| 6.4.7 | Tested with NVDA / VoiceOver (manual) | L |
+| ID | Item | Effort | Status |
+|---|---|---|---|
+| 6.4.1 | Keyboard navigation throughout (no mouse-only interactions) | M | DONE (verified in `e2e/a11y-matrix.spec.ts`) |
+| 6.4.2 | Screen reader labels on all interactive elements | M | DONE |
+| 6.4.3 | Color contrast 4.5:1 minimum | M | DONE (see `docs/A11Y-AUDIT-2026-04-19.md`) |
+| 6.4.4 | Focus indicators visible | S | DONE |
+| 6.4.5 | Skip-to-content link | XS | DONE |
+| 6.4.6 | Lighthouse a11y score 95+ on all pages | M | DONE — prod reports 0.95–0.96 |
+| 6.4.7 | Tested with NVDA / VoiceOver (manual) | L | PARTIAL — automated matrix covers static flows; full manual pass outstanding |
 
 ### 6.5 Performance
 
-| ID | Item | Effort |
-|---|---|---|
-| 6.5.1 | Core Web Vitals: LCP < 2.5s, FID < 100ms, CLS < 0.1 | M |
-| 6.5.2 | Image optimization (we use SVG, mostly fine) | XS |
-| 6.5.3 | Code-splitting for heavy game clients | M |
-| 6.5.4 | Lazy load city scene if below the fold | S |
-| 6.5.5 | Edge caching for static assets | XS |
-| 6.5.6 | Server response time < 200ms p95 for cached routes | M |
+| ID | Item | Effort | Status |
+|---|---|---|---|
+| 6.5.1 | Core Web Vitals: LCP < 2.5s, FID < 100ms, CLS < 0.1 | M | DONE — Lighthouse prod perf 0.94–1.00 |
+| 6.5.2 | Image optimization | XS | DONE — SVG-only |
+| 6.5.3 | Code-splitting for heavy game clients | M | DONE |
+| 6.5.4 | Lazy load city scene if below the fold | S | DONE |
+| 6.5.5 | Edge caching for static assets | XS | DONE |
+| 6.5.6 | Server response time < 200ms p95 for cached routes | M | DONE — `/api/score` parallelised 2026-04-22 |
 
 ### 6.6 i18n completeness
 
-| ID | Item | Effort |
-|---|---|---|
-| 6.6.1 | Audit all 4 langs for missing/stale strings | M |
-| 6.6.2 | Native speaker review for UK / CS / EN | M | external |
+| ID | Item | Effort | Status |
+|---|---|---|---|
+| 6.6.1 | Audit all 4 langs for missing/stale strings | M | DONE — 423 keys, zero drift (`scripts/audit-i18n.mjs`) |
+| 6.6.2 | Native speaker review for UK / CS / EN | M | PARTIAL — UK calques flagged in `docs/progress/2026-04-22-docs-review.md` |
 | 6.6.3 | RTL support framework (for Hebrew/Arabic future) | DEFERRED | |
-| 6.6.4 | Pluralization rules (Polish has complex plurals) | M |
-| 6.6.5 | Date/number formatting per locale | S |
+| 6.6.4 | Pluralization rules (Polish has complex plurals) | M | DONE (`lib/i18n-format.ts`) |
+| 6.6.5 | Date/number formatting per locale | S | DONE |
 
 ### 6.7 Test coverage
 
-| ID | Item | Effort |
-|---|---|---|
-| 6.7.1 | Unit tests: leaderboard, resource ledger, loan engine | L |
-| 6.7.2 | Integration tests: register → play → score → resources | L |
-| 6.7.3 | E2E tests: Playwright covering 10 critical flows | XL |
-| 6.7.4 | Visual regression tests for city scene | L |
-| 6.7.5 | AI pipeline tests: mock Claude responses, verify schemas | M |
-| 6.7.6 | Load test: 1000 concurrent users on prod-like env | L |
+| ID | Item | Effort | Status |
+|---|---|---|---|
+| 6.7.1 | Unit tests: leaderboard, resource ledger, loan engine | L | DONE — 635/635 vitest across 80 files |
+| 6.7.2 | Integration tests: register → play → score → resources | L | DONE (`lib/integration-flow.test.ts`) |
+| 6.7.3 | E2E tests: Playwright covering critical flows | XL | DONE — 13 specs (~600 assertions): smoke, prod-smoke, api-contracts, security, data-integrity, a11y-matrix, golden-paths, perf, rate-limits, cross, pwa, mobile, production-ready, bot-protection |
+| 6.7.4 | Visual regression tests for city scene | L | TODO |
+| 6.7.5 | AI pipeline tests: mock Claude responses, verify schemas | M | DONE (`lib/ai-pipeline/*.test.ts`) |
+| 6.7.6 | Load test: 1000 concurrent users on prod-like env | L | DONE — harness in `docs/LOAD-TEST.md` |
 
 ---
 
@@ -562,15 +599,15 @@ Each item lists: ID · title · effort · acceptance criteria · dependencies ·
 
 ### 7.1 PWA
 
-| ID | Item | Effort |
-|---|---|---|
-| 7.1.1 | PWA manifest (`manifest.json`) | XS |
-| 7.1.2 | Service worker for offline shell | M |
-| 7.1.3 | Install prompt (with parental consent for kids) | M |
-| 7.1.4 | App icons all sizes | S |
-| 7.1.5 | Splash screen | S |
-| 7.1.6 | Push notifications via Web Push (Phase 2.7 dependency) | M |
-| 7.1.7 | iOS Safari quirks (limited push, no add-to-home auto) | M |
+| ID | Item | Effort | Status |
+|---|---|---|---|
+| 7.1.1 | PWA manifest (`manifest.json`) | XS | DONE |
+| 7.1.2 | Service worker for offline shell | M | DONE (verified in `e2e/pwa.spec.ts`) |
+| 7.1.3 | Install prompt (with parental consent for kids) | M | DONE |
+| 7.1.4 | App icons all sizes | S | DONE |
+| 7.1.5 | Splash screen | S | DONE |
+| 7.1.6 | Push notifications via Web Push | M | PARTIAL — server-side `lib/web-push.ts` ready, user-enable UI TODO |
+| 7.1.7 | iOS Safari quirks | M | DONE — mobile-safari coverage in `e2e/smoke.mobile.spec.ts` |
 
 ### 7.2 Native shells (optional)
 
@@ -798,4 +835,4 @@ A backlog item moves to **DONE** when:
 
 This is a living document. Items get added/removed as we learn. Status updates go in the table directly. Major scope changes go through ADR (`docs/adr/`).
 
-Last revised: tonight (XP Arena → SKO pivot session).
+Last revised: 2026-04-22 — post-ETHSilesia status sweep.

@@ -1,9 +1,12 @@
 # End-to-end critical flows — Phase 6.7.3
 
 Phase 6.7.3 originally called for 10 Playwright flows. As of 2026-04-22
-(commit `5dd81e0`) the suite has grown to **13 spec files, ~600+
+(HEAD `69ee7c9`) the suite has grown to **14 spec files, ~600+
 assertions** — the original per-flow file layout was superseded by
-thematic specs during the 2026-04-21 deep-audit (Phases 2–8).
+thematic specs during the 2026-04-21 deep-audit (Phases 2–8). The
+`smoke.cross.spec.ts` + `smoke.mobile.spec.ts` pair is opt-in via the
+`chromium` project's `testIgnore` — `pnpm test:e2e` defaults to the
+Chromium-only slice for CI speed.
 
 | Spec file | Scope |
 |---|---|

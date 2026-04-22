@@ -1,9 +1,14 @@
-# Watt City (working name) — Vision & Mechanics
+# Watt City — Vision & Mechanics
 
-> **Public name decided: "Watt City".**
-> SKO 2.0 is the pitch context only — used in conversations with PKO Bank Polski. The product name shipped to players is **Watt City**.
+> **Public name: "Watt City".** SKO 2.0 is the pitch context only — used
+> in conversations with PKO Bank Polski. The product name shipped to
+> players is **Watt City**. See Risk #1 (PKO trademark).
 >
-> See Risk #1 (PKO trademark) — the SKO label stays internal/pitch-only until partnership signed.
+> **Status 2026-04-22**: MVP live on https://watt-city.vercel.app,
+> 1st place PKO Gaming track at ETHSilesia 2026. This document is the
+> product-narrative source of truth — most of the "what ships first"
+> scope in Section 11 is now actual. Delta vs vision is tracked in
+> `docs/SKO-BACKLOG.md`.
 
 ## 1. Why this exists
 
@@ -392,36 +397,51 @@ See `docs/SKO-BACKLOG.md` for the phased work plan.
 
 ---
 
-## 11. MVP definition (what ships first)
+## 11. MVP definition — as shipped (2026-04-22)
 
-Confirmed scope for the first deliverable demo:
+The scope below is live on https://watt-city.vercel.app. The "COMING-SOON"
+set below was drafted pre-ship; most of it is now live — verify individual
+items against `docs/SKO-BACKLOG.md` Phase 1.
 
-### MUST WORK (live, real)
-1. **Hourly AI game rotation** — cron + lazy fallback. New game spawns every hour; previous game retires to archive.
-2. **Single starter building**: only **Domek** at signup. Every other building (Mała elektrownia, Sklepik, Huta szkła, Bank lokalny T3, …) **must be earned by playing games**. Earn-to-unlock thresholds (e.g. accumulate 50 watts to unlock Mała elektrownia in catalog).
-3. **0 starter resources** — player must play games to accumulate anything. The first game's prize is what funds the second building.
-4. **Resource ledger** — tracking watts / coins / bricks (glass / steel / code visible-but-greyed "Wkrótce")
-5. **Mortgage flow** — once player has any building producing cashflow, can take 1 mortgage to unlock building of a **better** building (e.g. Huta szkła or Bank lokalny tier 3); shows monthly payment, interest, repayment from cashflow
-6. **Cashflow tick** — runs hourly with offline catch-up
-7. **Building visual on map** — clickable, shows level + production rate
-8. **Countdown** for current LIVE AI game
+### SHIPPED (live, real)
+1. **Hourly AI game rotation** — cron + lazy-render fallback + external
+   pinger. Rotation triple-redundant (see ADR
+   `docs/decisions/001-hourly-rotation-on-hobby.md`).
+2. **Single starter building: Domek.** Every other building must be
+   earned. Earn-to-unlock thresholds enforced in `lib/building-catalog.ts`.
+3. **0 starter resources** — player accumulates via gameplay only.
+4. **Resource ledger** — all 7 resources (⚡ 🪙 🧱 🪟 🔩 💾 💵) live with
+   append-only SADD-backed idempotent ledger.
+5. **Mortgage flow** — amortized 8% / 5%-preferred, 12/24/36 mo, credit
+   score 0–100 with on-time / missed / default transitions.
+6. **Cashflow tick** — hourly; 30-day offline catch-up cap; citywide-
+   landmark multiplier; single-flight 30s lock.
+7. **20-slot city map** at `/miasto` — place / upgrade / demolish (50%
+   refund, Domek-protected), rate-limited 5 ops/min.
+8. **LIVE countdown** for current AI hra.
+9. **12 AI kinds shipped** (quiz / scramble / price-guess / true-false /
+   match-pairs / order / memory / fill-in-blank / calc-sprint / budget /
+   chart-read / what-if) vs original 6 at pivot time.
+10. **9 evergreen mini-games** (finance-quiz, stock-tap, memory-match,
+    math-sprint, energy-dash, power-flip, currency-rush, budget-balance,
+    word-scramble) as the "training ground".
+11. **Parent observer flow** (V4.6) — invite code, GDPR-K consent,
+    `/rodzic` read-only dashboard.
+12. **Teacher / classroom flow** — `/nauczyciel`, invite codes, per-class
+    leaderboard, onboarding tour.
+13. **Notifications** — bell dropdown with unread badge, tier-up + missed-
+    mortgage events, quiet-hours push gate.
+14. **Web3 opt-in** — soulbound `WattCityMedal` ERC-721 on Base Sepolia,
+    parent-gated mint, burn-on-revoke.
+15. **4 languages** (PL / UK / CS / EN), cookie-driven SSR, 423 keys,
+    zero drift.
+16. **Auth / security** — per-IP rate limits, CSRF double-submit via
+    `proxy.ts` + `CsrfBootstrap`, awardXP single-flight lock,
+    Resend→SendGrid→log mailer fallback.
 
-The point of "must earn everything": the first 30 minutes of gameplay are pure player → game → reward → unlock. No free handouts. This is also the strongest pitch line: *"every building in your city was built with knowledge you earned"*.
-
-### COMING-SOON (graphical placeholder, no logic)
-- Other resources (glass, steel, code) — visible icons, tooltip "wkrótce"
-- Other loan types (kredyt obrotowy, leasing, kredyt konsumencki, inwestycyjny)
-- Tier 5+ buildings (tax office, train station)
-- Friend trade (PvP)
-- Parent dashboard
-- School class mode
-- Real PKO API integration
-
-Each "coming soon" tile/button is greyed out with a `🔒 Wkrótce` badge and a one-line teaser of what it will do — that itself is content for the pitch ("you can see the roadmap baked in").
-
-### MVP leftover from current XP Arena that stays
-- Auth, AI pipeline, sin-slavy, leaderboards, 6 game kinds, i18n, evergreen 9 mini-games
-
-The 9 evergreen games stay as a "training ground" — kid plays them anytime for resources, on top of the 1-hour-rotated AI hra.
-
-This keeps MVP scope to ~5–7 days of focused work with the engine already built.
+### STILL COMING-SOON (placeholders only)
+- Marketplace / friend trade (schema exists; launch gated on D10).
+- PKO Junior real-money mirror — blocked on partnership signing.
+- Tier 5+ Skarbówka / Stacja kolejowa full logic.
+- Other loan types beyond mortgage (kredyt obrotowy / leasing / konsumencki / inwestycyjny).
+- Native-app shells (PWA is live; Capacitor iOS/Android not yet).

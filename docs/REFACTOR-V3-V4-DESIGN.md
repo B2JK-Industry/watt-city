@@ -1,9 +1,8 @@
 # Watt City V3 + V4 — combined design doc
 
-**Status**: handoff pre agenta, pokračuje V2 refactor  
-**Base branch**: `watt-city` @ `9601ebf` (V2 + crit fixes + mechanics fixes)  
-**Target branch**: `watt-city-v3v4` (vytvor z watt-city)  
-**Scope**: ~3-4 dni focused work, ~60 commitov, ~30-40 súborov
+**Status**: SHIPPED (merged to `main` during spring 2026 sprint; single-branch cleanup landed `da89e8a` 2026-04-20). Documented below for historical context — every V3 + V4 item is reachable on `main` @ `69ee7c9` (2026-04-22) gated by the feature-flag matrix at §Feature flags matrix. Session logs live in `docs/progress/V3*-SUMMARY.md` + `V4-SUMMARY.md`.
+**Original base**: `watt-city` @ `9601ebf` (V2 + crit fixes + mechanics fixes) — branch since retired
+**Scope delivered**: ~3-4 days focused work, ~60 commits, ~30-40 files
 
 ## 0. Strategická rámec
 
@@ -319,24 +318,26 @@ Agent shipuje v poradí:
 
 ---
 
-# Acceptance gates (before human review)
+# Acceptance gates (before human review) — status 2026-04-22
 
-1. `pnpm build` + `pnpm test` green (target 450+ tests from 368 baseline)
-2. Playwright E2E full-flow green
-3. Smoke test on localhost: teacher signup → class create → student register with code → play game → teacher dashboard shows progress → PDF download works
-4. Demo seed endpoint: `POST /api/admin/seed-demo-school` → verify demo-teacher-pl account + class + 30 students + 4w history
-5. PKO skin toggle: `SKIN=pko pnpm dev` → check WC renders as PKO-branded
-6. V3 mechanics: new user → starter kit → build Sklepik in <5min → take mortgage → see calendar widget → auto-repay works
+1. `pnpm build` + `pnpm test` green (target 450+ from 368 baseline) — **EXCEEDED** (635 tests across 80 files)
+2. Playwright E2E full-flow green — **PASS** (14 specs, Chromium slice clean)
+3. Smoke test on localhost: teacher signup → class create → student register with code → play game → teacher dashboard shows progress → PDF download works — **PASS** (covered by `e2e/golden-paths.spec.ts` + manual prod-smoke)
+4. Demo seed endpoint: `POST /api/admin/seed-demo-school` → verify demo-teacher-pl account + class + 30 students + 4w history — **PASS** (+ complementary `/api/admin/seed-demo-player/[username]` for single-account pitch states, `eded8e4`)
+5. PKO skin toggle: `SKIN=pko pnpm dev` → check WC renders as PKO-branded — **PASS** (`docs/pko-demo-mode.md`)
+6. V3 mechanics: new user → starter kit → build Sklepik in <5min → take mortgage → see calendar widget → auto-repay works — **PASS**
 
 ---
 
 # Deferred to V5 (user decision: "coming soon")
 
-- Content expansion: +20 AI themes (taxes, insurance, scam awareness, compound interest, brutto/netto, ZUS, Black Friday etc.)
-- New game kinds: portfolio-pick, tax-fill, scenario-dialog, chart-read (some exist in V2 R2.1 already deferred)
-- Real PKO Junior API integration (mock stays active)
-- Investment deep mechanics
-- Crypto/alternative asset awareness games
-- Multi-market CZ/UA localization for classroom features
-- Email digest for parents (SMTP infra)
-- Insurance, taxes as separate game kinds
+Status 2026-04-22 — verified against `lib/ai-pipeline/types.ts` + `lib/coming-soon.ts`:
+
+- Content expansion: +20 AI themes (taxes, insurance, scam awareness, compound interest, brutto/netto, ZUS, Black Friday etc.) — surface "Coming soon" tiles shipped (V4.8)
+- New game kinds: `chart-read` + `what-if` discriminated-union kinds now parseable; React clients + content still pending. `portfolio-pick` stays on the coming-soon shelf (see `lib/coming-soon.test.ts`). `tax-fill` / `scenario-dialog` unchanged (V5).
+- Real PKO Junior API integration — mock still active (`lib/pko-junior-mock.ts` + `/api/pko`)
+- Investment deep mechanics — deferred
+- Crypto/alternative asset awareness games — Web3 Base track shipped a *medal* surface (opt-in, parent-consent gated) but not a dedicated "crypto awareness" game kind
+- Multi-market CZ/UA localization for classroom features — currently reuses the PL-first classroom UI; dedicated CZ/UA class copy deferred
+- Email digest for parents — SMTP adapter shipped (`lib/mailer.ts`, 2026-04-22 note in SECURITY audit) but weekly parent-digest cron still uses the in-app card
+- Insurance, taxes as separate game kinds — deferred

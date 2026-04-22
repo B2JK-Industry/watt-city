@@ -170,7 +170,7 @@ Nová sekcia na `/profile` (pod existujúcou V4.6 ParentInviteCard):
 
 Odovzdaná práca bude akceptovaná ak:
 
-- [ ] `pnpm vitest run` zelené — všetky existujúce 569 testov + nové web3 testy
+- [ ] `pnpm vitest run` zelené — všetkých 635 testov (80 súborov, stav 2026-04-22) vrátane web3 sady
 - [ ] `pnpm exec tsc --noEmit` zelené — strict TypeScript
 - [ ] `pnpm build` zelené — production build
 - [ ] `WattCityMedal` kontrakt deployed + verified na Base Sepolia, link dostupný

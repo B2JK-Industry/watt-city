@@ -125,6 +125,55 @@ consecutive misses flip the loan into `defaulted` status with score −20.
    - Mortgage dialog usable with one thumb.
 2. Touch targets ≥ 44 px on buttons.
 
+## 11. Notification bell popover
+
+1. Nav → click 🔔. The popover opens below the button (`top-full mt-2`),
+   sits on `var(--surface)` with the ink-coloured border, and clamps to
+   `max-w-[calc(100vw-1rem)]` on narrow viewports.
+2. Open it over `/miasto` where the SVG competes for stacking context —
+   the popover stays above the city at `z-40`; no building should
+   occlude the list.
+3. With unread notifications, clicking the bell POSTs `{action:
+   "mark-seen"}` and the red-dot badge clears on the next poll (≤45 s).
+
+## 12. Tutorial replay (`/o-platforme`)
+
+1. Fresh account on `/` → 4-step onboarding modal appears (welcome →
+   wallet → city → no-risk credit). Skip/finish.
+2. Reload `/` — modal does not re-appear (server + localStorage cache).
+   Watch the devtools Network panel: the PATCH to `/api/me/profile`
+   goes out with `keepalive: true`, so it still completes even if you
+   click the last step's `/loans/compare` link before the response
+   lands.
+3. Visit `/o-platforme` and click "Pokaż samouczek ponownie" (the
+   `OpenTutorialButton`). The tour re-opens in place, even though the
+   auto-show is pathname-gated to `/`. Dismissing again re-sets the
+   `wc_tour_seen` localStorage flag.
+
+## 13. City-scene "unlit" appearance
+
+1. Log in as a fresh user so no evergreen game has been played.
+2. `/` hero city-scene: every evergreen building should render as a
+   near-silhouette (filter `saturate(0) brightness(0.18)`) — no base
+   colour visible. This matches the hero copy "9 budynków = 9 mini-gier.
+   Dopóki nie zagrasz, budynek stoi w ciemności."
+3. Play any evergreen game, reload — the corresponding building lights
+   up (filter `none`, neon sign glows yellow, windows powered). All
+   other buildings stay dark.
+
+## 14. E2E isolation + purge endpoint (operator-only)
+
+1. `pnpm test:e2e` locally: the test run must NEVER touch production
+   Upstash. `playwright.config.ts` blanks the Upstash REST env at
+   webServer start — confirm by running `pnpm test:e2e -- smoke.spec`
+   with a `.env.local` that has production tokens; afterwards
+   production `xp:leaderboard:global` must show zero new `gp_*`,
+   `pr_*`, `rl_*`, … members.
+2. If you spot leaked E2E usernames in production (older runs), clean
+   up with `/api/admin/purge-e2e-accounts` — start with `dryRun: true`
+   and confirm the candidate list before flipping to `dryRun: false`.
+   See `docs/OPERATIONS.md` §7 for the curl recipes.
+
 If any step fails, capture a quick `curl`/browser-console snippet and file
 it under `docs/progress/<date>.md` with the blocker. Do NOT mark a backlog
 item as DONE if its corresponding smoke-step is red.

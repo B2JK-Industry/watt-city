@@ -75,3 +75,22 @@ cut-over.
   the rotation cron firing for all users on a schedule change).
 - **Dev-mode traffic**: local development hits the in-memory fallback
   (`lib/redis.ts` has that path); don't factor into prod budgeting.
+
+## E2E pollution — class-of-problem fixed 2026-04-22
+
+Symptom: test-only prefixes (`gp_*`, `pr_*`, `rl_*`, `bp_*`) were leaking
+into the production leaderboard ZSET because the Playwright dev-server
+inherited `.env.local` Upstash credentials. Ground truth: Next.js's
+dotenv loader treats `process.env` as already-set, so the test runner
+couldn't mask production tokens by setting them in its webServer env.
+
+Fix: `playwright.config.ts` now passes explicit empty strings for
+`UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` when starting
+`next dev` under test, forcing `lib/redis.ts` down the in-memory
+fallback path regardless of what `.env.local` carries. Complementary
+janitor: `POST /api/admin/purge-e2e-accounts` wipes any pollution that
+landed before the fix (admin-secret gated, idempotent SADD sentinel).
+
+Runbook implication: when you *do* want a dedicated test Upstash for
+golden-path assertions, set `E2E_UPSTASH_URL` + `E2E_UPSTASH_TOKEN`
+rather than removing the blanking — the blanking is the safety floor.

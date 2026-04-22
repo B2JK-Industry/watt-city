@@ -1,11 +1,14 @@
 # Target bounties — ETHSilesia 2026
 
-> **Historical note (2026-04-22)**: ETHSilesia 2026 concluded on
-> 17–19 April. This document was the pre-event targeting plan; it is
-> kept for context. Post-event outcomes + follow-ups live in the
-> `docs/progress/` session logs.
+> **OUTCOME (2026-04-22)**: ETHSilesia 2026 concluded on 17–19 April.
+> **Watt City took 1st place on the PKO Gaming track.** The other
+> tracks listed below are preserved as pre-event targeting context;
+> treat every "Win probability" / "Killer demo move" cell as historical.
+> Post-event follow-ups, PKO partnership path and web3-submission
+> outputs live in `docs/progress/` (session logs 2026-04-19 → 2026-04-22)
+> and `docs/web3/SUBMISSION.md`.
 
-What we're aiming to win and how Watt City fits each track.
+What we aimed to win, how Watt City fit each track, and what happened.
 
 ## Event basics
 
@@ -21,20 +24,20 @@ Sources:
 - Article: [ETHSilesia 2026: Where Blockchain Meets the Real World](https://ethwarsaw.substack.com/p/ethsilesia-2026-where-blockchain)
 - University announcement: [us.edu.pl/student](https://us.edu.pl/student/en/komunikaty/ethsilesia-2026-konferencja-warsztaty-hackathon/)
 
-## Tracks we're targeting (in priority order)
+## Tracks targeted (in priority order; frozen pre-event)
 
-> **Note**: prize amounts and exact track names are best-known estimates. Confirm against the official Notion FAQ and onsite materials. Update this doc as concrete numbers land.
+> **Note**: prize amounts and exact track names were best-known estimates at drafting time. Gaming track outcome is confirmed (1st place); other tracks' final placements are not recorded here.
 
-### 🥇 PRIMARY — PKO XP: Gaming (PKO Bank Polski)
+### 🥇 PRIMARY — PKO XP: Gaming (PKO Bank Polski) — **WON** 🏆
 
 | Field | Value |
 |---|---|
 | Sponsor | PKO Bank Polski |
-| Confirmed prize | ~10,000 PLN (per existing project copy) |
-| What they want | Gamified financial literacy for younger audiences (Gen Z and below) |
-| Our angle | **Watt City — re-skin of the existing static SKO product into a daily-game habit-builder.** Demonstrate: 6 game kinds (growing to 12+), multi-resource economy, building progression, mortgage flow with real RRSO math, leaderboards. Pitch positions us as the engine PKO can drop into the SKO app shell. |
-| Win probability | **High** if we ship a polished MVP. Direct fit — there's nothing else in the field that targets the actual SKO product. |
-| Killer demo move | Live-rotate an AI hra during the pitch. Show the city building animate in. Then take a mortgage. Then show the credit-score meter tick up. |
+| Prize | 1st place — PKO Gaming track, ETHSilesia 2026 |
+| What they wanted | Gamified financial literacy for younger audiences (Gen Z and below) |
+| Our angle | **Watt City — re-skin of the existing static SKO product into a daily-game habit-builder.** Shipped on the day: 9 evergreen minigames, daily AI challenge with Hall-of-Fame, 20-slot city map, mortgage flow with real RRSO math, per-class leaderboards, parent observer flow, 4-lang localization, Base Sepolia soulbound medals. Positioned as the engine PKO can drop into the SKO app shell. |
+| Outcome | **1st place.** Partnership path with PKO BP innovation team is active; handoff docs for the SKO 2.0 product team are the near-term priority (see README "Future roadmap"). |
+| Killer demo move (used on stage) | Live-rotate an AI hra during the pitch, show the city building animate in, take a mortgage, show the credit-score meter tick up. |
 
 ### 🥈 SECONDARY — ETHLegal / Law Innovation (University of Silesia partnership)
 
@@ -107,41 +110,38 @@ Sources:
 - Open `/o-platforme` — show the pipeline diagram (we updated it tonight)
 - Show `/sin-slavy` archive — medals are permanent, "this is what makes it stick"
 
-### Pre-pitch checklist
+### Pre-pitch checklist (all checked on the day)
 
-- [ ] Production deploy stable (after deploy unblock)
-- [ ] One AI hra of each kind generated and visible (true-false, match-pairs, order in addition to original 3)
-- [ ] Sample player with realistic-looking skill (kasia_kowalska on multiple medals)
-- [ ] Admin terminal pre-loaded with example rotate command
-- [ ] `/o-platforme` updated with current pipeline diagram (DONE tonight)
-- [ ] Slide deck (Phase 1 backlog item 1.9.5 not yet done)
-- [ ] 3-min demo script written + rehearsed (1.9.6 not yet done)
-- [ ] Backup plan if internet/cron fails: pre-recorded screen capture as fallback
+- [x] Production deploy stable (https://watt-city.vercel.app)
+- [x] All 12 AI kinds generated and visible (quiz / scramble / price-guess / true-false / match-pairs / order / memory / fill-in-blank / calc-sprint / budget / chart-read / what-if)
+- [x] Sample player seeded via `/api/admin/seed-demo-player` (99% scores across every evergreen game)
+- [x] Admin terminal pre-loaded with example rotate command
+- [x] `/o-platforme` updated with current pipeline diagram
+- [x] Slide deck finalised (Phase 1 backlog 1.9.5)
+- [x] 3-min demo script rehearsed (1.9.6)
+- [x] Backup plan: pre-recorded screen capture as fallback
 
-## Submission requirements (assumed; confirm onsite)
+## Submission requirements (met on submission)
 
 - Public GitHub repo: ✅ [B2JK-Industry/watt-city](https://github.com/B2JK-Industry/watt-city)
-- Live deployment URL: ✅ https://xp-arena-ethsilesia2026.vercel.app (domain rename pending — see OPERATIONS.md)
+- Live deployment URL: ✅ https://watt-city.vercel.app
 - README explaining what the project is: ✅
-- Demo video (often required): TODO — record 2-min walkthrough
-- Slide deck (often required): TODO
+- Demo video: ✅
+- Slide deck: ✅
 
-## Post-event opportunities
+## Post-event outcomes (actuals)
 
-If we win Gaming track:
-- Direct pitch meeting with PKO Bank Polski innovation team
-- Pilot proposal (Phase 4 of backlog)
-- Possible sponsorship for continued development
+Gaming track win → the following are the active follow-ups:
+- Direct pitch meeting with PKO Bank Polski innovation team — scheduled.
+- Pilot proposal (Phase 4 of backlog) — drafting.
+- Handoff / audit docs for the web3 layer — precondition for mainnet
+  (see `docs/web3/SUBMISSION.md`).
 
-If we win ETHLegal track:
-- University collaboration on financial literacy research
-- Co-authored paper opportunity
-- Speaking slot at next semester's faculty seminar
-
-If we win nothing:
-- We still have a working product
-- Public GitHub repo + live demo as portfolio piece
-- Direct cold outreach to PKO innovation team via LinkedIn
+Other tracks:
+- ETHLegal / AI / Tauron / Critical Applications — we did not place.
+  The legal-privacy posture (GDPR Art. 17 deletion, parent-consent flow,
+  KNF-style disclaimers) shipped anyway and is live on production.
+- Public GitHub repo + live demo remain as portfolio assets.
 
 ## Backup tracks to scan onsite
 
@@ -172,4 +172,4 @@ This is the warm-leads log for post-event outreach, regardless of winning.
 
 ---
 
-**Update this doc as actual track details land.** Treat this as a living target list, not a final brief.
+**Frozen 2026-04-22.** Preserved as the pre-event targeting plan; outcome recorded in the banner at the top. Post-event follow-ups live in `docs/progress/` and the repo README.

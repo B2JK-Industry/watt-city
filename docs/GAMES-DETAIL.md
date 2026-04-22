@@ -2,6 +2,12 @@
 
 Implementation-grade detail for every game kind. For each: zod schema, Sonnet prompt template, Haiku translator rules, React client contract, scoring algorithm, edge cases, fixture example.
 
+**Status 2026-04-22** — verified against `lib/ai-pipeline/types.ts`, `lib/games.ts`, `lib/content/*.ts`:
+- **Shipped AI kinds** (zod discriminator in `GameSpecSchema`): `quiz`, `scramble`, `price-guess`, `true-false`, `match-pairs`, `order`, `memory`, `fill-in-blank`, `calc-sprint`, `budget-allocate`, `what-if`, `chart-read` — 12 total.
+- **Coming soon** (`lib/coming-soon.ts` advertises but no runtime yet): `portfolio-pick`, `tax-fill`, `scenario-dialog`, `timeline-build`, `negotiate`, `invest-sim`.
+- **Evergreen (hand-authored) games** in `lib/content/`: `finance-quiz`, `word-scramble`, `memory-pairs`, `power-flip`, `budget-balance` (+ 4 more defined in `lib/games.ts`: `energy-dash`, `stock-tap`, `math-sprint`, `currency-rush` — their content lives inside their client components, not `lib/content/`). Total = 9 evergreen games, matching the landing-page hero copy.
+- Sections 12-18 below are design sketches. §12 `what-if` and §14 `chart-read` both have shipped zod schemas (`lib/ai-pipeline/types.ts`) + React clients (`components/games/ai-whatif-client.tsx`, `components/games/ai-chartread-client.tsx`). §13 `dialog`, §15–§18 still design-only.
+
 ## Common contract — every kind
 
 ### Discriminated union member

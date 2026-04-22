@@ -2,63 +2,45 @@
 
 Inventory of every AI game **kind** + theme bucket + which resource it produces.
 
-A "kind" is a gameplay shape (quiz, scramble, match-pairs…). A "theme" is the topical content (Earth Hour, BLIK, RRSO…). Each AI hra is a **(kind, theme, angle, difficulty)** tuple, generated daily-or-hourly. To keep the catalog rich enough that a 10-year-old plays for months without seeing the same shape twice in a week, we aim for **12+ kinds** by Phase 2.
+A "kind" is a gameplay shape (quiz, scramble, match-pairs…). A "theme" is the topical content (Earth Hour, BLIK, RRSO…). Each AI hra is a **(kind, theme, angle, difficulty)** tuple, generated hourly. The 12-kind target from Phase 2 is now met — see Section 1.
 
 Resource yield mapping is the educational signal: kids who like reflex games naturally build energy infrastructure; kids who like quizzes naturally build civic/cashflow buildings.
 
+The 9 evergreen minigames (finance-quiz, stock-tap, memory-match, math-sprint, energy-dash, power-flip, currency-rush, budget-balance, word-scramble) live alongside the AI rotation as the always-available "training ground" — see `lib/games.ts` for the canonical catalog. This file focuses on the AI-rotation kinds.
+
 ---
 
-## 1. Kinds shipped today (Phase 0)
+## 1. Kinds shipped today (Phase 0 + Phase 2 batch) — 12 kinds live
+
+All 12 kinds are wired end-to-end (Zod schema in `lib/ai-pipeline/types.ts`
+→ Sonnet/Haiku prompt → React client in `components/games/ai-*-client.tsx`
+→ route branch in `app/games/ai/[id]/page.tsx` → i18n in all 4 locales).
 
 | Kind | Loop | Resource yield | Difficulty curve | Status |
 |---|---|---|---|---|
 | **quiz** | 5 multi-choice Q's, instant explanation | 🪙 coins | 5 easy → 8 hard | DONE |
 | **scramble** | unscramble UPPERCASE word from hint | 🧱 bricks | 4 letters easy → 12 letters hard | DONE |
 | **price-guess** | numeric estimate within tolerance | 🪟 glass | wider tolerance easy → tighter hard | DONE |
-| **true-false** ⭐ | 6–12 statement sprint, isTrue + explanation | 🪙 coins (½ rate of quiz) | quick reflex bonus | DONE |
-| **match-pairs** ⭐ | 4–8 concept ↔ definition pairs, click both sides | 🧱 bricks + 🪟 glass | small set easy → 8 pairs hard | DONE |
-| **order** ⭐ | 4–7 items, drag ▲▼ into sequence | 🪟 glass | 4 items easy → 7 hard | DONE |
-
-⭐ = added in tonight's session.
+| **true-false** | 6–12 statement sprint, isTrue + explanation | 🪙 coins (½ rate of quiz) | quick reflex bonus | DONE |
+| **match-pairs** | 4–8 concept ↔ definition pairs, click both sides | 🧱 bricks + 🪟 glass | small set easy → 8 pairs hard | DONE |
+| **order** | 4–7 items, drag ▲▼ into sequence | 🪟 glass | 4 items easy → 7 hard | DONE |
+| **memory** | 4×4 card grid, concept ↔ icon pairs | 🧱 bricks | 4 pairs easy → 8 pairs hard | DONE |
+| **fill-in-blank** | sentence with one missing word, type it | 🧱 bricks + 🪙 coins | vocab breadth | DONE |
+| **calc-sprint** | 60s mental math grounded in finance | ⚡ watts | arithmetic depth | DONE |
+| **budget** (budget-allocate) | drag % into 4 buckets from monthly income | 🪙 coins + 💵 zł | allocation nuance | DONE |
+| **chart-read** | read synthetic line/bar chart + 1 question | 🪟 glass | chart complexity | DONE |
+| **what-if** | multi-step scenario chain reasoning | 🔩 steel | inference depth | DONE |
 
 ---
 
-## 2. Kinds proposed for Phase 2 (~6 more, target = 12)
-
-### kind: **memory** (concentration)
-- 4×4 grid of cards, flip 2, find pairs.
-- Pairs are concept ↔ icon (e.g. "Lokata" ↔ 🏦 icon).
-- Resource: 🧱 bricks
-- Educational: vocabulary anchoring through visual pairing.
-
-### kind: **fill-in-blank**
-- Sentence with one word missing, type it in.
-- "RRSO to ____ koszt kredytu." → expect "całkowity"
-- Resource: 🧱 bricks + 🪙 coins
-- Educational: active recall of terminology.
-
-### kind: **calc-sprint**
-- 60s of arithmetic relevant to finance: "5% z 4500 zł = ?", "Rata kredytu 200 zł × 60 mies = ?"
-- Resource: ⚡ watts (rewards reflex)
-- Educational: mental math grounded in personal finance.
+## 2. Kinds still proposed (not yet shipped)
 
 ### kind: **portfolio-pick**
 - "Masz 1000 zł i 5 lat. Wybierz 3 z 6 instrumentów."
 - After choice, spec evaluates risk/return based on real PL benchmarks (NBP rates, WIG20 history).
 - Resource: 🪟 glass + 🪙 coins
 - Educational: portfolio theory via experience.
-
-### kind: **budget-allocate**
-- Given monthly income, drag percentages into 4 buckets (potrzeby/rozrywka/oszczędności/dług).
-- Game shows month-end consequence of allocation.
-- Resource: 🪙 coins + 💵 in-game zł
-- Educational: 50/30/20 rule by feel. (We have this as evergreen `budget-balance` already — promote into AI rotation.)
-
-### kind: **what-if** (scenario)
-- "WIBOR rośnie o 2 pp. Twoja rata 1500 zł zmieni się o ile?"
-- Numeric answer with tolerance, but with multi-step reasoning shown after.
-- Resource: 🔩 steel (advanced kind)
-- Educational: cause→effect chains in macro.
+- Status: **TODO** — needs market-simulator backend; see SKO-BACKLOG 2.1.4.
 
 ---
 
@@ -212,16 +194,17 @@ Roughly 2–3 hours per kind once you've done one. The pattern is templated.
 
 ## 8. Live ops: what new kind unlocks WHEN
 
-Phase 2 sequence (suggest order based on impact):
+Phase 2 sequence — **complete as of 2026-04-22**. Shipped in this order:
 
-1. **memory** — broadest age appeal, easy to ship, big yield 🧱
-2. **calc-sprint** — gives ⚡ watts via knowledge (currently only via reflex), fills gap
-3. **fill-in-blank** — strong educational signal
-4. **portfolio-pick** — first "advanced" kind, justifies 🔩 steel resource
-5. **budget-allocate** — promotes the existing evergreen game into AI rotation
-6. **what-if** — long-form thinking, balances quick games
+1. ✅ **memory** — broadest age appeal, easy to ship, big yield 🧱
+2. ✅ **calc-sprint** — gives ⚡ watts via knowledge
+3. ✅ **fill-in-blank** — strong educational signal
+4. ✅ **budget** (budget-allocate) — promoted the evergreen into AI rotation
+5. ✅ **chart-read** — visual literacy
+6. ✅ **what-if** — long-form multi-step reasoning, justifies 🔩 steel
 
-Then Phase 3 in any order.
+Phase 3 kinds still outstanding: `portfolio-pick`, `dialog`, `negotiate`,
+`timeline-build`, `invest-sim`, `tax-fill`.
 
 ---
 

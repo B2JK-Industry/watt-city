@@ -79,4 +79,4 @@ forge script contracts/script/Deploy.s.sol \
 
 ## Burn log (GDPR Art. 17 + consent revocations)
 
-Burns are logged off-chain in Redis as `xp:web3:burn-log:<username>` (append-only). The on-chain Transfer → 0x0 events are public on BaseScan. Retention policy per `docs/legal/DATA-RETENTION.md`.
+Burns are recorded inline on each `xp:web3:mint-log:<username>` list entry via the `burnedAt` (epoch ms) and `burnTxHash` fields set by `lib/web3/burn-all.ts` — there is no separate burn-log key. The on-chain Transfer → 0x0 events are public on BaseScan. Three call sites feed this path: (1) kid flips `web3OptIn` off on `/profile`, (2) linked parent flips approval off on `/rodzic/[kid]`, (3) `hardErase()` in `lib/soft-delete.ts`, which is also invoked by the `/api/admin/purge-e2e-accounts` leaderboard cleanup surface (see `docs/legal/DATA-RETENTION.md`). Retention policy per `docs/legal/DATA-RETENTION.md`.
