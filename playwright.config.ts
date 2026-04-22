@@ -76,6 +76,14 @@ export default defineConfig({
               process.env.E2E_ADMIN_SECRET ?? "e2e-admin-secret-not-for-production",
             SESSION_SECRET:
               process.env.E2E_SESSION_SECRET ?? "e2e-session-secret-16char",
+            // E2E tests share source IP (127.0.0.1); the anti-abuse
+            // register/login rate-limit would throttle parallel workers.
+            // Defaults to a high (test-only) cap — override via the
+            // ambient env for the opt-in bot-protection run:
+            //   REGISTER_IP_LIMIT=5 LOGIN_IP_LIMIT=20 \
+            //   BOT_PROTECTION_E2E=1 pnpm test:e2e -- bot-protection
+            REGISTER_IP_LIMIT: process.env.REGISTER_IP_LIMIT ?? "1000",
+            LOGIN_IP_LIMIT: process.env.LOGIN_IP_LIMIT ?? "1000",
           },
         },
 });

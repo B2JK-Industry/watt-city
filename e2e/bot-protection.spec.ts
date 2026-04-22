@@ -5,15 +5,27 @@ import { randomAlphaSuffix } from "./_helpers";
  * endpoints.
  *
  * The per-IP rate limits live in `app/api/auth/{register,login}/route.ts`
- * and are configurable via env (`REGISTER_IP_LIMIT` etc.). The dev
- * server keeps the defaults (5 registers/min, 20 logins/min) unless
- * playwright.config.ts overrides them. */
+ * and are env-configurable (`REGISTER_IP_LIMIT`, `LOGIN_IP_LIMIT`).
+ *
+ * playwright.config.ts bumps these limits to 1000 for the default
+ * test run so parallel workers (all on 127.0.0.1) don't trip them.
+ * To verify the prod-default behaviour (5/min register, 20/min
+ * login), run this spec with an explicit opt-in env:
+ *
+ *   REGISTER_IP_LIMIT=5 LOGIN_IP_LIMIT=20 \
+ *   BOT_PROTECTION_E2E=1 pnpm test:e2e -- bot-protection
+ *
+ * Without `BOT_PROTECTION_E2E=1` the tests skip — otherwise they'd
+ * fail in the default suite against the high test env and add CI
+ * flake. */
 
 const PROD_HOST = "watt-city.vercel.app";
 const isProd = (process.env.PLAYWRIGHT_BASE_URL ?? "").includes(PROD_HOST);
+const botRun = process.env.BOT_PROTECTION_E2E === "1";
 
 test.describe("bot protection — /api/auth/register IP rate limit", () => {
   test.skip(isProd, "mutating");
+  test.skip(!botRun, "opt-in: set BOT_PROTECTION_E2E=1 + REGISTER_IP_LIMIT=5");
 
   test("6th register attempt from the same IP in <60s returns 429", async ({ request }) => {
     // The dev server's in-memory rate-limit keyspace is shared across
@@ -48,6 +60,7 @@ test.describe("bot protection — /api/auth/register IP rate limit", () => {
 
 test.describe("bot protection — /api/auth/login IP rate limit", () => {
   test.skip(isProd, "mutating (login attempts fill Upstash state)");
+  test.skip(!botRun, "opt-in: set BOT_PROTECTION_E2E=1 + LOGIN_IP_LIMIT=20");
 
   test("21st login attempt from the same IP in <60s returns 429", async ({ request }) => {
     const ip = `203.0.113.${Math.floor(Math.random() * 200) + 1}`;
