@@ -19,6 +19,8 @@ export async function POST(request: NextRequest) {
     return cronAuthFailure();
   }
   const started = Date.now();
+  // 3-slot parallel rotation: no slot arg → iterates fast/medium/slow and
+  // returns an aggregated result (plus a per-slot breakdown in `slots`).
   const result = await rotateIfDue(started);
   const durationMs = Date.now() - started;
 
@@ -45,7 +47,8 @@ export async function POST(request: NextRequest) {
 
   // Telemetry: single structured log line per rotation outcome. Vercel captures
   // stdout as searchable logs; a later tap (1.1.10) can forward these to a
-  // metrics backend.
+  // metrics backend. Per-slot breakdown included so on-call can tell which of
+  // the 3 lanes published / skipped.
   console.log(
     JSON.stringify({
       event: "rotation.fired",
@@ -55,6 +58,7 @@ export async function POST(request: NextRequest) {
       theme: result.theme,
       skipped: result.skipped,
       reason: result.reason,
+      slots: result.slots,
     }),
   );
   if (result.published) {

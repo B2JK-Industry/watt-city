@@ -779,8 +779,17 @@ function hashString(s: string): number {
 // (incrementing once per full pool pass ≈ every 20 h); difficulty hashes
 // theme + bucket so consecutive hours don't always share a level. Yields
 // ~240 distinct (theme, angle, difficulty) combinations before repetition.
-export function pickResearchSeed(nowMs: number): ResearchSeed {
-  const hourBucket = Math.floor(nowMs / (60 * 60 * 1000));
+//
+// `slotOffset` (default 0) lets callers shift the bucket so the 3-slot
+// parallel rotation picks DIFFERENT themes even when all slots rotate in the
+// same tick — each slot gets a distinct theme because it reads a different
+// offset into the pool. The coprime-to-pool-length offsets (0, 7, 13) walk
+// different residues so the three slots don't collide on pool wrap-around.
+export function pickResearchSeed(
+  nowMs: number,
+  slotOffset = 0,
+): ResearchSeed {
+  const hourBucket = Math.floor(nowMs / (60 * 60 * 1000)) + slotOffset;
   const base = ROTATION_POOL[hourBucket % ROTATION_POOL.length];
   const angleIndex =
     Math.floor(hourBucket / ROTATION_POOL.length) % base.angles.length;

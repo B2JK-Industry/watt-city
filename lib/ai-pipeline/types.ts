@@ -242,6 +242,31 @@ export function resolveSpecForLang(s: SpecField, lang: Lang): GameSpec {
   return s[lang] ?? s.pl;
 }
 
+/* ---------- Rotation slot (3-slot parallel rotation) ---------- */
+
+// Three independent rotation cycles run in parallel. Each slot holds up to
+// one live AI game at a time, so the city scene shows up to 3 simultaneously.
+// "fast" (1h) retains the original single-slot behaviour; "medium" (6h) and
+// "slow" (12h) give returning players something stable to attempt over longer
+// windows without displacing the hourly refresh.
+export const RotationSlotSchema = z.enum(["fast", "medium", "slow"]);
+export type RotationSlot = z.infer<typeof RotationSlotSchema>;
+
+export const SLOT_INTERVAL_HOURS: Record<RotationSlot, number> = {
+  fast: 1,
+  medium: 6,
+  slow: 12,
+};
+
+export const ALL_SLOTS: readonly RotationSlot[] = ["fast", "medium", "slow"] as const;
+
+// Envelopes persisted before 3-slot rotation had no `rotationSlot` field.
+// Treat missing / unknown values as "fast" so legacy games keep rendering
+// on the hourly cycle (which matches their original 1h validUntil window).
+export function resolveSlot(slot: RotationSlot | undefined | null): RotationSlot {
+  return slot === "medium" || slot === "slow" ? slot : "fast";
+}
+
 /* ---------- Outer envelope stored in Redis ---------- */
 
 export const AiGameSchema = z.object({
@@ -263,6 +288,10 @@ export const AiGameSchema = z.object({
   // Phase 5.2.6: deterministic sha256 over canonicalised spec. Optional so
   // pre-5.2 envelopes keep validating; new publishes always set it.
   contentHash: z.string().length(64).optional(),
+  // 3-slot parallel rotation (fast/medium/slow). Optional for backward compat
+  // with envelopes written before this field existed — read-side treats a
+  // missing value as "fast" (see `resolveSlot`).
+  rotationSlot: RotationSlotSchema.optional(),
 });
 export type AiGame = z.infer<typeof AiGameSchema>;
 
@@ -302,12 +331,18 @@ export type { Lang };
 
 /* ---------- Rotation policy ---------- */
 
-// Watt City: hourly rotation. Live games retire at `validUntil` (now + 1h on publish);
-// after retirement the envelope is preserved forever so past AI games remain playable
-// at /games/ai/<id>, and leaderboards/medals stick. MAX_ACTIVE_AI_GAMES caps the live
-// index (see publish.ts step 6).
+// Watt City: 3-slot parallel rotation. One "fast" (1h), one "medium" (6h), one
+// "slow" (12h) game are live simultaneously — each slot retires independently
+// at its own `validUntil` and re-publishes on its own cadence. After retirement
+// the envelope is preserved forever so past AI games remain playable at
+// /games/ai/<id>, and leaderboards/medals stick. MAX_ACTIVE_AI_GAMES caps the
+// live index at the 3 slot count (see publish.ts).
+//
+// LEGACY: `ROTATION_HOURS = 1` is retained as the "fast" slot interval and for
+// back-compat with external consumers. New code must use
+// `SLOT_INTERVAL_HOURS[slot]` instead.
 export const ROTATION_HOURS = 1;
 export const MAX_ACTIVE_AI_GAMES = 3;
-// Unused — envelopes persist without TTL (publish.ts step 6). Kept for backward compat
+// Unused — envelopes persist without TTL (publish.ts). Kept for backward compat
 // with any external consumer that imports this constant.
 export const AI_GAME_TTL_SECONDS = ROTATION_HOURS * 60 * 60 * 2;
