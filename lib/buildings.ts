@@ -246,6 +246,18 @@ export async function demolishBuilding(
 // ---------------------------------------------------------------------------
 
 export async function ensureSignupGift(state: PlayerState): Promise<PlayerState> {
+  // Fast-path for returning users — both sub-grants are already in.
+  // `ensureSignupGift` used to fire the `v3_starter_kit` flag read
+  // (one Redis round-trip) on every authenticated layout render, even
+  // for users who received the kit months ago. Guarding here means
+  // steady-state reads pay zero extra Redis calls.
+  if (state.buildings.length > 0) {
+    // User already has buildings → Domek grant is done. Check if the
+    // starter kit is also already recorded; if yes, nothing to do.
+    const hasKit = await hasReceivedStarterKit(state.username);
+    if (hasKit) return state;
+  }
+
   let mutated = false;
   if (state.buildings.length === 0) {
     const entry = getCatalogEntry("domek");

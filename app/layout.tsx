@@ -69,15 +69,16 @@ export default async function RootLayout({
   const [session, lang] = await Promise.all([getSession(), getLang()]);
   const dict = dictFor(lang);
   const theme = resolveTheme();
-  // Lazy tick + signup gift on every authenticated render — both are
-  // idempotent (tick is lock-guarded + ledger-deduped; gift is no-op if the
-  // player already has ≥1 building). Runs before we read PlayerState so the
+  // Lazy tick on every authenticated render (idempotent, lock-guarded,
+  // ledger-deduped). Must run before we read PlayerState so the
   // resource bar reflects the just-ticked balance.
   if (session) {
     await tickPlayer(session.username);
-    const preState = await getPlayerState(session.username);
-    await ensureSignupGift(preState);
   }
+  // Single `getPlayerState` round-trip — the prior layout called it
+  // twice (once guarding `ensureSignupGift`, again inside the parallel
+  // block). Folding: read once, pass to ensureSignupGift which returns
+  // the same (possibly-mutated) state, and reuse downstream.
   const [
     stats,
     player,
@@ -88,7 +89,9 @@ export default async function RootLayout({
     linkedKid,
   ] = await Promise.all([
     session ? userStats(session.username) : Promise.resolve(null),
-    session ? getPlayerState(session.username) : Promise.resolve(null),
+    session
+      ? getPlayerState(session.username).then(ensureSignupGift)
+      : Promise.resolve(null),
     session
       ? isFlagEnabled("v2_cashflow_hud", session.username)
       : Promise.resolve(false),

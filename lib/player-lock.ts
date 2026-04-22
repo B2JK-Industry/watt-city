@@ -91,3 +91,32 @@ export async function withListingLock<T>(
   }
   return body();
 }
+
+/** Ordered-pair lock for two-party operations (friend request/accept,
+ *  future direct trades). Both `sendFriendRequest(A, B)` and its
+ *  mirror `sendFriendRequest(B, A)` race for the same key, so two
+ *  users clicking "add friend" at the exact same moment can't both
+ *  land in each other's inbox instead of auto-accepting. Lexicographic
+ *  sort makes the lock key symmetric regardless of caller order. */
+export async function withPairLock<T>(
+  a: string,
+  b: string,
+  body: () => Promise<T>,
+): Promise<T> {
+  const [lo, hi] = a < b ? [a, b] : [b, a];
+  const key = `xp:pair-lock:${lo}:${hi}`;
+  const token = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  const MAX_ATTEMPTS = 5;
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    if (await kvSetNX(key, token, { ex: 5 })) {
+      try {
+        return await body();
+      } finally {
+        await kvDel(key);
+      }
+    }
+    const backoff = Math.min(400, 30 * 2 ** attempt) + Math.random() * 20;
+    await new Promise((r) => setTimeout(r, backoff));
+  }
+  return body();
+}

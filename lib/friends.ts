@@ -15,6 +15,7 @@
 
 import { kvGet, kvSet, sAdd } from "@/lib/redis";
 import { pushNotification } from "@/lib/notifications";
+import { withPairLock } from "@/lib/player-lock";
 
 type FriendSetKind = "friends" | "requests" | "inbox";
 
@@ -104,26 +105,30 @@ export async function sendFriendRequest(
   if (from === to) return { ok: false, error: "cannot-friend-self" };
   const userRec = await kvGet(`xp:user:${to}`);
   if (!userRec) return { ok: false, error: "unknown-user" };
-  if (await inList("friends", from, to)) return { ok: false, error: "already-friends" };
-  if (await inList("requests", from, to))
-    return { ok: false, error: "already-requested" };
-  // If `to` already has a request FROM `from` in their inbox we skip the
-  // mirror; if there's a reverse request (to→from in their requests + from's
-  // inbox) we auto-accept — friends can handshake from either side.
-  if (await inList("inbox", from, to)) {
-    // `from` already has request from `to` in inbox → auto-accept
-    return await acceptFriendRequest(from, to);
-  }
-  await addToSet("requests", from, to);
-  await addToSet("inbox", to, from);
-  await pushNotification(to, {
-    kind: "friend-request",
-    title: `Zaproszenie od ${from}`,
-    body: `${from} chce się zaprzyjaźnić w Watt City.`,
-    href: "/friends",
-    meta: { from },
+  // Pair lock serialises A→B with B→A so two people hitting "add
+  // friend" simultaneously resolve as one auto-accept rather than
+  // leaving mutually-pending requests in each other's inbox.
+  return withPairLock(from, to, async () => {
+    if (await inList("friends", from, to))
+      return { ok: false, error: "already-friends" };
+    if (await inList("requests", from, to))
+      return { ok: false, error: "already-requested" };
+    // If `from` already has a request from `to` in their inbox we
+    // auto-accept — friends can handshake from either side.
+    if (await inList("inbox", from, to)) {
+      return await acceptFriendRequest(from, to);
+    }
+    await addToSet("requests", from, to);
+    await addToSet("inbox", to, from);
+    await pushNotification(to, {
+      kind: "friend-request",
+      title: `Zaproszenie od ${from}`,
+      body: `${from} chce się zaprzyjaźnić w Watt City.`,
+      href: "/friends",
+      meta: { from },
+    });
+    return { ok: true };
   });
-  return { ok: true };
 }
 
 export async function acceptFriendRequest(

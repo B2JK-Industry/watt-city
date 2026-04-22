@@ -407,7 +407,11 @@ function BuildingSlot({
 }) {
   return (
     <g
-      className="transition-all duration-300"
+      // Narrow the transition to the exact properties we animate on
+      // powered-flip. `transition-all` also animates filter + transform
+      // but also any future style change (stroke, opacity, translate),
+      // which surprises readers and costs extra paint work.
+      className="transition-[filter,transform] duration-300"
       style={{
         // Unlit buildings render as near-silhouettes matching the hero
         // copy "9 budynków = 9 mini-gier. Dopóki nie zagrasz, budynek
