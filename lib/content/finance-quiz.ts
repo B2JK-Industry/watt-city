@@ -232,7 +232,7 @@ const PL_QUESTIONS: QuizQuestion[] = [
     options: ["210 m", "270 m", "310 m", "420 m"],
     correctIndex: 2,
     explanation:
-      "Varso Tower mierzy 310 m i jest najwyższym budynkiem w Unii Europejskiej. W XP Arena to twój ostateczny cel progresu.",
+      "Varso Tower mierzy 310 m i jest najwyższym budynkiem w Unii Europejskiej. W Watt City to twój ostateczny cel progresu.",
   },
 ];
 
@@ -836,7 +836,7 @@ const EN_QUESTIONS: QuizQuestion[] = [
     options: ["Poland only", "Central Europe", "The EU", "The world"],
     correctIndex: 2,
     explanation:
-      "Varso Tower (310 m) is the tallest building in the European Union. In XP Arena it's the final tier of your progress.",
+      "Varso Tower (310 m) is the tallest building in the European Union. In Watt City it's the final tier of your progress.",
   },
 ];
 

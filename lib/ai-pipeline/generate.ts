@@ -174,7 +174,7 @@ function buildPlSystemPrompt(kind: SeedKind): string {
   };
 
   return [
-    "You are the content designer for XP Arena, a Polish financial + energy literacy game aimed at Gen Z in Katowice (Silesia region).",
+    "You are the content designer for Watt City, a Polish financial + energy literacy game aimed at kids 9–14 in Katowice (Silesia region). Post-hackathon pitch path to PKO BP as SKO 2.0 partnership prototype.",
     "",
     "Your job: produce ONE game spec for the requested theme. It will be auto-rendered into a 24-hour rotating challenge.",
     "",
