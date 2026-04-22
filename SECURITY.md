@@ -17,8 +17,10 @@ bypass that spams the Claude API are all treated as P0/P1 incidents.
 ### In scope
 
 - Authentication + session handling (`lib/session.ts`, `lib/auth.ts`)
-- Rate limits (`lib/rate-limit.ts`) — bypass is a P2
-- CSRF (`lib/csrf.ts`, `middleware.ts`) — bypass is P1
+- Rate limits (`lib/rate-limit.ts`, per-IP auth caps via `lib/client-ip.ts`) — bypass is a P2
+- CSRF (`lib/csrf.ts`, `proxy.ts` — renamed from `middleware.ts` for Next 16) — bypass is P1
+- Cron authorisation (`lib/cron-auth.ts`) — bypass that lets an anonymous
+  caller trigger account purges or rotation is P1
 - Content-Security-Policy (`next.config.ts`) regression is P2
 - AI-generated content filter (`lib/ai-pipeline/moderation.ts`) — bypass
   that publishes a slur is P1
@@ -37,8 +39,9 @@ bypass that spams the Claude API are all treated as P0/P1 incidents.
 
 ## Supported versions
 
-Only the `watt-city` branch is supported. `main` hosts the frozen XP
-Arena demo and only receives security patches when they also apply there.
+Only `main` is supported. Single-branch workflow since 2026-04-20; the
+pre-merge XP Arena demo is preserved at tag `xp-arena-final-v1.0` and
+receives no further patches.
 
 ## Response times
 

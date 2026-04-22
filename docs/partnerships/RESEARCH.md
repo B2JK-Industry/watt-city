@@ -67,6 +67,12 @@ Don't ask until we have: (a) a 3-minute demo video of Watt City,
 (b) a one-pager PDF with the numbers, (c) a named agent / operator who
 owns the partnership.
 
+**Credential unlocked (2026-04-22)**: Watt City is the 1st-place winner
+of the PKO Gaming track at ETHSilesia 2026. Lead any partnership
+outreach with that proof-point; it materially improves reply rates for
+(a) SGH behavioural-economics cold email and (b) SECURITECH PL +
+Złoty Bankier talk proposals.
+
 Cold email template lives at `docs/partnerships/OUTREACH.md` (TODO —
 write this when a partnership is imminent).
 

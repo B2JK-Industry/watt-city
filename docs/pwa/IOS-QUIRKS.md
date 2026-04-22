@@ -23,10 +23,11 @@ something Apple deliberately broke.
   detect iOS and swap the install CTA for a "Add to Home Screen →
   Share sheet" hint instead. See implementation in `PwaRegister`
   (future follow-up — currently we hide the button on iOS).
-- **No background Web Push pre-iOS 16.4**; on ≥ 16.4 push works ONLY
-  for home-screen-installed sites. Our Phase 7.1.6 `sendPush` gracefully
-  returns `{ ok: false, reason: "vapid-not-configured" }` when the
-  subscription is missing.
+- **Web Push**: requires iOS 16.4+ AND home-screen-installed site. Per
+  ADR 002 we ship the service worker inactive — no VAPID pair is
+  provisioned, so `sendPush` returns
+  `{ ok: false, reason: "vapid-not-configured" }` by design. Re-enable
+  only after the push-opt-in UI + admin test-push tool land.
 - **No cache-storage pinning**: iOS evicts SW caches after ~50 MB.
   Workbox `CacheFirst` strategies work but budgets are tight.
 - **No file system writes**: no `window.showDirectoryPicker`, no

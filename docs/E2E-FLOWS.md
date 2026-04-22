@@ -1,21 +1,29 @@
 # End-to-end critical flows — Phase 6.7.3
 
-The backlog calls for 10 Playwright flows. `e2e/smoke.spec.ts` covers the
-first three. The remaining seven live as stubbed specs with a TODO — one
-per flow so PRs can tick them off individually.
+Phase 6.7.3 originally called for 10 Playwright flows. As of 2026-04-22
+(commit `5dd81e0`) the suite has grown to **13 spec files, ~600+
+assertions** — the original per-flow file layout was superseded by
+thematic specs during the 2026-04-21 deep-audit (Phases 2–8).
 
-| # | Flow | Status | Spec file |
-|---|---|---|---|
-| 1 | Landing loads + axe clean | ✅ done | `e2e/smoke.spec.ts` |
-| 2 | Register → redirect to /games | ✅ done | `e2e/smoke.spec.ts` |
-| 3 | Logged-in can open /miasto | ✅ done | `e2e/smoke.spec.ts` |
-| 4 | Play finance-quiz → resources credit | ⏳ pending | `e2e/flow-play-score.spec.ts` (TODO) |
-| 5 | Place Mała elektrownia after earning 50 ⚡ | ⏳ pending | `e2e/flow-build.spec.ts` (TODO) |
-| 6 | Upgrade Domek → yield grows | ⏳ pending | `e2e/flow-upgrade.spec.ts` (TODO) |
-| 7 | Take mortgage + see loan in list | ⏳ pending | `e2e/flow-mortgage.spec.ts` (TODO) |
-| 8 | Tier-up toast fires when tier crosses | ⏳ pending | `e2e/flow-tier-up.spec.ts` (TODO) |
-| 9 | Friend request + accept + visit city | ⏳ pending | `e2e/flow-friends.spec.ts` (TODO) |
-| 10 | Marketplace list + buy flow (two accounts) | ⏳ pending | `e2e/flow-marketplace.spec.ts` (TODO) |
+| Spec file | Scope |
+|---|---|
+| `e2e/smoke.spec.ts` | Landing axe-clean + register → /games + logged-in /miasto |
+| `e2e/smoke.cross.spec.ts` | Cross-browser smoke |
+| `e2e/smoke.mobile.spec.ts` | Mobile viewport smoke |
+| `e2e/prod-smoke.spec.ts` | Non-mutating prod-env smoke (17 assertions; runs vs any `PLAYWRIGHT_BASE_URL`) |
+| `e2e/api-contracts.spec.ts` | 451 assertions — auth/CSRF/method/Zod across 79 routes |
+| `e2e/security.spec.ts` | 30 assertions — session tamper, IDOR, admin bearer, PII, age gate, headers |
+| `e2e/data-integrity.spec.ts` | 5 assertions — score idempotency, concurrency, rotation single-flight, LB order |
+| `e2e/a11y-matrix.spec.ts` | 39 assertions — 9 public pages × 4 locales + reduced-motion + keyboard |
+| `e2e/golden-paths.spec.ts` | 10 mutating flows — onboarding, buildings, mortgage, parent, class, AI cron, i18n, logout, soft-delete, daily cap |
+| `e2e/perf.spec.ts` | 8 assertions — Chromium Performance API TTFB/DCL/LCP/CLS |
+| `e2e/rate-limits.spec.ts` | Per-user bucket coverage |
+| `e2e/bot-protection.spec.ts` | Per-IP register/login limits — opt-in via `BOT_PROTECTION_E2E=1` |
+| `e2e/pwa.spec.ts` | PWA manifest + SW behaviour |
+| `e2e/production-ready.spec.ts` | Final production-readiness suite (commit `5dd81e0`) |
+
+Helpers live in `e2e/_helpers.ts` (excluded from Playwright's default
+`*.spec.ts` glob via the `_` prefix).
 
 ## Running locally
 

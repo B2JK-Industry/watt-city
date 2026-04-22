@@ -1,3 +1,23 @@
+/* Leaderboard — per-game + global ZSETs, best-score semantics.
+ *
+ * Data layout:
+ *  - `xp:leaderboard:global`      — ZSET, member=username, score=sum of
+ *                                    best-per-game XP (+ duel bonuses).
+ *  - `xp:leaderboard:game:<id>`   — ZSET per game, member=username,
+ *                                    score=best score that user has
+ *                                    posted for this game.
+ *
+ * Concurrency:
+ *  - `awardXP` wraps the read-then-write critical section in a
+ *    `kvSetNX`-based single-flight lock (`xp:award-lock:<user>:<game>`)
+ *    with 5× exp-backoff retries. Without it, concurrent score POSTs
+ *    for the same user+game would both read `prevGame=0` and each
+ *    ZINCRBY the global — inflating totals to the sum of scores
+ *    instead of max. Deep-audit 2026-04-21 Phase 5 caught this; the
+ *    data-integrity spec exercises the fix.
+ *  - `creditBonus` is global-only; duel wins / achievements go through
+ *    here and never touch per-game ZSETs.
+ */
 import { kvDel, kvSetNX, zIncrBy, zRank, zRem, zScore, zTopN, LeaderboardEntry } from "@/lib/redis";
 
 const GLOBAL_KEY = "xp:leaderboard:global";

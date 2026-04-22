@@ -1,5 +1,10 @@
 # Target bounties — ETHSilesia 2026
 
+> **Historical note (2026-04-22)**: ETHSilesia 2026 concluded on
+> 17–19 April. This document was the pre-event targeting plan; it is
+> kept for context. Post-event outcomes + follow-ups live in the
+> `docs/progress/` session logs.
+
 What we're aiming to win and how Watt City fits each track.
 
 ## Event basics

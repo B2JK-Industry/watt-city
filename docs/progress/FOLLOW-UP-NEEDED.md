@@ -2,6 +2,14 @@
 
 Everything in this file was OUT OF SCOPE for the autonomous V2-refactor session by the operator's explicit instruction. Each entry names what, why deferred, and what unblocks it.
 
+> **Reconciliation 2026-04-22** (commit `5dd81e0`): none of the V2-refactor
+> R4–R9 items in this doc were closed by the 2026-04-21/22 production-readiness
+> work. Items that shipped on 2026-04-22 (IP-based rate limiting, SMTP adapter,
+> mortgage-default state machine, bot protection, Web3 mint + parent consent,
+> mobile touch targets 44×44, `middleware.ts` → `proxy.ts` rename) are tracked
+> in `docs/SECURITY-AUDIT-2026-04-19.md` and the Phase-1/7 sections of
+> `SKO-BACKLOG.md`, not here.
+
 ---
 
 ## R4 — Streaks & daily-special
@@ -49,6 +57,6 @@ Everything in this file was OUT OF SCOPE for the autonomous V2-refactor session 
 - `TierUpToast` → `LevelUpToast` rename — scheduled for after R3.2 dashboard swap (V1 ring still renders; component can migrate when the V1 ring is removed).
 - AI-pipeline system prompt rename "XP Arena" → "Watt City" in `lib/ai-pipeline/generate.ts` — tracked in VOCAB-AUDIT §3, low priority.
 - Mentor-help one-tap UI (modal + trigger) — API ready (`issueMentorHelp`, `mentorHelpEligibility`), UI not wired.
-- Classroom mode UI + teacher-onboarding — API fields ready (`state.classroomMode`, `classroomRebalanceDeadline`), surface not wired.
+- ~~Classroom mode UI + teacher-onboarding — API fields ready (`state.classroomMode`, `classroomRebalanceDeadline`), surface not wired.~~ ✅ superseded — V4 classroom surface shipped (`/dla-szkol`, `/klasa/[id]`, teacher signup wizard). Audit next steps in ux-audit report.
 - Conversion-rate computation from ledger (BLOCKER-2 ideal) — current default 0.5× per deprecated key is conservative but static. An offline admin tool can populate `xp:migration:v2:rates` with ledger-derived medians.
 - Reset BLOCKER-1 HUD copy if/when deficit feature flag `v2_cashflow_hud` is flipped off — hide the rescue CTA with the HUD, don't surface it elsewhere (would be confusing).

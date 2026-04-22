@@ -49,14 +49,15 @@ See `ARCHITECTURE.md` § 17 for architecture-level open questions.
 1. Read this file
 2. Pick a backlog item
 3. Read relevant detail doc
-4. Branch from `watt-city`
+4. Branch from `main`
 5. Implement
 6. Test (unit + manual smoke)
-7. PR to `watt-city`
+7. PR to `main`
 8. After merge, update CHANGELOG + relevant doc if behaviour changed
 
 ## Recent sessions
 
-- [`progress/2026-04-21-review-fix.md`](./progress/2026-04-21-review-fix.md) — post-merge convergence pass: fixed 3/3 E2E failures (footer a11y, register button regex, PII-regex-hostile test username), 5 genuine lint errors, relaxed two React 19.2 strict rules that produced false positives. End state: 618/618 vitest, 0 lint errors, 3/3 Playwright.
+- [`progress/2026-04-21-review-fix.md`](./progress/2026-04-21-review-fix.md) — post-merge convergence pass: fixed 3/3 E2E failures (footer a11y, register button regex, PII-regex-hostile test username), 5 genuine lint errors, relaxed two React 19.2 strict rules that produced false positives.
 - [`progress/2026-04-21-prod-smoke.md`](./progress/2026-04-21-prod-smoke.md) — read-only prod smoke suite (`e2e/prod-smoke.spec.ts`) caught three classes of real a11y regressions on https://watt-city.vercel.app: sub-AA `text-zinc-500` on card surfaces (64 occurrences swept), opacity-keyframed slide-up/stagger-in that flagged transient mid-frame low contrast, and `<svg role="img">` with focusable children. Plus an inline-link-in-text contrast rule. End state: 17/17 prod-smoke green.
 - [`progress/2026-04-21-deep-audit.md`](./progress/2026-04-21-deep-audit.md) — full 12-phase audit: API-contract + security + data-integrity + i18n + a11y-matrix sweeps. 525 dev e2e assertions + 56 prod assertions all green. Real bugs fixed: admin rotate-ai theme leak, web-vitals 500-on-bad-body, cron auth-bypass in 4 routes (consolidated to `lib/cron-auth.ts`). Prompt: [`progress/2026-04-21-deep-audit-prompt.md`](./progress/2026-04-21-deep-audit-prompt.md).
+- Post-audit backlog sweep (commits `91139f3` + `5dd81e0`, 2026-04-21): 13-item production-readiness backlog closed (per-IP rate-limiter for register/login, `lib/mailer.ts` Resend/SendGrid/log-only adapter for parental-consent email, `proxy.ts` rename, awardXP single-flight lock, parent-link bridge). New E2E specs: `production-ready`, `rate-limits`, `bot-protection` (opt-in), `pwa`, `smoke.mobile`, `smoke.cross`. End state 2026-04-22: **635/635 vitest (80 files) · 79 API routes · 76 static pages · 13 Playwright specs**.

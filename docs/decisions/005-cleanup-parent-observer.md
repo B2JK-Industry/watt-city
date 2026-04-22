@@ -1,7 +1,7 @@
 # ADR 005 — Cleanup (Issue 4): V4.6 parent observer restoration
 
 **Date**: 2026-04-19
-**Status**: accepted (landed in `fix(cleanup):issue-4`)
+**Status**: Implemented 2026-04-19 (landed in `fix(cleanup):issue-4`). Follow-up in a15e45b added `lib/roles.ts#registerParentKid` so `/api/rodzic/dolacz` now mirrors the V4.6 linkage into the legacy parent-children store — `/api/parent` dashboards populate correctly for V4.6-onboarded pairs (deep-audit Phase 5).
 **Scope**: cleanup audit §Issue 4 — "V4.6 parent observer was reverted — restore or document".
 
 ## Context

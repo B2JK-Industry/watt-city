@@ -1,7 +1,12 @@
 # Web3 architecture plan — Phase 8
 
-> **Status**: scaffold-only. No mainnet, no testnet, no real gas. Every
-> step below is for a human operator to execute with a funded wallet.
+> **Status (2026-04-22)**: W1..W7 shipped. `WattCityMedal` contract,
+> Foundry test suite, mint API, burn-on-revocation, RainbowKit/wagmi
+> client, `/profile` gallery, and the ETHSilesia submission package are
+> all live in-repo. Base Sepolia deploy remained operator-blocked on
+> faucet funding at W7 — local anvil address is pinned in
+> `DEPLOYMENTS.md` for demo purposes. Base mainnet still gated on the
+> external audit per `DEPLOY.md §5`.
 
 ## 1. Scope
 
@@ -70,9 +75,10 @@ Read-only helpers:
 ## 5. Wallet UX
 
 We integrate [RainbowKit](https://www.rainbowkit.com) (or
-Coinbase-native Smart Wallet) only in the opt-in flow. Default users
-never see a wallet button. Connecting a wallet is a **profile setting**
-not a login requirement.
+Coinbase-native Smart Wallet) only in the opt-in flow — shipped in W5
+as `components/web3/medal-gallery.tsx` + `mint-button.tsx`. Default
+users never see a wallet button. Connecting a wallet is a **profile
+setting** not a login requirement.
 
 For kid accounts, Coinbase Smart Wallet's passkey-based sign-in is the
 intended path — no seed phrase, no extension, tied to their device

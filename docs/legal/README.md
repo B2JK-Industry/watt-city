@@ -24,12 +24,20 @@ These are external tasks that code cannot execute:
 
 ### 4.3.2 — Children's marketing + GDPR-K review
 - **Questions to raise**:
-  - Does our parental-consent handshake (kid-generated 24h one-shot code +
-    parent POST) satisfy UODO's 2026 interpretation of GDPR-K art. 8?
+  - Does our parental-consent handshake (kid-generated 24h one-shot code
+    via `POST /api/rodzic/code` + parent redeem via `POST /api/rodzic/dolacz`,
+    mirrored into legacy parent-children store by
+    `lib/roles.ts#registerParentKid`, OR email-token flow via
+    `lib/gdpr-k.ts#openConsentRequest` → `/consent/[token]` → `/api/consent/[token]`)
+    satisfy UODO's 2026 interpretation of GDPR-K art. 8?
+  - SMTP path: parental-consent mail routes through `lib/mailer.ts` which
+    picks Resend → SendGrid → log-only fallback (the last in dev /
+    unconfigured prod). Is the log-only degraded mode acceptable for
+    preview deployments that might be shown to UODO review?
   - Is the 30-day soft-delete window acceptable for minors or must we
     offer immediate erasure?
   - Do we need separate consent for: in-app notifications, push
-    notifications (Phase 2.7 gated), OAuth to PKO Junior?
+    notifications (ADR 002 — still gated), OAuth to PKO Junior?
 - **Contacts needed**: UODO (PL supervisory authority), external children-
   media lawyer.
 

@@ -13,10 +13,11 @@ Junior skin.
 
 ## 1. Eligibility
 
-- Users under 13 require documented parental consent (see
-  `docs/legal/PRIVACY-PKO.md` §3.3).
-- Users aged 13–15 require parental consent per GDPR-K (PL: ustawa o
-  ochronie danych osobowych, art. 35).
+- Polish GDPR-K sets the digital-consent threshold at 16
+  (`GDPR_K_AGE_THRESHOLD` in `lib/gdpr-k.ts`). Users under 16 (both the
+  `under-13` and `13-15` age buckets per `ageBucketFromBirthYear`)
+  require documented parental consent via one of the two flows
+  described in `docs/legal/PRIVACY-PKO.md` §3.3.
 - Users 16+ may register without additional consent.
 
 ## 2. In-game currency

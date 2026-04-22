@@ -7,7 +7,7 @@ tricky dep we've actually hit in production.
 ## Pre-flight (always)
 
 ```bash
-git checkout watt-city
+git checkout main
 git pull --rebase
 pnpm install
 pnpm build && pnpm test
@@ -19,12 +19,13 @@ git rev-parse HEAD > .upgrade-baseline.txt
 
 1. Read release notes in `node_modules/next/dist/docs/` **before**
    running `pnpm add next@latest`. Breaking changes frequently land in
-   the `app/` router, metadata API, and middleware runtime.
+   the `app/` router, metadata API, and proxy (ex-middleware) runtime.
 2. Test with: `NODE_OPTIONS="--max-old-space-size=6144" pnpm build` and
-   all 200+ unit tests.
+   the full vitest suite (635/635 across 80 files as of 2026-04-22).
 3. Specifically re-verify:
-   - `middleware.ts` (edge runtime imports must stay free of `node:`
-     modules — see `lib/csrf-shared.ts` split).
+   - `proxy.ts` (renamed from `middleware.ts` for Next 16; edge runtime
+     imports must stay free of `node:` modules — see `lib/csrf-shared.ts`
+     split).
    - `export const dynamic = "force-dynamic"` semantics on
      `/api/cron/*` and `/miasto`.
    - `layout.tsx` metadata schema — React 19 + Next 16 split
@@ -80,14 +81,14 @@ heavy, so the risk surface is small, but run a visual smoke pass on
 
 ```bash
 git checkout $(cat .upgrade-baseline.txt)
-git push --force-with-lease origin watt-city
+git push --force-with-lease origin main
 ```
 
 (Hard constraint: agent never force-pushes. Operator runs this.)
 
 ## Dependabot PRs
 
-Dependabot opens PRs into `watt-city` per `.github/dependabot.yml`.
+Dependabot opens PRs into `main` per `.github/dependabot.yml`.
 Review workflow:
 
 1. Read the PR diff.

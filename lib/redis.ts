@@ -1,3 +1,25 @@
+/* Thin Upstash Redis wrapper with an in-memory fallback.
+ *
+ * Every primitive we use (kv get/set/del, zset incr/score/top, set add/
+ * members/has/rem, list push/range/trim, kvSetNX for single-flight locks)
+ * has a production path against Upstash and a dev path against a Map/Array
+ * triple kept in-process.
+ *
+ * Fallback triggers when `UPSTASH_REDIS_REST_URL` + `_TOKEN` are both
+ * unset — that's the default for local `pnpm dev` + the vitest suite
+ * (each test run starts fresh). `console.warn` at module init announces
+ * the degraded mode so nobody ships to production without realising.
+ *
+ * Invariants
+ *  - Never use both paths at once — `upstash === null` permanently if
+ *    either env var is missing; no late retries.
+ *  - TTLs are best-effort on the in-memory path (setTimeout with unref);
+ *    Upstash enforces exactly. Never write a test that asserts on TTL
+ *    timing unless it's running against Upstash.
+ *  - `kvSetNX` is atomic in both paths — Upstash via `SET NX EX`, memory
+ *    via synchronous Map.has/set (single-threaded JS event loop keeps it
+ *    race-safe for the check-then-set sequence).
+ */
 import { Redis } from "@upstash/redis";
 
 type SortedSetEntry = { score: number; member: string };

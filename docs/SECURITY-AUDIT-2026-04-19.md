@@ -19,9 +19,20 @@ require external verification (pen test, SOC2) are flagged as EXTERNAL.
 
 ## Additional controls
 
-- **CSRF**: double-submit cookie pattern via `middleware.ts` + global fetch
+- **CSRF**: double-submit cookie pattern via `proxy.ts` (renamed from
+  `middleware.ts` for Next 16; ✅ done in `5dd81e0`) + global fetch
   patch in `components/csrf-bootstrap.tsx`. Exemptions: admin bearer
   paths, cron pings, login/register (they set the cookie).
+- **Bot protection (2026-04-22)**: per-IP rate limits on `register` and
+  `login` (env-configurable via `REGISTER_IP_LIMIT`, `LOGIN_IP_LIMIT`;
+  prod defaults 5/min register, 20/min login). ✅ done in `5dd81e0`,
+  covered by `e2e/bot-protection.spec.ts` (opt-in via
+  `BOT_PROTECTION_E2E=1` to avoid CI flake against the high test env).
+- **Transactional email (2026-04-22)**: SMTP adapter shipped at
+  `lib/mailer.ts` — env-driven Resend / SendGrid / log backends.
+  ✅ done in `5dd81e0`.
+- **Mortgage default state machine**: verified via
+  `lib/mortgage-default.test.ts`. ✅ done in `5dd81e0`.
 - **Rate limits per route**: existing `rateLimit()` helper, buckets:
   - `build:<u>` 5/min (place/upgrade/demolish + tick manual)
   - `loan-take:<u>` 1/min

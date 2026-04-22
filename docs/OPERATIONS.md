@@ -8,7 +8,7 @@ How to deploy, monitor, debug, recover. Day-2 stuff.
 |---|---|---|---|---|
 | **dev (local)** | http://localhost:3000 | any | uses `.env.local` (defaults to prod Upstash, can override) | `pnpm dev` |
 | **preview (Vercel)** | per-PR auto URL | any non-`main` | inherits production env vars | `vercel deploy` (no --prod) |
-| **prod** | https://xp-arena-ethsilesia2026.vercel.app (domain rename TBD — e.g. `watt-city.vercel.app`) | `main` | Watt City Upstash | active development |
+| **prod** | https://watt-city.vercel.app (canonical alias; `xp-arena-ethsilesia2026.vercel.app` still resolves) | `main` | Watt City Upstash | active development |
 
 ## 2. Deploy procedure
 
@@ -65,7 +65,7 @@ vercel rollback <deployment-url>
 # Verify production is back
 curl -s -o /dev/null -w "%{http_code}" "https://watt-city.vercel.app/"
 
-# Investigate the broken deploy on watt-city branch
+# Investigate the broken deploy on main
 git log -1
 ```
 
@@ -90,6 +90,12 @@ Watch for `Resource is limited - try again in 24 hours` error. We hit this once 
 | `ANTHROPIC_API_KEY` | `sk-ant-api03-...` | `vercel env add` (sensitive) | quarterly |
 | `ADMIN_SECRET` | hex 64 chars | `vercel env add` (sensitive) | quarterly |
 | `CRON_SECRET` | hex 64 chars | `vercel env add` (sensitive) | quarterly |
+| `REGISTER_IP_LIMIT` | integer (default `5`, per hour) | `vercel env add` | n/a (tune) |
+| `LOGIN_IP_LIMIT` | integer (default `20`, per minute) | `vercel env add` | n/a (tune) |
+| `RESEND_API_KEY` | `re_...` | `vercel env add` (sensitive) | quarterly OR on leak |
+| `SENDGRID_API_KEY` | `SG.xxx` (fallback provider) | `vercel env add` (sensitive) | quarterly OR on leak |
+| `MAIL_FROM` | `Watt City <no-reply@watt-city.vercel.app>` | `vercel env add` | n/a |
+| `APP_BASE_URL` | `https://watt-city.vercel.app` | `vercel env add` | n/a |
 
 ### Add a new env var
 
@@ -133,6 +139,13 @@ vercel env pull .env.local --environment=production --yes
 
 The Vercel cron is the **safety net**, not the primary. See ADR
 `docs/decisions/001-hourly-rotation-on-hobby.md` for rationale.
+
+Additional cron routes exist in the code (`/api/cron/daily-game`,
+`/api/cron/sweep-deletions`, `/api/cron/sweep-inactive-kids`) and are
+driven by external pingers / Vercel Cron when scheduled on Pro. All four
+routes share `lib/cron-auth.ts` (Phase 2 deep-audit consolidation) — a
+single bearer-gate matrix with a NODE_ENV-gated dev bypass. Preview and
+production always require a bearer.
 
 ### Hobby vs Pro
 
@@ -533,6 +546,31 @@ After any production incident:
 After any new operational tool/script:
 - Document in this file
 - Add to relevant playbook section
+
+---
+
+## Post-audit note — 2026-04-22
+
+The 13-item production-readiness backlog closed in commits `91139f3` +
+`5dd81e0`. Operational impact:
+
+- **Per-IP rate-limit** on auth endpoints — new `REGISTER_IP_LIMIT` /
+  `LOGIN_IP_LIMIT` env vars (see §3). Left unset, defaults of 5/h and
+  20/min apply. Playwright runs bump both to `1000` so suites aren't
+  self-throttled.
+- **Mail adapter** (`lib/mailer.ts`) — Resend → SendGrid → log-only. No
+  provider configured means parental-consent invites log a structured
+  `mail.would-send` line instead of mailing; fine for dev, fail-closed
+  safe for prod if someone forgets to set the key. Env vars:
+  `RESEND_API_KEY`, `SENDGRID_API_KEY`, `MAIL_FROM`, `APP_BASE_URL`.
+- **Cron consolidation** — `lib/cron-auth.ts` is the single source of
+  truth for bearer validation across all four `/api/cron/*` routes.
+  Sweep routes are no longer silently open in preview.
+- **Parent-link bridge** — `/api/parent-link/{issue,redeem}` fully wired.
+- **`awardXP` single-flight lock** — concurrent score submits no longer
+  double-credit the global leaderboard.
+- **`proxy.ts`** — renamed from `middleware.ts` (Next 16 deprecation);
+  CSRF behaviour unchanged.
 
 ---
 

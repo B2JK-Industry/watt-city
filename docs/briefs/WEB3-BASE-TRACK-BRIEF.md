@@ -6,6 +6,8 @@
 **Rozpočet**: ~8 vývojových hodín + ~0,5 h operátorského času klienta
 **Externé náklady**: 0 € (testnet + free-tier služby)
 
+> **Status (2026-04-22)**: W1..W7 dodané (dc40def → 046c120). Watt City vyhral **1. miesto v PKO Gaming tracku**. Web3/Base submission package je v `docs/web3/SUBMISSION.md`; Base Sepolia deploy ostáva operator-blocked na funding faucetu — demo flow bežal proti lokálnemu anvil nodu per `docs/web3/DEPLOYMENTS.md`.
+
 ---
 
 ## 1. Čo treba vyvinúť (1 veta)

@@ -8,6 +8,12 @@ V4.10 — how to run Watt City with the PKO skin applied.
 > picks up the skin (previously only the single brand chip changed
 > colour). Pages tag the `data-skin="pko"` attribute on `<html>` so
 > tests + dev tools can key off it.
+>
+> **Post-hackathon status (2026-04-22)**: the `SKIN=pko` demo path
+> carried the 1st-place PKO Gaming track pitch at ETHSilesia 2026. The
+> mascot placeholder, accent colour and disclaimer wording below are
+> still the values that need PKO brand-team sign-off before any real
+> production deployment.
 
 ## One-line boot
 

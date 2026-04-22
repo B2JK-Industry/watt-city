@@ -135,7 +135,7 @@ Each item lists: ID · title · effort · acceptance criteria · dependencies ·
 | 1.5.3 | Mortgage acceptance: creates `Loan` record, credits `principal` to player resources | S | balance jumps by principal amount | 1.5.1 |
 | 1.5.4 | Loan status panel: outstanding balance, next payment date, on-time streak, total interest paid so far | M | always visible in nav or dashboard | 1.5.3 |
 | 1.5.5 | Auto-deduct payment: integrated into `tick`; if `cashZl ≥ monthlyPayment` deduct + score+1, else mark missed + score−5 | M | scheduled correctly | 1.5.1, 1.4.1 |
-| 1.5.6 | Default handling: 3 consecutive missed → seize smallest building, sell for 50%, mark loan defaulted | M | UI shows clear "default" warning before seizure | 1.5.5 |
+| 1.5.6 | Default handling: 3 consecutive missed → seize smallest building, sell for 50%, mark loan defaulted | M | UI shows clear "default" warning before seizure | 1.5.5 | ✅ state machine verified in `lib/mortgage-default.test.ts` (commit `5dd81e0`) |
 | 1.5.7 | Early repayment ("nadpłata"): allow lump-sum payment that reduces principal; recompute schedule | M | educational: shows interest saved | 1.5.1 |
 | 1.5.8 | Credit score: 0–100, visible on player profile; +1 each on-time, −5 missed, −20 default | S | UI shows current score + tier (poor/fair/good/excellent) | 1.5.5 |
 | 1.5.9 | Loan history: list of all loans (active + paid_off + defaulted) | S | linked from profile | 1.5.3 |
@@ -270,6 +270,10 @@ Each item lists: ID · title · effort · acceptance criteria · dependencies ·
 | 2.6.7 | KNF / financial advice disclaimer on every loan dialog | XS | required compliance |
 
 ### 2.7 Notifications
+
+> **Infra note 2026-04-22**: SMTP adapter shipped at `lib/mailer.ts`
+> (Resend / SendGrid / log backends) — ✅ done in `5dd81e0`.
+> Unblocks 2.7.5 (weekly digest job) and any other email-triggered flow.
 
 | ID | Item | Effort |
 |---|---|---|
@@ -480,7 +484,7 @@ Each item lists: ID · title · effort · acceptance criteria · dependencies ·
 |---|---|---|
 | 6.1.1 | Penetration test (external) | L | external |
 | 6.1.2 | OWASP top 10 audit | M |
-| 6.1.3 | Rate limiting on all endpoints | M |
+| 6.1.3 | Rate limiting on all endpoints | M | ✅ done in `5dd81e0` — per-user buckets + IP-based auth limits (`REGISTER_IP_LIMIT`, `LOGIN_IP_LIMIT`) |
 | 6.1.4 | CSRF tokens on state-changing forms | M |
 | 6.1.5 | Content Security Policy headers | S |
 | 6.1.6 | Subresource Integrity for any 3rd-party CDN | S |
@@ -582,7 +586,7 @@ Each item lists: ID · title · effort · acceptance criteria · dependencies ·
 
 | ID | Item | Effort |
 |---|---|---|
-| 7.3.1 | Touch targets ≥ 44×44 px throughout | S |
+| 7.3.1 | Touch targets ≥ 44×44 px throughout | S | ✅ done in `5dd81e0` — `.tap-target` class |
 | 7.3.2 | Build modal optimized for one-thumb operation | M |
 | 7.3.3 | Map pinch-to-zoom + pan | M |
 | 7.3.4 | Swipe-to-dismiss notifications | S |
@@ -593,6 +597,11 @@ Each item lists: ID · title · effort · acceptance criteria · dependencies ·
 ## Phase 8 — Web3 layer (optional)
 
 ### 8.1 Soulbound medals
+
+> **Status 2026-04-22 (commit `5dd81e0`)**: W1–W7 web3 scope delivered
+> — `WattCityMedal` on Base Sepolia, mint flow end-to-end, parent-consent
+> gate verified. ✅ items 8.1.1–8.1.6, 8.1.8 done; 8.1.7 (mainnet + audit)
+> still pending. See `docs/web3/SUBMISSION.md`.
 
 | ID | Item | Effort |
 |---|---|---|

@@ -74,7 +74,7 @@ const uk: typeof plDict = {
     unlocksLabel: "Розблоковує:",
     stillLabel: "Ще",
     pathCaption:
-      "Шлях: Дерев'яна хата → Ніковіце → Сімейний дім → Кам'яниця → Сонячна кам'яниця → Офіс → Хмарочос → Altus Tower → Varso Tower 310 м (найвища в ЄС).",
+      "Шлях: Дерев'яна хата → Nikiszowiec → Сімейний дім → Кам'яниця → Сонячна кам'яниця → Офіс → Хмарочос → Altus Tower → Varso Tower 310 м (найвища в ЄС).",
     continueTitle: "Продовжити гру",
     continueEmpty: "Ще не грав. Починай з {game} і згенеруй перші Вати.",
     record: "Рекорд",
@@ -393,7 +393,7 @@ const uk: typeof plDict = {
     wrongMark: "Неправильно ✗",
     expired: "Цей AI-виклик вже завершився. Дивись Hall of Fame.",
     tFTrueLabel: "ПРАВДА",
-    tFFalseLabel: "БРЕХНЯ",
+    tFFalseLabel: "НЕПРАВДА",
     matchPairs: "Пари",
     tries: "Спроби",
     correctPosition: "На правильному місці",
@@ -468,7 +468,7 @@ const uk: typeof plDict = {
       { name: "Generate (Sonnet PL)", details: ["lib/ai-pipeline/generate.ts","Claude Sonnet 4.6 продукує PL spec за kind-specific схемою.","Prompt caching на системному промпті."] },
       { name: "Translate (Haiku ×3)", details: ["Claude Haiku 4.5 перекладає PL spec паралельно в UK / CS / EN.","Числові інваріанти заблоковані з PL.","PL-native терміни (zł, BLIK, NBP, RRSO) захищені."] },
       { name: "Validate", details: ["zod schemas + portfolio diversity gate."] },
-      { name: "Publish + archive", details: ["Envelope `xp:ai-games:<id>` постійний.","Index capнут на 3 активні ігри; виштовхані ігри залишаються грабельними через /games/ai/<id>.","Archive record для Зали Слави."] },
+      { name: "Publish + archive", details: ["Envelope `xp:ai-games:<id>` постійний.","Index обмежений до 3 активних ігор; витіснені ігри залишаються гральними через /games/ai/<id>.","Archive record для Зали Слави."] },
       { name: "UI rollout", details: ["Унікальний SVG візуал hashed з game id (768 комбінацій).","Renderer вибере spec за lang cookie (PL fallback).","Медалі за топ-3 залишаються назавжди."] },
     ],
     pipelineSecurityLabel: "Безпека:",
@@ -477,7 +477,7 @@ const uk: typeof plDict = {
     securityNote: "Cron endpoint захищено заголовком Bearer <CRON_SECRET>. Жодне PII користувача не покидає Upstash.",
     securityNoteLabel: "Безпека:",
     sourceTitle: "Джерело правди:",
-    tierPathText: "Дерев'яна хатинка (Ніковіце) → Будинок робітника → Сімейний дім → Кам'яниця → Сонячна кам'яниця → Офіс → Хмарочос → Altus Tower (125 м) → Varso Tower (310 м, найвища в ЄС).",
+    tierPathText: "Дерев'яна хатинка (Nikiszowiec) → Будинок робітника → Сімейний дім → Кам'яниця → Сонячна кам'яниця → Офіс → Хмарочос → Altus Tower (125 м) → Varso Tower (310 м, найвища в ЄС).",
     tierPathHighlight: "Varso Tower",
     tech: [
       { name: "Next.js 16", note: "App Router, RSC, Turbopack." },
@@ -565,7 +565,7 @@ const uk: typeof plDict = {
     web3Body:
       "Якщо активуєш соулбаунд медалі у /profile (потрібна згода батьків для акаунтів < 16 років), обмежений набір даних потрапить у публічний блокчейн (Base, L2 Ethereum): адреса твого гаманця, детермінований tokenId (хеш нікнейму + id досягнення) та IPFS-посилання на метадані медалі (назва досягнення, іконка). Ми не надсилаємо e-mail, ім'я, ID сесії чи будь-які PII на блокчейн. Медалі непередавані (соулбаунд). Відкликання згоди запускає `burn(tokenId)` для кожної раніше мінтованої медалі — on-chain-посилання зникає (подія Transfer → 0x0 публічна). Opt-in, за замовчуванням вимкнено. Деталі в `docs/web3/PLAN.md`.",
     version: "Версія 1.0 · 2026-04-18 ·",
-    backHome: "Назад до дому",
+    backHome: "Назад на головну",
     dataFields: {
       usernameValue: "<те, що ти ввів>",
       passwordValue: "scrypt хеш + сіль (64 байти)",

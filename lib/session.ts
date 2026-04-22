@@ -1,3 +1,21 @@
+/* HMAC-signed cookie sessions — no external auth library.
+ *
+ * Shape: cookie `xp_sess = ${base64url(payload)}.${base64url(hmac)}`.
+ * Payload is `{username, issuedAt}`; HMAC is SHA-256 with `SESSION_SECRET`.
+ * `getSession()` verifies the signature in constant time (`timingSafeEqual`)
+ * and returns null on any decode / signature / shape mismatch.
+ *
+ * Invariants
+ *  - `SESSION_SECRET` ≥ 16 chars in production — enforced at module init
+ *    (we throw on the first `getSecret()` call if missing).
+ *  - Cookie is HttpOnly + SameSite=Lax + Secure-in-prod. JS can't read it.
+ *  - 30-day max-age; no refresh rotation (hackathon scope). Users who stay
+ *    signed in longer just re-login — no silent session extension path.
+ *
+ * Related:
+ *  - `lib/csrf.ts` for same-origin mutation protection.
+ *  - `app/api/auth/{login,register,logout}/route.ts` for issue/clear paths.
+ */
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 

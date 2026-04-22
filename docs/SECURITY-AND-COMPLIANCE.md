@@ -61,12 +61,15 @@ Registration:
 Login:
   – Constant-time comparison (timingSafeEqual)
   – Same error message for bad username + bad password
-  – No rate limiting yet (Phase 6.1.3)
+  – Per-IP rate-limit via `lib/client-ip.ts` + `lib/rate-limit.ts`
+    (default 20/min; tunable via `LOGIN_IP_LIMIT` env).
 ```
 
 ### Hardening required pre-launch
 
-- [ ] **Rate limiting** — max 5 login attempts per IP per minute, then exponential backoff (Phase 6.1.3)
+- [x] **Rate limiting (per-IP)** — register + login guarded by a fixed
+      window on `clientIp(req)`. Defaults 5/h (register) and 20/min
+      (login). See `REGISTER_IP_LIMIT` / `LOGIN_IP_LIMIT`.
 - [ ] **Password complexity** — currently only length; consider rejecting top-1000 common passwords
 - [ ] **Brute force lockout** — 10 failed logins → temporary account lockout (15 min)
 - [ ] **CAPTCHA** on registration (Phase 6.1; weighed against UX cost for kids)
@@ -130,20 +133,26 @@ Zod errors logged but not echoed to user (don't leak schema internals).
 
 Forms validate before submit (better UX). Server still validates; never trust client.
 
-### Rate limiting (Phase 6.1.3)
+### Rate limiting
 
-Per-endpoint policy:
+Shipped (2026-04-21 backlog sweep) as a Redis fixed-window counter in
+`lib/rate-limit.ts`. Per-IP caps on `/api/auth/login` and
+`/api/auth/register` use `lib/client-ip.ts` to key on the first
+`x-forwarded-for` entry.
+
+Active per-endpoint policy:
 
 ```
-/api/auth/login        → 5 / IP / minute (then 15-min lockout after 10 failures)
-/api/auth/register     → 3 / IP / hour (prevent account farms)
-/api/score             → 60 / session / minute (one game per ~second is plenty)
-/api/buildings/place   → 10 / session / minute
-/api/loans/take        → 3 / session / hour
-/api/admin/*           → 100 / day total (alert if exceeded)
+/api/auth/login        → LOGIN_IP_LIMIT    (default 20 / IP / minute)
+/api/auth/register     → REGISTER_IP_LIMIT (default 5  / IP / hour)
+/api/buildings/*       → 5 / user / minute (place, upgrade, demolish)
+/api/admin/*           → bearer-gated; no count cap (monitored via logs)
 ```
 
-Implementation: Redis sliding window counters keyed by `rl:<scope>:<bucket>`.
+Keys look like `xp:ratelimit:<scope>:<windowStart>` — TTL = window +
+5s grace. Both env vars are overridable at runtime; Playwright bumps
+both to `1000` so bot-protection tests only fire on explicit opt-in
+(`BOT_PROTECTION_E2E=1`).
 
 ## 5. Data privacy (GDPR)
 
@@ -213,19 +222,26 @@ In PL, the GDPR consent age is **16** (not the GDPR-default 13). For users under
 - Parental consent required
 - Verifiable (not just check-box)
 
-### Implementation plan (Phase 6.3)
+### Implementation (Phase 6.3 — wired 2026-04-21)
 
 ```
 Registration flow for kid (claimed age < 16):
   1. Show "Czy masz 16 lat?" question
      – YES → standard registration, kid is treated as full GDPR data subject
      – NO  → enter parent's email
-  2. Send email to parent with magic link
+  2. `lib/mailer.ts` dispatches the invite. Adapter order: Resend →
+     SendGrid → structured `mail.would-send` log line (used in dev /
+     CI / when no provider is configured).
   3. Parent clicks link → confirmation page → grant consent
   4. Account activated only after parent confirms
   5. Audit trail: { kidUsername, parentEmail, confirmedAt, ipAddress } stored encrypted in xp:consent:<username>
   6. Parent can revoke consent at any time → kid account becomes read-only, then deleted after 30 days
 ```
+
+Env required to actually mail: `RESEND_API_KEY` or `SENDGRID_API_KEY`
+plus `MAIL_FROM` and `APP_BASE_URL` for absolute link construction.
+Without them the adapter logs what it would have sent but does not
+block the registration path — a deliberate dev-ergonomics choice.
 
 **Critical**: parent email is the ONLY PII collected from a real adult. Encrypted at rest (`xp:consent:` keys are encrypted via separate KMS key, not just scrypt — actually a symmetric key, so we can decrypt for parent to revoke).
 
@@ -438,7 +454,7 @@ CSP allowlist:
 vercel ls                         # find last good deployment
 vercel rollback <deployment-url>  # promote it to production
 # verify smoke tests
-# investigate broken deploy on watt-city branch, fix, re-deploy
+# investigate broken deploy on main, fix, re-deploy
 ```
 
 ### Data corruption recovery

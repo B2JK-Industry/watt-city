@@ -125,6 +125,16 @@ one, then play it at `/games/ai/<id>`.
 - `CRON_SECRET` — shared secret Vercel Cron / external pinger send in
   `Authorization: Bearer`; omit during dev to allow any caller
 - `ADMIN_SECRET` — required by `/api/admin/*` in production
+- `REGISTER_IP_LIMIT` / `LOGIN_IP_LIMIT` — per-IP rate-limit ceilings for
+  `/api/auth/register` and `/api/auth/login` (defaults 5/h and 20/min;
+  Playwright bumps both to `1000` so test runs aren't self-throttled)
+- Mail adapter (`lib/mailer.ts`; parental-consent invites, falls back to
+  log-only if nothing is configured):
+  - `RESEND_API_KEY` — preferred provider
+  - `SENDGRID_API_KEY` — fallback provider
+  - `MAIL_FROM` — default `From` address (e.g. `Watt City <no-reply@watt-city.vercel.app>`)
+- `APP_BASE_URL` — absolute base for parent-consent links emitted from
+  server code that has no request context (default `https://watt-city.vercel.app`)
 - Web3 (opt-in, default off — see "Web3 surface" below):
   - `NEXT_PUBLIC_WEB3_ENABLED=true` activates the `/profile` on-chain gallery
   - `NEXT_PUBLIC_WEB3_CHAIN_ID=84532` (Base Sepolia testnet)
@@ -170,10 +180,16 @@ rotation, language switch, mobile.
 
 ## Tests
 
-`pnpm test` runs the vitest suite (49+ unit tests as of this writing
-covering research bucket, rotation idempotency, resource yield math,
+`pnpm test` runs the vitest suite (635/635 across 80 files as of
+2026-04-22 — research bucket, rotation idempotency, resource yield math,
 ledger dedupe, building place/upgrade/demolish, tick catch-up with 30-day
-cap, amortization formula, default after 3 misses).
+cap, amortization formula, default after 3 misses, cron auth matrix,
+rate-limit keying, mailer fallback, awardXP lock, parent-link redeem).
+
+Playwright E2E (13 specs): `pnpm test:e2e` covers smoke, prod-smoke,
+api-contracts, security, data-integrity, a11y-matrix, golden-paths,
+perf, production-ready, rate-limits, bot-protection (opt-in), pwa,
+smoke.mobile, smoke.cross.
 
 ## Docs
 

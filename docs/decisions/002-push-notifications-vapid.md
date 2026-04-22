@@ -7,7 +7,7 @@ type: project
 # ADR 002 — Push notifications held behind VAPID provisioning
 
 **Date**: 2026-04-19
-**Status**: accepted
+**Status**: accepted — still held. GDPR-K parental-consent scaffolding (Phase 6.3) shipped (`lib/gdpr-k.ts`, `/api/consent/[token]`, SMTP adapter `lib/mailer.ts` with Resend/SendGrid + log-only fallback). Push remains gated until a VAPID pair is provisioned on Vercel and the per-user push opt-in UI + admin test-push tool land.
 **Supersedes**: nothing
 
 ## Context

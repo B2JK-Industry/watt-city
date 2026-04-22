@@ -21,7 +21,7 @@
 
 ### Operator action needed — Base Sepolia deploy
 
-**Status**: **BLOCKED on operator funding**. Deploy script is ready; needs a funded EOA.
+**Status (2026-04-22)**: **BLOCKED on operator funding** at W7 submission. Deploy script + verification command are ready; needs a funded EOA. The ETHSilesia demo shipped against the local anvil fallback below. Post-hackathon (winner, 1st place PKO Gaming track) the Base Sepolia deploy is still the next on-chain milestone before any mainnet path.
 
 ```bash
 # Prereqs: fund DEPLOYER_PRIVATE_KEY wallet with ≥ 0.01 ETH on Base Sepolia

@@ -530,9 +530,31 @@ Single-branch workflow since 2026-04-20. `watt-city` was fast-forward-merged int
 
 - Branch: `main` (only)
 - Project: `xp-arena-ethsilesia2026` on Vercel (pending rename per operator)
-- Domain: `xp-arena-ethsilesia2026.vercel.app` (custom domain migration TBD — e.g. `watt-city.vercel.app`)
+- Domain: `watt-city.vercel.app` is the canonical alias; `xp-arena-ethsilesia2026.vercel.app` still resolves as the Vercel project URL
 - Redis: existing Upstash
 - Status: active development (PKO Gaming track 1st place, ETHSilesia 2026 — partnership path live)
+
+> **Post-audit note (2026-04-22).** The 13-item production-readiness
+> backlog closed in commits `91139f3` + `5dd81e0`. Five items touched
+> this document's scope:
+>
+> - **Per-IP rate-limit** on `/api/auth/register` + `/api/auth/login` via
+>   `lib/client-ip.ts` + `lib/rate-limit.ts`; defaults configurable via
+>   `REGISTER_IP_LIMIT` / `LOGIN_IP_LIMIT` env.
+> - **Mail adapter** `lib/mailer.ts` — Resend → SendGrid → log-only; used
+>   by the parental-consent invite. `RESEND_API_KEY` / `SENDGRID_API_KEY`
+>   / `MAIL_FROM` / `APP_BASE_URL` envs wire it up.
+> - **Cron consolidation** — all four `/api/cron/*` routes now share
+>   `lib/cron-auth.ts`. Dev bypass is NODE_ENV-gated, so preview + prod
+>   always require a bearer.
+> - **Parent-link bridge** — `/api/parent-link/{issue,redeem}` is wired
+>   end-to-end (prior work was scaffolding only).
+> - **`awardXP` single-flight lock** — race between concurrent score
+>   submits that double-credited the global leaderboard is closed.
+>
+> Follow-on doc work: §3 (Redis key map) needs entries for
+> `xp:ratelimit:…` buckets (already in use) and `xp:parental-consent:*`
+> (Phase 6.3.5) once the consent record shape settles.
 
 ## 13. Observability
 

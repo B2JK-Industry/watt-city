@@ -1,7 +1,7 @@
 # ADR 004 — Duel removal (V3.6) + future "Mądry Wybór" design sketch
 
 **Date**: 2026-04-19
-**Status**: accepted (landed in V3.6)
+**Status**: Implemented 2026-04-19 (landed in V3.6). `lib/duel.legacy.ts` still present as an archived reference; "Mądry Wybór" remains a design sketch, not scheduled.
 **Depth**: `lib/duel.ts` → `lib/duel.legacy.ts` (git history retained); `app/duel/`, `app/api/duel/`, `components/duel/` removed.
 
 ## Context

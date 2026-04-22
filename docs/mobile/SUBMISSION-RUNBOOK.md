@@ -13,7 +13,9 @@ the checklist a human follows with the scaffolding the agent shipped.
   submission.
 - Google Play Console account (USD 25 one-time) — required for Play
   Store submission.
-- Node 22+, pnpm 10+, Ruby + CocoaPods (iOS), JDK 17 (Android).
+- Node 20 LTS or 22 LTS (repo currently targets `@types/node@^20`;
+  Node 25 is incompatible with Hardhat 2.x per `docs/web3/DEPLOY.md §0`),
+  pnpm 10+, Ruby + CocoaPods (iOS), JDK 17 (Android).
 
 ## One-time scaffold (operator runs once)
 

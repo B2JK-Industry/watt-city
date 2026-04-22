@@ -25,7 +25,11 @@ drives engineering choices.
 | PKO Junior mock audit | `xp:pko-audit:<u>` (LIST cap 200) | 200 entries or 5 years (legal), whichever is longer | LTRIM + cron sweep |
 | Parent↔child link codes | `xp:link-code:<code>` | 24 h TTL | Redis TTL |
 | Rate-limit buckets | `xp:ratelimit:*:<window>` | ~1-60 min TTL | Redis TTL |
-| Parental consent audit | `xp:parental-consent:*` (Phase 6.3.5) | 5 years (GDPR Art. 7 §1 evidencing) | Cron sweep after 5 years |
+| Parental consent audit | `xp:parental-consent:*` (Phase 6.3.5) | 50-entry rolling cap via `lPush` + `lTrim`; 5 years target retention per GDPR Art. 7 §1 evidencing | Cron sweep after 5 years |
+| Consent pending tokens | `xp:consent-pending:<token>` | 48 h TTL | Redis TTL |
+| Consent granted record | `xp:consent-granted:<u>` | Until revocation or account delete | Manual revoke / hard-erase |
+| Mail dispatch logs | Vercel logs only (structured `event:"mail.would-send"`) — domain + subject prefix, never full address or body | Retained per Vercel log-retention policy | Log rotation |
+| Web3 mint log + consent-revoked flag | `xp:web3:mint-log:<u>`, `xp:web3:consent-revoked:<u>` | Until hard-erase | Soft-delete cascade |
 | Cookie-consent ack | Browser `localStorage` | Client-side until user clears | N/A |
 
 ## Soft-delete grace (Phase 6.2.4)
@@ -41,9 +45,13 @@ drives engineering choices.
 
 - Cron `/api/cron/sweep-inactive-kids` (Phase 6.3) scans for users:
   - Age-flag < 16 (from `xp:user:<u>:age-bucket`)
-  - `xp:player:<u>.lastTickAt` > 12 months ago
+  - `xp:player:<u>.lastTickAt` > 12 months ago (`INACTIVE_KID_AUTO_DELETE_MS` in `lib/gdpr-k.ts`)
   - No session activity in 12 months
 - Action: flag for 30-day soft-delete (same path as user-initiated).
+- Cron auth: shared via `lib/cron-auth.ts`. Dev-bypass is gated on
+  `NODE_ENV === "development"` with no secret configured; every other
+  environment (preview / CI / production) requires a bearer match —
+  anonymous triggers cannot purge accounts.
 
 ## Backup retention (Phase 5.4.3)
 

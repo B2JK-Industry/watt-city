@@ -74,7 +74,7 @@ const cs: typeof plDict = {
     unlocksLabel: "Odemyká:",
     stillLabel: "Ještě",
     pathCaption:
-      "Cesta: Dřevěná chatrč → Nikiszowiec → Rodinný dům → Kamenice → Solární kamenice → Kancelář → Mrakodrap → Altus Tower → Varso Tower 310 m (nejvyšší v EU).",
+      "Cesta: Dřevěná chatrč → Nikiszowiec → Rodinný dům → Činžák → Solární činžák → Kancelář → Mrakodrap → Altus Tower → Varso Tower 310 m (nejvyšší v EU).",
     continueTitle: "Pokračovat ve hře",
     continueEmpty: "Ještě jsi nehrál. Začni s {game} a vygeneruj první Watty.",
     record: "Rekord",
@@ -570,7 +570,7 @@ const cs: typeof plDict = {
       usernameValue: "<co jsi zadal>",
       passwordValue: "scrypt hash + sůl (64 bajtů)",
       wattsValue: "číselné hodnoty per hra",
-      statsValue: "počet pokusů, best skóre, čas posledné hry",
+      statsValue: "počet pokusů, best skóre, čas poslední hry",
       duelsValue: "kód, odpovědi, časy kol",
       sessionValue: "HMAC-signed, HttpOnly, 30 dní",
       untilDelete: "dokud nesmažeš účet",

@@ -14,6 +14,8 @@
 
 **ETHSilesia 2026** · submitted by **B2JK Industry**
 
+> **Post-hackathon note (2026-04-22)**: Watt City won **1st place in the PKO Gaming track**. The Web3/Base submission below is preserved as-is for the judging record. Base mainnet deploy is still gated on the external audit per `docs/web3/DEPLOY.md §5`.
+
 ## The one-paragraph pitch
 
 Watt City is a gamified financial-literacy city-builder for kids (10–16) pitched to PKO Bank Polski as an SKO 2.0 partnership prototype. Kids play minigames to earn virtual resources, build their city, take a virtual mortgage with real RRSO math, and learn financial concepts without touching real money. The **Web3 surface** adds **soulbound on-chain medals** for their off-chain achievements — a verifiable, permanent record that the kid owns forever, with **parental consent required** for every under-16 account and **GDPR Art. 17 burn-on-revocation** built in. This is the first kid-safe on-chain achievement system aligned with the Polish national curriculum and banking-supervisor-ready compliance posture.

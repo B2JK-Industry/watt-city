@@ -7,7 +7,7 @@ type: project
 # ADR 003 — Web3 scope: soulbound medals, scaffold-only
 
 **Date**: 2026-04-19
-**Status**: accepted
+**Status**: accepted — partially superseded by W1..W7 execution (dc40def → 046c120). Soulbound `WattCityMedal` ERC-721 shipped with Foundry test suite, mint API, burn-on-revocation, RainbowKit/wagmi client, `/profile` gallery, and ETHSilesia submission package. Base Sepolia deploy remained operator-blocked on faucet funding at time of W7 (see `docs/web3/DEPLOYMENTS.md`). Mainnet still gated on the external audit per `DEPLOY.md §5`.
 **Supersedes**: nothing
 
 ## Context

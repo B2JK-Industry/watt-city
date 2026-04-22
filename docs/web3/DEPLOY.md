@@ -3,6 +3,12 @@
 > Operator-led. Every step here involves funded wallets + irreversible
 > on-chain actions. Do NOT run this against mainnet before the audit
 > lands (Phase 8.1.7).
+>
+> **Status (2026-04-22)**: Foundry toolchain is the shipped path
+> (see `foundry.toml` + `contracts/script/Deploy.s.sol`); the Hardhat
+> commands below remain as an alternate route. Base Sepolia deploy is
+> ready but still operator-blocked on faucet funding — substitute the
+> published address via `scripts/fill-web3-submission.ts` once funded.
 
 ## 0. Prerequisites
 

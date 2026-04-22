@@ -8,7 +8,7 @@ type: project
 
 **Date**: 2026-04-18
 **Decision authors**: autonomous agent (executing the tech-lead kickoff prompt)
-**Status**: accepted
+**Status**: accepted — implemented; three-trigger path live as of 2026-04-18. Cron-auth consolidation landed in `lib/cron-auth.ts` (0f8369e, deep-audit Phase 2); all four `/api/cron/*` routes share the same auth gate and dev-bypass is gated on `NODE_ENV === "development"`.
 **Supersedes**: previous daily-at-09:00 cron schedule
 
 ## Context
