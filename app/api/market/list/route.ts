@@ -4,6 +4,7 @@ import { getSession } from "@/lib/session";
 import { getPlayerState } from "@/lib/player";
 import { createListing } from "@/lib/marketplace";
 import { rateLimit } from "@/lib/rate-limit";
+import { withPlayerLock } from "@/lib/player-lock";
 
 const BodySchema = z.object({
   instanceId: z.string().min(1).max(64),
@@ -29,9 +30,11 @@ export async function POST(request: NextRequest) {
       { status: 400 },
     );
   }
-  const state = await getPlayerState(session.username);
-  const result = await createListing(state, body);
-  if (!result.ok)
-    return Response.json(result, { status: 400 });
-  return Response.json(result);
+  return withPlayerLock(session.username, async () => {
+    const state = await getPlayerState(session.username);
+    const result = await createListing(state, body);
+    if (!result.ok)
+      return Response.json(result, { status: 400 });
+    return Response.json(result);
+  });
 }

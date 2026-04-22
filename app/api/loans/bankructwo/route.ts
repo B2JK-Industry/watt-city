@@ -2,6 +2,7 @@ import { getSession } from "@/lib/session";
 import { getPlayerState } from "@/lib/player";
 import { bankructwoReset, eligibleForBankructwo } from "@/lib/loans";
 import { rateLimit } from "@/lib/rate-limit";
+import { withPlayerLock } from "@/lib/player-lock";
 
 export async function POST() {
   const session = await getSession();
@@ -16,24 +17,26 @@ export async function POST() {
       { status: 429 },
     );
   }
-  const state = await getPlayerState(session.username);
-  if (!eligibleForBankructwo(state)) {
-    return Response.json(
-      {
-        ok: false,
-        error: "not-eligible",
-        hint: "need ≥1 defaulted loan AND monthlyCashflow < activeMonthlyPayments",
-      },
-      { status: 400 },
-    );
-  }
-  const { demolished } = await bankructwoReset(state);
-  return Response.json({
-    ok: true,
-    demolished,
-    creditScore: state.creditScore,
-    buildings: state.buildings,
-    loans: state.loans,
+  return withPlayerLock(session.username, async () => {
+    const state = await getPlayerState(session.username);
+    if (!eligibleForBankructwo(state)) {
+      return Response.json(
+        {
+          ok: false,
+          error: "not-eligible",
+          hint: "need ≥1 defaulted loan AND monthlyCashflow < activeMonthlyPayments",
+        },
+        { status: 400 },
+      );
+    }
+    const { demolished } = await bankructwoReset(state);
+    return Response.json({
+      ok: true,
+      demolished,
+      creditScore: state.creditScore,
+      buildings: state.buildings,
+      loans: state.loans,
+    });
   });
 }
 

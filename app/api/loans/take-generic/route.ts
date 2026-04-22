@@ -4,6 +4,7 @@ import { getSession } from "@/lib/session";
 import { getPlayerState } from "@/lib/player";
 import { takeLoan, LOAN_CONFIGS } from "@/lib/loans";
 import { rateLimit } from "@/lib/rate-limit";
+import { withPlayerLock } from "@/lib/player-lock";
 
 const BodySchema = z.object({
   type: z.enum(["mortgage", "kredyt_obrotowy", "kredyt_konsumencki", "leasing"]),
@@ -43,16 +44,18 @@ export async function POST(request: NextRequest) {
       { status: 400 },
     );
   }
-  const state = await getPlayerState(session.username);
-  const result = await takeLoan(state, body);
-  if (!result.ok) {
-    return Response.json({ ok: false, error: result.error }, { status: 400 });
-  }
-  return Response.json({
-    ok: true,
-    loan: result.loan,
-    resources: result.state.resources,
-    caution: cfg.caution,
+  return withPlayerLock(session.username, async () => {
+    const state = await getPlayerState(session.username);
+    const result = await takeLoan(state, body);
+    if (!result.ok) {
+      return Response.json({ ok: false, error: result.error }, { status: 400 });
+    }
+    return Response.json({
+      ok: true,
+      loan: result.loan,
+      resources: result.state.resources,
+      caution: cfg.caution,
+    });
   });
 }
 

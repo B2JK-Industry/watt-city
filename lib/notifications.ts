@@ -139,11 +139,24 @@ export async function readPrefs(
   };
 }
 
+export type NotificationPrefsPatch = {
+  enabled?: Partial<Record<NotificationChannel, boolean>>;
+  quietHours?: Partial<NotificationSettings["quietHours"]>;
+};
+
+/** Deep-merge patch into the existing prefs. Callers (validated route
+ *  handler) may pass sub-objects with only the changed fields; we keep
+ *  the untouched keys intact rather than the old shallow spread which
+ *  replaced the whole `enabled` / `quietHours` sub-object. */
 export async function writePrefs(
   username: string,
-  patch: Partial<NotificationSettings>,
+  patch: NotificationPrefsPatch,
 ): Promise<NotificationSettings> {
-  const next = { ...(await readPrefs(username)), ...patch };
+  const cur = await readPrefs(username);
+  const next: NotificationSettings = {
+    enabled: { ...cur.enabled, ...(patch.enabled ?? {}) },
+    quietHours: { ...cur.quietHours, ...(patch.quietHours ?? {}) },
+  };
   await kvSet(PREFS_KEY(username), next);
   return next;
 }

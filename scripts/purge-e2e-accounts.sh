@@ -13,13 +13,15 @@ set -euo pipefail
 
 DRY_RUN="true"
 INCLUDE_SINGLE="false"
+INCLUDE_AMBIGUOUS="false"
 for arg in "$@"; do
   case "$arg" in
     --commit) DRY_RUN="false" ;;
     --include-single-letter) INCLUDE_SINGLE="true" ;;
+    --include-ambiguous) INCLUDE_AMBIGUOUS="true" ;;
     *)
       echo "unknown arg: $arg" >&2
-      echo "usage: $0 [--commit] [--include-single-letter]" >&2
+      echo "usage: $0 [--commit] [--include-ambiguous] [--include-single-letter]" >&2
       exit 1
       ;;
   esac
@@ -41,8 +43,14 @@ else
   echo "→ COMMIT MODE — this will hardErase() every matching account."
 fi
 
+BODY="{\"dryRun\": $DRY_RUN, \"includeAmbiguous\": $INCLUDE_AMBIGUOUS, \"includeSingleLetter\": $INCLUDE_SINGLE"
+if [[ "$DRY_RUN" == "false" ]]; then
+  BODY="$BODY, \"confirm\": \"purge-e2e-accounts-for-real\""
+fi
+BODY="$BODY}"
+
 curl -sS -X POST "$HOST/api/admin/purge-e2e-accounts" \
   -H "Authorization: Bearer $SECRET" \
   -H "Content-Type: application/json" \
-  -d "{\"dryRun\": $DRY_RUN, \"includeSingleLetter\": $INCLUDE_SINGLE}" \
+  -d "$BODY" \
   | jq '.'

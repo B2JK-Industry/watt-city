@@ -2,6 +2,7 @@ import { getSession } from "@/lib/session";
 import { getPlayerState, savePlayerState } from "@/lib/player";
 import { computePlayerTier } from "@/lib/buildings";
 import { pushNotification } from "@/lib/notifications";
+import { withPlayerLock } from "@/lib/player-lock";
 
 // GET: returns current tier + whether a celebration is pending. If a tier-up
 // happened since the last acknowledgement, `justLeveledTo > previousTier`.
@@ -40,9 +41,11 @@ export async function GET() {
 export async function POST() {
   const session = await getSession();
   if (!session) return Response.json({ ok: false, error: "unauthorized" }, { status: 401 });
-  const state = await getPlayerState(session.username);
-  const tier = computePlayerTier(state.buildings);
-  state.acknowledgedTier = tier;
-  await savePlayerState(state);
-  return Response.json({ ok: true, tier });
+  return withPlayerLock(session.username, async () => {
+    const state = await getPlayerState(session.username);
+    const tier = computePlayerTier(state.buildings);
+    state.acknowledgedTier = tier;
+    await savePlayerState(state);
+    return Response.json({ ok: true, tier });
+  });
 }

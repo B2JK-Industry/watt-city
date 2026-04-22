@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, after } from "next/server";
 import { z } from "zod";
 import { getSession } from "@/lib/session";
 import { awardXP } from "@/lib/leaderboard";
@@ -174,41 +174,38 @@ export async function POST(request: NextRequest) {
   }
 
   const level = levelFromXP(xpResult.globalXP);
-  // Parallelize + fire-and-forget the two terminal side-effects.
-  // Achievements land on the next `/api/me/achievements` poll anyway;
-  // `recordEvent` is analytics-only (never read in-request). Running
-  // them in parallel halves the tail-latency on the hot path; not
-  // awaiting them hands the response back to the client as soon as
-  // the score + resources are persisted. Errors are logged inside
-  // each fn — a background failure doesn't fail the request.
-  const backgroundWork = Promise.all([
-    sweepAchievements(session.username).catch((e) =>
-      console.error(
-        JSON.stringify({
-          event: "score.sweepAchievements-failed",
-          user: session.username,
-          error: (e as Error).message,
-        }),
+  // Terminal side-effects run via `after()` so Vercel's runtime holds
+  // the invocation alive until both complete — a plain `void promise`
+  // would get torn down the moment the response flushes. Achievements
+  // land in the same request window (next `/api/me/achievements` poll
+  // sees them); `recordEvent` analytics lands in the ledger. Errors
+  // are logged per-call — a background failure never fails the client.
+  after(async () => {
+    await Promise.all([
+      sweepAchievements(session.username).catch((e) =>
+        console.error(
+          JSON.stringify({
+            event: "score.sweepAchievements-failed",
+            user: session.username,
+            error: (e as Error).message,
+          }),
+        ),
       ),
-    ),
-    recordEvent({
-      kind: "score_submitted",
-      user: session.username,
-      meta: { gameId, aiKind, xp, isNewBest: xpResult.isNewBest },
-    }).catch((e) =>
-      console.error(
-        JSON.stringify({
-          event: "score.recordEvent-failed",
-          user: session.username,
-          error: (e as Error).message,
-        }),
+      recordEvent({
+        kind: "score_submitted",
+        user: session.username,
+        meta: { gameId, aiKind, xp, isNewBest: xpResult.isNewBest },
+      }).catch((e) =>
+        console.error(
+          JSON.stringify({
+            event: "score.recordEvent-failed",
+            user: session.username,
+            error: (e as Error).message,
+          }),
+        ),
       ),
-    ),
-  ]);
-  // Hold a reference on `globalThis` so Vercel's runtime doesn't
-  // cancel the promise when the response is sent. On local Node the
-  // promise resolves normally regardless.
-  void backgroundWork;
+    ]);
+  });
 
   // xpResult already carries the authoritative isNewBest / delta /
   // previousBest derived from the per-game leaderboard ZSET. user-stats

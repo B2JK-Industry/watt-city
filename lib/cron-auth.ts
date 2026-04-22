@@ -1,4 +1,15 @@
 import type { NextRequest } from "next/server";
+import { timingSafeEqual } from "node:crypto";
+
+/** Constant-time string compare. `timingSafeEqual` requires equal-length
+ *  Buffers; mismatched lengths short-circuit to `false` without leaking
+ *  the secret's length through an early-return timing channel. */
+function safeTokenEqual(a: string, b: string): boolean {
+  const bufA = Buffer.from(a, "utf8");
+  const bufB = Buffer.from(b, "utf8");
+  if (bufA.length !== bufB.length) return false;
+  return timingSafeEqual(bufA, bufB);
+}
 
 /* Shared cron authorisation — Phase 2 deep audit.
  *
@@ -43,8 +54,9 @@ export function isCronAuthorised(
   const isVercelCron = request.headers.get("x-vercel-cron") === "1";
 
   if (isVercelCron) return true;
-  if (cronSecret && token === cronSecret) return true;
-  if (opts.allowAdminBearer && adminSecret && token === adminSecret) return true;
+  if (cronSecret && safeTokenEqual(token, cronSecret)) return true;
+  if (opts.allowAdminBearer && adminSecret && safeTokenEqual(token, adminSecret))
+    return true;
 
   // Dev-only open bypass: ONLY in `next dev` with no secret configured.
   // `NODE_ENV` is "development" under `next dev`, "production" under

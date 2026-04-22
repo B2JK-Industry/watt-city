@@ -9,6 +9,7 @@ import {
   hasParentalConsent,
 } from "@/lib/gdpr-k";
 import { burnAllForUser } from "@/lib/web3/burn-all";
+import { withPlayerLock } from "@/lib/player-lock";
 
 const PatchSchema = z.object({
   avatar: z.string().max(16).optional(),
@@ -58,50 +59,52 @@ export async function PATCH(request: NextRequest) {
   if (body.avatar && !AVATARS.some((a) => a.id === body.avatar)) {
     return Response.json({ ok: false, error: "unknown-avatar" }, { status: 400 });
   }
-  const state = await getPlayerState(session.username);
-  state.profile = {
-    ...(state.profile ?? {}),
-    ...(body.avatar !== undefined ? { avatar: body.avatar } : {}),
-    ...(body.displayName !== undefined ? { displayName: body.displayName.trim() } : {}),
-  };
+  return withPlayerLock(session.username, async () => {
+    const state = await getPlayerState(session.username);
+    state.profile = {
+      ...(state.profile ?? {}),
+      ...(body.avatar !== undefined ? { avatar: body.avatar } : {}),
+      ...(body.displayName !== undefined ? { displayName: body.displayName.trim() } : {}),
+    };
 
-  // web3OptIn write gate: under-16 users can't set it to true without
-  // a parent-granted consent record. Any-age user can flip it off.
-  let burnResult: Awaited<ReturnType<typeof burnAllForUser>> | null = null;
-  const nextOptIn = body.onboarding?.web3OptIn;
-  const prevOptIn = state.onboarding?.web3OptIn === true;
-  if (nextOptIn === true && !prevOptIn) {
-    const [ageBucket, parentalConsent] = await Promise.all([
-      readAgeBucket(session.username),
-      hasParentalConsent(session.username),
-    ]);
-    const needsParent = ageBucket ? requiresParentalConsent(ageBucket) : true;
-    if (needsParent && !parentalConsent) {
-      return Response.json(
-        { ok: false, error: "parent-consent-required" },
-        { status: 403 },
-      );
+    // web3OptIn write gate: under-16 users can't set it to true without
+    // a parent-granted consent record. Any-age user can flip it off.
+    let burnResult: Awaited<ReturnType<typeof burnAllForUser>> | null = null;
+    const nextOptIn = body.onboarding?.web3OptIn;
+    const prevOptIn = state.onboarding?.web3OptIn === true;
+    if (nextOptIn === true && !prevOptIn) {
+      const [ageBucket, parentalConsent] = await Promise.all([
+        readAgeBucket(session.username),
+        hasParentalConsent(session.username),
+      ]);
+      const needsParent = ageBucket ? requiresParentalConsent(ageBucket) : true;
+      if (needsParent && !parentalConsent) {
+        return Response.json(
+          { ok: false, error: "parent-consent-required" },
+          { status: 403 },
+        );
+      }
     }
-  }
-  if (nextOptIn === false && prevOptIn) {
-    // Best-effort — log any per-token errors but don't fail the flip.
-    burnResult = await burnAllForUser(session.username).catch((err) => ({
-      attempted: 0,
-      burned: [],
-      skipped: [],
-      errors: [{ tokenId: "?", reason: err instanceof Error ? err.message : String(err) }],
-    }));
-  }
+    if (nextOptIn === false && prevOptIn) {
+      // Best-effort — log any per-token errors but don't fail the flip.
+      burnResult = await burnAllForUser(session.username).catch((err) => ({
+        attempted: 0,
+        burned: [],
+        skipped: [],
+        errors: [{ tokenId: "?", reason: err instanceof Error ? err.message : String(err) }],
+      }));
+    }
 
-  state.onboarding = {
-    ...(state.onboarding ?? {}),
-    ...(body.onboarding ?? {}),
-  };
-  await savePlayerState(state);
-  return Response.json({
-    ok: true,
-    profile: state.profile,
-    onboarding: state.onboarding,
-    ...(burnResult ? { burn: burnResult } : {}),
+    state.onboarding = {
+      ...(state.onboarding ?? {}),
+      ...(body.onboarding ?? {}),
+    };
+    await savePlayerState(state);
+    return Response.json({
+      ok: true,
+      profile: state.profile,
+      onboarding: state.onboarding,
+      ...(burnResult ? { burn: burnResult } : {}),
+    });
   });
 }

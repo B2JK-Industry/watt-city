@@ -6,6 +6,7 @@ import { placeBuilding } from "@/lib/buildings";
 import { rateLimit } from "@/lib/rate-limit";
 import { isBuildingLocked } from "@/lib/building-lock";
 import { isFlagEnabled } from "@/lib/feature-flags";
+import { withPlayerLock } from "@/lib/player-lock";
 
 const BodySchema = z.object({
   slotId: z.number().int().min(0).max(19),
@@ -49,17 +50,19 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const state = await getPlayerState(session.username);
-  const result = await placeBuilding(state, body.slotId, body.catalogId);
-  if (!result.ok) {
-    return Response.json(
-      { ok: false, error: result.error, detail: result.detail },
-      { status: 400 },
-    );
-  }
-  return Response.json({
-    ok: true,
-    building: result.building,
-    resources: result.state.resources,
+  return withPlayerLock(session.username, async () => {
+    const state = await getPlayerState(session.username);
+    const result = await placeBuilding(state, body.slotId, body.catalogId);
+    if (!result.ok) {
+      return Response.json(
+        { ok: false, error: result.error, detail: result.detail },
+        { status: 400 },
+      );
+    }
+    return Response.json({
+      ok: true,
+      building: result.building,
+      resources: result.state.resources,
+    });
   });
 }

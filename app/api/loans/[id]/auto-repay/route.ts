@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { z } from "zod";
 import { getSession } from "@/lib/session";
 import { getPlayerState, savePlayerState } from "@/lib/player";
+import { withPlayerLock } from "@/lib/player-lock";
 
 /* V3.5 — toggle `loan.autoRepay`.
  *   PATCH /api/loans/{id}/auto-repay  { enabled: boolean }
@@ -26,18 +27,20 @@ export async function PATCH(request: NextRequest, { params }: RouteCtx) {
       { status: 400 },
     );
   }
-  const state = await getPlayerState(session.username);
-  const loan = state.loans.find((l) => l.id === id);
-  if (!loan) {
-    return Response.json({ ok: false, error: "not-found" }, { status: 404 });
-  }
-  if (loan.status !== "active") {
-    return Response.json(
-      { ok: false, error: "loan-not-active" },
-      { status: 409 },
-    );
-  }
-  loan.autoRepay = body.enabled;
-  await savePlayerState(state);
-  return Response.json({ ok: true, loan: { id: loan.id, autoRepay: loan.autoRepay } });
+  return withPlayerLock(session.username, async () => {
+    const state = await getPlayerState(session.username);
+    const loan = state.loans.find((l) => l.id === id);
+    if (!loan) {
+      return Response.json({ ok: false, error: "not-found" }, { status: 404 });
+    }
+    if (loan.status !== "active") {
+      return Response.json(
+        { ok: false, error: "loan-not-active" },
+        { status: 409 },
+      );
+    }
+    loan.autoRepay = body.enabled;
+    await savePlayerState(state);
+    return Response.json({ ok: true, loan: { id: loan.id, autoRepay: loan.autoRepay } });
+  });
 }

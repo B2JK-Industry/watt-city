@@ -122,13 +122,18 @@ export function OnboardingTour({ lang }: Props) {
 
   useEffect(() => {
     function reopen() {
-      try {
-        localStorage.removeItem(LS_KEY);
-      } catch {
-        /* ignore */
-      }
-      setIndex(0);
-      setNeedsTour(true);
+      // No-op if the tour is already open — otherwise a stray dispatch
+      // would snap the user back to step 0 mid-flow.
+      setNeedsTour((cur) => {
+        if (cur) return cur;
+        try {
+          localStorage.removeItem(LS_KEY);
+        } catch {
+          /* ignore */
+        }
+        setIndex(0);
+        return true;
+      });
     }
     window.addEventListener(OPEN_EVENT, reopen);
     return () => window.removeEventListener(OPEN_EVENT, reopen);

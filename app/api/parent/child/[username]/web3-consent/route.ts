@@ -20,6 +20,7 @@ import { getPlayerState, savePlayerState } from "@/lib/player";
 import { kvSet, kvSetNX } from "@/lib/redis";
 import { revokeParentalConsent, hasParentalConsent } from "@/lib/gdpr-k";
 import { burnAllForUser } from "@/lib/web3/burn-all";
+import { withPlayerLock } from "@/lib/player-lock";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -57,58 +58,60 @@ export async function POST(
     );
   }
 
-  if (body.consent) {
-    // Grant side — mirror the shape lib/gdpr-k.ts grantConsent() writes,
-    // but sourced from the observer dashboard rather than the email flow.
-    // Idempotent: if already granted, keep the earlier timestamp.
-    const existed = await hasParentalConsent(kid);
-    if (!existed) {
-      await kvSetNX(CONSENT_GRANTED(kid), {
-        grantedAt: Date.now(),
-        parentEmail: `${session.username}@parent.watt-city.local`,
-        token: `observer-${session.username}-${Date.now()}`,
+  return withPlayerLock(kid, async () => {
+    if (body.consent) {
+      // Grant side — mirror the shape lib/gdpr-k.ts grantConsent() writes,
+      // but sourced from the observer dashboard rather than the email flow.
+      // Idempotent: if already granted, keep the earlier timestamp.
+      const existed = await hasParentalConsent(kid);
+      if (!existed) {
+        await kvSetNX(CONSENT_GRANTED(kid), {
+          grantedAt: Date.now(),
+          parentEmail: `${session.username}@parent.watt-city.local`,
+          token: `observer-${session.username}-${Date.now()}`,
+        });
+      }
+      return Response.json({
+        ok: true,
+        consent: true,
+        alreadyGranted: existed,
       });
     }
+
+    // Revoke side — delete consent, flip kid's opt-in off, burn medals.
+    const revoked = await revokeParentalConsent(kid);
+    const state = await getPlayerState(kid);
+    if (state.onboarding?.web3OptIn === true) {
+      state.onboarding = { ...state.onboarding, web3OptIn: false };
+      await savePlayerState(state);
+    }
+    let burn: Awaited<ReturnType<typeof burnAllForUser>> | null = null;
+    try {
+      burn = await burnAllForUser(kid);
+    } catch (err) {
+      burn = {
+        attempted: 0,
+        burned: [],
+        skipped: [],
+        errors: [
+          {
+            tokenId: "?",
+            reason: err instanceof Error ? err.message : String(err),
+          },
+        ],
+      };
+    }
+    // Best-effort kvSet to keep a revocation audit marker even if the
+    // consent record was already absent (idempotent parent re-click).
+    await kvSet(`xp:web3:consent-revoked:${kid}`, {
+      at: Date.now(),
+      by: session.username,
+    });
     return Response.json({
       ok: true,
-      consent: true,
-      alreadyGranted: existed,
+      consent: false,
+      revoked,
+      burn,
     });
-  }
-
-  // Revoke side — delete consent, flip kid's opt-in off, burn medals.
-  const revoked = await revokeParentalConsent(kid);
-  const state = await getPlayerState(kid);
-  if (state.onboarding?.web3OptIn === true) {
-    state.onboarding = { ...state.onboarding, web3OptIn: false };
-    await savePlayerState(state);
-  }
-  let burn: Awaited<ReturnType<typeof burnAllForUser>> | null = null;
-  try {
-    burn = await burnAllForUser(kid);
-  } catch (err) {
-    burn = {
-      attempted: 0,
-      burned: [],
-      skipped: [],
-      errors: [
-        {
-          tokenId: "?",
-          reason: err instanceof Error ? err.message : String(err),
-        },
-      ],
-    };
-  }
-  // Best-effort kvSet to keep a revocation audit marker even if the
-  // consent record was already absent (idempotent parent re-click).
-  await kvSet(`xp:web3:consent-revoked:${kid}`, {
-    at: Date.now(),
-    by: session.username,
-  });
-  return Response.json({
-    ok: true,
-    consent: false,
-    revoked,
-    burn,
   });
 }

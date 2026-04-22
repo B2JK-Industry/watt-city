@@ -6,6 +6,7 @@ import { upgradeBuilding } from "@/lib/buildings";
 import { rateLimit } from "@/lib/rate-limit";
 import { isBuildingLocked } from "@/lib/building-lock";
 import { isFlagEnabled } from "@/lib/feature-flags";
+import { withPlayerLock } from "@/lib/player-lock";
 
 const BodySchema = z.object({
   instanceId: z.string().min(1).max(64),
@@ -41,17 +42,19 @@ export async function POST(request: NextRequest) {
       { status: 400 },
     );
   }
-  const state = await getPlayerState(session.username);
-  const result = await upgradeBuilding(state, body.instanceId);
-  if (!result.ok) {
-    return Response.json(
-      { ok: false, error: result.error },
-      { status: 400 },
-    );
-  }
-  return Response.json({
-    ok: true,
-    building: result.building,
-    resources: result.state.resources,
+  return withPlayerLock(session.username, async () => {
+    const state = await getPlayerState(session.username);
+    const result = await upgradeBuilding(state, body.instanceId);
+    if (!result.ok) {
+      return Response.json(
+        { ok: false, error: result.error },
+        { status: 400 },
+      );
+    }
+    return Response.json({
+      ok: true,
+      building: result.building,
+      resources: result.state.resources,
+    });
   });
 }

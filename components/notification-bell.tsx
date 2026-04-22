@@ -61,8 +61,17 @@ export function NotificationBell({ labels }: Props) {
       if (!panelRef.current) return;
       if (!panelRef.current.contains(e.target as Node)) setOpen(false);
     }
-    if (open) document.addEventListener("mousedown", onDoc);
-    return () => document.removeEventListener("mousedown", onDoc);
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    if (open) {
+      document.addEventListener("mousedown", onDoc);
+      document.addEventListener("keydown", onKey);
+    }
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onKey);
+    };
   }, [open]);
 
   async function toggle() {
@@ -97,7 +106,7 @@ export function NotificationBell({ labels }: Props) {
       </button>
       {open && (
         <div
-          role="dialog"
+          role="region"
           aria-label={labels.bell}
           className="absolute right-0 top-full mt-2 z-40 w-[min(95vw,22rem)] max-w-[calc(100vw-1rem)] card p-2 shadow-[6px_6px_0_0_var(--ink)] bg-[var(--surface)] border-2 border-[var(--ink)]"
         >

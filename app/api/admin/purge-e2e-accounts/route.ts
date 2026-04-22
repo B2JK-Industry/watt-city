@@ -30,28 +30,38 @@ import { hardErase } from "@/lib/soft-delete";
  *  - `dryRun: true` is the default when the body is missing.
  */
 
+// Defaults kept deliberately narrow: every prefix here is an e2e-only
+// idiom that real users are unlikely to choose (e.g. no one registers
+// as `gp_abcdefghij`). "kid", "bot", "sec", "db", "di", "okuser" —
+// while used in e2e — are ambiguous enough that a human might pick
+// them, so they move to the opt-in list. A false-positive here wipes
+// a real account + burns on-chain medals; we bias toward missing
+// real e2e garbage over deleting real users.
 const DEFAULT_PREFIXES = [
   "gp",
   "pr",
   "rl",
-  "bot",
   "ghost",
   "smoke",
-  "db",
-  "di",
-  "sec",
-  "okuser",
-  "kid",
 ];
 
+const AMBIGUOUS_PREFIXES = ["kid", "bot", "sec", "db", "di", "okuser"];
+
 // Single-letter prefixes used by e2e (k_, p_, t_, s_, a_, b_, f_, lb1_, lb2_).
-// Gated behind an explicit opt-in flag because a real user could
-// conceivably register as `a_something`.
+// Real users could register as `a_something`; gated behind an explicit
+// opt-in flag.
 const SINGLE_LETTER_PREFIXES = ["k", "p", "t", "s", "a", "b", "f"];
+
+/** Magic token the caller must send alongside `dryRun: false` to
+ *  confirm they really want to erase accounts. Belt-and-braces against
+ *  an operator typing `"dryRun": false` by reflex. */
+const CONFIRM_TOKEN = "purge-e2e-accounts-for-real";
 
 const BodySchema = z.object({
   dryRun: z.boolean().optional().default(true),
+  confirm: z.string().optional(),
   prefixes: z.array(z.string().min(1).max(16)).optional(),
+  includeAmbiguous: z.boolean().optional().default(false),
   includeSingleLetter: z.boolean().optional().default(false),
   // Minimum random-suffix length; e2e helpers default to 6+. Anything
   // shorter is probably a real user choosing an evocative short handle.
@@ -75,10 +85,21 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const prefixes = new Set([
-    ...(body.prefixes ?? DEFAULT_PREFIXES),
-    // Always recognise the numbered `lb\d+` family (lb1_, lb2_, …) as e2e.
-  ]);
+  if (!body.dryRun && body.confirm !== CONFIRM_TOKEN) {
+    return Response.json(
+      {
+        ok: false,
+        error: "confirm-token-required",
+        hint: `send {"dryRun": false, "confirm": "${CONFIRM_TOKEN}"} to commit`,
+      },
+      { status: 400 },
+    );
+  }
+
+  const prefixes = new Set<string>(body.prefixes ?? DEFAULT_PREFIXES);
+  if (body.includeAmbiguous) {
+    for (const p of AMBIGUOUS_PREFIXES) prefixes.add(p);
+  }
   if (body.includeSingleLetter) {
     for (const p of SINGLE_LETTER_PREFIXES) prefixes.add(p);
   }
@@ -119,6 +140,14 @@ export async function POST(request: NextRequest) {
         : null,
     )
     .filter((x): x is { username: string; reason: string } => x !== null);
+  // Log each failure server-side so a partial-wipe user is
+  // recoverable from Vercel logs (the response may be consumed by a
+  // script that only reads `succeeded`).
+  for (const f of failed) {
+    console.error(
+      JSON.stringify({ event: "purge.failed", user: f.username, reason: f.reason }),
+    );
+  }
 
   return Response.json({
     ok: true,

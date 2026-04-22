@@ -297,6 +297,37 @@ export async function sRem(key: string, member: string): Promise<boolean> {
   return was;
 }
 
+/** Atomic INCR with TTL — returns the new counter value. Sets the TTL
+ *  on every call (Redis `EXPIRE` is idempotent + cheap); avoids the
+ *  classic GET-then-SET race where two concurrent readers both see
+ *  `current=0`, each write `1`, and both pass a limit check. Used by
+ *  `lib/rate-limit.ts` fixed-window buckets.
+ *
+ *  On Upstash: single round-trip via `multi()` pipeline (MULTI/EXEC is
+ *  atomic server-side).
+ *  On the in-memory fallback: synchronous map increment + best-effort
+ *  TTL clear. The JS event loop is single-threaded so the in-process
+ *  race window doesn't exist. */
+export async function kvIncrWithTTL(
+  key: string,
+  ttlSeconds: number,
+): Promise<number> {
+  if (upstash) {
+    const pipe = upstash.multi();
+    pipe.incr(key);
+    pipe.expire(key, ttlSeconds);
+    const [count] = (await pipe.exec()) as [number, unknown];
+    return count;
+  }
+  const cur = Number(memory.kv.get(key) ?? 0);
+  const next = cur + 1;
+  memory.kv.set(key, String(next));
+  setTimeout(() => {
+    if (memory.kv.get(key) === String(next)) memory.kv.delete(key);
+  }, ttlSeconds * 1000).unref?.();
+  return next;
+}
+
 /** Read every member of a ZSET (unbounded). Used by the E2E-purge admin
  *  endpoint to enumerate candidates before filtering by username regex —
  *  the leaderboard is at most a few hundred entries in practice, so a
