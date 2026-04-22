@@ -12,8 +12,13 @@ active.
 > preserved at the `xp-arena-final-v1.0` tag. Pre-merge feature branches
 > are preserved under `archive/*` tags — see "Repo history" below.
 
-## Phase-1 MVP — what's in (2026-04-18)
+## Current state (2026-04-22)
 
+Production on https://watt-city.vercel.app. 635 / 635 vitest across 80
+files, 13 Playwright specs (~600 E2E assertions), 79 API routes,
+76 static pages, 4 locales (423 keys each, zero drift).
+
+**Shipped core loop**
 - **Hourly AI rotation**: fresh Sonnet/Haiku game every hour, single-flight
   lock, idempotent `rotate-if-due` endpoint; three converging triggers
   (external pinger + Vercel Cron safety net + on-render lazy backstop).
@@ -22,9 +27,8 @@ active.
   with SADD-backed idempotency, backfill endpoint for legacy XP Arena
   users, nav ResourceBar honouring MVP-vs-coming-soon state.
 - **20-slot city map** at `/miasto`: signup-gifted Domek, earn-to-unlock
-  gating (50 ⚡ for Mała elektrownia, 50 🪙 for Sklepik), place/upgrade/
-  demolish (50% refund, Domek-protected), slot category restrictions,
-  rate-limited 5 ops/min.
+  gating, place/upgrade/demolish (50% refund, Domek-protected), slot
+  category restrictions, rate-limited 5 ops/min.
 - **Hourly cashflow tick** with 30-day offline catch-up cap, citywide-
   landmark multiplier, fires on every authenticated render behind a
   30-second single-flight lock.
@@ -32,11 +36,66 @@ active.
   preferred), 12/24/36-month terms, cap = min(12 × monthly cashflow,
   50 000 W$), credit score 0–100 (+1 on-time / −5 miss / −20 default
   after 3 consecutive misses), early repayment bonus.
-- **Coming-soon tiles** for leasing / kredyt obrotowy / kredyt konsumencki
-  / kredyt inwestycyjny / parent dashboard / class mode / p2p trade /
-  PKO Junior mirror.
-- **New-game toast**: 30s client polling + `router.refresh` on new id.
+- **9 evergreen minigames** + **daily AI challenge** with a top-3 Hall-of-Fame.
+- **Parent observer flow** (V4.6): parent-link bridge (invite code +
+  consent), `/rodzic` dashboard, GDPR-K gating for under-16 accounts.
+- **Teacher/classroom flow**: `/nauczyciel` class dashboard, invite
+  codes, per-class leaderboard, teacher onboarding tour.
+- **Notifications**: server ledger of tier-ups + mortgage-missed events,
+  bell dropdown with unread badge, quiet-hours push gate.
+- **Web3 opt-in** (default off): soulbound `WattCityMedal` ERC-721 on
+  Base Sepolia, parent-gated mint, burn-on-revoke (GDPR Art. 17).
 - **4 langs** (PL default · UK · CS · EN).
+
+**Hardening since 2026-04-19 hackathon day**
+- awardXP single-flight race fixed (`kvSetNX` lock + 5× exp-backoff).
+- CSRF double-submit via `proxy.ts` (Next.js 16 middleware rename) +
+  `CsrfBootstrap` monkey-patching `window.fetch` so every mutating call
+  picks up `x-csrf-token` without per-component wiring.
+- Cron-auth consolidated to `lib/cron-auth.ts` (4 duplicates collapsed),
+  NODE_ENV-gated dev bypass.
+- Per-IP rate-limit for `/api/auth/register` + `/login`; parental-consent
+  mail via Resend → SendGrid → log-only fallback (`lib/mailer.ts`).
+- 2026-04-22 UX/E2E sweep: unlit buildings render true silhouettes
+  (hero-copy parity), `/api/score` parallelises Redis hops, notification
+  popover repositioned so it stops bleeding through the resource-bar,
+  onboarding tour uses `keepalive` + localStorage so the modal never
+  resurrects after the user completes it, Playwright webServer blanked
+  Upstash env so `gp_*`/`pr_*`/… test accounts no longer leak into the
+  production leaderboard (+ new `/api/admin/purge-e2e-accounts` cleans
+  up historical leakage). See
+  [`docs/progress/2026-04-22-ux-fixes-batch.md`](docs/progress/2026-04-22-ux-fixes-batch.md).
+
+## Future roadmap
+
+Near-term, no specific date — tracked in `docs/SKO-BACKLOG.md`:
+
+- **PKO partnership path**: audit closure for the web3 layer, handoff
+  docs for SKO 2.0 product team. Precondition for mainnet.
+- **City widget iteration** (home page): the "Tvé město" card's empty
+  centre needs content — candidates are a mini-skyline preview, XP-today /
+  streak / to-next-level stat trio, or a "today's challenge" CTA. Design
+  still open, flagged from the 2026-04-22 user-testing pass.
+- **Real-device mobile matrix**: the Playwright mobile-safari / mobile-
+  chrome specs pass against bundled webkit/chromium, but full real-device
+  coverage (actual iOS Safari class-rule parser, Android Chrome PWA
+  install flow) is pending.
+- **Content expansion**: more per-kind evergreen questions to stretch
+  the 9-game pool, native-speaker polish pass on the UK locale (calques
+  flagged in `docs/progress/2026-04-22-docs-review.md`).
+- **Observability**: structured JSON logs already in place; external
+  sink (Grafana / Datadog) + alerting is the next step.
+- **School pricing**: per-class feature flag + stripe-backed plan —
+  scope still being sized; partnership conversations are upstream.
+
+Longer-term, subject to product direction:
+
+- **Marketplace** for resource trading between kids (ADR pending — see
+  D10).
+- **PKO Junior mirror**: read-only parental mirror of the kid's city
+  into the real PKO Junior app surface.
+- **Resource decay** / seasonal events to sustain engagement past the
+  initial build-out phase.
 
 ## Stack
 
@@ -190,6 +249,14 @@ Playwright E2E (13 specs): `pnpm test:e2e` covers smoke, prod-smoke,
 api-contracts, security, data-integrity, a11y-matrix, golden-paths,
 perf, production-ready, rate-limits, bot-protection (opt-in), pwa,
 smoke.mobile, smoke.cross.
+
+> E2E test accounts never reach the production Upstash — `playwright.config.ts`
+> blanks `UPSTASH_REDIS_REST_URL` + `_TOKEN` for its webServer so
+> `lib/redis.ts` falls back to its in-memory store. If you accidentally
+> ran an older commit against prod, `scripts/purge-e2e-accounts.sh`
+> cleans historical `gp_*`, `pr_*`, `rl_*`, … leftovers via
+> `/api/admin/purge-e2e-accounts` (admin-bearer, `--commit` to actually
+> delete; dry-run by default).
 
 ## Docs
 
