@@ -297,6 +297,19 @@ export async function sRem(key: string, member: string): Promise<boolean> {
   return was;
 }
 
+/** Read every member of a ZSET (unbounded). Used by the E2E-purge admin
+ *  endpoint to enumerate candidates before filtering by username regex —
+ *  the leaderboard is at most a few hundred entries in practice, so a
+ *  single ZRANGE 0..-1 is simpler than SCAN-based pagination. */
+export async function zAllMembers(zkey: string): Promise<string[]> {
+  if (upstash) {
+    const raw = (await upstash.zrange(zkey, 0, -1)) as unknown[];
+    return raw.map((v) => String(v));
+  }
+  const entries = memory.zsets.get(zkey) ?? [];
+  return entries.map((e) => e.member);
+}
+
 export async function zRem(zkey: string, member: string): Promise<void> {
   if (upstash) {
     await upstash.zrem(zkey, member);

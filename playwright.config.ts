@@ -69,6 +69,15 @@ export default defineConfig({
           // admin auth paths behave the way they would in prod — no
           // NODE_ENV-gated bypass. The API contract sweep relies on
           // anonymous callers being rejected, not silently allowed.
+          //
+          // Upstash blanking: explicit empty strings force
+          // `lib/redis.ts` down the in-memory fallback path, even when
+          // `.env.local` carries production tokens (Next.js dotenv load
+          // order puts process.env above .env.local, so our empty string
+          // wins). This prevents E2E test users (gp_*, pr_*, rl_*, …)
+          // from leaking into the production leaderboard ZSET.
+          // Override with `E2E_UPSTASH_URL` if you deliberately want a
+          // dedicated test Upstash project.
           env: {
             CRON_SECRET:
               process.env.E2E_CRON_SECRET ?? "e2e-cron-secret-not-for-production",
@@ -76,6 +85,8 @@ export default defineConfig({
               process.env.E2E_ADMIN_SECRET ?? "e2e-admin-secret-not-for-production",
             SESSION_SECRET:
               process.env.E2E_SESSION_SECRET ?? "e2e-session-secret-16char",
+            UPSTASH_REDIS_REST_URL: process.env.E2E_UPSTASH_URL ?? "",
+            UPSTASH_REDIS_REST_TOKEN: process.env.E2E_UPSTASH_TOKEN ?? "",
             // E2E tests share source IP (127.0.0.1); the anti-abuse
             // register/login rate-limit would throttle parallel workers.
             // Defaults to a high (test-only) cap — override via the

@@ -96,9 +96,13 @@ export function NotificationBell({ labels }: Props) {
         )}
       </button>
       {open && (
-        <div className="absolute right-0 top-10 z-30 w-[min(95vw,22rem)] card p-2 shadow-[6px_6px_0_0_var(--ink)] bg-[var(--background)]">
-          <header className="flex items-center justify-between px-2 py-1 text-xs uppercase tracking-wider text-zinc-400">
-            <span>{labels.bell}</span>
+        <div
+          role="dialog"
+          aria-label={labels.bell}
+          className="absolute right-0 top-full mt-2 z-40 w-[min(95vw,22rem)] max-w-[calc(100vw-1rem)] card p-2 shadow-[6px_6px_0_0_var(--ink)] bg-[var(--surface)] border-2 border-[var(--ink)]"
+        >
+          <header className="flex items-center justify-between px-2 py-1 text-xs uppercase tracking-wider text-zinc-400 border-b border-[var(--ink)]/30 mb-1">
+            <span className="font-bold">{labels.bell}</span>
           </header>
           <ul className="flex flex-col max-h-96 overflow-y-auto divide-y divide-[var(--ink)]/20">
             {(data?.entries ?? []).length === 0 && (

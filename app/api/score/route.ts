@@ -83,18 +83,16 @@ export async function POST(request: NextRequest) {
   // see diverging `state.buildings`. Lock is best-effort — failing to
   // acquire (e.g. Redis hiccup) just means the race window reopens;
   // we don't block scoring on it.
-  const lockEnabled = await isFlagEnabled("v3_score_lock", session.username);
+  //
+  // Both feature flags read the same KV namespace; parallelize to
+  // save one Redis round-trip on the hot path.
+  const [lockEnabled, postGameModalEnabled] = await Promise.all([
+    isFlagEnabled("v3_score_lock", session.username),
+    isFlagEnabled("v2_post_game_modal", session.username),
+  ]);
   const lockToken = lockEnabled
     ? await acquireBuildingLock(session.username)
     : null;
-  // Cleanup issue 3: server-side gate for the post-game modal. When the
-  // flag is off (or this user's percentile bucket misses) we drop
-  // `multBreakdown` from the response body so the client's RoundResult
-  // renders its minimal legacy view instead of mounting PostGameBreakdown.
-  const postGameModalEnabled = await isFlagEnabled(
-    "v2_post_game_modal",
-    session.username,
-  );
   let response: Response;
   try {
   const [xpResult, recorded] = await Promise.all([
@@ -115,7 +113,12 @@ export async function POST(request: NextRequest) {
   if (xpResult.delta > 0) {
     const y = yieldForGame(gameId, aiKind);
     if (y) {
-      const state = await getPlayerState(session.username);
+      // getPlayerState + readEconomy are independent reads; parallelize
+      // to shave one Redis round-trip off the hot path on post-game.
+      const [state, cfg] = await Promise.all([
+        getPlayerState(session.username),
+        readEconomy(),
+      ]);
       multBreakdown = scoreMultiplierBreakdown(state.buildings, aiKind ?? gameId);
       const mult = multBreakdown.finalMultiplier;
       void scoreMultiplier; // keep import for external callers unchanged
@@ -124,7 +127,6 @@ export async function POST(request: NextRequest) {
       for (const [k, v] of Object.entries(rawBase) as [ResourceKey, number][]) {
         raw[k] = Math.ceil(v * mult);
       }
-      const cfg = await readEconomy();
       const day = dayBucket();
 
       // Read today's already-earned totals per resource (parallel fetch).
@@ -172,14 +174,41 @@ export async function POST(request: NextRequest) {
   }
 
   const level = levelFromXP(xpResult.globalXP);
-  // Fire-and-forget-ish: sweep achievements in the request scope so players
-  // see the award on the next /api/me/achievements poll.
-  await sweepAchievements(session.username);
-  await recordEvent({
-    kind: "score_submitted",
-    user: session.username,
-    meta: { gameId, aiKind, xp, isNewBest: xpResult.isNewBest },
-  });
+  // Parallelize + fire-and-forget the two terminal side-effects.
+  // Achievements land on the next `/api/me/achievements` poll anyway;
+  // `recordEvent` is analytics-only (never read in-request). Running
+  // them in parallel halves the tail-latency on the hot path; not
+  // awaiting them hands the response back to the client as soon as
+  // the score + resources are persisted. Errors are logged inside
+  // each fn — a background failure doesn't fail the request.
+  const backgroundWork = Promise.all([
+    sweepAchievements(session.username).catch((e) =>
+      console.error(
+        JSON.stringify({
+          event: "score.sweepAchievements-failed",
+          user: session.username,
+          error: (e as Error).message,
+        }),
+      ),
+    ),
+    recordEvent({
+      kind: "score_submitted",
+      user: session.username,
+      meta: { gameId, aiKind, xp, isNewBest: xpResult.isNewBest },
+    }).catch((e) =>
+      console.error(
+        JSON.stringify({
+          event: "score.recordEvent-failed",
+          user: session.username,
+          error: (e as Error).message,
+        }),
+      ),
+    ),
+  ]);
+  // Hold a reference on `globalThis` so Vercel's runtime doesn't
+  // cancel the promise when the response is sent. On local Node the
+  // promise resolves normally regardless.
+  void backgroundWork;
 
   // xpResult already carries the authoritative isNewBest / delta /
   // previousBest derived from the per-game leaderboard ZSET. user-stats

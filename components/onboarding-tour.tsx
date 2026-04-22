@@ -63,16 +63,21 @@ function stepsFor(lang: Lang): Step[] {
   return set[lang];
 }
 
-// Renders on first login until the user dismisses. The `tourSeen` flag is
-// persisted server-side via PATCH /api/me/profile so the modal doesn't pop
-// on every page load after the player's first visit.
+const LS_KEY = "wc_tour_seen";
+const OPEN_EVENT = "wc:open-tour";
+
+// Renders on first login until the user dismisses. Persistence is two-tier:
+// server-side `tourSeen` (PATCH /api/me/profile) + localStorage cache. If
+// either says "seen" the modal stays closed — so a navigation-aborted PATCH
+// can't resurrect the tour, and clearing localStorage alone won't either.
+// Manual re-open via window event `wc:open-tour` (dispatched by
+// OpenTutorialButton in /o-platforme).
 export function OnboardingTour({ lang }: Props) {
   const pathname = usePathname();
   // Pathname gate — the tour is a home-page welcome, not a deep-link
   // interceptor. Bookmarking /games/ai/XYZ, /miasto, or /loans/compare
-  // should open that page, not a 4-step modal. The first time the user
-  // lands on `/` the tour still opens and writes `tourSeen` so it
-  // doesn't re-appear anywhere.
+  // should open that page, not a 4-step modal. Re-open event bypasses
+  // the gate so the user can replay the tour from any page.
   const onHome = pathname === "/";
   const [needsTour, setNeedsTour] = useState<boolean | null>(null);
   const [index, setIndex] = useState(0);
@@ -80,13 +85,31 @@ export function OnboardingTour({ lang }: Props) {
 
   useEffect(() => {
     if (!onHome) return;
+    // LS short-circuit: if the client already confirmed "seen" we skip the
+    // network round-trip and never flash the modal on subsequent visits.
+    try {
+      if (localStorage.getItem(LS_KEY) === "1") {
+        setNeedsTour(false);
+        return;
+      }
+    } catch {
+      /* ignore quota / disabled storage */
+    }
     let cancelled = false;
     fetch("/api/me/profile")
       .then((r) => r.json())
       .then((j) => {
         if (cancelled) return;
         if (j.ok) {
-          setNeedsTour(!j.onboarding?.tourSeen);
+          const seen = Boolean(j.onboarding?.tourSeen);
+          if (seen) {
+            try {
+              localStorage.setItem(LS_KEY, "1");
+            } catch {
+              /* ignore */
+            }
+          }
+          setNeedsTour(!seen);
         }
       })
       .catch(() => {
@@ -97,12 +120,38 @@ export function OnboardingTour({ lang }: Props) {
     };
   }, [onHome]);
 
+  useEffect(() => {
+    function reopen() {
+      try {
+        localStorage.removeItem(LS_KEY);
+      } catch {
+        /* ignore */
+      }
+      setIndex(0);
+      setNeedsTour(true);
+    }
+    window.addEventListener(OPEN_EVENT, reopen);
+    return () => window.removeEventListener(OPEN_EVENT, reopen);
+  }, []);
+
   async function dismiss() {
     setNeedsTour(false);
+    try {
+      localStorage.setItem(LS_KEY, "1");
+    } catch {
+      /* ignore */
+    }
+    // keepalive keeps the PATCH in flight even if the user navigates away
+    // (e.g. the last step's <Link> triggers a route change). Without it
+    // the browser cancels the request, the server never records tourSeen,
+    // and the tour pops up again on the next visit.
     await fetch("/api/me/profile", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ onboarding: { tourSeen: true } }),
+      keepalive: true,
+    }).catch(() => {
+      /* LS already cached — server catch-up on next load */
     });
   }
 
@@ -159,5 +208,37 @@ export function OnboardingTour({ lang }: Props) {
         </div>
       </div>
     </div>
+  );
+}
+
+/** Standalone trigger that fires the `wc:open-tour` event consumed by
+ *  OnboardingTour (mounted globally in app/layout.tsx). Renders in place
+ *  wherever the host page wants a "replay the tutorial" affordance —
+ *  the tour then opens on top of whatever the user was looking at.
+ *
+ *  Note: OnboardingTour's modal is pathname-gated to "/" for its
+ *  auto-show behaviour only. The manual event bypasses that gate by
+ *  setting `needsTour` directly, so replay works from any route. */
+export function OpenTutorialButton({
+  lang,
+  className,
+}: {
+  lang: Lang;
+  className?: string;
+}) {
+  const label = {
+    pl: "▶︎ Pokaż samouczek ponownie",
+    uk: "▶︎ Показати навчання знову",
+    cs: "▶︎ Spustit tutoriál znovu",
+    en: "▶︎ Replay tutorial",
+  }[lang];
+  return (
+    <button
+      type="button"
+      className={className ?? "btn btn-ghost text-sm"}
+      onClick={() => window.dispatchEvent(new Event(OPEN_EVENT))}
+    >
+      {label}
+    </button>
   );
 }

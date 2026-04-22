@@ -2,6 +2,8 @@ import Link from "next/link";
 import { LEVEL_UNLOCK_LADDER } from "@/lib/city-level";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
+import { getSession } from "@/lib/session";
+import { OpenTutorialButton } from "@/components/onboarding-tour";
 
 export const metadata = {
   title: "O platformie · Watt City",
@@ -10,7 +12,7 @@ export const metadata = {
 };
 
 export default async function AboutPage() {
-  const lang = await getLang();
+  const [lang, session] = await Promise.all([getLang(), getSession()]);
   const dict = dictFor(lang);
   const t = dict.aboutPage;
   return (
@@ -43,6 +45,11 @@ export default async function AboutPage() {
           </span>
         </div>
         <p className="text-lg text-zinc-300 max-w-3xl">{t.heroBody}</p>
+        {session && (
+          <div className="flex">
+            <OpenTutorialButton lang={lang} />
+          </div>
+        )}
       </header>
 
       {/* -------- Myšlienka -------- */}

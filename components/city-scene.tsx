@@ -407,9 +407,15 @@ function BuildingSlot({
 }) {
   return (
     <g
-      className="transition-transform duration-200"
+      className="transition-all duration-300"
       style={{
-        filter: powered ? "none" : "saturate(0.35) brightness(0.6)",
+        // Unlit buildings render as near-silhouettes matching the hero
+        // copy "9 budynków = 9 mini-gier. Dopóki nie zagrasz, budynek
+        // stoi w ciemności. Po wyniku zapali mu się okna i neon."
+        // Prior saturate(0.35) brightness(0.6) kept colours too visible
+        // to read as "darkness"; saturate(0) brightness(0.18) produces
+        // a mono-tone silhouette that reads convincingly as night-dark.
+        filter: powered ? "none" : "saturate(0) brightness(0.18)",
       }}
       data-idx={index}
     >
