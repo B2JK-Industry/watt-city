@@ -111,20 +111,26 @@ export function SiteNav({
             </Link>
           ))}
         </div>
-        <div className="flex items-center gap-3 text-sm">
+        <div className="flex items-center gap-2 sm:gap-3 text-sm">
           {username ? (
             <>
+              {/* Narrow-viewport tiering — 320 px is the smallest phone
+                  we support. With ring + chip + bell + lang + logout the
+                  right cluster spans ~283 px, which combined with the
+                  brand logo (110 px) overflows a 320-px viewport. Hide
+                  the purely-informational chip + ring below ~400 px,
+                  keep the interactive controls reachable. */}
               <span
-                className="level-ring"
+                className="level-ring hidden min-[420px]:inline-flex"
                 style={{ ["--p" as string]: String(pct) }}
                 title={`Tier ${level} · ${pct}%`}
               >
                 <span>{level}</span>
               </span>
-              <span className="chip">
+              <span className="chip hidden min-[380px]:inline-flex">
                 <strong>{xp.toLocaleString("pl-PL")} W</strong>
                 {rank !== null && (
-                  <span className="opacity-70">· #{rank}</span>
+                  <span className="opacity-70 hidden sm:inline">· #{rank}</span>
                 )}
               </span>
               <span className="hidden md:flex flex-col leading-tight">

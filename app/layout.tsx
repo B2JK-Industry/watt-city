@@ -158,7 +158,7 @@ export default async function RootLayout({
         <CsrfBootstrap />
         <WebVitalsReporter />
         <PwaRegister lang={lang} />
-        <CookieConsent lang={lang} />
+        <CookieConsent lang={lang} hasBottomTabs={Boolean(session)} />
         {session && player && brownoutPanelEnabled && (
           <WattDeficitPanel deficit={deficitState(player)} lang={lang} />
         )}

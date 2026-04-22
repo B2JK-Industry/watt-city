@@ -100,19 +100,25 @@ export function CityScene({
         {/* Sky */}
         <rect x="0" y="0" width={VB_W} height={GROUND} fill="url(#sky)" />
 
-        {/* Moon + glow */}
-        <circle cx={VB_W - 160} cy={100} r={120} fill="url(#moonGlow)" />
+        {/* Moon + glow — repositioned 2026-04-22 to the upper-left sky
+            band. Previously cx=VB_W-160 (upper-right), which collided
+            with the AI-zone building banners + countdown chips (same
+            x-band; SVG z-order put buildings on top so the moon bled
+            through the chip corners). The upper-left sky has only
+            low-profile evergreen buildings below it so a larger moon
+            can live there without touching building art. */}
+        <circle cx={220} cy={90} r={95} fill="url(#moonGlow)" />
         <circle
-          cx={VB_W - 160}
-          cy={100}
-          r={52}
+          cx={220}
+          cy={90}
+          r={44}
           fill="#f8fafc"
           stroke="#0a0a0f"
           strokeWidth={3}
         />
-        <circle cx={VB_W - 180} cy={85} r={9} fill="#e2e8f0" />
-        <circle cx={VB_W - 145} cy={120} r={6} fill="#cbd5e1" />
-        <circle cx={VB_W - 135} cy={80} r={4} fill="#cbd5e1" />
+        <circle cx={200} cy={75} r={7} fill="#e2e8f0" />
+        <circle cx={240} cy={108} r={5} fill="#cbd5e1" />
+        <circle cx={248} cy={72} r={3} fill="#cbd5e1" />
 
         {/* Stars (deterministic pattern so no hydration mismatch) */}
         {STARS.map((s, i) => (

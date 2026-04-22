@@ -18,7 +18,17 @@ const LOCAL_KEY = "wc_cookie_consent_v1";
  * without breaking the app. The banner exists to satisfy EU disclosure
  * obligations, not to offer an opt-out.
  */
-export function CookieConsent({ lang }: { lang: Lang }) {
+export function CookieConsent({
+  lang,
+  hasBottomTabs = false,
+}: {
+  lang: Lang;
+  /** True when the user is logged in and BottomTabs is rendering on
+   *  mobile. The consent banner lifts above the 56-px tab row so it
+   *  doesn't blanket-block the primary navigation before the user has
+   *  had a chance to acknowledge cookies. */
+  hasBottomTabs?: boolean;
+}) {
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -55,11 +65,19 @@ export function CookieConsent({ lang }: { lang: Lang }) {
     },
   }[lang];
 
+  // On mobile + logged-in, lift the banner above the 56-px BottomTabs
+  // row. Desktop (≥sm) never has BottomTabs so the CSS var resets to 0
+  // via the responsive utility. `--cc-bot` is the computed bottom
+  // offset; Tailwind arbitrary value reads it on mobile, sm: overrides.
+  const bottomOffset = hasBottomTabs
+    ? "calc(3.5rem + env(safe-area-inset-bottom, 0px))"
+    : "env(safe-area-inset-bottom, 0px)";
   return (
     <div
       role="dialog"
       aria-live="polite"
-      className="fixed bottom-0 inset-x-0 z-40 bg-[var(--background)] border-t-[3px] border-[var(--ink)] p-3 sm:p-4 text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+      style={{ ["--cc-bot" as string]: bottomOffset }}
+      className="fixed inset-x-0 z-40 bottom-[var(--cc-bot)] sm:bottom-0 bg-[var(--background)] border-t-[3px] border-[var(--ink)] p-3 sm:p-4 text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2"
     >
       <p className="flex-1 text-zinc-300">{copy.body}</p>
       <div className="flex gap-2 flex-wrap">
