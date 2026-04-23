@@ -11,7 +11,6 @@ import {
 import { tickPlayer } from "@/lib/tick";
 import { getCatalogEntry } from "@/lib/building-catalog";
 import { WattCityClient } from "@/components/watt-city/watt-city-client";
-import { CashflowHudMount } from "@/components/cashflow-hud-mount";
 import { getLang } from "@/lib/i18n-server";
 import type { Lang } from "@/lib/i18n";
 
@@ -231,7 +230,6 @@ export default async function MiastoPage() {
         }}
       />
       <ComingSoonSection lang={lang} />
-      <CashflowHudMount />
     </div>
   );
 }

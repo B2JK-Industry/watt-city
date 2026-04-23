@@ -10,17 +10,14 @@ import { getLang } from "@/lib/i18n-server";
  *
  * Moved out of `app/layout.tsx` 2026-04-23 — a global HUD on every
  * authenticated page duplicated info already exposed via SiteNav's
- * resource-bar + WattDeficitPanel + NotificationBell. Most pages got
- * no unique value from it, and three UI-overlap bugs (HUD vs
- * BottomTabs / NewGameToast / WattDeficitPanel on /miasto) tracked
- * back to the global mount.
+ * resource-bar + WattDeficitPanel + NotificationBell.
  *
- * The HUD earns its keep on two surfaces only:
- *   - /miasto — active decisions about building, yields matter here
- *   - /loans/compare — "can I afford this loan's monthly payment?"
- * On both pages the projected hourly yield + watt balance feed the
- * decision the user is making RIGHT NOW. Other pages use the nav's
- * resource-bar for passive state.
+ * Final home: /loans/compare only. A first pass also kept it on
+ * /miasto but the per-building slot cards already surface each
+ * building's yield inline, so the aggregate HUD turned out to be
+ * redundant there. The loan-compare surface is the one place where
+ * "projected hourly yield vs monthly payment" is the actual
+ * decision the user is making.
  *
  * Server component by design: reads session + feature flag + player
  * state with zero hydration overhead, then mounts the client HUD
