@@ -19,6 +19,16 @@ const SLOT_LABEL: Record<RotationSlot, string> = {
   slow: "12h",
 };
 
+// Ground-plaque variant — reads like a proper city sign ("FAST · 1h") so
+// the bottom tag below each AI slot tells the user which lane they're
+// looking at instead of leaking an opaque envelope id. Kept separate from
+// SLOT_LABEL (used in banners) so the two can diverge without a rename.
+const SLOT_GROUND_TAG: Record<RotationSlot, string> = {
+  fast: "FAST · 1h",
+  medium: "MEDIUM · 6h",
+  slow: "SLOW · 12h",
+};
+
 /** Timestamp of the next aligned rotation-bucket boundary for `slot`.
  *  When a slot sits empty (rotation pipeline hasn't filled it yet), the
  *  construction-site placeholder counts down to this moment so the user
@@ -60,6 +70,23 @@ export type CityAiGame = {
   rotationSlot?: RotationSlot;
 };
 
+/** Given the full list of candidate AI games (as passed to CityScene),
+ *  return the one that owns `slot` for the given rendering cutoff.
+ *  Expired envelopes (validUntil ≤ now) are filtered BEFORE resolving the
+ *  slot owner, which is what prevents a stale envelope from rendering
+ *  under a LIVE label with a red EXPIRED chip when the upstream consumer
+ *  forgot to call `listActiveAiGamesWithLazyRotation`. Exported for
+ *  unit-test coverage of the expired-leak regression. */
+export function resolveLiveAiGameForSlot(
+  activeAi: readonly CityAiGame[],
+  slot: RotationSlot,
+  now: number,
+): CityAiGame | undefined {
+  return activeAi.find(
+    (g) => g.validUntil > now && resolveSlot(g.rotationSlot) === slot,
+  );
+}
+
 type Props = {
   games?: CityGameState[];
   loggedIn?: boolean;
@@ -78,6 +105,10 @@ export function CityScene({
   aiGames,
 }: Props) {
   const activeAi: CityAiGame[] = aiGames ?? (aiGame ? [aiGame] : []);
+  // Shared cutoff so all 3 slots agree on what's expired within a single
+  // render — without it a stale envelope could satisfy slot A's resolve
+  // but fail slot B's milliseconds later, producing an inconsistent scene.
+  const renderNow = Date.now();
   const map = new Map(games?.map((g) => [g.meta.id, g]) ?? []);
   const get = (id: string) => map.get(id);
 
@@ -212,7 +243,12 @@ export function CityScene({
             backend pipeline is mid-generate / rate-limited / mid-deploy. */}
         {ALL_SLOTS.map((slot, i) => {
           const plan = aiPlanFor(i, 3);
-          const game = activeAi.find((g) => resolveSlot(g.rotationSlot) === slot);
+          // `resolveLiveAiGameForSlot` filters expired envelopes BEFORE
+          // resolving which one owns the slot. Consumers that don't use
+          // lazy-rotation can leak expired games into `activeAi`; without
+          // this filter the scene renders an EXPIRED chip under a
+          // LIVE-labelled building (bug seen 2026-04-23).
+          const game = resolveLiveAiGameForSlot(activeAi, slot, renderNow);
           return (
             <ConstructionSlot
               key={slot}
@@ -939,27 +975,17 @@ function BankBranch({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
 }
 
 function ConstructionSite({ x, w, h, name: _name }: DrawProps) {
-  // AI-generated "game of the day" placeholder. Scaffolding, caution tape,
-  // crane, AI badge. Click leads to /sin-slavy (today's challenge).
+  // Pending AI-slot placeholder. The parent `ConstructionSlot` already
+  // draws the TOP two-tier copy (countdown chip + "🛠 AI · 1h/6h/12h"
+  // lane banner), so this primitive stays visually quiet: barricade-hatched
+  // scaffolding + a single neutral "🚧" glyph. The ground tag below is
+  // intentionally *not* drawn here — `ConstructionSlot` overlays its own
+  // slot-keyed ground tag (see bug 5 / bug 4 alignment) so that live and
+  // pending slots share an identical bottom plaque instead of the verbose
+  // "STAVENISKO + SOON + AI VÝZVA" stack the old site rendered.
   const top = GROUND - h;
   return (
     <g>
-      {/* banner sign */}
-      <g transform={`translate(${x + w / 2 - 42}, ${top - 26})`}>
-        <rect x={0} y={0} width={84} height={18} fill="#0a0a0f" stroke="#fde047" strokeWidth={2} rx={2} />
-        <text x={42} y={12} textAnchor="middle" fontSize={9} fontWeight={900} fill="#fde047">
-          🤖 AI VÝZVA
-        </text>
-      </g>
-      {/* crane */}
-      <g transform={`translate(${x + w / 2 - 4}, ${top - 10})`}>
-        <rect x={0} y={0} width={6} height={80} fill="#a16207" stroke="#0a0a0f" strokeWidth={2} />
-        <g className="crane-arm" transform="translate(0,0)">
-          <rect x={-30} y={-2} width={60} height={6} fill="#a16207" stroke="#0a0a0f" strokeWidth={2} />
-          <line x1={22} y1={4} x2={22} y2={22} stroke="#0a0a0f" strokeWidth={1.5} />
-          <rect x={18} y={22} width={8} height={8} fill="#fde047" stroke="#0a0a0f" strokeWidth={1.5} />
-        </g>
-      </g>
       {/* scaffolding */}
       <rect x={x} y={top + 20} width={w} height={h - 20} fill="#1f2937" stroke="#0a0a0f" strokeWidth={3} />
       {/* diagonal caution stripes */}
@@ -1005,17 +1031,16 @@ function ConstructionSite({ x, w, h, name: _name }: DrawProps) {
           opacity={0.9}
         />
       ))}
-      {/* AI badge */}
-      <g transform={`translate(${x + w / 2 - 18}, ${GROUND - 50})`}>
-        <rect width={36} height={20} fill="#fde047" stroke="#0a0a0f" strokeWidth={2} rx={2} />
-        <text x={18} y={14} textAnchor="middle" fontSize={9} fontWeight={900} fill="#0a0a0f">
-          SOON
-        </text>
-      </g>
-      {/* sign at bottom */}
-      <rect x={x} y={GROUND + 4} width={w} height={16} fill="#0a0a0f" stroke="#0a0a0f" strokeWidth={2} rx={2} />
-      <text x={x + w / 2} y={GROUND + 15} textAnchor="middle" fontSize={8} fontWeight={900} fill="#fde047">
-        STAVENISKO
+      {/* Neutral single glyph — replaces the prior "SOON" / "🤖 AI VÝZVA"
+          sign stack. One marker, no copy. */}
+      <text
+        x={x + w / 2}
+        y={top + h / 2 + 14}
+        textAnchor="middle"
+        fontSize={38}
+        style={{ filter: "drop-shadow(0 2px 0 #000)" }}
+      >
+        🚧
       </text>
     </g>
   );
@@ -1054,6 +1079,7 @@ function ConstructionSlot({
       w={plan.w}
       h={plan.h}
       aiGame={aiGame!}
+      slot={slotKind}
     />
   ) : (
     <g>
@@ -1087,7 +1113,6 @@ function ConstructionSlot({
             <LiveCountdown
               validUntil={pendingCountdown}
               color="#fde047"
-              secondsThreshold={Infinity}
             />
           </g>
           <g transform={`translate(${plan.x + plan.w / 2 - 44}, ${top - 46})`}>
@@ -1113,6 +1138,30 @@ function ConstructionSlot({
               🛠 AI · {laneLabel}
             </text>
           </g>
+          {/* Ground plaque — mirrors the LIVE slot's street sign (same y,
+              same fill/font/size) so pending and live slots visually share
+              a bottom row. Carries the slot-keyed label so the user sees
+              which lane is "under construction" from a glance. */}
+          <rect
+            x={plan.x}
+            y={GROUND + 22}
+            width={plan.w}
+            height={16}
+            fill="#0a0a0f"
+            stroke="#0a0a0f"
+            strokeWidth={2}
+            rx={2}
+          />
+          <text
+            x={plan.x + plan.w / 2}
+            y={GROUND + 33}
+            textAnchor="middle"
+            fontSize={8}
+            fontWeight={900}
+            fill="#fde047"
+          >
+            {slotKind ? SLOT_GROUND_TAG[slotKind] : "AI · SOON"}
+          </text>
         </>
       )}
     </g>
@@ -1125,7 +1174,7 @@ function ConstructionSlot({
       ? `Wyzwanie AI · ${laneLabel} · wkrótce`
       : "Wyzwanie AI dnia — wkrótce";
   const title = aiGame
-    ? `Wyzwanie AI dnia · dostępne — ${aiGame.title}`
+    ? `Wyzwanie AI dnia · dostępne — ${aiGame.title} (${aiGame.id})`
     : laneLabel
       ? `Wyzwanie AI · ${laneLabel} · w budowie — nowa gra za chwilę`
       : "Wyzwanie AI dnia · w budowie";
@@ -1329,16 +1378,34 @@ function LiveAiBuilding({
   w,
   h,
   aiGame,
+  slot,
 }: {
   x: number;
   w: number;
   h: number;
   aiGame: CityAiGame;
+  /** Lane this live game belongs to. When present, the banner and bottom
+   *  tag carry a lane prefix ("1h", "6h", "12h") so the 3-lane structure
+   *  is legible from a glance. Missing = legacy caller → original format. */
+  slot?: RotationSlot;
 }) {
   const top = GROUND - h;
+  // Tighten the title budget when a lane prefix is present so the banner
+  // doesn't run past the widened chip.
+  const titleBudget = slot ? 8 : 10;
   const short =
-    aiGame.title.length > 10 ? aiGame.title.slice(0, 10) + "…" : aiGame.title;
+    aiGame.title.length > titleBudget
+      ? aiGame.title.slice(0, titleBudget) + "…"
+      : aiGame.title;
   const r = recipeFor(aiGame.id);
+  const laneLabel = slot ? SLOT_LABEL[slot] : null;
+  const bannerText = laneLabel
+    ? `🤖 ${laneLabel} · ${short.toUpperCase()}`
+    : `🤖 ${short.toUpperCase()}`;
+  // Widen the banner only when a lane prefix is added, so legacy single-
+  // lane callers keep the original width they were designed around.
+  const bannerW = laneLabel ? 102 : 88;
+  const bannerDx = bannerW / 2;
   return (
     <g>
       {/* Pillar layout above the roof — stacked vertically with explicit
@@ -1366,10 +1433,10 @@ function LiveAiBuilding({
 
       {/* banner with title — 42 px below countdown top (countdown bottom
           at top-56, banner top at top-46 → 10 px clear gap) */}
-      <g transform={`translate(${x + w / 2 - 44}, ${top - 46})`}>
-        <rect x={0} y={0} width={88} height={18} fill="#fde047" stroke="#0a0a0f" strokeWidth={2} rx={2} />
-        <text x={44} y={12} textAnchor="middle" fontSize={8} fontWeight={900} fill="#0a0a0f">
-          🤖 {short.toUpperCase()}
+      <g transform={`translate(${x + w / 2 - bannerDx}, ${top - 46})`}>
+        <rect x={0} y={0} width={bannerW} height={18} fill="#fde047" stroke="#0a0a0f" strokeWidth={2} rx={2} />
+        <text x={bannerDx} y={12} textAnchor="middle" fontSize={8} fontWeight={900} fill="#0a0a0f">
+          {bannerText}
         </text>
       </g>
 
@@ -1424,10 +1491,14 @@ function LiveAiBuilding({
         <WattMeter x={x} y={GROUND + 8} w={w} value={aiGame.bestScore ?? 0} cap={aiGame.cap} />
       )}
 
-      {/* street sign */}
+      {/* Ground-anchored street sign. `y` is computed from GROUND (not
+          from the per-slot building top) so all three AI slots' tags sit
+          on the same row regardless of AI_SLOT_HEIGHTS. Slot-keyed label
+          teaches the user the lane identity; the envelope id is relegated
+          to the <title> tooltip above the Link. */}
       <rect x={x} y={GROUND + 22} width={w} height={16} fill="#0a0a0f" stroke="#0a0a0f" strokeWidth={2} rx={2} />
       <text x={x + w / 2} y={GROUND + 33} textAnchor="middle" fontSize={8} fontWeight={900} fill={r.roofColor}>
-        AI · {aiGame.id.replace("ai-", "").toUpperCase()}
+        {slot ? SLOT_GROUND_TAG[slot] : `AI · ${aiGame.id.replace("ai-", "").toUpperCase()}`}
       </text>
     </g>
   );

@@ -5,7 +5,7 @@ import { getUserStats } from "@/lib/user-stats";
 import { getPlayerState } from "@/lib/player";
 import { cityLevelFromState } from "@/lib/city-level";
 import { CityScene, type CityGameState } from "@/components/city-scene";
-import { listActiveAiGames } from "@/lib/ai-pipeline/publish";
+import { listActiveAiGamesWithLazyRotation as listActiveAiGames } from "@/lib/ai-pipeline/lazy-rotation";
 import { xpCapForAnyLang } from "@/lib/ai-pipeline/types";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
