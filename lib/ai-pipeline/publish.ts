@@ -257,19 +257,33 @@ export async function runPipeline(
     };
   }
 
-  // 6) Persist forever (no TTL) and cap the LIVE index at MAX_ACTIVE_AI_GAMES.
-  // Evicted games stay in Redis and remain playable via /games/ai/[id] — their
-  // leaderboard ZSET is already permanent, so users can still score on old AI
-  // games and earn medals that stick. The live index only controls which game
-  // the city scene / "LIVE" card surface.
+  // 6) Persist forever (no TTL) and evict any PRIOR entry for THIS slot from
+  // the live index. Per-slot eviction (not "oldest in index") is load-bearing
+  // for the 3-slot design: the old global "shift oldest until cap=3" rule
+  // would evict a still-fresh medium/slow game the moment a fast-slot
+  // publish pushed the index past 3, breaking the invariant of "1 live per
+  // slot". Envelopes NOT deleted — they stay playable at /games/ai/[id] and
+  // their leaderboard ZSET is permanent; only the live index reference
+  // drops.
   await kvSet(`xp:ai-games:${id}`, envParse.data);
-  const nextIndex = [...index, id];
-  let evicted: string | null = null;
-  while (nextIndex.length > MAX_ACTIVE_AI_GAMES) {
-    const oldest = nextIndex.shift();
-    if (!oldest) break;
-    evicted = oldest; // envelope NOT deleted — game stays playable
+  const evictedIds: string[] = [];
+  const filteredIndex: string[] = [];
+  for (const existingId of index) {
+    if (existingId === id) continue; // just-written, will re-append below
+    const env = await kvGet<AiGame>(`xp:ai-games:${existingId}`);
+    if (!env) {
+      // Orphaned index entry (envelope already purged). Drop it silently.
+      continue;
+    }
+    if (resolveSlot(env.rotationSlot) === slot) {
+      // Prior entry for this slot — evict from live index.
+      evictedIds.push(existingId);
+      continue;
+    }
+    filteredIndex.push(existingId);
   }
+  const nextIndex = [...filteredIndex, id];
+  const evicted = evictedIds[0] ?? null;
   await writeIndex(nextIndex);
 
   // 7) Persist a permanent archive record so Hall of Fame can surface this
@@ -462,16 +476,24 @@ async function rotateSingleSlot(
     return { ok: false, slot, error: "lock-contended", contended: true };
   }
   try {
-    // Prune expired games belonging to this slot. We intentionally ignore
-    // envelopes from other slots so the three rotation lanes don't prune each
-    // other — each slot owns its own lifecycle.
+    // Two-pass cleanup for THIS slot. Ignore envelopes belonging to other
+    // slots — each slot owns its own lifecycle.
+    //
+    // Pass 1 — prune expired OR orphaned envelopes from the live index.
+    //
+    // Pass 2 — dedupe within the slot. When legacy data (pre-3-slot) put
+    // multiple "fast" games into the live index, `listActiveAiGames()
+    // .slice(0, 3)` on the UI would surface three fast duplicates instead
+    // of fast+medium+slow. We keep the newest live envelope for the slot
+    // and archive the rest; the 1-per-slot invariant is then enforced on
+    // the live index regardless of what state rolled over from the
+    // pre-refactor snapshot.
     const index = await readIndex();
     const rotated: string[] = [];
+    const liveInSlot: AiGame[] = [];
     for (const id of index) {
       const envelope = await kvGet<AiGame>(`xp:ai-games:${id}`);
       if (!envelope) {
-        // orphaned id in index — ANY slot run should clean these up; no
-        // membership info exists anyway.
         rotated.push(id);
         await archiveOnExpire(id);
         continue;
@@ -480,6 +502,18 @@ async function rotateSingleSlot(
       if (envelope.validUntil <= now) {
         await archiveOnExpire(id);
         rotated.push(id);
+      } else {
+        liveInSlot.push(envelope);
+      }
+    }
+    // If more than one live envelope exists for this slot, keep the newest
+    // (max generatedAt) and archive the older siblings from the live index.
+    if (liveInSlot.length > 1) {
+      liveInSlot.sort((a, b) => b.generatedAt - a.generatedAt);
+      const [, ...older] = liveInSlot;
+      for (const e of older) {
+        await archiveOnExpire(e.id);
+        rotated.push(e.id);
       }
     }
 

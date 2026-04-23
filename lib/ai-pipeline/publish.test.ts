@@ -210,6 +210,86 @@ describe("rotateIfDue — 3-slot parallel rotation flow", () => {
     expect(await liveGameForSlot("medium", now)).toBeNull();
     expect(await liveGameForSlot("slow", now)).toBeNull();
   });
+
+  it("publishing into a slot evicts ONLY that slot's prior entries — fresh other-slot games survive", async () => {
+    // Regression test for the eviction bug reported 2026-04-23:
+    // the old `while (index.length > MAX_ACTIVE_AI_GAMES) shift()` rule
+    // evicted the oldest id in the union index, which under the new
+    // 3-slot layout could drop a still-fresh medium/slow game the moment
+    // a fast-slot publish bumped the index past 3 entries. Symptom
+    // in prod: 2 live games instead of 3, oscillating over time.
+    const t0 = 1_700_000_000_000;
+    // First rotation publishes all three slots.
+    const first = await rotateIfDue(t0);
+    expect(first.ok).toBe(true);
+    expect(Object.keys((first as { slots?: object }).slots ?? {}).sort()).toEqual(
+      ["fast", "medium", "slow"],
+    );
+    expect((await listActiveAiGames()).length).toBe(3);
+    const mediumId0 = (await liveGameForSlot("medium", t0))!.id;
+    const slowId0 = (await liveGameForSlot("slow", t0))!.id;
+    // Jump 1h 1s into the future: fast expires (1h TTL), medium/slow fresh.
+    const t1 = t0 + 60 * 60 * 1000 + 1000;
+    const second = await rotateIfDue(t1);
+    expect(second.ok).toBe(true);
+    const games = await listActiveAiGames();
+    expect(games.length).toBe(3);
+    // Medium + slow from t0 must still be present — they're fresh.
+    const mediumStill = games.find((g) => g.id === mediumId0);
+    const slowStill = games.find((g) => g.id === slowId0);
+    expect(mediumStill).toBeDefined();
+    expect(slowStill).toBeDefined();
+    // And the fast slot holds a new envelope, not the t0 one.
+    const fastNow = await liveGameForSlot("fast", t1);
+    expect(fastNow).not.toBeNull();
+    expect(fastNow!.generatedAt).toBe(t1);
+  });
+
+  it("dedupes duplicate fast entries left in the index by pre-3-slot data", async () => {
+    // Pre-refactor snapshots could have up to 3 fast games in the live
+    // index. On the new code, listActiveAiGames().slice(0, 3) should
+    // surface 1 fast + 1 medium + 1 slow rather than 3 fast duplicates.
+    const t0 = 1_700_000_000_000;
+    // Manually seed three legacy fast envelopes into the index.
+    const { kvSet } = await import("@/lib/redis");
+    const legacyIds = ["ai-legacy-a", "ai-legacy-b", "ai-legacy-c"];
+    const baseEnvelope = {
+      title: "legacy",
+      tagline: "legacy",
+      description: "legacy",
+      theme: "legacy-theme",
+      source: "legacy-source",
+      buildingName: "Legacy",
+      buildingGlyph: "📦",
+      buildingRoof: "#000",
+      buildingBody: "#000",
+      spec: { kind: "quiz" as const, xpPerCorrect: 10, items: [] },
+      model: "test-stub",
+      seed: 0,
+      contentHash: "deadbeef",
+      // Intentionally NO rotationSlot — mimics pre-3-slot envelopes.
+    };
+    for (const id of legacyIds) {
+      await kvSet(`xp:ai-games:${id}`, {
+        ...baseEnvelope,
+        id,
+        generatedAt: t0,
+        validUntil: t0 + 60 * 60 * 1000, // 1h in the future
+      });
+    }
+    await kvSet("xp:ai-games:index", legacyIds);
+    // Force rotation. Fast slot sees 3 live fast envelopes → dedup keeps
+    // newest, drops 2 older siblings off the live index.
+    const result = await rotateIfDue(t0 + 1); // +1ms to avoid bucket skip
+    expect(result.ok).toBe(true);
+    const games = await listActiveAiGames();
+    // Exactly one fast, one medium, one slow — no more fast duplicates.
+    const bySlot = { fast: 0, medium: 0, slow: 0 } as Record<string, number>;
+    for (const g of games) bySlot[resolveSlot(g.rotationSlot)]++;
+    expect(bySlot.fast).toBe(1);
+    expect(bySlot.medium).toBe(1);
+    expect(bySlot.slow).toBe(1);
+  });
 });
 
 describe("archiveOnExpire", () => {
