@@ -10,8 +10,6 @@ import { CookieConsent } from "@/components/cookie-consent";
 import { WebVitalsReporter } from "@/components/web-vitals-reporter";
 import { PwaRegister } from "@/components/pwa-register";
 import { BottomTabs } from "@/components/bottom-tabs";
-import { CashflowHud } from "@/components/cashflow-hud";
-import { buildHudBundle } from "@/lib/hud-data";
 import { WattDeficitPanel } from "@/components/watt-deficit-panel";
 import { deficitState } from "@/lib/watts";
 import { resolveTheme } from "@/lib/theme";
@@ -82,7 +80,6 @@ export default async function RootLayout({
   const [
     stats,
     player,
-    hudEnabled,
     cityFirstEnabled,
     brownoutPanelEnabled,
     teacherFlag,
@@ -92,9 +89,6 @@ export default async function RootLayout({
     session
       ? getPlayerState(session.username).then(ensureSignupGift)
       : Promise.resolve(null),
-    session
-      ? isFlagEnabled("v2_cashflow_hud", session.username)
-      : Promise.resolve(false),
     session
       ? isFlagEnabled("v3_city_first", session.username)
       : Promise.resolve(true),
@@ -181,15 +175,11 @@ export default async function RootLayout({
         >
           {children}
         </main>
-        {session && player && hudEnabled && (
-          <CashflowHud
-            hud={buildHudBundle(player, Date.now(), {
-              brownoutBannerActive:
-                brownoutPanelEnabled && deficitState(player).inDeficit,
-            })}
-            lang={lang}
-          />
-        )}
+        {/* CashflowHud moved to per-page mount — see
+            components/cashflow-hud-mount.tsx. Lives on /miasto
+            and /loans/compare where the hourly-yield + watt-balance
+            numbers feed an active decision. Other pages use the
+            resource-bar in SiteNav for passive state. */}
         {session && <BottomTabs lang={lang} />}
         {session && (
           <>

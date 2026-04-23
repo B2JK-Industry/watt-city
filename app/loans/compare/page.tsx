@@ -4,6 +4,7 @@ import { getPlayerState } from "@/lib/player";
 import { compareLoans } from "@/lib/loans";
 import { LoanComparison } from "@/components/loan-comparison";
 import { KnfDisclaimer } from "@/components/knf-disclaimer";
+import { CashflowHudMount } from "@/components/cashflow-hud-mount";
 import { getLang } from "@/lib/i18n-server";
 
 export const dynamic = "force-dynamic";
@@ -39,6 +40,7 @@ export default async function LoanComparePage({
         principal={principal}
         termMonths={termMonths}
       />
+      <CashflowHudMount />
     </div>
   );
 }
