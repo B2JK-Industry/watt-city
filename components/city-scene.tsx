@@ -1,6 +1,34 @@
 import Link from "next/link";
 import { type GameMeta } from "@/lib/games";
 import { LiveCountdown } from "@/components/live-countdown";
+import {
+  ALL_SLOTS,
+  SLOT_INTERVAL_HOURS,
+  resolveSlot,
+  type RotationSlot,
+} from "@/lib/ai-pipeline/types";
+
+// Slot-label map — "FAST / MEDIUM / SLOW" reads like jargon. The city
+// UI uses interval-keyed labels so a user glancing at the banner
+// instantly knows the cadence. PL canonical; CityPreview + /games hub
+// re-use via the same constants where the UI layer localises. Keeping
+// them here keeps the city-scene SVG self-contained.
+const SLOT_LABEL: Record<RotationSlot, string> = {
+  fast: "1h",
+  medium: "6h",
+  slow: "12h",
+};
+
+/** Timestamp of the next aligned rotation-bucket boundary for `slot`.
+ *  When a slot sits empty (rotation pipeline hasn't filled it yet), the
+ *  construction-site placeholder counts down to this moment so the user
+ *  sees a real deadline for "the next fresh AI game" instead of a vague
+ *  "soon" label. Matches the bucket math in lib/ai-pipeline/publish.ts
+ *  (`Math.floor(now / slotHours*h) * slotHours*h`). */
+function nextSlotBoundary(slot: RotationSlot, now: number): number {
+  const slotMs = SLOT_INTERVAL_HOURS[slot] * 60 * 60 * 1000;
+  return (Math.floor(now / slotMs) + 1) * slotMs;
+}
 
 // Night panorama of Katowice — SVG viewBox is `VB_W x VB_H`. Buildings are
 // placed on a ground line at `GROUND`. Each game gets a unique silhouette.
@@ -26,6 +54,10 @@ export type CityAiGame = {
   glyph?: string;
   bestScore?: number; // current user's best on this AI game
   cap?: number;       // XP cap of this game's spec
+  /** Which rotation lane this game belongs to. Undefined on legacy
+   *  envelopes generated before the 3-slot cutover — those resolve to
+   *  "fast" via `resolveSlot`. */
+  rotationSlot?: RotationSlot;
 };
 
 type Props = {
@@ -173,28 +205,24 @@ export function CityScene({
           </g>
         ))}
 
-        {/* AI buildings — one per active AI game. When there are no active
-            games (only after a fresh Redis wipe), we show a single
-            "construction site" placeholder so the city doesn't feel empty. */}
-        {activeAi.length === 0 ? (
-          <ConstructionSlot
-            plan={CONSTRUCTION}
-            interactive={interactive}
-            aiGame={undefined}
-          />
-        ) : (
-          activeAi.slice(0, 3).map((game, i) => {
-            const plan = aiPlanFor(i, activeAi.length);
-            return (
-              <ConstructionSlot
-                key={game.id}
-                plan={plan}
-                interactive={interactive}
-                aiGame={game}
-              />
-            );
-          })
-        )}
+        {/* AI zone — always renders 3 fixed slots (fast / medium / slow).
+            A slot without a live game shows a construction-site placeholder
+            with a countdown to the next rotation boundary, so the "3 AI
+            games running in parallel" contract is visible even when the
+            backend pipeline is mid-generate / rate-limited / mid-deploy. */}
+        {ALL_SLOTS.map((slot, i) => {
+          const plan = aiPlanFor(i, 3);
+          const game = activeAi.find((g) => resolveSlot(g.rotationSlot) === slot);
+          return (
+            <ConstructionSlot
+              key={slot}
+              plan={plan}
+              interactive={interactive}
+              aiGame={game}
+              slot={slot}
+            />
+          );
+        })}
 
         {/* Buildings — wrapped in SVG-native <a> so click zones sit in the
             exact same coordinate space as the art (no HTML-overlay drift). */}
@@ -997,13 +1025,30 @@ function ConstructionSlot({
   plan,
   interactive,
   aiGame,
+  slot: slotKind,
 }: {
   plan: Plan;
   interactive: boolean;
   aiGame?: CityAiGame;
+  /** The rotation lane this visual slot represents. When `aiGame` is
+   *  undefined the placeholder labels itself as "1h / 6h / 12h" and
+   *  counts down to the next boundary for THAT lane. */
+  slot?: RotationSlot;
 }) {
   const live = Boolean(aiGame);
-  const slot = live ? (
+  const top = GROUND - plan.h;
+  // Pending placeholder: no live game yet for this slot. Surface the
+  // lane cadence ("1h / 6h / 12h") + a LiveCountdown to the next
+  // aligned rotation boundary so the user sees a concrete deadline,
+  // not "coming soon". When `slotKind` is missing (legacy caller),
+  // we skip the lane-branded banner entirely and fall back to the
+  // plain construction-site art.
+  const pendingCountdown = !live && slotKind
+    ? nextSlotBoundary(slotKind, Date.now())
+    : null;
+  const laneLabel = slotKind ? SLOT_LABEL[slotKind] : null;
+
+  const node = live ? (
     <LiveAiBuilding
       x={plan.x}
       w={plan.w}
@@ -1011,37 +1056,92 @@ function ConstructionSlot({
       aiGame={aiGame!}
     />
   ) : (
-    plan.draw({
-      x: plan.x,
-      w: plan.w,
-      h: plan.h,
-      powered: false,
-      bestScore: 0,
-      cap: 0,
-      name: plan.buildingName,
-    })
+    <g>
+      {plan.draw({
+        x: plan.x,
+        w: plan.w,
+        h: plan.h,
+        powered: false,
+        bestScore: 0,
+        cap: 0,
+        name: plan.buildingName,
+      })}
+      {pendingCountdown !== null && laneLabel && (
+        <>
+          {/* lane-cadence badge (1h / 6h / 12h) + countdown to the
+              next rotation boundary. Same vertical layout + gap
+              rhythm as LiveAiBuilding so live + pending slots stack
+              visually together. */}
+          <g transform={`translate(${plan.x + plan.w / 2 - 22}, ${top - 70})`}>
+            <rect
+              x={0}
+              y={0}
+              width={44}
+              height={14}
+              fill="#0a0a0f"
+              stroke="#fde047"
+              strokeWidth={1.5}
+              rx={2}
+              opacity={0.7}
+            />
+            <LiveCountdown
+              validUntil={pendingCountdown}
+              color="#fde047"
+              secondsThreshold={Infinity}
+            />
+          </g>
+          <g transform={`translate(${plan.x + plan.w / 2 - 44}, ${top - 46})`}>
+            <rect
+              x={0}
+              y={0}
+              width={88}
+              height={18}
+              fill="#fde047"
+              stroke="#0a0a0f"
+              strokeWidth={2}
+              rx={2}
+              opacity={0.55}
+            />
+            <text
+              x={44}
+              y={12}
+              textAnchor="middle"
+              fontSize={8}
+              fontWeight={900}
+              fill="#0a0a0f"
+            >
+              🛠 AI · {laneLabel}
+            </text>
+          </g>
+        </>
+      )}
+    </g>
   );
-  if (!interactive) return <g>{slot}</g>;
+  if (!interactive) return <g>{node}</g>;
   const href = aiGame ? `/games/ai/${aiGame.id}` : "/sin-slavy";
   const label = aiGame
     ? `Wyzwanie AI dnia — ${aiGame.title}`
-    : "Wyzwanie AI dnia — wkrótce";
+    : laneLabel
+      ? `Wyzwanie AI · ${laneLabel} · wkrótce`
+      : "Wyzwanie AI dnia — wkrótce";
   const title = aiGame
     ? `Wyzwanie AI dnia · dostępne — ${aiGame.title}`
-    : "Wyzwanie AI dnia · w budowie";
+    : laneLabel
+      ? `Wyzwanie AI · ${laneLabel} · w budowie — nowa gra za chwilę`
+      : "Wyzwanie AI dnia · w budowie";
   return (
     <Link href={href} aria-label={label}>
       <g className="building-link" data-powered={live}>
         <title>{title}</title>
         <rect
           x={plan.x - 6}
-          y={GROUND - plan.h - 30}
+          y={GROUND - plan.h - 80}
           width={plan.w + 12}
-          height={plan.h + 60}
+          height={plan.h + 110}
           fill="transparent"
           pointerEvents="all"
         />
-        {slot}
+        {node}
       </g>
     </Link>
   );

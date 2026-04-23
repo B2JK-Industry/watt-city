@@ -41,6 +41,7 @@ export default async function GamesHubPage() {
     glyph: g.buildingGlyph,
     cap: xpCapForAnyLang(g.spec),
     bestScore: stats?.games[g.id]?.bestScore ?? 0,
+    rotationSlot: g.rotationSlot,
   }));
 
   const bodyParts = t.gamesHubBody

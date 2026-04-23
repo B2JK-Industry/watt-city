@@ -39,6 +39,7 @@ export default async function Home() {
       glyph: g.buildingGlyph,
       cap: xpCapForAnyLang(g.spec),
       bestScore: stats.games[g.id]?.bestScore ?? 0,
+      rotationSlot: g.rotationSlot,
     }));
     return (
       <Dashboard
@@ -81,6 +82,7 @@ export default async function Home() {
     glyph: g.buildingGlyph,
     cap: xpCapForAnyLang(g.spec),
     bestScore: 0,
+    rotationSlot: g.rotationSlot,
   }));
   const t = dict.hero;
   const bodyParts = t.body
