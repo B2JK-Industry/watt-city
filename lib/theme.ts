@@ -73,10 +73,14 @@ export const PKO_THEME: ThemeTokens = {
   brand: "PKO Junior × Watt City",
   brandShort: "PKO",
   colors: {
-    accent: "#d31f26", // PKO red (public brand)
+    // Verified against pkobp.pl/junior 2026-04-24 — see
+    // docs/partnerships/pko-visual-system-v1/04-DESIGN-TOKENS.json.
+    // `accent` is the DOMINANT navy (97× occurrences on pkobp.pl/junior),
+    // not PKO corporate red — red is reserved for co-branding lockups only.
+    accent: "#003574", // PKO navy-700 (PRIMARY)
     accentInk: "#ffffff",
-    background: "#052c65", // PKO navy
-    surface: "#0b3a7a",
+    background: "#001E4B", // PKO navy-900 (darkest — hero, page BG)
+    surface: "#003574", // PKO navy-700 (card surface on navy BG)
     ink: "#ffffff",
   },
   disclaimer:

@@ -1,0 +1,514 @@
+/* SKO × Watt City — PKO-inspired design layer.
+ *
+ * Mounts via <html data-skin="pko"> (already wired in app/layout.tsx).
+ * Override Watt City neo-brutalism for a banking-clean aesthetic.
+ *
+ * Source values verified 2026-04-24 against:
+ *   - https://www.pkobp.pl/junior/  (97× #003574, 25× #E5E5E5, 23× #636363)
+ *   - https://www.pkobp.pl/_next/static/css/645585a1fd07418b.css (button + form patterns)
+ *
+ * Usage: import after globals.css in app/globals.css:
+ *   @import "./globals-pko.css";
+ *
+ * !important is used surgically to beat Tailwind v4 utility specificity
+ * for arbitrary-value classes (border-[3px], shadow-[Npx_Npx_0_0]) that
+ * proliferate across 47 sites in the repo. Path B in v1.1 cleanup PR will
+ * refactor those into semantic .card/.btn classes; v1 ships with the
+ * !important shield.
+ *
+ * Ordering rationale:
+ *   §1 tokens (CSS variables — load first)
+ *   §2 base + body (page-level)
+ *   §3 typography helpers (.brutal-heading, .brutal-tag)
+ *   §4 components (.btn, .card, .input, .chip)
+ *   §5 cross-cutting (badges, level-ring, leaderboard)
+ *   §6 motion overrides
+ *   §7 brutalism shield (Tailwind arbitrary value resets)
+ */
+
+/* ============================================================
+ * §1 — TOKENS
+ * ============================================================ */
+
+:root[data-skin="pko"] {
+  /* Brand navy ramp (verified) */
+  --sko-navy-900: #001E4B;     /* darkest — page BG hero, deepest shadow */
+  --sko-navy-700: #003574;     /* PRIMARY (97× verified) — CTA, brand chip */
+  --sko-navy-500: #004C9A;     /* hover navy, surface above primary */
+  --sko-navy-300: #3074D5;     /* link, info, muted-on-dark */
+
+  /* Accent (verified Junior + Next bundle) */
+  --sko-accent-orange: #CC7A09;        /* primary highlight, badge */
+  --sko-accent-orange-light: #DB912C;  /* secondary highlight */
+
+  /* Ink + surface */
+  --sko-ink: #172B4D;              /* body text on paper */
+  --sko-text-secondary: #636363;   /* captions */
+  --sko-text-muted: #818181;       /* disabled text */
+  --sko-white: #FFFFFF;
+  --sko-paper: #F9F9F9;            /* light-mode BG */
+  --sko-surface: #F2F2F2;          /* muted surface */
+  --sko-border: #D5D5D5;           /* input, divider */
+  --sko-border-light: #E5E5E5;     /* card outline */
+
+  /* Semantic */
+  --sko-success: #2E7D49;
+  --sko-warning: #CC7A09;
+  --sko-danger:  #B91C1C;          /* DESIGN-CALL — muted vs PKO corporate red */
+  --sko-info:    #3074D5;
+
+  /* Reserved (NOT in product UI) */
+  --sko-pko-red: #CA171D;          /* corporate co-branding only */
+
+  /* Shape tokens */
+  --sko-radius-none: 0;
+  --sko-radius-xs: 4px;
+  --sko-radius-sm: 6px;
+  --sko-radius-md: 10px;            /* DOMINANT button + card */
+  --sko-radius-md-asym: 10px 0 10px 0;  /* PKO signature asymmetric */
+  --sko-radius-lg: 16px;            /* modal */
+  --sko-radius-full: 9999px;        /* chip pill */
+
+  /* Border widths */
+  --sko-border-thin: 1px;
+  --sko-border-thick: 2px;          /* used sparingly */
+
+  /* Depth */
+  --sko-shadow-card:    0 3px 6px rgba(0, 0, 0, 0.16);
+  --sko-shadow-outline: 0 0 0 1px var(--sko-border-light);
+  --sko-shadow-lg:      0 8px 24px rgba(0, 30, 75, 0.18);
+
+  /* Motion */
+  --sko-ease: ease;
+  --sko-ease-material: cubic-bezier(0.4, 0, 0.2, 1);
+  --sko-dur-short: 200ms;
+  --sko-dur-base: 300ms;
+
+  /* Typography */
+  --sko-font-sans: var(--font-sko-sans), Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --sko-font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Spacing */
+  --sko-space-1: 4px;
+  --sko-space-2: 8px;
+  --sko-space-3: 12px;
+  --sko-space-4: 16px;
+  --sko-space-6: 24px;
+
+  /* === Remap existing Watt City tokens consumed by Tailwind v4 @theme === */
+  --background: var(--sko-navy-900);
+  --foreground: var(--sko-white);
+  --surface: var(--sko-navy-700);
+  --surface-2: var(--sko-navy-500);
+  --ink: var(--sko-border-light);   /* "ink" tokens become hairline divider colour under PKO skin */
+  --shadow: rgba(0, 0, 0, 0.16);
+
+  --accent: var(--sko-navy-700);
+  --accent-2: var(--sko-accent-orange);
+  --brand: var(--sko-navy-300);
+
+  /* Neo-* legacy palette — remap to PKO equivalents so any leftover
+   * `var(--neo-pink)` etc. doesn't render literal pink under skin. */
+  --neo-yellow: var(--sko-accent-orange-light);
+  --neo-pink:   var(--sko-danger);
+  --neo-cyan:   var(--sko-navy-300);
+  --neo-lime:   var(--sko-success);
+  --neo-purple: var(--sko-navy-700);
+  --neo-orange: var(--sko-accent-orange);
+  --neo-red:    var(--sko-danger);
+}
+
+/* ============================================================
+ * §2 — BASE / BODY
+ * ============================================================ */
+
+:root[data-skin="pko"] body {
+  background: var(--sko-navy-900);
+  /* Drop the dotted radial-gradient (brutalist confetti pattern). */
+  background-image: none;
+  font-family: var(--sko-font-sans);
+  color: var(--sko-white);
+}
+
+/* Light-mode paper variant (opt-in via [data-mode="light"] on <html>). */
+:root[data-skin="pko"][data-mode="light"] body {
+  background: var(--sko-paper);
+  color: var(--sko-ink);
+}
+
+/* ============================================================
+ * §3 — TYPOGRAPHY HELPERS (override brutalist headings)
+ * ============================================================ */
+
+:root[data-skin="pko"] .brutal-heading {
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+  font-family: var(--sko-font-sans);
+}
+
+/* Drop the 14×14 yellow square decorator from .brutal-heading::before */
+:root[data-skin="pko"] .brutal-heading::before {
+  content: none;
+}
+
+:root[data-skin="pko"] .brutal-tag {
+  display: inline-flex;
+  background: var(--sko-navy-500);
+  color: var(--sko-white);
+  border: none;
+  border-radius: var(--sko-radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  box-shadow: none;
+}
+
+/* ============================================================
+ * §4 — COMPONENTS
+ * ============================================================ */
+
+/* ---- 4.1 Buttons ---- */
+
+:root[data-skin="pko"] .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sko-space-2);
+  padding: 11px 16px;                                /* verified PKO pattern */
+  border: none;
+  border-radius: var(--sko-radius-md-asym);          /* signature asymmetric corner */
+  background: var(--sko-navy-700);
+  color: var(--sko-white);
+  font-family: var(--sko-font-sans);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+  text-decoration: none;
+  box-shadow: var(--sko-shadow-card);
+  cursor: pointer;
+  transition: background var(--sko-dur-base) var(--sko-ease-material),
+              box-shadow var(--sko-dur-short) var(--sko-ease);
+}
+
+:root[data-skin="pko"] .btn:hover {
+  background: var(--sko-navy-500);
+  box-shadow: var(--sko-shadow-lg);
+  transform: none;                                   /* kill brutalist push */
+}
+
+:root[data-skin="pko"] .btn:active {
+  background: #002E78;                                /* deeper navy than 700 */
+  box-shadow: var(--sko-shadow-card);
+  transform: none;
+}
+
+:root[data-skin="pko"] .btn:disabled,
+:root[data-skin="pko"] .btn[aria-disabled="true"] {
+  background: var(--sko-border);
+  color: var(--sko-text-muted);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+:root[data-skin="pko"] .btn-primary {
+  background: var(--sko-navy-700);
+  color: var(--sko-white);
+}
+
+:root[data-skin="pko"] .btn-ghost {
+  background: transparent;
+  color: var(--sko-white);
+  border: 1px solid var(--sko-white);
+  box-shadow: none;
+}
+:root[data-skin="pko"] .btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+:root[data-skin="pko"] [data-mode="light"] .btn-ghost {
+  color: var(--sko-navy-700);
+  border-color: var(--sko-navy-700);
+}
+
+:root[data-skin="pko"] .btn-pink,
+:root[data-skin="pko"] .btn-cyan,
+:root[data-skin="pko"] .btn-lime {
+  /* Legacy neon variants → mute to PKO palette. */
+  background: var(--sko-accent-orange);
+  color: var(--sko-white);
+}
+
+:root[data-skin="pko"] .btn-danger {
+  background: var(--sko-danger);
+  color: var(--sko-white);
+}
+
+/* ---- 4.2 Cards ---- */
+
+:root[data-skin="pko"] .card {
+  background: var(--sko-navy-700);                   /* on dark page BG */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--sko-radius-md);
+  box-shadow: var(--sko-shadow-card);
+}
+
+:root[data-skin="pko"] [data-mode="light"] .card {
+  background: var(--sko-white);
+  border: 1px solid var(--sko-border-light);
+  color: var(--sko-ink);
+}
+
+:root[data-skin="pko"] .card-alt {
+  background: var(--sko-navy-500);
+}
+
+/* ---- 4.3 Inputs ---- */
+
+:root[data-skin="pko"] .input {
+  background: var(--sko-white);
+  color: var(--sko-ink);
+  border: 1px solid var(--sko-border);
+  border-radius: var(--sko-radius-xs);
+  padding: 11px 13px;
+  font-size: 16px;
+  font-weight: 400;
+  font-family: var(--sko-font-sans);
+  box-shadow: none;
+  transition: border-color var(--sko-dur-short) var(--sko-ease);
+}
+
+:root[data-skin="pko"] .input:focus {
+  outline: 2px solid var(--sko-navy-500);
+  outline-offset: 0;
+  border-color: var(--sko-navy-700);
+  transform: none;
+  box-shadow: none;
+}
+
+/* On dark navy page BG, inputs invert. */
+:root[data-skin="pko"] .input.input-on-dark {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--sko-white);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+/* ---- 4.4 Chips ---- */
+
+:root[data-skin="pko"] .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--sko-radius-full);
+  background: var(--sko-navy-500);
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sko-white);
+  box-shadow: none;
+  transition: background var(--sko-dur-short) var(--sko-ease);
+}
+
+/* ---- 4.5 Game-tile ---- */
+
+:root[data-skin="pko"] .game-tile {
+  background: var(--sko-navy-700);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: var(--sko-radius-md);
+  box-shadow: var(--sko-shadow-card);
+  transition: box-shadow var(--sko-dur-short) var(--sko-ease);
+  transform: none;
+}
+
+:root[data-skin="pko"] .game-tile:hover {
+  box-shadow: var(--sko-shadow-lg);
+  transform: none;
+}
+
+:root[data-skin="pko"] .game-tile:active {
+  box-shadow: var(--sko-shadow-card);
+  transform: none;
+}
+
+/* ---- 4.6 Podium / leaderboard ---- */
+
+:root[data-skin="pko"] .podium-tile {
+  background: var(--sko-navy-700);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: var(--sko-radius-md);
+  box-shadow: var(--sko-shadow-card);
+}
+
+:root[data-skin="pko"] .leaderboard-row-me {
+  background: rgba(48, 116, 213, 0.12);              /* navy-300 tint */
+}
+
+/* ============================================================
+ * §5 — CROSS-CUTTING (badges, level-ring, focus, mascot)
+ * ============================================================ */
+
+:root[data-skin="pko"] .new-badge,
+:root[data-skin="pko"] .hot-badge {
+  position: absolute;
+  top: 8px;
+  padding: 3px 10px;
+  border: none;
+  border-radius: var(--sko-radius-full);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  box-shadow: var(--sko-shadow-outline);
+}
+
+:root[data-skin="pko"] .new-badge {
+  right: 8px;
+  background: var(--sko-accent-orange);
+  color: var(--sko-white);
+}
+
+:root[data-skin="pko"] .hot-badge {
+  left: 8px;
+  background: var(--sko-danger);
+  color: var(--sko-white);
+}
+
+:root[data-skin="pko"] .level-ring {
+  border: none;
+  box-shadow: none;
+  background:
+    conic-gradient(var(--sko-accent-orange) calc(var(--p, 0) * 1%),
+                   rgba(255, 255, 255, 0.18) 0);
+}
+
+:root[data-skin="pko"] .level-ring::before {
+  background: var(--sko-navy-700);
+}
+
+/* Focus ring under skin: navy-300 instead of yellow. */
+:root[data-skin="pko"] :focus-visible {
+  outline: 3px solid var(--sko-navy-300);
+  outline-offset: 2px;
+  border-radius: var(--sko-radius-xs);
+}
+
+/* Skip-to-content button under skin. */
+:root[data-skin="pko"] .skip-to-content {
+  background: var(--sko-navy-700);
+  color: var(--sko-white);
+  border: none;
+  border-radius: var(--sko-radius-xs);
+  font-weight: 600;
+}
+
+/* ============================================================
+ * §6 — MOTION OVERRIDES
+ * ============================================================ */
+
+/* Cap brutalist overshoots in pop-in / tier-up-enter when the skin is on. */
+:root[data-skin="pko"] .animate-xp-pop,
+:root[data-skin="pko"] [class*="animate-pop-in"] {
+  animation-duration: 200ms;
+  animation-timing-function: var(--sko-ease-material);
+}
+
+/* CityScene SVG building hover — replace yellow neon glow with navy soft. */
+:root[data-skin="pko"] .building-link:hover,
+:root[data-skin="pko"] .building-link:focus-visible {
+  filter: drop-shadow(0 4px 8px rgba(0, 30, 75, 0.30));
+  transform: none;
+}
+
+/* ============================================================
+ * §7 — BRUTALISM SHIELD (Tailwind arbitrary-value resets)
+ *
+ * Watt City spreads `border-[3px]`, `shadow-[6px_6px_0_0_var(--ink)]`
+ * across 47 + 28 sites. These are Tailwind utilities with high specificity
+ * — only !important reliably overrides them. Path B (v1.1 PR) refactors
+ * them into semantic classes; v1 ships this shield.
+ * ============================================================ */
+
+:root[data-skin="pko"] [class*="border-[3px]"],
+:root[data-skin="pko"] [class*="border-\\[3px\\]"] {
+  border-width: 1px !important;
+  border-color: var(--sko-border-light) !important;
+}
+
+:root[data-skin="pko"] [class*="border-b-[3px]"],
+:root[data-skin="pko"] [class*="border-b-\\[3px\\]"] {
+  border-bottom-width: 1px !important;
+  border-bottom-color: var(--sko-border-light) !important;
+}
+
+:root[data-skin="pko"] [class*="border-t-[3px]"],
+:root[data-skin="pko"] [class*="border-t-\\[3px\\]"] {
+  border-top-width: 1px !important;
+  border-top-color: var(--sko-border-light) !important;
+}
+
+/* Strip Tailwind arbitrary offset shadows. The pattern matcher can't
+ * enumerate all `shadow-[Npx_Npx_0_0_*]` permutations, so we lean on a
+ * data-skin scoped wildcard that catches the common ones. */
+:root[data-skin="pko"] .shadow-\[3px_3px_0_0_var\(--ink\)\],
+:root[data-skin="pko"] .shadow-\[4px_4px_0_0_var\(--ink\)\],
+:root[data-skin="pko"] .shadow-\[5px_5px_0_0_var\(--ink\)\],
+:root[data-skin="pko"] .shadow-\[6px_6px_0_0_var\(--ink\)\],
+:root[data-skin="pko"] .shadow-\[7px_7px_0_0_var\(--ink\)\],
+:root[data-skin="pko"] .shadow-\[9px_9px_0_0_var\(--ink\)\],
+:root[data-skin="pko"] [class*="shadow-["][class*="0_0_var"] {
+  box-shadow: var(--sko-shadow-card) !important;
+}
+
+/* Kill `uppercase` Tailwind utility under skin (124 sites). Banking copy
+ * is sentence-case; uppercase headings break tone. */
+:root[data-skin="pko"] .uppercase {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+/* Kill `font-black` (900 weight) where it's used decoratively. Headings
+ * keep 700; body 400. */
+:root[data-skin="pko"] .font-black {
+  font-weight: 700 !important;
+}
+
+/* Kill arbitrary tracking-widest. */
+:root[data-skin="pko"] .tracking-widest,
+:root[data-skin="pko"] .tracking-wider {
+  letter-spacing: 0 !important;
+}
+
+/* ============================================================
+ * §8 — REGRESSION GUARDS
+ *
+ * Specific spots where Watt City core renders non-themable hard-coded
+ * colours. These selectors target the inline style attribute as a
+ * last-resort patch.
+ * ============================================================ */
+
+/* Footer brand chip in app/layout.tsx:237 — inline background = theme.colors.accent.
+ * Already handled by theme.ts under PKO skin (navy), but force the border + shadow
+ * to drop because the chip element uses border-[3px] arbitrary value. */
+:root[data-skin="pko"] footer span[style*="background: rgb(0, 53, 116)"],
+:root[data-skin="pko"] footer span[style*="background:#003574"] {
+  border: 1px solid var(--sko-border-light) !important;
+  box-shadow: none !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+  border-radius: var(--sko-radius-sm) !important;
+}
+
+/* tier-up-toast.tsx:62 — `bg-[var(--accent)]` toast surface.
+ * Under PKO skin --accent = navy-700, but the offset shadow lives in
+ * an arbitrary-value class. Already shielded in §7. Add white text just
+ * in case the toast still has dark text from base. */
+:root[data-skin="pko"] [role="status"][class*="motion-safe:animate-[tier-up-enter"] {
+  color: var(--sko-white) !important;
+}
+
+/* End of globals-pko.css */

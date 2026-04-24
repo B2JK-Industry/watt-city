@@ -541,3 +541,9 @@ body {
   letter-spacing: 0.06em;
   box-shadow: 2px 2px 0 0 var(--ink);
 }
+
+/* SKO × Watt City — PKO partnership skin layer.
+ * Loaded last so `:root[data-skin="pko"]` overrides win the cascade
+ * against the brutalist primitives above. See docs/partnerships/
+ * pko-visual-system-v1/ for sourcing + component specs. */
+@import "./globals-pko.css";

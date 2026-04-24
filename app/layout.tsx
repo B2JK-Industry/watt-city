@@ -40,7 +40,8 @@ export const metadata: Metadata = {
   title: "Watt City · Edukacja finansowa dla dzieci · Katowice",
   description:
     "Watt City — gra edukacyjna ucząca dzieci finansów osobistych. Graj w minigry → zarabiaj zasoby → buduj miasto → zaciągaj kredyt → spłacaj. SKO 2.0 prototype. Pitched to PKO BP at ETHSilesia 2026.",
-  manifest: "/manifest.webmanifest",
+  // Manifest is auto-served from app/manifest.ts — Next 16 injects the
+  // <link rel="manifest"> tag, so no explicit `manifest` field here.
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -52,12 +53,15 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport = {
-  themeColor: "#fde047",
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 5,
-};
+export function generateViewport() {
+  const theme = resolveTheme();
+  return {
+    themeColor: theme.colors.accent,
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+  };
+}
 
 export default async function RootLayout({
   children,

@@ -26,8 +26,13 @@ describe("D8 — SKIN=pko skin propagation", () => {
 
   it("resolveTheme('pko') returns the PKO skin", () => {
     expect(resolveTheme("pko")).toBe(PKO_THEME);
-    expect(PKO_THEME.colors.accent).toBe("#d31f26");
-    expect(PKO_THEME.colors.background).toBe("#052c65");
+    // Verified tokens from 04-DESIGN-TOKENS.json (pkobp.pl/junior scan):
+    // navy-700 #003574 is the DOMINANT brand colour (97× occurrences),
+    // navy-900 #001E4B is the hero / darkest background.
+    expect(PKO_THEME.colors.accent).toBe("#003574");
+    expect(PKO_THEME.colors.background).toBe("#001E4B");
+    expect(PKO_THEME.colors.surface).toBe("#003574");
+    expect(PKO_THEME.colors.ink).toBe("#ffffff");
   });
 
   it("layout.tsx injects theme palette as CSS vars when pko", () => {
