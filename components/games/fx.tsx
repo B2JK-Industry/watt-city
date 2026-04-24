@@ -63,7 +63,7 @@ export function ComboBadge({
     multiplier >= 3
       ? "border-[var(--danger)] text-[var(--danger)]"
       : multiplier >= 2
-      ? "border-[var(--accent-2)] text-[var(--accent-2)]"
+      ? "border-[var(--accent)] text-[var(--accent)]"
       : "border-[var(--accent)] text-[var(--accent)]";
   return (
     <span

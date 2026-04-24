@@ -18,7 +18,7 @@ export default async function PrivacyPage() {
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="section-heading text-3xl sm:text-4xl">{t.title}</h1>
           <span
-            className="brutal-tag"
+            className="chip"
             style={{ background: "var(--success)", color: "var(--accent-ink)" }}
           >
             {t.tag}

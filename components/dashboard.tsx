@@ -117,7 +117,7 @@ export function Dashboard({
                 <defs>
                   <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0%" stopColor="var(--accent)" />
-                    <stop offset="100%" stopColor="var(--accent-2)" />
+                    <stop offset="100%" stopColor="var(--accent)" />
                   </linearGradient>
                 </defs>
               </svg>
@@ -232,7 +232,7 @@ export function Dashboard({
                   className="relative card game-tile stagger-item p-5 flex flex-col gap-3"
                 >
                   <div
-                    className={`h-16 rounded-xl bg-gradient-to-br ${game.accent} flex items-center justify-center text-3xl`}
+                    className={`h-16 rounded-xl bg-[var(--accent)] ${game.accent} flex items-center justify-center text-3xl`}
                   >
                     {game.emoji}
                   </div>
@@ -272,7 +272,7 @@ export function Dashboard({
         <div className="flex flex-wrap items-center gap-2">
           <h2 className="section-heading text-lg">{d.dataRightsTitle}</h2>
           <span
-            className="brutal-tag"
+            className="chip"
             style={{ background: "var(--success)", color: "var(--accent-ink)" }}
           >
             GDPR

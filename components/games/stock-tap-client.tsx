@@ -236,7 +236,7 @@ export function StockTapClient({ dict }: { dict: Dict }) {
       </div>
       <div className="h-2 rounded-full bg-[var(--surface-2)] overflow-hidden">
         <div
-          className="h-full bg-gradient-to-r from-emerald-400 via-[var(--accent)] to-[var(--accent-2)] transition-all"
+          className="h-full bg-[var(--accent)] via-[var(--accent)] to-[var(--accent)] transition-all"
           style={{ width: `${(secondsLeft / DURATION_SECONDS) * 100}%` }}
         />
       </div>
@@ -298,7 +298,7 @@ export function StockTapClient({ dict }: { dict: Dict }) {
               y1={height - ((position - min) / range) * height}
               x2={width}
               y2={height - ((position - min) / range) * height}
-              stroke="var(--accent-2)"
+              stroke="var(--accent)"
               strokeDasharray="2 2"
               strokeWidth="0.7"
             />

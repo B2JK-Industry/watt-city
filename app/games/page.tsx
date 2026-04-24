@@ -58,14 +58,14 @@ export default async function GamesHubPage() {
           </h1>
           {cityBadge && (
             <span
-              className="brutal-tag"
+              className="chip"
               style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
             >
               {cityBadge}
             </span>
           )}
           <span
-            className="brutal-tag"
+            className="chip"
             style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
           >
             {t.gamesHubTime}

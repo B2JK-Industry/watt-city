@@ -359,7 +359,7 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
                     width={slot.w}
                     height={14}
                     fill={building.roofColor}
-                    stroke="#0a0a0f"
+                    stroke="var(--ink)"
                     strokeWidth={2}
                   />
                 )}
@@ -369,7 +369,7 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
                   y={slot.y + slot.h / 2 + 8}
                   textAnchor="middle"
                   fontSize={slot.w < 80 ? 18 : 28}
-                  fill={occupied ? "#0a0a0f" : "#94a3b8"}
+                  fill={occupied ? "var(--ink)" : "#94a3b8"}
                   style={{ filter: "drop-shadow(0 1px 0 rgba(0,0,0,0.4))" }}
                 >
                   {occupied ? (building?.glyph ?? "🏗") : "+"}
@@ -377,7 +377,7 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
                 {/* level badge */}
                 {occupied && (
                   <g transform={`translate(${slot.x + slot.w - 22}, ${slot.y + 2})`}>
-                    <rect width={20} height={14} fill="#0a0a0f" stroke="#fde047" strokeWidth={1.5} rx={2} />
+                    <rect width={20} height={14} fill="var(--ink)" stroke="#fde047" strokeWidth={1.5} rx={2} />
                     <text x={10} y={11} textAnchor="middle" fontSize={8} fontWeight={900} fill="#fde047">
                       L{building?.level}
                     </text>

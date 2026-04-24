@@ -59,7 +59,8 @@ export function TierUpToast({
   return (
     <div
       role="status"
-      className="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 w-[min(92vw,26rem)] card elev-soft border-l-[4px] border-l-[var(--accent)] p-4 flex flex-col gap-2 bg-[var(--surface)] text-[var(--foreground)] motion-safe:animate-[tier-up-enter_420ms_cubic-bezier(0.2,0.9,0.2,1.2)]"
+      className="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 w-[min(92vw,26rem)] card elev-soft p-4 flex flex-col gap-2 bg-[var(--surface)] text-[var(--foreground)] motion-safe:animate-[tier-up-enter_420ms_cubic-bezier(0.2,0.9,0.2,1.2)]"
+      style={{ borderLeft: "4px solid var(--accent)" }}
     >
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <Confetti count={20} />

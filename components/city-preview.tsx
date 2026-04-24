@@ -24,16 +24,12 @@ export function CityPreview() {
               style={{ height: isTall ? "100%" : `${h}%` }}
             >
               <div
-                className={`${g.building.roof} border-b-[3px] border-[var(--line)] h-5`}
-                style={{
-                  backgroundImage:
-                    "repeating-linear-gradient(135deg, rgba(0,0,0,0.2) 0 5px, transparent 5px 10px)",
-                }}
+                className={`${g.building.roof} border-b border-[var(--line)] h-5`}
               />
               <div
                 className={`${g.building.body} h-[calc(100%-1.25rem)] relative flex items-center justify-center`}
               >
-                <div className="absolute inset-2 rounded-md border border-[var(--line)] bg-[#0a0a0f]/70 flex items-center justify-center">
+                <div className="absolute inset-2 rounded-md border border-[var(--line)] bg-[var(--surface-2)] flex items-center justify-center">
                   <span className="text-3xl sm:text-4xl">
                     {g.building.glyph}
                   </span>
@@ -48,11 +44,7 @@ export function CityPreview() {
       </div>
       <div
         aria-hidden="true"
-        className="mt-3 h-5 rounded-lg border border-[var(--line)] bg-[var(--ink-subtle)]"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(45deg, rgba(0,0,0,0.25) 0 6px, transparent 6px 12px)",
-        }}
+        className="mt-3 h-5 rounded-md border border-[var(--line)] bg-[var(--surface-2)]"
       />
     </div>
   );

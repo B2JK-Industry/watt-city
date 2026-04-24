@@ -204,7 +204,7 @@ export function EnergyDashClient({ dict }: { dict: Dict }) {
               <div className="rounded-lg bg-[var(--surface-2)] px-2 py-1 border border-[var(--line)]">
                 5+ = <strong>×1.5</strong>
               </div>
-              <div className="rounded-lg bg-[var(--surface-2)] px-2 py-1 border border-[var(--accent-2)]/50 text-[var(--accent-2)]">
+              <div className="rounded-lg bg-[var(--surface-2)] px-2 py-1 border border-[var(--accent)]/50 text-[var(--accent)]">
                 10+ = <strong>×2</strong>
               </div>
               <div className="rounded-lg bg-[var(--surface-2)] px-2 py-1 border border-[var(--danger)] text-[var(--danger)]">
@@ -252,7 +252,7 @@ export function EnergyDashClient({ dict }: { dict: Dict }) {
       </div>
       <div className="h-2 rounded-full bg-[var(--surface-2)] overflow-hidden">
         <div
-          className="h-full bg-gradient-to-r from-emerald-400 via-[var(--accent)] to-[var(--accent-2)] transition-all"
+          className="h-full bg-[var(--accent)] via-[var(--accent)] to-[var(--accent)] transition-all"
           style={{ width: `${(secondsLeft / DURATION_SECONDS) * 100}%` }}
         />
       </div>
@@ -274,8 +274,8 @@ export function EnergyDashClient({ dict }: { dict: Dict }) {
                   aria-label={tile.label}
                   className={`absolute inset-0 rounded-xl flex items-center justify-center text-3xl sm:text-4xl transition-transform active:scale-90 ${
                     tile.kind === "oze"
-                      ? "bg-gradient-to-br from-emerald-400/30 to-emerald-600/20 border border-[var(--success)] text-[var(--success)]"
-                      : "bg-gradient-to-br from-[var(--surface-2)] to-[var(--surface-2)] border border-[var(--line)]/60 text-[var(--foreground)]"
+                      ? "bg-[var(--accent)] border border-[var(--success)] text-[var(--success)]"
+                      : "bg-[var(--accent)] from-[var(--surface-2)] to-[var(--surface-2)] border border-[var(--line)]/60 text-[var(--foreground)]"
                   }`}
                 >
                   <span>{tile.icon}</span>

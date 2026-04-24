@@ -106,7 +106,7 @@ export default async function FriendCityPage({
                       width={slot.w}
                       height={12}
                       fill={cat.roofColor}
-                      stroke="#0a0a0f"
+                      stroke="var(--ink)"
                       strokeWidth={2}
                     />
                     <text

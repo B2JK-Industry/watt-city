@@ -239,19 +239,19 @@ export default async function SchoolsLanding() {
       <section className="flex flex-col gap-4">
         <div className="flex flex-wrap gap-2">
           <span
-            className="brutal-tag"
+            className="chip"
             style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
           >
             ✅ MEN V–VIII
           </span>
           <span
-            className="brutal-tag"
+            className="chip"
             style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
           >
             PKO SKO 2.0
           </span>
           <span
-            className="brutal-tag"
+            className="chip"
             style={{ background: "var(--success)", color: "var(--accent-ink)" }}
           >
             GDPR-K
@@ -355,9 +355,9 @@ export default async function SchoolsLanding() {
           {[t.screen1, t.screen2, t.screen3].map((caption, i) => (
             <div
               key={i}
-              className="aspect-video rounded-xl border border-[var(--line)] p-6 flex items-center justify-center text-center"
+              className="aspect-video rounded-md border border-[var(--line)] p-6 flex items-center justify-center text-center"
               style={{
-                background: `linear-gradient(135deg, var(--accent), var(--accent))`,
+                background: "var(--accent)",
                 color: "var(--accent-ink)",
               }}
             >

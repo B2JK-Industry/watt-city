@@ -110,7 +110,7 @@ export function BudgetBalanceClient({
     }));
     return (
       <div className="flex flex-col gap-4">
-        <div className="card p-5 bg-gradient-to-br from-[var(--surface)] to-[var(--surface-2)]">
+        <div className="card p-5 bg-[var(--accent)] from-[var(--surface)] to-[var(--surface-2)]">
           <p className="text-sm text-[var(--ink-muted)] mb-1">{t.takeaway}</p>
           <p className="text-base">💡 {scenario.takeaway}</p>
         </div>
@@ -152,14 +152,14 @@ export function BudgetBalanceClient({
           {scenario.targets.map((tgt, i) => {
             const colors = [
               "from-sky-400 to-sky-500",
-              "from-emerald-400 to-emerald-500",
-              "from-[var(--accent)] to-[var(--accent-2)]",
+              "",
+              "from-[var(--accent)] to-[var(--accent)]",
               "from-fuchsia-400 to-fuchsia-500",
             ];
             return (
               <div
                 key={tgt.id}
-                className={`h-full bg-gradient-to-r ${colors[i % colors.length]}`}
+                className={`h-full bg-[var(--accent)] ${colors[i % colors.length]}`}
                 style={{ width: `${alloc[tgt.id]}%` }}
               />
             );

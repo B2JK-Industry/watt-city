@@ -86,7 +86,7 @@ export function CitySkylineHero({ buildings, lang, emptyStateCta }: Props) {
             patternUnits="userSpaceOnUse"
           >
             <rect width="40" height="20" fill="#1f2937" />
-            <line x1="0" y1="0" x2="40" y2="0" stroke="#0a0a0f" strokeWidth="2" />
+            <line x1="0" y1="0" x2="40" y2="0" stroke="var(--ink)" strokeWidth="2" />
           </pattern>
         </defs>
         <rect width={VB_W} height={GROUND_Y} fill="url(#hero-sky)" />
@@ -193,7 +193,7 @@ function BuildingSilhouette({
         y={y + roofH + bodyH - 4}
         fontSize="14"
         fontWeight="900"
-        fill="#0a0a0f"
+        fill="var(--ink)"
         style={{ paintOrder: "stroke", stroke: "white", strokeWidth: 2 }}
       >
         L{level}
