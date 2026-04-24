@@ -62,10 +62,24 @@ Source of truth for what is unresolved:
 
 ## Q8 — Hero skyline illustration (PR-2)
 
-- **Status:** DESIGN-CALL, pending PR-3 city-scene refactor to expose the 6-var palette
+- **Status:** DESIGN-CALL, PR-3 now exposes the `--scene-*` palette
 - **Substitute shipped:** stylised 480×300 silhouette inside `components/pko-hero.tsx` `PkoSkylineIcon`. Uses CSS variables (`--sko-navy-500/700/900`, `--sko-accent-orange-light`) so once PR-3 ships the `--scene-*` palette, a single import-swap can swap to the full skyline.
 - **Swap location:** `components/pko-hero.tsx` `PkoSkylineIcon` JSX.
-- **First shipped in:** PR-2.
+- **First shipped in:** PR-2. PR-3 now makes the full `components/city-scene.tsx` available as a drop-in once we're happy to carry its 1.6 kLOC bundle cost into the anonymous landing.
+
+## Q9 — Building-catalog hex strings (PR-3 scope-slip)
+
+- **Status:** deferred to v1.1
+- **Substitute shipped:** `lib/building-catalog.ts` still returns the original 30 hex strings for `bodyColor` / `roofColor`. `components/city-skyline-hero.tsx` passes them through via `fill={body}` / `fill={roof}` JSX expressions — skin-aware catalog would require a runtime skin-check on a server component tree, which is out of scope for the 6-var scene refactor.
+- **Swap location:** `lib/building-catalog.ts`. Options: (a) add `colorByskin: { core: string, pko: string }` field per entry, (b) emit CSS-variable tokens (`"var(--catalog-sklepik-body)"`) and declare them on `:root` / `:root[data-skin="pko"]`.
+- **First shipped in:** pending v1.1.
+
+## Q10 — Scene-sky middle gradient stop (PR-3)
+
+- **Status:** DESIGN-CALL, v1 ships a two-colour sky.
+- **Substitute shipped:** the 3-stop sky gradient in `components/city-scene.tsx` used `#02021a → #120f3a → #2a1458`. The 6-var collapse maps the top + middle stop both to `--scene-sky-top`, flattening the night-sky interpolation into a 2-stop gradient (sky-top → sky-bottom). Visually the sky band reads slightly more uniform; no crash-level regression.
+- **Swap location:** add a 7th token `--scene-sky-mid` in a v1.1 follow-up if visual QA surfaces a complaint.
+- **First shipped in:** PR-3.
 
 ---
 

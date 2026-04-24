@@ -116,7 +116,7 @@ export function CityScene({
     <div
       className="relative w-full rounded-2xl border-[3px] border-[var(--ink)] overflow-hidden shadow-[6px_6px_0_0_var(--ink)]"
       style={{
-        background: "#07071a",
+        background: "var(--scene-ground)",
         aspectRatio: `${VB_W} / ${VB_H}`,
         maxHeight: compact ? 360 : 560,
       }}
@@ -140,23 +140,23 @@ export function CityScene({
         </title>
         <defs>
           <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#02021a" />
-            <stop offset="55%" stopColor="#120f3a" />
-            <stop offset="100%" stopColor="#2a1458" />
+            <stop offset="0%" stopColor="var(--scene-sky-top)" />
+            <stop offset="55%" stopColor="var(--scene-sky-top)" />
+            <stop offset="100%" stopColor="var(--scene-sky-bottom)" />
           </linearGradient>
           <radialGradient id="moonGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#fef3c7" stopOpacity="0.8" />
-            <stop offset="60%" stopColor="#fde68a" stopOpacity="0.15" />
-            <stop offset="100%" stopColor="#fde68a" stopOpacity="0" />
+            <stop offset="0%" stopColor="var(--scene-building-primary)" stopOpacity="0.8" />
+            <stop offset="60%" stopColor="var(--scene-building-primary)" stopOpacity="0.15" />
+            <stop offset="100%" stopColor="var(--scene-building-primary)" stopOpacity="0" />
           </radialGradient>
           <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#1a1a2e" />
-            <stop offset="100%" stopColor="#0a0a0f" />
+            <stop offset="0%" stopColor="var(--scene-ground)" />
+            <stop offset="100%" stopColor="var(--scene-ground)" />
           </linearGradient>
           <pattern id="cobbles" width="22" height="14" patternUnits="userSpaceOnUse">
-            <rect width="22" height="14" fill="#0f0f1f" />
-            <path d="M0 7 L22 7" stroke="#222" strokeWidth="1" />
-            <path d="M11 0 L11 7 M0 7 M22 14" stroke="#222" strokeWidth="1" />
+            <rect width="22" height="14" fill="var(--scene-ground)" />
+            <path d="M0 7 L22 7" stroke="var(--scene-ground)" strokeWidth="1" />
+            <path d="M11 0 L11 7 M0 7 M22 14" stroke="var(--scene-ground)" strokeWidth="1" />
           </pattern>
         </defs>
 
@@ -175,20 +175,20 @@ export function CityScene({
           cx={220}
           cy={90}
           r={44}
-          fill="#f8fafc"
-          stroke="#0a0a0f"
+          fill="var(--scene-building-primary)"
+          stroke="var(--scene-ground)"
           strokeWidth={3}
         />
-        <circle cx={200} cy={75} r={7} fill="#e2e8f0" />
-        <circle cx={240} cy={108} r={5} fill="#cbd5e1" />
-        <circle cx={248} cy={72} r={3} fill="#cbd5e1" />
+        <circle cx={200} cy={75} r={7} fill="var(--scene-building-primary)" />
+        <circle cx={240} cy={108} r={5} fill="var(--scene-building-primary)" />
+        <circle cx={248} cy={72} r={3} fill="var(--scene-building-primary)" />
 
         {/* Stars (deterministic pattern so no hydration mismatch) */}
         {STARS.map((s, i) => (
           <g key={i}>
-            <circle cx={s.x} cy={s.y} r={s.r} fill="#fffbe6" opacity={s.o} />
+            <circle cx={s.x} cy={s.y} r={s.r} fill="var(--scene-building-primary)" opacity={s.o} />
             {s.big && (
-              <g stroke="#fffbe6" strokeWidth={0.8} opacity={s.o}>
+              <g stroke="var(--scene-building-primary)" strokeWidth={0.8} opacity={s.o}>
                 <line x1={s.x - 4} y1={s.y} x2={s.x + 4} y2={s.y} />
                 <line x1={s.x} y1={s.y - 4} x2={s.x} y2={s.y + 4} />
               </g>
@@ -205,15 +205,15 @@ export function CityScene({
               y={GROUND - b.h}
               width={b.w}
               height={b.h}
-              fill="#0b0b20"
-              stroke="#0a0a0f"
+              fill="var(--scene-ground)"
+              stroke="var(--scene-ground)"
               strokeWidth={2}
             />
           ))}
           {/* chimney smoke trails very faint */}
           <path
             d={`M 160 ${GROUND - 260} q -10 -20 0 -40 q 10 -20 0 -40`}
-            stroke="#1e1e3e"
+            stroke="var(--scene-ground)"
             strokeWidth={3}
             fill="none"
           />
@@ -223,16 +223,16 @@ export function CityScene({
         <rect x="0" y={GROUND} width={VB_W} height={VB_H - GROUND} fill="url(#ground)" />
         <rect x="0" y={GROUND + 28} width={VB_W} height={12} fill="url(#cobbles)" />
         {/* road center dashed line */}
-        <g stroke="#fde047" strokeDasharray="22 16" strokeWidth={4} opacity="0.55">
+        <g stroke="var(--scene-building-primary)" strokeDasharray="22 16" strokeWidth={4} opacity="0.55">
           <line x1="0" y1={GROUND + 36} x2={VB_W} y2={GROUND + 36} />
         </g>
 
         {/* Streetlight posts */}
         {[120, 430, 730, 1040, 1320].map((x, i) => (
           <g key={i}>
-            <rect x={x - 2} y={GROUND - 52} width={4} height={54} fill="#3f3f5a" />
-            <circle cx={x} cy={GROUND - 58} r={6} fill="#fde047" opacity="0.95" />
-            <circle cx={x} cy={GROUND - 58} r={14} fill="#fde047" opacity="0.15" />
+            <rect x={x - 2} y={GROUND - 52} width={4} height={54} fill="var(--scene-sky-top)" />
+            <circle cx={x} cy={GROUND - 58} r={6} fill="var(--scene-building-primary)" opacity="0.95" />
+            <circle cx={x} cy={GROUND - 58} r={14} fill="var(--scene-building-primary)" opacity="0.15" />
           </g>
         ))}
 
@@ -522,13 +522,13 @@ function Tower({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
     <g>
       <NeonSign x={x + w / 2} y={top - 18} text={name} powered={powered} />
       {/* antenna */}
-      <line x1={x + w / 2} y1={top - 20} x2={x + w / 2} y2={top - 60} stroke="#0a0a0f" strokeWidth={3} />
-      <circle cx={x + w / 2} cy={top - 62} r={4} fill={powered ? "#ef4444" : "#555"} />
+      <line x1={x + w / 2} y1={top - 20} x2={x + w / 2} y2={top - 60} stroke="var(--scene-ground)" strokeWidth={3} />
+      <circle cx={x + w / 2} cy={top - 62} r={4} fill={powered ? "var(--scene-window-lit)" : "var(--scene-building-secondary)"} />
 
       {/* roof */}
-      <rect x={x - 5} y={top - 6} width={w + 10} height={10} fill="#0a0a0f" />
+      <rect x={x - 5} y={top - 6} width={w + 10} height={10} fill="var(--scene-ground)" />
       {/* body */}
-      <rect x={x} y={top} width={w} height={h} fill="#fde047" stroke="#0a0a0f" strokeWidth={3} />
+      <rect x={x} y={top} width={w} height={h} fill="var(--scene-building-primary)" stroke="var(--scene-ground)" strokeWidth={3} />
 
       {/* windows */}
       {Array.from({ length: rows }).flatMap((_, row) =>
@@ -543,8 +543,8 @@ function Tower({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
               y={wy}
               width={winW}
               height={winH}
-              fill={lit ? "#fde047" : "#0a0a0f"}
-              stroke="#0a0a0f"
+              fill={lit ? "var(--scene-building-primary)" : "var(--scene-ground)"}
+              stroke="var(--scene-ground)"
               strokeWidth={1.5}
             />
           );
@@ -557,8 +557,8 @@ function Tower({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
         y={GROUND - 30}
         width={28}
         height={30}
-        fill="#111"
-        stroke="#0a0a0f"
+        fill="var(--scene-ground)"
+        stroke="var(--scene-ground)"
         strokeWidth={3}
       />
       <rect
@@ -566,7 +566,7 @@ function Tower({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
         y={GROUND - 26}
         width={20}
         height={24}
-        fill={powered ? "#f59e0b" : "#222"}
+        fill={powered ? "var(--scene-window-lit)" : "var(--scene-ground)"}
       />
 
       <WattMeter x={x + 5} y={GROUND + 8} w={w - 10} value={bestScore} cap={cap} />
@@ -583,14 +583,14 @@ function Library({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
       {/* pediment triangle */}
       <polygon
         points={`${x - 6},${top + 6} ${x + w / 2},${top - 18} ${x + w + 6},${top + 6}`}
-        fill="#d97706"
-        stroke="#0a0a0f"
+        fill="var(--scene-window-lit)"
+        stroke="var(--scene-ground)"
         strokeWidth={3}
       />
       {/* entablature */}
-      <rect x={x - 6} y={top} width={w + 12} height={16} fill="#b45309" stroke="#0a0a0f" strokeWidth={3} />
+      <rect x={x - 6} y={top} width={w + 12} height={16} fill="var(--scene-window-lit)" stroke="var(--scene-ground)" strokeWidth={3} />
       {/* body */}
-      <rect x={x} y={top + 16} width={w} height={h - 16} fill="#f59e0b" stroke="#0a0a0f" strokeWidth={3} />
+      <rect x={x} y={top + 16} width={w} height={h - 16} fill="var(--scene-window-lit)" stroke="var(--scene-ground)" strokeWidth={3} />
       {/* pillars */}
       {Array.from({ length: pillarCount }).map((_, i) => {
         const pw = 10;
@@ -603,15 +603,15 @@ function Library({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
             y={top + 24}
             width={pw}
             height={h - 50}
-            fill="#92400e"
-            stroke="#0a0a0f"
+            fill="var(--scene-window-lit)"
+            stroke="var(--scene-ground)"
             strokeWidth={2}
           />
         );
       })}
       {/* steps */}
-      <rect x={x - 4} y={GROUND - 16} width={w + 8} height={8} fill="#854d0e" stroke="#0a0a0f" strokeWidth={2} />
-      <rect x={x - 10} y={GROUND - 8} width={w + 20} height={8} fill="#78350f" stroke="#0a0a0f" strokeWidth={2} />
+      <rect x={x - 4} y={GROUND - 16} width={w + 8} height={8} fill="var(--scene-window-lit)" stroke="var(--scene-ground)" strokeWidth={2} />
+      <rect x={x - 10} y={GROUND - 8} width={w + 20} height={8} fill="var(--scene-ground)" stroke="var(--scene-ground)" strokeWidth={2} />
       {/* entrance glow */}
       <rect
         x={x + w / 2 - 18}
@@ -631,8 +631,8 @@ function Museum({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
   return (
     <g>
       <NeonSign x={x + w / 2} y={top - 14} text={name} powered={powered} />
-      <rect x={x} y={top + 40} width={w} height={h - 40} fill="#0f172a" stroke="#0a0a0f" strokeWidth={3} />
-      <rect x={x + 14} y={top} width={w - 28} height={60} fill="#0ea5e9" stroke="#0a0a0f" strokeWidth={3} />
+      <rect x={x} y={top + 40} width={w} height={h - 40} fill="var(--scene-ground)" stroke="var(--scene-ground)" strokeWidth={3} />
+      <rect x={x + 14} y={top} width={w - 28} height={60} fill="var(--scene-building-secondary)" stroke="var(--scene-ground)" strokeWidth={3} />
       {/* glass grid */}
       {Array.from({ length: 3 }).flatMap((_, row) =>
         Array.from({ length: 4 }).map((__, col) => {
@@ -646,16 +646,16 @@ function Museum({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
               y={wy}
               width={(w - 30) / 4}
               height={22}
-              fill={lit ? "#38bdf8" : "#0c1229"}
-              stroke="#0a0a0f"
+              fill={lit ? "var(--scene-building-secondary)" : "var(--scene-ground)"}
+              stroke="var(--scene-ground)"
               strokeWidth={1.5}
             />
           );
         }),
       )}
       {/* cantilever top box */}
-      <rect x={x - 6} y={top + 14} width={24} height={26} fill="#155e75" stroke="#0a0a0f" strokeWidth={3} />
-      <rect x={x + w - 18} y={top + 4} width={24} height={26} fill="#155e75" stroke="#0a0a0f" strokeWidth={3} />
+      <rect x={x - 6} y={top + 14} width={24} height={26} fill="var(--scene-sky-top)" stroke="var(--scene-ground)" strokeWidth={3} />
+      <rect x={x + w - 18} y={top + 4} width={24} height={26} fill="var(--scene-sky-top)" stroke="var(--scene-ground)" strokeWidth={3} />
       <WattMeter x={x + 10} y={GROUND + 8} w={w - 20} value={bestScore} cap={cap} />
     </g>
   );
@@ -670,30 +670,30 @@ function Institute({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
     <g>
       <NeonSign x={x + w / 2} y={top - 12} text={name} powered={powered} />
       {/* left tower */}
-      <rect x={x} y={GROUND - sideH} width={sideW} height={sideH} fill="#6366f1" stroke="#0a0a0f" strokeWidth={3} />
+      <rect x={x} y={GROUND - sideH} width={sideW} height={sideH} fill="var(--scene-building-secondary)" stroke="var(--scene-ground)" strokeWidth={3} />
       <polygon
         points={`${x - 4},${GROUND - sideH + 2} ${x + sideW / 2},${GROUND - sideH - 22} ${x + sideW + 4},${GROUND - sideH + 2}`}
-        fill="#4338ca"
-        stroke="#0a0a0f"
+        fill="var(--scene-sky-top)"
+        stroke="var(--scene-ground)"
         strokeWidth={3}
       />
       {/* right tower */}
-      <rect x={x + w - sideW} y={GROUND - sideH} width={sideW} height={sideH} fill="#6366f1" stroke="#0a0a0f" strokeWidth={3} />
+      <rect x={x + w - sideW} y={GROUND - sideH} width={sideW} height={sideH} fill="var(--scene-building-secondary)" stroke="var(--scene-ground)" strokeWidth={3} />
       <polygon
         points={`${x + w - sideW - 4},${GROUND - sideH + 2} ${x + w - sideW / 2},${GROUND - sideH - 22} ${x + w + 4},${GROUND - sideH + 2}`}
-        fill="#4338ca"
-        stroke="#0a0a0f"
+        fill="var(--scene-sky-top)"
+        stroke="var(--scene-ground)"
         strokeWidth={3}
       />
       {/* main */}
-      <rect x={x + sideW - 4} y={top} width={w - 2 * (sideW - 4)} height={centerH} fill="#818cf8" stroke="#0a0a0f" strokeWidth={3} />
+      <rect x={x + sideW - 4} y={top} width={w - 2 * (sideW - 4)} height={centerH} fill="var(--scene-building-secondary)" stroke="var(--scene-ground)" strokeWidth={3} />
       {/* big clock / π sign */}
       <circle
         cx={x + w / 2}
         cy={top + 40}
         r={22}
-        fill={powered ? "#fde047" : "#312e81"}
-        stroke="#0a0a0f"
+        fill={powered ? "var(--scene-building-primary)" : "var(--scene-sky-top)"}
+        stroke="var(--scene-ground)"
         strokeWidth={3}
       />
       <text
@@ -702,7 +702,7 @@ function Institute({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
         textAnchor="middle"
         fontSize={26}
         fontWeight={900}
-        fill="#0a0a0f"
+        fill="var(--scene-ground)"
       >
         π
       </text>
@@ -719,8 +719,8 @@ function Institute({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
               y={wy}
               width={(w - 2 * sideW - 24) / 3}
               height={16}
-              fill={lit ? "#fcd34d" : "#1e1b4b"}
-              stroke="#0a0a0f"
+              fill={lit ? "var(--scene-building-primary)" : "var(--scene-sky-top)"}
+              stroke="var(--scene-ground)"
               strokeWidth={1.5}
             />
           );
@@ -740,8 +740,8 @@ function SolarFarm({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
       <NeonSign x={x + w / 2} y={top - 10} text={name} powered={powered} />
       {/* Wind turbine */}
       <g>
-        <rect x={x - 10} y={GROUND - 140} width={6} height={140} fill="#475569" stroke="#0a0a0f" strokeWidth={2} />
-        <circle cx={x - 7} cy={GROUND - 140} r={5} fill="#0a0a0f" />
+        <rect x={x - 10} y={GROUND - 140} width={6} height={140} fill="var(--scene-ground)" stroke="var(--scene-ground)" strokeWidth={2} />
+        <circle cx={x - 7} cy={GROUND - 140} r={5} fill="var(--scene-ground)" />
         {/* three blades */}
         {[0, 120, 240].map((deg, i) => (
           <rect
@@ -750,20 +750,20 @@ function SolarFarm({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
             y={GROUND - 142}
             width={3}
             height={40}
-            fill="#f1f5f9"
-            stroke="#0a0a0f"
+            fill="var(--scene-building-primary)"
+            stroke="var(--scene-ground)"
             strokeWidth={1}
             transform={`rotate(${deg + 30} ${x - 7} ${GROUND - 140})`}
           />
         ))}
       </g>
       {/* body with slanted solar roof */}
-      <rect x={x} y={GROUND - buildingH} width={w} height={buildingH} fill="#10b981" stroke="#0a0a0f" strokeWidth={3} />
+      <rect x={x} y={GROUND - buildingH} width={w} height={buildingH} fill="var(--scene-window-lit)" stroke="var(--scene-ground)" strokeWidth={3} />
       {/* slanted roof */}
       <polygon
         points={`${x},${GROUND - buildingH} ${x + w},${GROUND - buildingH} ${x + w},${top + 26} ${x + 20},${top}`}
-        fill="#064e3b"
-        stroke="#0a0a0f"
+        fill="var(--scene-ground)"
+        stroke="var(--scene-ground)"
         strokeWidth={3}
       />
       {/* solar panels on the roof */}
@@ -778,8 +778,8 @@ function SolarFarm({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
               y={tiltY}
               width={panelW}
               height={22}
-              fill={powered ? "#38bdf8" : "#0c4a6e"}
-              stroke="#0a0a0f"
+              fill={powered ? "var(--scene-building-secondary)" : "var(--scene-ground)"}
+              stroke="var(--scene-ground)"
               strokeWidth={2}
             />
             <line
@@ -787,7 +787,7 @@ function SolarFarm({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
               y1={tiltY + 1}
               x2={panelX + panelW / 2}
               y2={tiltY + 21}
-              stroke="#0a0a0f"
+              stroke="var(--scene-ground)"
               strokeWidth={1}
             />
             <line
@@ -795,20 +795,20 @@ function SolarFarm({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
               y1={tiltY + 11}
               x2={panelX + panelW - 1}
               y2={tiltY + 11}
-              stroke="#0a0a0f"
+              stroke="var(--scene-ground)"
               strokeWidth={1}
             />
           </g>
         );
       })}
       {/* door + windows */}
-      <rect x={x + w / 2 - 12} y={GROUND - 36} width={24} height={36} fill="#064e3b" stroke="#0a0a0f" strokeWidth={2} />
+      <rect x={x + w / 2 - 12} y={GROUND - 36} width={24} height={36} fill="var(--scene-ground)" stroke="var(--scene-ground)" strokeWidth={2} />
       <rect
         x={x + w / 2 - 8}
         y={GROUND - 32}
         width={16}
         height={28}
-        fill={powered ? "#fde047" : "#222"}
+        fill={powered ? "var(--scene-building-primary)" : "var(--scene-ground)"}
       />
       {Array.from({ length: 3 }).map((_, i) => (
         <rect
@@ -817,8 +817,8 @@ function SolarFarm({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
           y={GROUND - 46}
           width={28}
           height={16}
-          fill={powered ? "#4ade80" : "#0f2e1d"}
-          stroke="#0a0a0f"
+          fill={powered ? "var(--scene-window-lit)" : "var(--scene-ground)"}
+          stroke="var(--scene-ground)"
           strokeWidth={1.5}
         />
       ))}
@@ -835,12 +835,12 @@ function LEDHouse({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
       {/* pitched roof */}
       <polygon
         points={`${x - 4},${top + 22} ${x + w / 2},${top} ${x + w + 4},${top + 22}`}
-        fill="#65a30d"
-        stroke="#0a0a0f"
+        fill="var(--scene-window-lit)"
+        stroke="var(--scene-ground)"
         strokeWidth={3}
       />
       {/* body */}
-      <rect x={x} y={top + 22} width={w} height={h - 22} fill="#a3e635" stroke="#0a0a0f" strokeWidth={3} />
+      <rect x={x} y={top + 22} width={w} height={h - 22} fill="var(--scene-window-lit)" stroke="var(--scene-ground)" strokeWidth={3} />
       {/* LED strip decoration along the eaves */}
       {[0, 1, 2, 3].map((i) => (
         <circle
@@ -848,7 +848,7 @@ function LEDHouse({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
           cx={x + 14 + i * ((w - 28) / 3)}
           cy={top + 24}
           r={3}
-          fill={powered ? "#fde047" : "#3f3f46"}
+          fill={powered ? "var(--scene-building-primary)" : "var(--scene-building-secondary)"}
         />
       ))}
       {/* window */}
@@ -857,23 +857,23 @@ function LEDHouse({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
         y={top + 38}
         width={w - 28}
         height={30}
-        fill={powered ? "#fde047" : "#1a2e05"}
-        stroke="#0a0a0f"
+        fill={powered ? "var(--scene-building-primary)" : "var(--scene-ground)"}
+        stroke="var(--scene-ground)"
         strokeWidth={2}
       />
-      <line x1={x + w / 2} y1={top + 38} x2={x + w / 2} y2={top + 68} stroke="#0a0a0f" strokeWidth={2} />
-      <line x1={x + 14} y1={top + 53} x2={x + w - 14} y2={top + 53} stroke="#0a0a0f" strokeWidth={2} />
+      <line x1={x + w / 2} y1={top + 38} x2={x + w / 2} y2={top + 68} stroke="var(--scene-ground)" strokeWidth={2} />
+      <line x1={x + 14} y1={top + 53} x2={x + w - 14} y2={top + 53} stroke="var(--scene-ground)" strokeWidth={2} />
       {/* door */}
       <rect
         x={x + w / 2 - 9}
         y={GROUND - 32}
         width={18}
         height={32}
-        fill="#365314"
-        stroke="#0a0a0f"
+        fill="var(--scene-sky-top)"
+        stroke="var(--scene-ground)"
         strokeWidth={2}
       />
-      <circle cx={x + w / 2 + 4} cy={GROUND - 16} r={1.6} fill="#fde047" />
+      <circle cx={x + w / 2 + 4} cy={GROUND - 16} r={1.6} fill="var(--scene-building-primary)" />
       <WattMeter x={x + 4} y={GROUND + 8} w={w - 8} value={bestScore} cap={cap} />
     </g>
   );
@@ -885,7 +885,7 @@ function ExchangeBooth({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
     <g>
       <NeonSign x={x + w / 2} y={top - 10} text={name} powered={powered} small />
       {/* awning */}
-      <rect x={x - 4} y={top + 14} width={w + 8} height={10} fill="#b45309" stroke="#0a0a0f" strokeWidth={3} />
+      <rect x={x - 4} y={top + 14} width={w + 8} height={10} fill="var(--scene-window-lit)" stroke="var(--scene-ground)" strokeWidth={3} />
       {/* striped awning */}
       {Array.from({ length: 6 }).map((_, i) => (
         <rect
@@ -894,35 +894,35 @@ function ExchangeBooth({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
           y={top + 14}
           width={(w + 8) / 6}
           height={10}
-          fill={i % 2 === 0 ? "#facc15" : "#b45309"}
-          stroke="#0a0a0f"
+          fill={i % 2 === 0 ? "var(--scene-building-primary)" : "var(--scene-window-lit)"}
+          stroke="var(--scene-ground)"
           strokeWidth={1.5}
         />
       ))}
       {/* head */}
-      <rect x={x} y={top} width={w} height={16} fill="#fbbf24" stroke="#0a0a0f" strokeWidth={3} />
-      <text x={x + w / 2} y={top + 12} textAnchor="middle" fontSize={10} fontWeight={900} fill="#0a0a0f">
+      <rect x={x} y={top} width={w} height={16} fill="var(--scene-building-primary)" stroke="var(--scene-ground)" strokeWidth={3} />
+      <text x={x + w / 2} y={top + 12} textAnchor="middle" fontSize={10} fontWeight={900} fill="var(--scene-ground)">
         KANTOR
       </text>
       {/* body */}
-      <rect x={x} y={top + 24} width={w} height={h - 24} fill="#f59e0b" stroke="#0a0a0f" strokeWidth={3} />
+      <rect x={x} y={top + 24} width={w} height={h - 24} fill="var(--scene-window-lit)" stroke="var(--scene-ground)" strokeWidth={3} />
       {/* glass window with currencies */}
       <rect
         x={x + 6}
         y={top + 34}
         width={w - 12}
         height={h - 66}
-        fill={powered ? "#fde68a" : "#1f1b0b"}
-        stroke="#0a0a0f"
+        fill={powered ? "var(--scene-building-primary)" : "var(--scene-ground)"}
+        stroke="var(--scene-ground)"
         strokeWidth={2}
       />
-      <text x={x + w / 2} y={top + 54} textAnchor="middle" fontSize={13} fontWeight={900} fill="#0a0a0f">
+      <text x={x + w / 2} y={top + 54} textAnchor="middle" fontSize={13} fontWeight={900} fill="var(--scene-ground)">
         €
       </text>
-      <text x={x + w / 2} y={top + 74} textAnchor="middle" fontSize={13} fontWeight={900} fill="#0a0a0f">
+      <text x={x + w / 2} y={top + 74} textAnchor="middle" fontSize={13} fontWeight={900} fill="var(--scene-ground)">
         $
       </text>
-      <text x={x + w / 2} y={top + 94} textAnchor="middle" fontSize={13} fontWeight={900} fill="#0a0a0f">
+      <text x={x + w / 2} y={top + 94} textAnchor="middle" fontSize={13} fontWeight={900} fill="var(--scene-ground)">
         zł
       </text>
       <WattMeter x={x} y={GROUND + 8} w={w} value={bestScore} cap={cap} />
@@ -936,39 +936,39 @@ function BankBranch({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
     <g>
       <NeonSign x={x + w / 2} y={top - 14} text={name} powered={powered} />
       {/* roof band */}
-      <rect x={x - 4} y={top} width={w + 8} height={18} fill="#06b6d4" stroke="#0a0a0f" strokeWidth={3} />
-      <text x={x + w / 2} y={top + 13} textAnchor="middle" fontSize={12} fontWeight={900} fill="#0a0a0f">
+      <rect x={x - 4} y={top} width={w + 8} height={18} fill="var(--scene-building-secondary)" stroke="var(--scene-ground)" strokeWidth={3} />
+      <text x={x + w / 2} y={top + 13} textAnchor="middle" fontSize={12} fontWeight={900} fill="var(--scene-ground)">
         PKO BP
       </text>
       {/* body */}
-      <rect x={x} y={top + 18} width={w} height={h - 18} fill="#67e8f9" stroke="#0a0a0f" strokeWidth={3} />
+      <rect x={x} y={top + 18} width={w} height={h - 18} fill="var(--scene-building-secondary)" stroke="var(--scene-ground)" strokeWidth={3} />
       {/* glass front */}
       <rect
         x={x + 10}
         y={top + 28}
         width={w - 20}
         height={h - 64}
-        fill={powered ? "#fde047" : "#083344"}
-        stroke="#0a0a0f"
+        fill={powered ? "var(--scene-building-primary)" : "var(--scene-ground)"}
+        stroke="var(--scene-ground)"
         strokeWidth={2}
       />
       {/* grid of muntins */}
-      <line x1={x + w / 2} y1={top + 28} x2={x + w / 2} y2={top + h - 36} stroke="#0a0a0f" strokeWidth={2} />
+      <line x1={x + w / 2} y1={top + 28} x2={x + w / 2} y2={top + h - 36} stroke="var(--scene-ground)" strokeWidth={2} />
       <line
         x1={x + 10}
         y1={top + (h + 28) / 2 - 10}
         x2={x + w - 10}
         y2={top + (h + 28) / 2 - 10}
-        stroke="#0a0a0f"
+        stroke="var(--scene-ground)"
         strokeWidth={2}
       />
       {/* ATM */}
-      <rect x={x + 8} y={GROUND - 40} width={24} height={40} fill="#0a0a0f" stroke="#0a0a0f" strokeWidth={2} />
-      <rect x={x + 12} y={GROUND - 34} width={16} height={10} fill={powered ? "#22d3ee" : "#1e293b"} />
-      <circle cx={x + 20} cy={GROUND - 16} r={2} fill={powered ? "#fde047" : "#444"} />
+      <rect x={x + 8} y={GROUND - 40} width={24} height={40} fill="var(--scene-ground)" stroke="var(--scene-ground)" strokeWidth={2} />
+      <rect x={x + 12} y={GROUND - 34} width={16} height={10} fill={powered ? "var(--scene-building-secondary)" : "var(--scene-ground)"} />
+      <circle cx={x + 20} cy={GROUND - 16} r={2} fill={powered ? "var(--scene-building-primary)" : "var(--scene-ground)"} />
       {/* door */}
-      <rect x={x + w - 34} y={GROUND - 36} width={24} height={36} fill="#155e75" stroke="#0a0a0f" strokeWidth={2} />
-      <rect x={x + w - 30} y={GROUND - 32} width={16} height={28} fill={powered ? "#22d3ee" : "#0c4a6e"} />
+      <rect x={x + w - 34} y={GROUND - 36} width={24} height={36} fill="var(--scene-sky-top)" stroke="var(--scene-ground)" strokeWidth={2} />
+      <rect x={x + w - 30} y={GROUND - 32} width={16} height={28} fill={powered ? "var(--scene-building-secondary)" : "var(--scene-ground)"} />
       <WattMeter x={x} y={GROUND + 8} w={w} value={bestScore} cap={cap} />
     </g>
   );
@@ -987,7 +987,7 @@ function ConstructionSite({ x, w, h, name: _name }: DrawProps) {
   return (
     <g>
       {/* scaffolding */}
-      <rect x={x} y={top + 20} width={w} height={h - 20} fill="#1f2937" stroke="#0a0a0f" strokeWidth={3} />
+      <rect x={x} y={top + 20} width={w} height={h - 20} fill="var(--scene-building-secondary)" stroke="var(--scene-ground)" strokeWidth={3} />
       {/* diagonal caution stripes */}
       <rect
         x={x}
@@ -1001,8 +1001,8 @@ function ConstructionSite({ x, w, h, name: _name }: DrawProps) {
       />
       <defs>
         <pattern id="caution" width="20" height="20" patternUnits="userSpaceOnUse">
-          <rect width="20" height="20" fill="#111827" />
-          <path d="M0 20 L20 0" stroke="#fde047" strokeWidth="4" />
+          <rect width="20" height="20" fill="var(--scene-ground)" />
+          <path d="M0 20 L20 0" stroke="var(--scene-building-primary)" strokeWidth="4" />
         </pattern>
       </defs>
       {/* scaffolding rails */}
@@ -1013,7 +1013,7 @@ function ConstructionSite({ x, w, h, name: _name }: DrawProps) {
           y1={y}
           x2={x + w - 2}
           y2={y}
-          stroke="#fde047"
+          stroke="var(--scene-building-primary)"
           strokeWidth={2}
           opacity={0.9}
         />
@@ -1026,7 +1026,7 @@ function ConstructionSite({ x, w, h, name: _name }: DrawProps) {
           y1={top + 20}
           x2={cx}
           y2={GROUND}
-          stroke="#fde047"
+          stroke="var(--scene-building-primary)"
           strokeWidth={2}
           opacity={0.9}
         />
@@ -1038,7 +1038,7 @@ function ConstructionSite({ x, w, h, name: _name }: DrawProps) {
         y={top + h / 2 + 14}
         textAnchor="middle"
         fontSize={38}
-        style={{ filter: "drop-shadow(0 2px 0 #000)" }}
+        style={{ filter: "drop-shadow(0 2px 0 var(--scene-ground))" }}
       >
         🚧
       </text>
@@ -1104,15 +1104,15 @@ function ConstructionSlot({
               y={0}
               width={44}
               height={14}
-              fill="#0a0a0f"
-              stroke="#fde047"
+              fill="var(--scene-ground)"
+              stroke="var(--scene-building-primary)"
               strokeWidth={1.5}
               rx={2}
               opacity={0.7}
             />
             <LiveCountdown
               validUntil={pendingCountdown}
-              color="#fde047"
+              color="var(--scene-building-primary)"
             />
           </g>
           <g transform={`translate(${plan.x + plan.w / 2 - 44}, ${top - 46})`}>
@@ -1121,8 +1121,8 @@ function ConstructionSlot({
               y={0}
               width={88}
               height={18}
-              fill="#fde047"
-              stroke="#0a0a0f"
+              fill="var(--scene-building-primary)"
+              stroke="var(--scene-ground)"
               strokeWidth={2}
               rx={2}
               opacity={0.55}
@@ -1133,7 +1133,7 @@ function ConstructionSlot({
               textAnchor="middle"
               fontSize={8}
               fontWeight={900}
-              fill="#0a0a0f"
+              fill="var(--scene-ground)"
             >
               🛠 AI · {laneLabel}
             </text>
@@ -1147,8 +1147,8 @@ function ConstructionSlot({
             y={GROUND + 22}
             width={plan.w}
             height={16}
-            fill="#0a0a0f"
-            stroke="#0a0a0f"
+            fill="var(--scene-ground)"
+            stroke="var(--scene-ground)"
             strokeWidth={2}
             rx={2}
           />
@@ -1158,7 +1158,7 @@ function ConstructionSlot({
             textAnchor="middle"
             fontSize={8}
             fontWeight={900}
-            fill="#fde047"
+            fill="var(--scene-building-primary)"
           >
             {slotKind ? SLOT_GROUND_TAG[slotKind] : "AI · SOON"}
           </text>
@@ -1200,18 +1200,18 @@ function ConstructionSlot({
 // game looks materially different — different roof color, body color, roof
 // silhouette, and window pattern. Same id → same building, always.
 const AI_ROOF_PALETTE = [
-  "#ec4899", "#22d3ee", "#fde047", "#a3e635",
-  "#f97316", "#8b5cf6", "#14b8a6", "#f43f5e",
+  "var(--scene-building-secondary)", "var(--scene-building-secondary)", "var(--scene-building-primary)", "var(--scene-window-lit)",
+  "var(--scene-window-lit)", "var(--scene-building-secondary)", "var(--scene-building-secondary)", "var(--scene-window-lit)",
 ];
 const AI_BODY_PALETTE = [
-  "#1e1b4b", "#064e3b", "#831843", "#78350f",
-  "#164e63", "#581c87", "#0f172a", "#7c2d12",
+  "var(--scene-sky-top)", "var(--scene-ground)", "var(--scene-ground)", "var(--scene-ground)",
+  "var(--scene-ground)", "var(--scene-sky-top)", "var(--scene-ground)", "var(--scene-ground)",
 ];
 const AI_WINDOW_PRIMARY = [
-  "#fde047", "#22d3ee", "#a3e635", "#f97316", "#ec4899", "#8b5cf6",
+  "var(--scene-building-primary)", "var(--scene-building-secondary)", "var(--scene-window-lit)", "var(--scene-window-lit)", "var(--scene-building-secondary)", "var(--scene-building-secondary)",
 ];
 const AI_WINDOW_SECONDARY = [
-  "#22d3ee", "#fde047", "#ec4899", "#a3e635", "#f97316", "#fb7185",
+  "var(--scene-building-secondary)", "var(--scene-building-primary)", "var(--scene-building-secondary)", "var(--scene-window-lit)", "var(--scene-window-lit)", "var(--scene-window-lit)",
 ];
 
 type AiRoofShape = "flat" | "pitched" | "stepped" | "crenellated";
@@ -1255,7 +1255,7 @@ function RoofShape({
   if (shape === "flat") {
     return (
       <>
-        <rect x={x - 5} y={top - 6} width={w + 10} height={10} fill="#0a0a0f" />
+        <rect x={x - 5} y={top - 6} width={w + 10} height={10} fill="var(--scene-ground)" />
         <rect x={x - 2} y={top - 4} width={w + 4} height={6} fill={color} />
       </>
     );
@@ -1267,7 +1267,7 @@ function RoofShape({
         <polygon
           points={`${x - 6},${top} ${x + w / 2},${peak} ${x + w + 6},${top}`}
           fill={color}
-          stroke="#0a0a0f"
+          stroke="var(--scene-ground)"
           strokeWidth={3}
         />
       </>
@@ -1276,9 +1276,9 @@ function RoofShape({
   if (shape === "stepped") {
     return (
       <>
-        <rect x={x - 4} y={top - 16} width={w + 8} height={8} fill={color} stroke="#0a0a0f" strokeWidth={2} />
-        <rect x={x + 6} y={top - 24} width={w - 12} height={10} fill={color} stroke="#0a0a0f" strokeWidth={2} />
-        <rect x={x + w / 2 - 6} y={top - 32} width={12} height={10} fill={color} stroke="#0a0a0f" strokeWidth={2} />
+        <rect x={x - 4} y={top - 16} width={w + 8} height={8} fill={color} stroke="var(--scene-ground)" strokeWidth={2} />
+        <rect x={x + 6} y={top - 24} width={w - 12} height={10} fill={color} stroke="var(--scene-ground)" strokeWidth={2} />
+        <rect x={x + w / 2 - 6} y={top - 32} width={12} height={10} fill={color} stroke="var(--scene-ground)" strokeWidth={2} />
       </>
     );
   }
@@ -1287,7 +1287,7 @@ function RoofShape({
   const step = w / merlons;
   return (
     <g>
-      <rect x={x - 4} y={top - 10} width={w + 8} height={10} fill={color} stroke="#0a0a0f" strokeWidth={2} />
+      <rect x={x - 4} y={top - 10} width={w + 8} height={10} fill={color} stroke="var(--scene-ground)" strokeWidth={2} />
       {Array.from({ length: merlons }).map((_, i) => {
         if (i % 2 === 0) return null;
         return (
@@ -1298,7 +1298,7 @@ function RoofShape({
             width={step - 1}
             height={10}
             fill={color}
-            stroke="#0a0a0f"
+            stroke="var(--scene-ground)"
             strokeWidth={2}
           />
         );
@@ -1332,8 +1332,8 @@ function AiWindows({
     if (pattern === "grid") {
       items.push(
         <g key={row}>
-          <rect x={x + 8} y={wy} width={w / 2 - 12} height={7} fill={colorA} stroke="#0a0a0f" strokeWidth={1} />
-          <rect x={x + w / 2 + 4} y={wy} width={w / 2 - 12} height={7} fill={colorB} stroke="#0a0a0f" strokeWidth={1} />
+          <rect x={x + 8} y={wy} width={w / 2 - 12} height={7} fill={colorA} stroke="var(--scene-ground)" strokeWidth={1} />
+          <rect x={x + w / 2 + 4} y={wy} width={w / 2 - 12} height={7} fill={colorB} stroke="var(--scene-ground)" strokeWidth={1} />
         </g>,
       );
     } else if (pattern === "stacked") {
@@ -1345,7 +1345,7 @@ function AiWindows({
           width={w - 16}
           height={7}
           fill={row % 2 === 0 ? colorA : colorB}
-          stroke="#0a0a0f"
+          stroke="var(--scene-ground)"
           strokeWidth={1}
         />,
       );
@@ -1363,7 +1363,7 @@ function AiWindows({
             width={cellW - 2}
             height={7}
             fill={c % 2 === 0 ? colorA : colorB}
-            stroke="#0a0a0f"
+            stroke="var(--scene-ground)"
             strokeWidth={1}
           />,
         );
@@ -1423,7 +1423,7 @@ function LiveAiBuilding({
           y={0}
           width={44}
           height={14}
-          fill="#0a0a0f"
+          fill="var(--scene-ground)"
           stroke={r.roofColor}
           strokeWidth={1.5}
           rx={2}
@@ -1434,21 +1434,21 @@ function LiveAiBuilding({
       {/* banner with title — 42 px below countdown top (countdown bottom
           at top-56, banner top at top-46 → 10 px clear gap) */}
       <g transform={`translate(${x + w / 2 - bannerDx}, ${top - 46})`}>
-        <rect x={0} y={0} width={bannerW} height={18} fill="#fde047" stroke="#0a0a0f" strokeWidth={2} rx={2} />
-        <text x={bannerDx} y={12} textAnchor="middle" fontSize={8} fontWeight={900} fill="#0a0a0f">
+        <rect x={0} y={0} width={bannerW} height={18} fill="var(--scene-building-primary)" stroke="var(--scene-ground)" strokeWidth={2} rx={2} />
+        <text x={bannerDx} y={12} textAnchor="middle" fontSize={8} fontWeight={900} fill="var(--scene-ground)">
           {bannerText}
         </text>
       </g>
 
       {/* antenna — extends from the roof up to just below the banner */}
-      <line x1={x + w / 2} y1={top - 10} x2={x + w / 2} y2={top - 28} stroke="#0a0a0f" strokeWidth={3} />
+      <line x1={x + w / 2} y1={top - 10} x2={x + w / 2} y2={top - 28} stroke="var(--scene-ground)" strokeWidth={3} />
       <circle cx={x + w / 2} cy={top - 30} r={4} fill={r.roofColor} />
 
       {/* roof (per-id silhouette) */}
       <RoofShape x={x} w={w} top={top} shape={r.roofShape} color={r.roofColor} />
 
       {/* body */}
-      <rect x={x} y={top} width={w} height={h} fill={r.bodyColor} stroke="#0a0a0f" strokeWidth={3} />
+      <rect x={x} y={top} width={w} height={h} fill={r.bodyColor} stroke="var(--scene-ground)" strokeWidth={3} />
 
       {/* windows (per-id pattern) */}
       <AiWindows
@@ -1468,20 +1468,20 @@ function LiveAiBuilding({
           y={top + h / 2 + 14}
           textAnchor="middle"
           fontSize={36}
-          style={{ filter: "drop-shadow(0 2px 0 #000)" }}
+          style={{ filter: "drop-shadow(0 2px 0 var(--scene-ground))" }}
         >
           {aiGame.glyph}
         </text>
       )}
 
       {/* door */}
-      <rect x={x + w / 2 - 10} y={GROUND - 22} width={20} height={22} fill="#111" stroke="#0a0a0f" strokeWidth={2} />
-      <rect x={x + w / 2 - 7} y={GROUND - 19} width={14} height={18} fill="#fde047" />
+      <rect x={x + w / 2 - 10} y={GROUND - 22} width={20} height={22} fill="var(--scene-ground)" stroke="var(--scene-ground)" strokeWidth={2} />
+      <rect x={x + w / 2 - 7} y={GROUND - 19} width={14} height={18} fill="var(--scene-building-primary)" />
 
       {/* LIVE badge bottom */}
       <g transform={`translate(${x + w / 2 - 18}, ${GROUND - 50})`}>
-        <rect width={36} height={20} fill={r.roofColor} stroke="#0a0a0f" strokeWidth={2} rx={2} />
-        <text x={18} y={14} textAnchor="middle" fontSize={9} fontWeight={900} fill="#0a0a0f">
+        <rect width={36} height={20} fill={r.roofColor} stroke="var(--scene-ground)" strokeWidth={2} rx={2} />
+        <text x={18} y={14} textAnchor="middle" fontSize={9} fontWeight={900} fill="var(--scene-ground)">
           LIVE
         </text>
       </g>
@@ -1496,7 +1496,7 @@ function LiveAiBuilding({
           on the same row regardless of AI_SLOT_HEIGHTS. Slot-keyed label
           teaches the user the lane identity; the envelope id is relegated
           to the <title> tooltip above the Link. */}
-      <rect x={x} y={GROUND + 22} width={w} height={16} fill="#0a0a0f" stroke="#0a0a0f" strokeWidth={2} rx={2} />
+      <rect x={x} y={GROUND + 22} width={w} height={16} fill="var(--scene-ground)" stroke="var(--scene-ground)" strokeWidth={2} rx={2} />
       <text x={x + w / 2} y={GROUND + 33} textAnchor="middle" fontSize={8} fontWeight={900} fill={r.roofColor}>
         {slot ? SLOT_GROUND_TAG[slot] : `AI · ${aiGame.id.replace("ai-", "").toUpperCase()}`}
       </text>
@@ -1511,8 +1511,8 @@ function Printshop({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
     <g>
       <NeonSign x={x + w / 2} y={top - 14} text={name} powered={powered} />
       {/* chimney */}
-      <rect x={x + w - 24} y={top - 50} width={16} height={50} fill="#44403c" stroke="#0a0a0f" strokeWidth={3} />
-      <rect x={x + w - 28} y={top - 54} width={24} height={6} fill="#1c1917" stroke="#0a0a0f" strokeWidth={2} />
+      <rect x={x + w - 24} y={top - 50} width={16} height={50} fill="var(--scene-ground)" stroke="var(--scene-ground)" strokeWidth={3} />
+      <rect x={x + w - 28} y={top - 54} width={24} height={6} fill="var(--scene-ground)" stroke="var(--scene-ground)" strokeWidth={2} />
       {/* smoke puffs */}
       {powered &&
         [0, 1, 2].map((i) => (
@@ -1521,7 +1521,7 @@ function Printshop({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
             cx={x + w - 14 + (i % 2) * 6}
             cy={top - 68 - i * 16}
             r={8 + i * 2}
-            fill="#94a3b8"
+            fill="var(--scene-building-secondary)"
             opacity={0.5 - i * 0.12}
           />
         ))}
@@ -1534,13 +1534,13 @@ function Printshop({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
           <polygon
             key={i}
             points={`${sx},${top + 20} ${sx + sw / 2},${top - 4} ${sx + sw},${top + 20}`}
-            fill="#a21caf"
-            stroke="#0a0a0f"
+            fill="var(--scene-sky-top)"
+            stroke="var(--scene-ground)"
             strokeWidth={2}
           />
         );
       })}
-      <rect x={x} y={top + 18} width={w} height={h - 18} fill="#c026d3" stroke="#0a0a0f" strokeWidth={3} />
+      <rect x={x} y={top + 18} width={w} height={h - 18} fill="var(--scene-building-secondary)" stroke="var(--scene-ground)" strokeWidth={3} />
       {/* large factory windows */}
       {Array.from({ length: 3 }).flatMap((_, r) =>
         Array.from({ length: 4 }).map((__, c) => {
@@ -1554,8 +1554,8 @@ function Printshop({ x, w, h, powered, bestScore, cap, name }: DrawProps) {
               y={wy}
               width={(w - 20) / 4}
               height={22}
-              fill={lit ? "#fde047" : "#2a0a2e"}
-              stroke="#0a0a0f"
+              fill={lit ? "var(--scene-building-primary)" : "var(--scene-ground)"}
+              stroke="var(--scene-ground)"
               strokeWidth={1.5}
             />
           );
@@ -1589,8 +1589,8 @@ function NeonSign({
       <rect
         width={width}
         height={small ? 12 : 14}
-        fill="#0a0a0f"
-        stroke="#0a0a0f"
+        fill="var(--scene-ground)"
+        stroke="var(--scene-ground)"
         strokeWidth={2}
         rx={2}
       />
@@ -1600,7 +1600,7 @@ function NeonSign({
         textAnchor="middle"
         fontSize={fontSize}
         fontWeight={900}
-        fill={powered ? "#fde047" : "#3f3f46"}
+        fill={powered ? "var(--scene-building-primary)" : "var(--scene-building-secondary)"}
         style={{ letterSpacing: 0.5 }}
       >
         {text}
@@ -1612,7 +1612,7 @@ function NeonSign({
           width={width + 4}
           height={(small ? 12 : 14) + 4}
           fill="none"
-          stroke="#fde047"
+          stroke="var(--scene-building-primary)"
           strokeWidth={1}
           opacity={0.35}
           rx={3}
@@ -1639,8 +1639,8 @@ function WattMeter({
   const pct = Math.min(1, value / cap);
   return (
     <g>
-      <rect x={x} y={y} width={w} height={8} fill="#0a0a0f" stroke="#0a0a0f" strokeWidth={2} rx={2} />
-      <rect x={x + 1} y={y + 1} width={(w - 2) * pct} height={6} fill="#fde047" />
+      <rect x={x} y={y} width={w} height={8} fill="var(--scene-ground)" stroke="var(--scene-ground)" strokeWidth={2} rx={2} />
+      <rect x={x + 1} y={y + 1} width={(w - 2) * pct} height={6} fill="var(--scene-building-primary)" />
     </g>
   );
 }

@@ -116,6 +116,17 @@
   --neo-purple: var(--sko-navy-700);
   --neo-orange: var(--sko-accent-orange);
   --neo-red:    var(--sko-danger);
+
+  /* Six-role scene palette (see 08-CITY-SCENE-REFACTOR-PLAN.md §2).
+   * Reskins components/city-scene.tsx + city-skyline-hero.tsx from
+   * 78-hex neo-brutalist night panorama → PKO navy skyline without
+   * touching either component. */
+  --scene-sky-top:           var(--sko-navy-700);    /* #003574 */
+  --scene-sky-bottom:        var(--sko-navy-900);    /* #001E4B */
+  --scene-ground:            var(--sko-ink);         /* #172B4D */
+  --scene-building-primary:  var(--sko-white);       /* #FFFFFF */
+  --scene-building-secondary:var(--sko-navy-300);    /* #3074D5 */
+  --scene-window-lit:        var(--sko-accent-orange-light); /* #DB912C */
 }
 
 /* ============================================================

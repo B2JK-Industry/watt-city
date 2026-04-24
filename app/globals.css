@@ -133,6 +133,21 @@
   --accent: #fde047;        /* yellow */
   --accent-2: #f472b6;      /* pink */
   --brand: #22d3ee;         /* cyan */
+
+  /* Six-role palette for components/city-scene.tsx + city-skyline-hero.tsx.
+   * 78 unique hex literals collapsed to six semantic roles so the scene
+   * can reskin under [data-skin="pko"] without 229 edits. See
+   * docs/partnerships/pko-visual-system-v1/08-CITY-SCENE-REFACTOR-PLAN.md.
+   *
+   * Default values match the original night-panorama palette (top-of-sky
+   * near-black, purple horizon, warm yellow windows, cyan accents); the
+   * PKO skin swaps these to the navy ramp in app/globals-pko.css. */
+  --scene-sky-top:           #02021a;
+  --scene-sky-bottom:        #2a1458;
+  --scene-ground:            #0a0a0f;
+  --scene-building-primary:  #fde047;
+  --scene-building-secondary:#22d3ee;
+  --scene-window-lit:        #facc15;
 }
 
 @theme inline {
