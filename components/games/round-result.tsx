@@ -166,10 +166,10 @@ export function RoundResult({
             </div>
             {level && (
               <div
-                className={`text-right border rounded-xl px-3 py-1.5 ${
+                className={`text-right border rounded-md px-3 py-1.5 ${
                   isNewBest
-                    ? "bg-[#0a0a0f] text-[var(--accent)] border-[#0a0a0f]"
-                    : "bg-[#0a0a0f] text-[var(--accent)] border-[var(--line)]"
+                    ? "bg-[var(--accent)] text-[var(--accent-ink)] border-[var(--accent)]"
+                    : "bg-[var(--surface-2)] text-[var(--accent)] border-[var(--line)]"
                 }`}
               >
                 <span className="text-[10px] block opacity-70 text-[var(--ink-muted)]">
