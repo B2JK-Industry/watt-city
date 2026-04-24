@@ -61,7 +61,7 @@ export default async function HallOfFamePage() {
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="section-heading text-3xl sm:text-4xl">{t.title}</h1>
           <span
-            className="brutal-tag"
+            className="chip"
             style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
           >
             {t.tag}
@@ -76,7 +76,7 @@ export default async function HallOfFamePage() {
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="section-heading text-xl">{t.todayTitle}</h2>
             <span
-              className="brutal-tag"
+              className="chip"
               style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
             >
               LIVE
@@ -168,7 +168,7 @@ export default async function HallOfFamePage() {
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="section-heading text-xl">{t.todayTitle}</h2>
             <span
-              className="brutal-tag"
+              className="chip"
               style={{ background: "var(--danger)", color: "var(--accent-ink)" }}
             >
               {t.comingSoon}

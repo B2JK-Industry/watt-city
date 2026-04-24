@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 const COLORS = [
   "var(--accent)",
-  "var(--accent-2)",
+  "var(--accent)",
   "rgb(52, 211, 153)",
   "rgb(96, 165, 250)",
   "rgb(244, 114, 182)",

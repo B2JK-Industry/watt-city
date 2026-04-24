@@ -168,7 +168,7 @@ export function OnboardingTour({ lang }: Props) {
       role="dialog"
       aria-modal="true"
       aria-labelledby="onboarding-step-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 motion-safe:animate-[fade-in_200ms_ease-out]"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 motion-safe:animate-[fade-in_200ms_ease-out]"
     >
       <div className="card p-6 w-[min(92vw,28rem)] flex flex-col gap-4 motion-safe:animate-[pop-in_220ms_cubic-bezier(0.34,1.56,0.64,1)]">
         <div className="flex items-center justify-between text-xs text-[var(--ink-muted)]">

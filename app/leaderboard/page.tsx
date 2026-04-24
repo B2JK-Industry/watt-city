@@ -44,7 +44,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
             {t.title}
           </h1>
           <span
-            className="brutal-tag"
+            className="chip"
             style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
           >
             {t.tag}
@@ -96,7 +96,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
             entry={podium[2]}
             height="h-24"
             badge="🥉"
-            bg="bg-[var(--sales)]"
+            bg="bg-[var(--surface-2)]"
             isMe={podium[2].username === session?.username}
           />
         </div>
@@ -111,7 +111,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
       ) : (
         <div className="card overflow-hidden">
           <table className="w-full">
-            <thead className="bg-[var(--surface-2)]/60 text-xs text-[var(--ink-muted)]">
+            <thead className="bg-[var(--surface-2)] text-xs text-[var(--ink-muted)] font-semibold">
               <tr>
                 <th className="text-left px-4 py-3 w-16">{t.position}</th>
                 <th className="text-left px-4 py-3">{t.player}</th>
@@ -186,7 +186,12 @@ function PodiumCard({
       <div
         className={`w-full ${height} ${bg} podium-tile flex items-end justify-center p-3 text-3xl sm:text-4xl ${
           crown ? "animate-[glow-ring_2.4s_ease-in-out_infinite]" : ""
-        } ${isMe ? "ring-4 ring-[var(--danger)] ring-offset-4 ring-offset-[var(--background)]" : ""}`}
+        }`}
+        style={
+          isMe
+            ? { borderLeft: "4px solid var(--accent)" }
+            : undefined
+        }
       >
         <span>{badge}</span>
       </div>

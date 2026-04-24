@@ -206,7 +206,7 @@ function LoanRow({
           className="px-2 py-0.5 border border-[var(--line)] font-bold tabular-nums transition-shadow disabled:opacity-50"
           style={{
             background: autoRepay ? "var(--success)" : "var(--surface-2)",
-            color: autoRepay ? "#0a0a0f" : "inherit",
+            color: autoRepay ? "var(--ink)" : "inherit",
           }}
           aria-pressed={autoRepay}
         >

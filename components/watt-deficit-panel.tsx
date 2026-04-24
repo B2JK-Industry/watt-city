@@ -155,15 +155,14 @@ export function WattDeficitPanel({ deficit, lang }: Props) {
          the critical-state banner under the nav stack.
          The panel is only rendered for authenticated users who are
          in deficit, so resource-bar is always present → 144 is safe. */
-      className="sticky top-[144px] sm:top-16 z-[30] border-b-[3px] border-[var(--line)] bg-[var(--surface-2)] backdrop-blur"
-      style={{ borderColor: "var(--danger)" }}
+      className="sticky top-[144px] sm:top-16 z-[30] border-b border-[var(--danger)] bg-[var(--surface-2)]"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-2 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm">
         <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-          <p id="wdp-title" className="font-semibold tracking-tight">
+          <p id="wdp-title" className="font-semibold text-[var(--foreground)]">
             {t.title}
           </p>
-          <p className="text-xs opacity-80">
+          <p className="t-body-sm text-[var(--ink-muted)]">
             {t.elapsed.replace("{h}", String(hoursInDeficit))}
             {nextMilestoneLabel ? ` · ${nextMilestoneLabel}` : ""}
           </p>

@@ -215,12 +215,10 @@ function MemoryCard({ card, onClick, hiddenLabel }: { card: Card; onClick: () =>
       onClick={onClick}
       disabled={card.matched || card.revealed}
       aria-label={faceUp ? card.text : hiddenLabel}
-      className={`relative aspect-[5/4] rounded-2xl border border-[var(--line)] transition-all overflow-hidden ${
+      className={`relative aspect-[5/4] rounded-md border transition-all overflow-hidden ${
         card.matched
-          ? "opacity-95 ring-4 ring-emerald-400"
-          : !faceUp
-          ? " active:"
-          : ""
+          ? "border-[var(--success)] opacity-95"
+          : "border-[var(--line)]"
       }`}
     >
       {faceUp ? (
@@ -235,14 +233,10 @@ function MemoryCard({ card, onClick, hiddenLabel }: { card: Card; onClick: () =>
         </span>
       ) : (
         <span
-          className="absolute inset-0 flex items-center justify-center"
-          style={{
-            background:
-              "repeating-linear-gradient(45deg, var(--surface-2) 0 10px, var(--surface) 10px 20px)",
-          }}
+          className="absolute inset-0 flex items-center justify-center bg-[var(--surface-2)]"
           aria-hidden="true"
         >
-          <span className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-md border border-[var(--line)] bg-[var(--accent)] text-[var(--foreground)] font-semibold text-xl">
+          <span className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-md bg-[var(--accent)] text-[var(--accent-ink)] font-semibold text-xl">
             ?
           </span>
         </span>

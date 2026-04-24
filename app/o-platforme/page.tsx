@@ -25,19 +25,19 @@ export default async function AboutPage() {
             {t.title}
           </h1>
           <span
-            className="brutal-tag"
+            className="chip"
             style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
           >
             PKO XP · Gaming
           </span>
           <span
-            className="brutal-tag"
+            className="chip"
             style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
           >
             ETHSilesia 2026
           </span>
           <span
-            className="brutal-tag"
+            className="chip"
             style={{ background: "var(--danger)", color: "var(--accent-ink)" }}
           >
             Katowice
