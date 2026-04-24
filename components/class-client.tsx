@@ -93,13 +93,13 @@ export function ClassClient({
 
       {role !== "parent" && (
         <section className="card p-4 flex flex-col gap-3">
-          <h2 className="text-sm font-black uppercase">{copy.joinAsStudent}</h2>
+          <h2 className="text-sm font-semibold">{copy.joinAsStudent}</h2>
           <div className="flex gap-2">
             <input
               value={joinCodeInput}
               onChange={(e) => setJoinCodeInput(e.target.value.toUpperCase())}
               placeholder={copy.joinCode}
-              className="flex-1 px-3 py-2 border-[3px] border-[var(--ink)] rounded bg-[var(--surface-2)] font-mono"
+              className="flex-1 px-3 py-2 border border-[var(--ink)] rounded bg-[var(--surface-2)] font-mono"
               maxLength={8}
             />
             <button className="btn btn-primary" onClick={join} disabled={busy || joinCodeInput.length < 4}>
@@ -110,13 +110,13 @@ export function ClassClient({
       )}
 
       <section className="card p-4 flex flex-col gap-3">
-        <h2 className="text-sm font-black uppercase">{copy.createClass}</h2>
+        <h2 className="text-sm font-semibold">{copy.createClass}</h2>
         <div className="flex gap-2">
           <input
             value={className}
             onChange={(e) => setClassName(e.target.value)}
             placeholder={copy.className}
-            className="flex-1 px-3 py-2 border-[3px] border-[var(--ink)] rounded bg-[var(--surface-2)]"
+            className="flex-1 px-3 py-2 border border-[var(--ink)] rounded bg-[var(--surface-2)]"
             maxLength={60}
           />
           <button className="btn btn-primary" onClick={create} disabled={busy || className.length < 2}>
@@ -126,7 +126,7 @@ export function ClassClient({
       </section>
 
       <section className="flex flex-col gap-2">
-        <h2 className="text-sm font-black uppercase">{copy.yourClasses}</h2>
+        <h2 className="text-sm font-semibold">{copy.yourClasses}</h2>
         {classes.length === 0 ? (
           <p className="text-xs text-zinc-400">—</p>
         ) : (

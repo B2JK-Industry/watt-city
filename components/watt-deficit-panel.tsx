@@ -156,11 +156,11 @@ export function WattDeficitPanel({ deficit, lang }: Props) {
          The panel is only rendered for authenticated users who are
          in deficit, so resource-bar is always present → 144 is safe. */
       className="sticky top-[144px] sm:top-16 z-[30] border-b-[3px] border-[var(--ink)] bg-amber-500/20 backdrop-blur"
-      style={{ borderColor: "var(--neo-pink)" }}
+      style={{ borderColor: "var(--danger)" }}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-2 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm">
         <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-          <p id="wdp-title" className="font-black uppercase tracking-tight">
+          <p id="wdp-title" className="font-semibold tracking-tight">
             {t.title}
           </p>
           <p className="text-xs opacity-80">

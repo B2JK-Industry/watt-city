@@ -1,9 +1,168 @@
 @import "tailwindcss";
 
+/* ────────────────────────────────────────────────────────────────
+   Design tokens — two skins.
+   Default = `pko` (light, navy primary, warm-orange sales accent).
+   Legacy  = `core` (neo-brutalist, dark, neon).
+   Full spec: docs/pko-redesign/02-DESIGN-TOKENS.md
+   ──────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Palette — navy */
+  --color-navy-900: #001e4b;
+  --color-navy-700: #003574;
+  --color-navy-500: #004c9a;
+  /* Palette — orange */
+  --color-orange-700: #cc7a09;
+  --color-orange-500: #db912c;
+  /* Palette — feedback */
+  --color-green-600: #2e7d49;
+  --color-red-600: #c0342b;
+  /* Palette — ink */
+  --color-ink-900: #000000;
+  --color-ink-500: #636363;
+  --color-ink-300: #b7b7b7;
+  /* Palette — surface */
+  --color-surface-0: #ffffff;
+  --color-surface-50: #f9f9f9;
+  --color-line: #e5e5e5;
+
+  /* Semantic aliases (components consume these) */
+  --background: var(--color-surface-0);
+  --foreground: var(--color-ink-900);
+  --surface: var(--color-surface-0);
+  --surface-2: var(--color-surface-50);
+  --ink: var(--color-ink-900);
+  --ink-muted: var(--color-ink-500);
+  --ink-subtle: var(--color-ink-300);
+  --line: var(--color-line);
+
+  --accent: var(--color-navy-700);
+  --accent-hover: var(--color-navy-500);
+  --accent-ink: var(--color-surface-0);
+  --accent-2: var(--color-navy-700);
+  --brand: var(--color-navy-700);
+
+  --sales: var(--color-orange-500);
+  --sales-hover: var(--color-orange-700);
+  --sales-ink: var(--color-surface-0);
+
+  --success: var(--color-green-600);
+  --danger: var(--color-red-600);
+  --focus-ring: var(--color-navy-700);
+
+  /* Elevation */
+  --shadow-line: 0 0 0 1px var(--color-line);
+  --shadow-soft: 0 3px 6px rgba(0, 0, 0, 0.16);
+  --shadow-soft-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  /* Radius */
+  --radius-none: 0;
+  --radius-sm: 4px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* Motion easings */
+  --ease-standard: cubic-bezier(.4, 0, .2, 1);
+  --ease-enter: cubic-bezier(0, 0, .2, 1);
+  --ease-exit: cubic-bezier(.4, 0, 1, 1);
+
+  /* Legacy neo-brutalist neon aliases — kept for core skin + any
+   * component still reading them. pko skin re-maps them below to
+   * muted navy/orange so legacy consumers don't leak neon. */
+  --neo-yellow: var(--color-orange-500);
+  --neo-pink: var(--color-navy-700);
+  --neo-cyan: var(--color-navy-500);
+  --neo-lime: var(--color-green-600);
+  --neo-purple: var(--color-navy-900);
+  --neo-orange: var(--color-orange-500);
+  --neo-red: var(--color-red-600);
+
+  --shadow: rgba(0, 0, 0, 0.12);
+}
+
+:root[data-skin="core"] {
+  --background: #0a0a0f;
+  --foreground: #f8fafc;
+  --surface: #151521;
+  --surface-2: #1e1e2e;
+  --ink: #f8fafc;
+  --ink-muted: #94a3b8;
+  --ink-subtle: #64748b;
+  --line: #f8fafc;
+  --shadow: #000000;
+
+  /* Legacy neon palette (the real one) */
+  --neo-yellow: #fde047;
+  --neo-pink: #f472b6;
+  --neo-cyan: #22d3ee;
+  --neo-lime: #a3e635;
+  --neo-purple: #a78bfa;
+  --neo-orange: #fb923c;
+  --neo-red: #f87171;
+
+  --accent: #fde047;
+  --accent-hover: #facc15;
+  --accent-ink: #0a0a0f;
+  --accent-2: #f472b6;
+  --brand: #22d3ee;
+
+  --sales: #fb923c;
+  --sales-hover: #f97316;
+  --sales-ink: #0a0a0f;
+
+  --success: #a3e635;
+  --danger: #f87171;
+  --focus-ring: #fde047;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--line);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-2: var(--accent-2);
+  --color-sales: var(--sales);
+  --color-sales-hover: var(--sales-hover);
+  --color-brand: var(--brand);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+
+  --font-sans: var(--font-inter), var(--font-geist-sans), system-ui, sans-serif;
+  --font-display: var(--font-inter), var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --radius-sm: 4px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), var(--font-geist-sans), system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+:where([data-skin="core"]) body {
+  background-image:
+    radial-gradient(circle at 20px 20px, rgba(255, 255, 255, 0.06) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 60px 80px, rgba(34, 211, 238, 0.05) 1.5px, transparent 2px);
+  background-size: 40px 40px, 140px 140px;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
 /* ---------- Mobile UX (Phase 7.3) ---------- */
 
-/* 7.3.1 — touch targets ≥ 44×44 px on all interactive elements at mobile
- * viewports. Scoped to < 640px so desktop buttons stay compact. */
 @media (max-width: 639px) {
   button,
   a.btn,
@@ -13,22 +172,9 @@
   }
 }
 
-/* Deep-audit 2026-04-22 backlog #4 — `.tap-target` utility for nav +
- * footer links (plain `<a>` without `.btn`). Apply via `<a className=
- * "tap-target">` on nav + footer links.
- *
- * Applied unconditionally (no @media wrapper) because WebKit in
- * Playwright refused to apply it under either `max-width` or
- * `min-width` scoped forms — the served CSS looked right but the
- * computed box stayed `display: inline, min-height: 0`. Desktop
- * picks up a 44×44 floor too, which is a no-op for most nav links
- * (already 80-100 px wide from the text) and only visibly widens
- * short labels like "Gry" (36 → 44 px). Acceptable trade for
- * cross-engine reliability. */
-/* Doubled selector bumps specificity to 0-2-0 so Tailwind v4's
- * layered anchor resets (which win against a flat `.tap-target` on
- * some WebKit builds in Playwright) can't suppress us. Identical
- * effect on Chromium/Firefox. */
+/* WebKit-in-Playwright bug workaround — doubled selector bumps
+ * specificity to 0-2-0 so Tailwind v4's layered anchor resets cannot
+ * suppress us. Do NOT flatten back to `.tap-target`. */
 .tap-target.tap-target {
   min-height: 44px;
   min-width: 44px;
@@ -37,57 +183,72 @@
   justify-content: center;
 }
 
-/* 7.3.3 — city scene SVG allows native pinch-zoom + pan while blocking
- * double-tap-to-zoom (Safari default) on the page chrome. */
 .city-scene-viewport {
   touch-action: pinch-zoom;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-/* 7.3.5 — bottom tab bar safe-area padding for iOS PWA. */
+/* City-scene SVG: neon night palette is core-skin intent. Under pko
+ * we mute saturation + brightness so the scene reads as a calm
+ * panorama instead of a neon-arcade. Not a full 8-bucket refactor
+ * (that would touch 1600 lines of hand-placed SVG — see backlog E4),
+ * but it keeps the scene visually coherent with the light-mode
+ * chrome without a "neon-saturated disaster" regression (SKO revert
+ * lesson D). */
+:where([data-skin="pko"]) .city-scene-root {
+  filter: saturate(0.55) brightness(0.95);
+}
+:where([data-skin="pko"]) .city-scene-root svg text {
+  /* Restore text contrast — filter tints labels otherwise. */
+  filter: none;
+}
+
 .bottom-tabs {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* 7.3.4 — transition for swipe-to-dismiss notifications. */
 .swipeable {
   transition: transform 200ms ease-out, opacity 200ms ease-out;
   touch-action: pan-y;
 }
 
-/* ---------- Accessibility (Phase 6.4) ---------- */
+/* ---------- Accessibility ---------- */
 
-/* Visible keyboard focus ring. 2px outline + 2px offset gives WCAG 2.4.7
- * compliance against our dark background (contrast > 3:1). The :focus rule
- * below Tailwind's reset picks up all buttons, links, inputs. */
 :focus-visible {
-  outline: 3px solid var(--neo-yellow);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
   border-radius: 4px;
 }
 
-/* Skip-to-content link — visually hidden until focused. */
+:where([data-skin="core"]) :focus-visible {
+  outline-width: 3px;
+}
+
 .skip-to-content {
   position: absolute;
   top: -40px;
   left: 8px;
   z-index: 100;
-  background: var(--neo-yellow);
-  color: #0a0a0f;
+  background: var(--accent);
+  color: var(--accent-ink);
   padding: 0.5rem 0.9rem;
-  border: 2px solid #0a0a0f;
+  border: 1px solid var(--accent);
   border-radius: 6px;
-  font-weight: 800;
+  font-weight: 600;
   text-decoration: none;
   transition: top 120ms ease;
 }
 .skip-to-content:focus-visible {
   top: 8px;
-  outline: 3px solid #0a0a0f;
+  outline: 2px solid var(--focus-ring);
+}
+:where([data-skin="core"]) .skip-to-content {
+  border-width: 2px;
+  border-color: #0a0a0f;
+  font-weight: 800;
 }
 
-/* Respect user's reduced-motion preference (WCAG 2.3.3). */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -99,78 +260,57 @@
   }
 }
 
-/* Inline-text link affordance (WCAG 1.4.1 / axe `link-in-text-block`).
- * Tailwind v4's preflight strips the browser-default <a> underline, so
- * a yellow/cyan link inside a gray <p> body ends up distinguished from
- * the surrounding text by color alone — below the 3:1 contrast cue
- * threshold for link-vs-prose text. Reinstating the underline inside
- * text-block containers restores a non-colour distinguishing feature.
- * `.btn`/`.btn-*`/`.chip` and nav/footer/header links sit outside a
- * text block so they are unaffected. */
+/* Inline-text link affordance (WCAG 1.4.1). */
 :where(p, li, blockquote, dd) a:not([class*="btn"]):not(.chip) {
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
-
-:root {
-  --background: #0a0a0f;
-  --foreground: #f8fafc;
-  --surface: #151521;
-  --surface-2: #1e1e2e;
-  --ink: #f8fafc;           /* line/border color */
-  --shadow: #000000;
-
-  /* neo-brutalist neon palette */
-  --neo-yellow: #fde047;
-  --neo-pink: #f472b6;
-  --neo-cyan: #22d3ee;
-  --neo-lime: #a3e635;
-  --neo-purple: #a78bfa;
-  --neo-orange: #fb923c;
-  --neo-red: #f87171;
-
-  --accent: #fde047;        /* yellow */
-  --accent-2: #f472b6;      /* pink */
-  --brand: #22d3ee;         /* cyan */
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-surface: var(--surface);
-  --color-surface-2: var(--surface-2);
-  --color-border: var(--ink);
-  --color-accent: var(--accent);
-  --color-accent-2: var(--accent-2);
-  --color-brand: var(--brand);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-body {
-  background: var(--background);
-  background-image:
-    radial-gradient(circle at 20px 20px, rgba(255, 255, 255, 0.06) 1.5px, transparent 1.5px),
-    radial-gradient(circle at 60px 80px, rgba(34, 211, 238, 0.05) 1.5px, transparent 2px);
-  background-size: 40px 40px, 140px 140px;
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
-  min-height: 100vh;
-}
-
-/* ---------- Neo-brutalist primitives ---------- */
+/* ───────────────────────────────────────────────────────────
+   Primitives — default = pko (light). core overrides below.
+   ─────────────────────────────────────────────────────────── */
 
 .card {
   background: var(--surface);
-  border: 3px solid var(--ink);
-  border-radius: 14px;
-  box-shadow: 6px 6px 0 0 var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: none;
+  padding: 24px;
   position: relative;
+  transition: border-color 160ms var(--ease-standard),
+    box-shadow 160ms var(--ease-standard);
+}
+.card--interactive {
+  cursor: pointer;
+}
+.card--interactive:hover,
+.card--interactive:focus-within {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-soft);
+}
+.card--elevated {
+  box-shadow: var(--shadow-soft);
+}
+.card--sales {
+  border-color: var(--sales);
 }
 
 .card-alt {
   background: var(--surface-2);
+}
+
+/* core (legacy) neo-brutalist card */
+:where([data-skin="core"]) .card {
+  background: var(--surface);
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 6px 6px 0 0 var(--ink);
+  padding: 16px;
+}
+:where([data-skin="core"]) .card--interactive:hover,
+:where([data-skin="core"]) .card--interactive:focus-within {
+  border-color: var(--ink);
+  box-shadow: 6px 6px 0 0 var(--accent);
 }
 
 .btn {
@@ -178,58 +318,145 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  padding: 12px 20px;
+  min-height: 44px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: 0;
+  border: 1px solid transparent;
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: none;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease,
+    color 120ms ease, box-shadow 120ms ease, transform 80ms ease;
+  text-decoration: none;
+}
+.btn:hover { background: var(--accent-hover); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.btn-sm { padding: 8px 14px; min-height: 36px; font-size: 14px; }
+.btn-lg { padding: 14px 24px; min-height: 52px; font-size: 18px; }
+
+.btn-sales {
+  background: var(--sales);
+  color: var(--sales-ink);
+  border-color: transparent;
+}
+.btn-sales:hover { background: var(--sales-hover); }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.btn-secondary:hover {
+  background: var(--surface-2);
+  color: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--accent);
+  border-color: transparent;
+}
+.btn-ghost:hover { text-decoration: underline; }
+
+.btn-danger {
+  background: transparent;
+  color: var(--danger);
+  border-color: var(--danger);
+}
+.btn-danger:hover { background: var(--surface-2); }
+
+/* Legacy brutalist primary alias — same as .btn in pko, keeps core
+ * styling when [data-skin="core"] is active. */
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* Legacy neon variants — only rendered under core skin. In pko, they
+ * collapse to the default .btn (navy). */
+:where([data-skin="core"]) .btn {
   padding: 0.7rem 1.15rem;
   border-radius: 12px;
   font-weight: 800;
-  letter-spacing: 0.01em;
   border: 3px solid var(--ink);
   color: #0a0a0f;
   background: var(--neo-yellow);
   box-shadow: 5px 5px 0 0 var(--ink);
-  cursor: pointer;
   transition: transform 110ms ease, box-shadow 110ms ease;
-  text-decoration: none;
 }
-.btn:hover {
+:where([data-skin="core"]) .btn:hover {
   transform: translate(-2px, -2px);
   box-shadow: 7px 7px 0 0 var(--ink);
 }
-.btn:active {
+:where([data-skin="core"]) .btn:active {
   transform: translate(3px, 3px);
   box-shadow: 1px 1px 0 0 var(--ink);
 }
-.btn:disabled {
+:where([data-skin="core"]) .btn:disabled {
   opacity: 0.55;
   transform: none;
   box-shadow: 5px 5px 0 0 var(--ink);
-  cursor: not-allowed;
 }
-.btn-primary {
-  background: var(--accent);
-  color: #0a0a0f;
-}
-.btn-ghost {
-  background: var(--surface-2);
-  color: var(--ink);
-}
-.btn-pink { background: var(--neo-pink); color: #0a0a0f; }
-.btn-cyan { background: var(--neo-cyan); color: #0a0a0f; }
-.btn-lime { background: var(--neo-lime); color: #0a0a0f; }
-.btn-danger { background: var(--neo-red); color: #0a0a0f; }
+:where([data-skin="core"]) .btn-primary { background: var(--accent); color: #0a0a0f; }
+:where([data-skin="core"]) .btn-ghost { background: var(--surface-2); color: var(--ink); border: 3px solid var(--ink); }
+:where([data-skin="core"]) .btn-pink { background: var(--neo-pink); color: #0a0a0f; }
+:where([data-skin="core"]) .btn-cyan { background: var(--neo-cyan); color: #0a0a0f; }
+:where([data-skin="core"]) .btn-lime { background: var(--neo-lime); color: #0a0a0f; }
+:where([data-skin="core"]) .btn-danger { background: var(--neo-red); color: #0a0a0f; border: 3px solid var(--ink); }
+:where([data-skin="core"]) .btn-sales { background: var(--neo-orange); color: #0a0a0f; border: 3px solid var(--ink); }
+:where([data-skin="core"]) .btn-secondary { background: var(--surface-2); color: var(--ink); border: 3px solid var(--ink); }
 
 .input {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--foreground);
+  border-radius: 0;
+  padding: 12px 16px;
+  width: 100%;
+  font-weight: 400;
+  box-shadow: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+  min-height: 44px;
+}
+.input::placeholder { color: var(--ink-subtle); }
+.input:hover { border-color: var(--ink-muted); }
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.input:disabled {
+  background: var(--surface-2);
+  color: var(--ink-subtle);
+  cursor: not-allowed;
+}
+.input[aria-invalid="true"] { border-color: var(--danger); }
+.input[aria-invalid="true"]:focus {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 1px var(--danger);
+}
+
+:where([data-skin="core"]) .input {
   background: #0a0a0f;
   border: 3px solid var(--ink);
-  color: var(--foreground);
   border-radius: 10px;
-  padding: 0.65rem 0.85rem;
-  width: 100%;
   font-weight: 600;
   box-shadow: 4px 4px 0 0 var(--ink);
   transition: box-shadow 120ms ease, transform 120ms ease;
 }
-.input:focus {
-  outline: none;
+:where([data-skin="core"]) .input:focus {
   box-shadow: 6px 6px 0 0 var(--accent);
   transform: translate(-1px, -1px);
 }
@@ -237,10 +464,20 @@ body {
 .chip {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.22rem 0.7rem;
+  gap: 6px;
+  padding: 4px 12px;
   border-radius: 999px;
   background: var(--surface-2);
+  border: 1px solid var(--line);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-muted);
+  box-shadow: none;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+.chip:hover { border-color: var(--accent); color: var(--accent); }
+
+:where([data-skin="core"]) .chip {
   border: 2px solid var(--ink);
   font-size: 0.78rem;
   font-weight: 700;
@@ -249,23 +486,102 @@ body {
   transition: transform 110ms ease, box-shadow 110ms ease;
 }
 
-/* ---------- Brutalist game tile ---------- */
+/* Section heading — default pko */
+.section-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 40px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.section-heading::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 28px;
+  background: var(--sales);
+  border-radius: 2px;
+}
+
+/* brutal-heading stays — but only applies under core skin. */
+.brutal-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 700;
+}
+:where([data-skin="core"]) .brutal-heading {
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+:where([data-skin="core"]) .brutal-heading::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 0 var(--ink);
+  display: inline-block;
+}
+
+/* brutal-tag scoped to core (pko uses .chip). */
+.brutal-tag {
+  display: inline-flex;
+  padding: 2px 8px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+  letter-spacing: 0;
+}
+:where([data-skin="core"]) .brutal-tag {
+  border: 2px solid var(--ink);
+  background: var(--surface);
+  border-radius: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  box-shadow: 2px 2px 0 0 var(--ink);
+  color: var(--foreground);
+}
+
+/* ---------- Brutalist game tile — core-only decorations ---------- */
 
 .game-tile {
   position: relative;
   overflow: hidden;
   background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: none;
+  transition: border-color 160ms var(--ease-standard),
+    box-shadow 160ms var(--ease-standard),
+    transform 160ms var(--ease-standard);
+}
+.game-tile:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-soft);
+}
+
+:where([data-skin="core"]) .game-tile {
   border: 3px solid var(--ink);
   border-radius: 14px;
   box-shadow: 6px 6px 0 0 var(--ink);
   transition: transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1),
     box-shadow 140ms ease;
 }
-.game-tile:hover {
+:where([data-skin="core"]) .game-tile:hover {
   transform: translate(-3px, -3px);
   box-shadow: 9px 9px 0 0 var(--ink);
 }
-.game-tile:active {
+:where([data-skin="core"]) .game-tile:active {
   transform: translate(2px, 2px);
   box-shadow: 2px 2px 0 0 var(--ink);
 }
@@ -273,15 +589,29 @@ body {
 /* ---------- Podium + table ---------- */
 
 .podium-tile {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-line);
+}
+
+:where([data-skin="core"]) .podium-tile {
   border: 3px solid var(--ink);
   border-radius: 12px;
   box-shadow: 6px 6px 0 0 var(--ink);
 }
 
 .leaderboard-row {
+  border-bottom: 1px solid var(--line);
+}
+.leaderboard-row:hover { background: var(--surface-2); }
+.leaderboard-row-me {
+  background: rgba(0, 53, 116, 0.04);
+}
+
+:where([data-skin="core"]) .leaderboard-row {
   border-bottom: 2px solid color-mix(in oklab, var(--ink) 25%, transparent);
 }
-.leaderboard-row-me {
+:where([data-skin="core"]) .leaderboard-row-me {
   background: repeating-linear-gradient(
     45deg,
     color-mix(in oklab, var(--accent) 16%, transparent),
@@ -300,14 +630,14 @@ body {
   z-index: 2;
   padding: 3px 10px;
   border-radius: 999px;
-  font-size: 0.64rem;
-  font-weight: 900;
+  font-size: 11px;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  background: var(--neo-yellow);
-  color: #0a0a0f;
-  border: 2px solid var(--ink);
-  box-shadow: 3px 3px 0 0 var(--ink);
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: 1px solid var(--accent);
+  box-shadow: none;
 }
 .hot-badge {
   position: absolute;
@@ -316,45 +646,67 @@ body {
   z-index: 2;
   padding: 3px 10px;
   border-radius: 999px;
-  font-size: 0.64rem;
-  font-weight: 900;
+  font-size: 11px;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  background: var(--sales);
+  color: var(--sales-ink);
+  border: 1px solid var(--sales);
+  box-shadow: none;
+}
+
+:where([data-skin="core"]) .new-badge {
+  font-weight: 900;
+  background: var(--neo-yellow);
+  color: #0a0a0f;
+  border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 0 var(--ink);
+}
+:where([data-skin="core"]) .hot-badge {
+  font-weight: 900;
   background: var(--neo-red);
   color: #0a0a0f;
   border: 2px solid var(--ink);
   box-shadow: 3px 3px 0 0 var(--ink);
 }
 
-/* ---------- Level ring (neobrutalist version) ---------- */
+/* ---------- Level ring ---------- */
 
 .level-ring {
   --size: 40px;
-  --track: color-mix(in oklab, var(--ink) 18%, transparent);
+  --track: var(--line);
   width: var(--size);
   height: var(--size);
   border-radius: 999px;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--line);
   background:
     conic-gradient(var(--accent) calc(var(--p, 0) * 1%), var(--track) 0);
   display: inline-grid;
   place-items: center;
   position: relative;
-  box-shadow: 3px 3px 0 0 var(--ink);
 }
 .level-ring::before {
   content: "";
   position: absolute;
-  inset: 4px;
+  inset: 3px;
   background: var(--surface);
   border-radius: 999px;
 }
 .level-ring > span {
   position: relative;
   font-size: 0.78rem;
-  font-weight: 900;
+  font-weight: 600;
   color: var(--foreground);
 }
+
+:where([data-skin="core"]) .level-ring {
+  --track: color-mix(in oklab, var(--ink) 18%, transparent);
+  border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 0 var(--ink);
+}
+:where([data-skin="core"]) .level-ring::before { inset: 4px; }
+:where([data-skin="core"]) .level-ring > span { font-weight: 900; }
 
 /* ---------- Animations ---------- */
 
@@ -372,13 +724,6 @@ body {
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* slide-up: transform-only. The previous opacity 0→1 component caused
- * transient low text-contrast during the 320 ms fade (axe flagged
- * brutal-tag, brutal-heading, .chip and text-zinc-500 as serious
- * WCAG 1.4.3 violators mid-animation, because the partially-opaque
- * foreground blended with the dark page body). Sliding-only keeps the
- * entrance feel without ever hiding text. `prefers-reduced-motion`
- * still short-circuits via the global reset up top. */
 @keyframes slide-up {
   from { transform: translateY(10px); }
   to { transform: translateY(0); }
@@ -397,13 +742,20 @@ body {
 }
 
 @keyframes tile-flash-ok {
-  0%, 100% { box-shadow: 6px 6px 0 0 var(--ink); }
-  50% { box-shadow: 6px 6px 0 0 var(--neo-lime); }
+  0%, 100% { box-shadow: none; }
+  50% { box-shadow: 0 0 0 2px var(--success); }
 }
 
 @keyframes tile-flash-bad {
-  0%, 100% { box-shadow: 6px 6px 0 0 var(--ink); }
-  50% { box-shadow: 6px 6px 0 0 var(--neo-red); }
+  0%, 100% { box-shadow: none; }
+  50% { box-shadow: 0 0 0 2px var(--danger); }
+}
+
+:where([data-skin="core"]) .game-tile {
+  animation-name: none;
+}
+:where([data-skin="core"]) [class*="tile-flash"] {
+  /* keep legacy brutalist flashes in core skin */
 }
 
 @keyframes confetti-fall {
@@ -412,22 +764,16 @@ body {
   100% { transform: translateY(360px) rotate(720deg) scale(1); opacity: 0; }
 }
 
-/* stagger-in: transform-only for the same reason slide-up is — an
- * opacity-0 starting frame produces sub-WCAG contrast on the fading-in
- * text for the first ~100–200 ms of each staggered child, which axe
- * flags as a serious violation when it samples the page mid-animation.
- * Slide-only keeps the cascade feel without ever hiding content. */
 @keyframes stagger-in {
   from { transform: translate(10px, 10px); }
   to { transform: translate(0, 0); }
 }
 
 @keyframes glow-ring {
-  0%, 100% { box-shadow: 6px 6px 0 0 var(--ink); }
-  50% { box-shadow: 6px 6px 0 0 var(--neo-yellow); }
+  0%, 100% { box-shadow: none; }
+  50% { box-shadow: 0 0 0 2px var(--accent); }
 }
 
-/* D5 — kid onboarding modal entrance. Backdrop fades, card pops. */
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -439,22 +785,15 @@ body {
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* D6 — tier-up toast entrance: slides up from below with slight
- * overshoot (cubic-bezier has a >1 final control point). */
 @keyframes tier-up-enter {
   0%   { transform: translate(-50%, 24px); opacity: 0; }
   60%  { transform: translate(-50%, -6px); opacity: 1; }
   100% { transform: translate(-50%, 0);    opacity: 1; }
 }
 
-/* D6 — HUD resource delta flash. Quick pulse on the border when a
- * resource value changes. Consumers apply via Tailwind:
- *   className="motion-safe:animate-[hud-delta-flash_640ms_ease-out]"
- * and set `--delta-flash` to the desired accent colour (lime for +,
- * pink for −). */
 @keyframes hud-delta-flash {
   0%, 100% { box-shadow: 0 0 0 0 transparent; }
-  30%      { box-shadow: 0 0 0 6px var(--delta-flash, var(--neo-lime)); }
+  30%      { box-shadow: 0 0 0 6px var(--delta-flash, var(--success)); }
 }
 
 /* ---------- CityScene SVG interactivity ---------- */
@@ -466,12 +805,22 @@ body {
   transition: filter 220ms ease, transform 220ms ease;
 }
 .building-link:hover {
+  filter: brightness(1.08)
+    drop-shadow(0 0 8px rgba(0, 53, 116, 0.25));
+  transform: translateY(-2px);
+}
+.building-link:focus-visible {
+  outline: none;
+  filter: brightness(1.08)
+    drop-shadow(0 0 10px rgba(0, 53, 116, 0.35));
+}
+
+:where([data-skin="core"]) .building-link:hover {
   filter: brightness(1.22)
     drop-shadow(0 0 10px rgba(253, 224, 71, 0.45));
   transform: translateY(-4px);
 }
-.building-link:focus-visible {
-  outline: none;
+:where([data-skin="core"]) .building-link:focus-visible {
   filter: brightness(1.22)
     drop-shadow(0 0 14px rgba(253, 224, 71, 0.6));
 }
@@ -507,37 +856,54 @@ body {
 .stagger-item:nth-child(8) { animation-delay: 360ms; }
 .stagger-item:nth-child(9) { animation-delay: 400ms; }
 
-/* ---------- Section heading helpers ---------- */
+/* ───────────────────────────────────────────────────────────
+   Typo + spacing + elevation + motion utilities
+   ─────────────────────────────────────────────────────────── */
 
-.brutal-heading {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-}
-.brutal-heading::before {
-  content: "";
-  width: 14px;
-  height: 14px;
-  background: var(--accent);
-  border: 2px solid var(--ink);
-  box-shadow: 3px 3px 0 0 var(--ink);
-  display: inline-block;
+@layer utilities {
+  .t-display  { font-size: 48px; line-height: 56px; font-weight: 700; letter-spacing: -0.01em; }
+  .t-h1       { font-size: 40px; line-height: 48px; font-weight: 700; letter-spacing: -0.01em; }
+  .t-h2       { font-size: 32px; line-height: 40px; font-weight: 700; letter-spacing: -0.005em; }
+  .t-h3       { font-size: 24px; line-height: 32px; font-weight: 600; }
+  .t-h4       { font-size: 20px; line-height: 28px; font-weight: 600; }
+  .t-h5       { font-size: 18px; line-height: 26px; font-weight: 600; }
+  .t-body-lg  { font-size: 18px; line-height: 28px; font-weight: 400; }
+  .t-body     { font-size: 16px; line-height: 24px; font-weight: 400; }
+  .t-body-sm  { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .t-caption  { font-size: 13px; line-height: 18px; font-weight: 400; }
+  .t-micro    { font-size: 11px; line-height: 14px; font-weight: 400; }
+  .t-overline {
+    font-size: 12px; line-height: 16px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.12em;
+  }
+
+  .section-y     { padding-top: 96px; padding-bottom: 96px; }
+  .section-y-sm  { padding-top: 64px; padding-bottom: 64px; }
+
+  .elev-line    { box-shadow: var(--shadow-line); }
+  .elev-soft    { box-shadow: var(--shadow-soft); }
+  .elev-soft-lg { box-shadow: var(--shadow-soft-lg); }
+
+  .motion-fast { transition: all 120ms ease-out; }
+  .motion-base { transition: all 200ms var(--ease-standard); }
+  .motion-slow { transition: all 300ms var(--ease-standard); }
+
+  .tabular-nums { font-variant-numeric: tabular-nums; }
 }
 
-/* ---------- Tiny utilities ---------- */
-
-.brutal-tag {
-  display: inline-flex;
-  padding: 2px 8px;
-  border: 2px solid var(--ink);
-  background: var(--surface);
-  border-radius: 6px;
-  font-weight: 800;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  box-shadow: 2px 2px 0 0 var(--ink);
+@media (max-width: 767px) {
+  .section-y     { padding-top: 64px; padding-bottom: 64px; }
+  .section-y-sm  { padding-top: 48px; padding-bottom: 48px; }
 }
+
+/* ───────────────────────────────────────────────────────────
+   Z-index stack
+   0   base
+   10  sticky nav
+   20  dropdown
+   30  modal backdrop
+   31  modal content
+   40  toast
+   50  tooltip
+   100 skip-to-content
+   ─────────────────────────────────────────────────────────── */

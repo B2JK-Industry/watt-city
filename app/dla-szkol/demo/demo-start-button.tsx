@@ -46,7 +46,7 @@ export function DemoStartButton() {
         {isPending ? "⏳ Tworzę demo…" : "🎬 Rozpocznij demo (1 klik)"}
       </button>
       {error && (
-        <p className="text-xs text-[var(--neo-pink)]">
+        <p className="text-xs text-[var(--danger)]">
           Błąd: <code className="font-mono">{error}</code> — spróbuj
           ponownie albo{" "}
           <a href="/login" className="underline">

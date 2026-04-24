@@ -38,7 +38,7 @@ export default async function PublicProfilePage({
   return (
     <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex flex-col gap-2">
-        <h1 className="brutal-heading text-3xl">{heading}</h1>
+        <h1 className="section-heading text-3xl">{heading}</h1>
         <div className="flex flex-wrap gap-3 items-center">
           <span className="chip">
             <strong>{username}</strong>
@@ -51,7 +51,7 @@ export default async function PublicProfilePage({
         </div>
       </header>
       <section className="card p-4 flex flex-col gap-3">
-        <h2 className="text-lg font-black uppercase">
+        <h2 className="text-lg font-semibold">
           {{
             pl: "Odznaki",
             uk: "Значки",
@@ -74,12 +74,12 @@ export default async function PublicProfilePage({
             {owned.map(({ id, def }) => (
               <li
                 key={id}
-                className="border-2 border-[var(--ink)]/40 rounded p-3 flex flex-col items-center gap-1 text-center"
+                className="border border-[var(--ink)]/40 rounded p-3 flex flex-col items-center gap-1 text-center"
               >
                 <span className="text-3xl" aria-hidden>
                   {def.icon}
                 </span>
-                <strong className="text-xs uppercase tracking-wider">
+                <strong className="text-xs">
                   {def.labels[lang]}
                 </strong>
               </li>

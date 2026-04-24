@@ -58,11 +58,11 @@ export async function ClassDashboard({ cls, role, viewerUsername }: Props) {
     <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex flex-wrap items-baseline justify-between gap-3">
         <div className="flex flex-col">
-          <p className="text-xs uppercase tracking-widest opacity-60">
+          <p className="text-xs opacity-60">
             Klasa {cls.grade}
             {cls.subject ? ` · ${cls.subject}` : ""}
           </p>
-          <h1 className="brutal-heading text-3xl sm:text-4xl">{cls.name}</h1>
+          <h1 className="section-heading text-3xl sm:text-4xl">{cls.name}</h1>
           <p className="text-xs opacity-70">
             Kod dołączenia:{" "}
             <strong className="font-mono text-[var(--accent)]">
@@ -91,7 +91,7 @@ export async function ClassDashboard({ cls, role, viewerUsername }: Props) {
       </header>
 
       <section className="card p-4 flex flex-col gap-2">
-        <h2 className="text-xs uppercase tracking-widest font-black text-[var(--accent)]">
+        <h2 className="text-xs font-semibold text-[var(--accent)]">
           🎯 Temat tygodnia
         </h2>
         {cls.weeklyTheme ? (
@@ -114,7 +114,7 @@ export async function ClassDashboard({ cls, role, viewerUsername }: Props) {
 
       <section className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-5">
         <div className="card p-4 flex flex-col gap-3">
-          <h2 className="brutal-heading text-lg">📊 Liga klasy (top 10)</h2>
+          <h2 className="section-heading text-lg">📊 Liga klasy (top 10)</h2>
           {top10.length === 0 ? (
             <p className="text-sm italic opacity-70">
               Żaden uczeń jeszcze nie wszedł. Udostępnij kod:{" "}
@@ -140,7 +140,7 @@ export async function ClassDashboard({ cls, role, viewerUsername }: Props) {
         {role === "teacher" && (
           <aside className="flex flex-col gap-3">
             <div className="card p-4 flex flex-col gap-3">
-              <h2 className="text-xs uppercase tracking-widest font-black text-[var(--accent)]">
+              <h2 className="text-xs font-semibold text-[var(--accent)]">
                 ⚡ Szybkie akcje
               </h2>
               <ul className="flex flex-col gap-2 text-sm">

@@ -36,7 +36,7 @@ export default function ParentJoinPage() {
   return (
     <div className="max-w-md mx-auto flex flex-col gap-5 animate-slide-up">
       <header>
-        <h1 className="brutal-heading text-3xl">Dołącz jako rodzic</h1>
+        <h1 className="section-heading text-3xl">Dołącz jako rodzic</h1>
         <p className="text-sm text-zinc-300 mt-2">
           Twoje dziecko wygenerowało w swoim profilu 6-znakowy kod. Wpisz
           go poniżej, żeby obserwować jego postępy.
@@ -54,7 +54,7 @@ export default function ParentJoinPage() {
             placeholder="ABC123"
             value={code}
             onChange={(e) => setCode(e.target.value.toUpperCase())}
-            className="border-2 border-[var(--ink)] bg-[var(--surface)] px-3 py-3 rounded font-mono text-xl tracking-widest text-center"
+            className="border border-[var(--ink)] bg-[var(--surface)] px-3 py-3 rounded font-mono text-xl text-center"
           />
         </label>
         {error && <p className="text-rose-500 text-sm">Błąd: {error}</p>}

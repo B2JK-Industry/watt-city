@@ -36,7 +36,7 @@ export function FloatingFxLayer({ items }: { items: FloatingFx[] }) {
               ? "text-emerald-300"
               : it.tone === "bad"
               ? "text-rose-400"
-              : "text-[var(--accent)] drop-shadow-[0_0_8px_var(--accent)]"
+              : "text-[var(--accent)] drop-"
           }`}
           style={{
             left: `${it.x}%`,

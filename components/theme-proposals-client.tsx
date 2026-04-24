@@ -78,7 +78,7 @@ export function ThemeProposalsClient({
             onChange={(e) => setText(e.target.value)}
             placeholder={copy.placeholder}
             maxLength={100}
-            className="flex-1 px-3 py-2 border-[3px] border-[var(--ink)] rounded bg-[var(--surface-2)]"
+            className="flex-1 px-3 py-2 border border-[var(--ink)] rounded bg-[var(--surface-2)]"
           />
           <button
             className="btn btn-primary"
@@ -91,7 +91,7 @@ export function ThemeProposalsClient({
         {error && <p className="text-rose-400 text-xs">{error}</p>}
       </section>
       <section className="card p-4 flex flex-col gap-2">
-        <h2 className="text-sm font-black uppercase">{copy.ranking}</h2>
+        <h2 className="text-sm font-semibold">{copy.ranking}</h2>
         {proposals.length === 0 ? (
           <p className="text-xs text-zinc-400">{copy.empty}</p>
         ) : (

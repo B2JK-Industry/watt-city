@@ -59,10 +59,10 @@ export default async function HallOfFamePage() {
     <div className="flex flex-col gap-8 animate-slide-up">
       <header className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="brutal-heading text-3xl sm:text-4xl">{t.title}</h1>
+          <h1 className="section-heading text-3xl sm:text-4xl">{t.title}</h1>
           <span
             className="brutal-tag"
-            style={{ background: "var(--neo-yellow)", color: "#0a0a0f" }}
+            style={{ background: "var(--accent)", color: "#0a0a0f" }}
           >
             {t.tag}
           </span>
@@ -74,7 +74,7 @@ export default async function HallOfFamePage() {
       {liveAi.length > 0 ? (
         <section className="card p-6 flex flex-col gap-4 border-[var(--accent)]">
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="brutal-heading text-xl">{t.todayTitle}</h2>
+            <h2 className="section-heading text-xl">{t.todayTitle}</h2>
             <span
               className="brutal-tag"
               style={{ background: "var(--accent)", color: "#0a0a0f" }}
@@ -102,7 +102,7 @@ export default async function HallOfFamePage() {
                   >
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-2xl">🤖</span>
-                      <strong className="font-black uppercase tracking-tight">
+                      <strong className="font-semibold tracking-tight">
                         {g.title}
                       </strong>
                       <span className="chip ml-auto text-[11px]">
@@ -119,20 +119,20 @@ export default async function HallOfFamePage() {
                       const entry = top[i];
                       const medal = ["🥇", "🥈", "🥉"][i];
                       const tone = [
-                        "bg-[var(--neo-yellow)]",
+                        "bg-[var(--sales)]",
                         "bg-zinc-300",
-                        "bg-[var(--neo-orange)]",
+                        "bg-[var(--sales)]",
                       ][i];
                       return (
                         <li
                           key={i}
-                          className={`flex items-center justify-between rounded-lg border-2 border-[var(--ink)] px-2.5 py-1.5 ${
+                          className={`flex items-center justify-between rounded-lg border border-[var(--ink)] px-2.5 py-1.5 ${
                             entry
-                              ? `${tone} text-[#0a0a0f]`
+                              ? `${tone} text-[var(--foreground)]`
                               : "bg-[var(--surface-2)] text-zinc-400"
                           } ${
                             entry && entry.username === session?.username
-                              ? "ring-2 ring-[var(--neo-pink)]"
+                              ? "ring-2 ring-[var(--danger)]"
                               : ""
                           }`}
                         >
@@ -142,7 +142,7 @@ export default async function HallOfFamePage() {
                               <span className="truncate">
                                 {entry.username}
                                 {entry.username === session?.username && (
-                                  <span className="ml-1 text-[10px] font-black">
+                                  <span className="ml-1 text-[10px] font-semibold">
                                     (TY)
                                   </span>
                                 )}
@@ -151,7 +151,7 @@ export default async function HallOfFamePage() {
                               <span className="italic">{t.noneYet}</span>
                             )}
                           </span>
-                          <span className="font-mono font-black text-sm whitespace-nowrap">
+                          <span className="font-mono font-semibold text-sm whitespace-nowrap">
                             {entry ? `${entry.xp.toLocaleString("pl-PL")} W` : "—"}
                           </span>
                         </li>
@@ -166,10 +166,10 @@ export default async function HallOfFamePage() {
       ) : (
         <section className="card p-6 flex flex-col gap-3 border-[var(--accent)]">
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="brutal-heading text-xl">{t.todayTitle}</h2>
+            <h2 className="section-heading text-xl">{t.todayTitle}</h2>
             <span
               className="brutal-tag"
-              style={{ background: "var(--neo-pink)", color: "#0a0a0f" }}
+              style={{ background: "var(--danger)", color: "#0a0a0f" }}
             >
               {t.comingSoon}
             </span>
@@ -198,7 +198,7 @@ export default async function HallOfFamePage() {
       {/* Archive of expired AI games — permanent top-3 medals */}
       {pastAiWithTop.length > 0 && (
         <section className="flex flex-col gap-4">
-          <h2 className="brutal-heading text-xl sm:text-2xl">
+          <h2 className="section-heading text-xl sm:text-2xl">
             {t.aiArchiveTitle}
           </h2>
           <p className="text-sm text-zinc-400 max-w-2xl">
@@ -216,7 +216,7 @@ export default async function HallOfFamePage() {
                     <div className="flex items-start gap-2 min-w-0">
                       <span className="text-2xl shrink-0">🤖</span>
                       <div className="min-w-0">
-                        <p className="font-black uppercase tracking-tight truncate">
+                        <p className="font-semibold tracking-tight truncate">
                           {record.title}
                         </p>
                         <p className="text-[11px] text-zinc-400 font-semibold truncate">
@@ -234,20 +234,20 @@ export default async function HallOfFamePage() {
                       const entry = top[i];
                       const medal = ["🥇", "🥈", "🥉"][i];
                       const tone = [
-                        "bg-[var(--neo-yellow)]",
+                        "bg-[var(--sales)]",
                         "bg-zinc-300",
-                        "bg-[var(--neo-orange)]",
+                        "bg-[var(--sales)]",
                       ][i];
                       return (
                         <li
                           key={i}
-                          className={`flex items-center justify-between rounded-lg border-2 border-[var(--ink)] px-2.5 py-1.5 ${
+                          className={`flex items-center justify-between rounded-lg border border-[var(--ink)] px-2.5 py-1.5 ${
                             entry
-                              ? `${tone} text-[#0a0a0f]`
+                              ? `${tone} text-[var(--foreground)]`
                               : "bg-[var(--surface-2)] text-zinc-400"
                           } ${
                             entry && entry.username === session?.username
-                              ? "ring-2 ring-[var(--neo-pink)]"
+                              ? "ring-2 ring-[var(--danger)]"
                               : ""
                           }`}
                         >
@@ -257,7 +257,7 @@ export default async function HallOfFamePage() {
                               <span className="truncate">
                                 {entry.username}
                                 {entry.username === session?.username && (
-                                  <span className="ml-1 text-[10px] font-black">
+                                  <span className="ml-1 text-[10px] font-semibold">
                                     (TY)
                                   </span>
                                 )}
@@ -266,7 +266,7 @@ export default async function HallOfFamePage() {
                               <span className="italic">{t.noneYet}</span>
                             )}
                           </span>
-                          <span className="font-mono font-black text-sm whitespace-nowrap">
+                          <span className="font-mono font-semibold text-sm whitespace-nowrap">
                             {entry ? `${entry.xp.toLocaleString("pl-PL")} W` : "—"}
                           </span>
                         </li>
@@ -282,7 +282,7 @@ export default async function HallOfFamePage() {
 
       {/* Permanent games — current top 3 */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-xl sm:text-2xl">{t.medalsByGame}</h2>
+        <h2 className="section-heading text-xl sm:text-2xl">{t.medalsByGame}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {results.map(({ game, top }) => (
             <div
@@ -296,7 +296,7 @@ export default async function HallOfFamePage() {
                 >
                   <span className="text-3xl">{game.emoji}</span>
                   <div>
-                    <p className="font-black uppercase tracking-tight">
+                    <p className="font-semibold tracking-tight">
                       {localizedTitle(game, dict)}
                     </p>
                     <p className="text-[11px] text-zinc-400 font-semibold">
@@ -316,20 +316,20 @@ export default async function HallOfFamePage() {
                   const entry = top[i];
                   const medal = ["🥇", "🥈", "🥉"][i];
                   const tone = [
-                    "bg-[var(--neo-yellow)]",
+                    "bg-[var(--sales)]",
                     "bg-zinc-300",
-                    "bg-[var(--neo-orange)]",
+                    "bg-[var(--sales)]",
                   ][i];
                   return (
                     <li
                       key={i}
-                      className={`flex items-center justify-between rounded-lg border-2 border-[var(--ink)] px-2.5 py-1.5 ${
+                      className={`flex items-center justify-between rounded-lg border border-[var(--ink)] px-2.5 py-1.5 ${
                         entry
-                          ? `${tone} text-[#0a0a0f]`
+                          ? `${tone} text-[var(--foreground)]`
                           : "bg-[var(--surface-2)] text-zinc-400"
                       } ${
                         entry && entry.username === session?.username
-                          ? "ring-2 ring-[var(--neo-pink)]"
+                          ? "ring-2 ring-[var(--danger)]"
                           : ""
                       }`}
                     >
@@ -339,7 +339,7 @@ export default async function HallOfFamePage() {
                           <span className="truncate">
                             {entry.username}
                             {entry.username === session?.username && (
-                              <span className="ml-1 text-[10px] font-black">
+                              <span className="ml-1 text-[10px] font-semibold">
                                 (TY)
                               </span>
                             )}
@@ -348,7 +348,7 @@ export default async function HallOfFamePage() {
                           <span className="italic">{t.noneYet}</span>
                         )}
                       </span>
-                      <span className="font-mono font-black text-sm whitespace-nowrap">
+                      <span className="font-mono font-semibold text-sm whitespace-nowrap">
                         {entry ? `${entry.xp.toLocaleString("pl-PL")} W` : "—"}
                       </span>
                     </li>

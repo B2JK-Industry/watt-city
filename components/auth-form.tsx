@@ -55,9 +55,9 @@ export function AuthForm({ mode, dict }: Props) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-4">
-      <label className="flex flex-col gap-1.5 text-sm">
-        <span className="text-zinc-300">{t.usernameLabel}</span>
+    <form onSubmit={onSubmit} className="flex flex-col gap-5">
+      <label className="flex flex-col gap-1.5">
+        <span className="t-body-sm text-[var(--ink-muted)]">{t.usernameLabel}</span>
         <input
           className="input"
           value={username}
@@ -70,8 +70,8 @@ export function AuthForm({ mode, dict }: Props) {
           title={t.usernameTitle}
         />
       </label>
-      <label className="flex flex-col gap-1.5 text-sm">
-        <span className="text-zinc-300">{t.passwordLabel}</span>
+      <label className="flex flex-col gap-1.5">
+        <span className="t-body-sm text-[var(--ink-muted)]">{t.passwordLabel}</span>
         <input
           type="password"
           className="input"
@@ -85,8 +85,8 @@ export function AuthForm({ mode, dict }: Props) {
       </label>
       {mode === "register" && (
         <>
-          <label className="flex flex-col gap-1.5 text-sm">
-            <span className="text-zinc-300">Rok urodzenia (RODO-K)</span>
+          <label className="flex flex-col gap-1.5">
+            <span className="t-body-sm text-[var(--ink-muted)]">Rok urodzenia (RODO-K)</span>
             <select
               className="input"
               value={birthYear}
@@ -104,8 +104,8 @@ export function AuthForm({ mode, dict }: Props) {
             </select>
           </label>
           {needsParent && (
-            <label className="flex flex-col gap-1.5 text-sm">
-              <span className="text-zinc-300">
+            <label className="flex flex-col gap-1.5">
+              <span className="t-body-sm text-[var(--ink-muted)]">
                 E-mail rodzica (wymagane dla &lt; 16 lat)
               </span>
               <input
@@ -122,15 +122,18 @@ export function AuthForm({ mode, dict }: Props) {
         </>
       )}
       {error && (
-        <div className="text-sm text-rose-400 bg-rose-950/30 border border-rose-900/60 rounded-md px-3 py-2">
-          {error}
+        <div
+          role="alert"
+          className="t-body-sm text-[var(--danger)] border border-[var(--danger)] bg-[var(--surface-2)] rounded-sm px-3 py-2"
+        >
+          ⚠ {error}
         </div>
       )}
-      <button type="submit" className="btn btn-primary" disabled={pending}>
+      <button type="submit" className="btn w-full" disabled={pending}>
         {pending ? "…" : mode === "login" ? t.submitLogin : t.submitRegister}
       </button>
       {mode === "register" && (
-        <p className="text-[11px] text-zinc-400 leading-snug">
+        <p className="t-caption text-[var(--ink-muted)] leading-snug">
           {t.consent}{" "}
           <Link
             href="/ochrana-sukromia"

@@ -21,24 +21,24 @@ export default async function AboutPage() {
           <p className="text-xs text-zinc-400 italic">{t.note}</p>
         )}
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="brutal-heading text-3xl sm:text-5xl">
+          <h1 className="section-heading text-3xl sm:text-5xl">
             {t.title}
           </h1>
           <span
             className="brutal-tag"
-            style={{ background: "var(--neo-yellow)", color: "#0a0a0f" }}
+            style={{ background: "var(--accent)", color: "#0a0a0f" }}
           >
             PKO XP · Gaming
           </span>
           <span
             className="brutal-tag"
-            style={{ background: "var(--neo-cyan)", color: "#0a0a0f" }}
+            style={{ background: "var(--accent)", color: "#0a0a0f" }}
           >
             ETHSilesia 2026
           </span>
           <span
             className="brutal-tag"
-            style={{ background: "var(--neo-pink)", color: "#0a0a0f" }}
+            style={{ background: "var(--danger)", color: "#0a0a0f" }}
           >
             Katowice
           </span>
@@ -53,7 +53,7 @@ export default async function AboutPage() {
 
       {/* -------- Myšlienka -------- */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">{t.ideaTitle}</h2>
+        <h2 className="section-heading text-2xl">{t.ideaTitle}</h2>
         <div className="card p-6 flex flex-col gap-3 text-zinc-300">
           <p>
             {t.ideaBody1}{" "}
@@ -80,7 +80,7 @@ export default async function AboutPage() {
           aboutPage.scienceIntro / scienceBullets / scienceConclusion).
           No hardcoded locale lives here anymore. */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">{t.scienceTitle}</h2>
+        <h2 className="section-heading text-2xl">{t.scienceTitle}</h2>
         <div className="card p-6 flex flex-col gap-4 text-zinc-300">
           <p>{t.scienceIntro}</p>
           <ul className="list-disc pl-6 space-y-3">
@@ -107,7 +107,7 @@ export default async function AboutPage() {
 
       {/* -------- Ako to funguje — dict-driven (t.howSteps). */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">{t.howTitle}</h2>
+        <h2 className="section-heading text-2xl">{t.howTitle}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {t.howSteps.map((step, i) => (
             <StepCard
@@ -124,11 +124,11 @@ export default async function AboutPage() {
           t.pipelineSteps / t.pipelineSecurity). No Slovak / locale
           leak in this file anymore. */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">{t.pipelineTitle}</h2>
+        <h2 className="section-heading text-2xl">{t.pipelineTitle}</h2>
         <div className="card p-6 flex flex-col gap-5 text-zinc-300">
           <p>{t.pipelineIntro}</p>
 
-          <div className="rounded-2xl border-[3px] border-[var(--ink)] bg-[var(--surface-2)] p-5 sm:p-6">
+          <div className="rounded-2xl border border-[var(--ink)] bg-[var(--surface-2)] p-5 sm:p-6">
             <ol className="flex flex-wrap gap-x-3 gap-y-4 text-xs sm:text-sm">
               {[
                 { label: "Vercel Cron", meta: "0 9 * * *" },
@@ -143,8 +143,8 @@ export default async function AboutPage() {
                   key={step.label}
                   className="flex items-center gap-2"
                 >
-                  <div className="min-w-[128px] rounded-xl border-[3px] border-[var(--ink)] bg-[var(--surface)] px-3 py-2 shadow-[3px_3px_0_0_var(--ink)] font-mono">
-                    <p className="font-black text-sm leading-tight">
+                  <div className="min-w-[128px] rounded-xl border border-[var(--ink)] bg-[var(--surface)] px-3 py-2 font-mono">
+                    <p className="font-semibold text-sm leading-tight">
                       {step.label}
                     </p>
                     <p className="text-[11px] text-zinc-400 leading-tight">
@@ -154,7 +154,7 @@ export default async function AboutPage() {
                   {i < arr.length - 1 && (
                     <span
                       aria-hidden="true"
-                      className="text-[var(--accent)] font-black text-lg"
+                      className="text-[var(--accent)] font-semibold text-lg"
                     >
                       →
                     </span>
@@ -175,7 +175,7 @@ export default async function AboutPage() {
             ))}
           </div>
 
-          <div className="rounded-xl border-2 border-[var(--neo-pink)] bg-[color-mix(in_oklab,var(--neo-pink)_12%,transparent)] p-4 text-sm">
+          <div className="rounded-xl border border-[var(--danger)] bg-[color-mix(in_oklab,var(--danger)_12%,transparent)] p-4 text-sm">
             <strong>{t.pipelineSecurityLabel}</strong> {t.pipelineSecurityBody}
           </div>
 
@@ -213,15 +213,15 @@ export default async function AboutPage() {
 
       {/* -------- Progression ladder (V3.1 — city-first) -------- */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">{t.tiersTitle}</h2>
+        <h2 className="section-heading text-2xl">{t.tiersTitle}</h2>
         <ol className="flex flex-col gap-3">
           {t.ladder.map((row, i) => (
             <li
               key={i}
               className="card p-4 flex flex-col sm:flex-row gap-3 sm:items-start"
             >
-              <span className="flex-shrink-0 w-14 h-14 rounded-xl border-[3px] border-[var(--ink)] bg-[var(--accent)] text-[#0a0a0f] font-black text-lg flex flex-col items-center justify-center shadow-[3px_3px_0_0_var(--ink)]">
-                <span className="text-[9px] uppercase leading-none">Lvl</span>
+              <span className="flex-shrink-0 w-14 h-14 rounded-xl border border-[var(--ink)] bg-[var(--accent)] text-[var(--foreground)] font-semibold text-lg flex flex-col items-center justify-center">
+                <span className="text-[9px] leading-none">Lvl</span>
                 <span className="text-xl leading-none">{i + 1}</span>
               </span>
               <div className="flex flex-col gap-1">
@@ -241,7 +241,7 @@ export default async function AboutPage() {
 
       {/* -------- Tech stack -------- */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">{t.stackTitle}</h2>
+        <h2 className="section-heading text-2xl">{t.stackTitle}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <TechItem name="Next.js 16" note="App Router, RSC, Turbopack." />
           <TechItem name="React 19.2" note="Server components + client islands." />
@@ -258,12 +258,12 @@ export default async function AboutPage() {
 
       {/* -------- Tím -------- */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">{t.teamTitle}</h2>
+        <h2 className="section-heading text-2xl">{t.teamTitle}</h2>
         <div className="card p-6 flex flex-col gap-3 text-zinc-300">
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-3xl">🛠️</span>
             <div>
-              <p className="font-black uppercase text-lg tracking-tight">
+              <p className="font-semibold text-lg tracking-tight">
                 B2JK-Industry
               </p>
               <p className="text-xs text-zinc-400">
@@ -289,7 +289,7 @@ export default async function AboutPage() {
 
       {/* -------- Sponzori / thanks -------- */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">{t.sponsorsTitle}</h2>
+        <h2 className="section-heading text-2xl">{t.sponsorsTitle}</h2>
         <div className="card p-6 flex flex-col gap-3 text-sm text-zinc-300">
           <p>{t.sponsorsBody}</p>
           <p>
@@ -309,16 +309,16 @@ export default async function AboutPage() {
       </section>
 
       {/* -------- Web3 (opt-in, ETHSilesia 2026) -------- */}
-      <section className="flex flex-col gap-3 card p-5 border-[var(--neo-cyan)]">
+      <section className="flex flex-col gap-3 card p-5 border-[var(--accent)]">
         <div className="flex flex-wrap items-baseline gap-2">
-          <h2 className="brutal-heading text-2xl">{t.web3Title}</h2>
-          <span className="text-[10px] uppercase tracking-widest opacity-70">
+          <h2 className="section-heading text-2xl">{t.web3Title}</h2>
+          <span className="text-[10px] opacity-70">
             {t.web3StatusLabel} {t.web3StatusValue}
           </span>
         </div>
         <p className="text-sm text-zinc-300 leading-relaxed">{t.web3Body}</p>
         <div className="flex flex-col gap-1">
-          <h3 className="text-xs uppercase tracking-widest font-black">
+          <h3 className="text-xs font-semibold">
             {t.web3TenetsTitle}
           </h3>
           <ul className="list-disc pl-6 space-y-1 text-sm text-zinc-300">
@@ -351,7 +351,7 @@ export default async function AboutPage() {
 
       {/* -------- Roadmap -------- */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">{t.roadmapTitle}</h2>
+        <h2 className="section-heading text-2xl">{t.roadmapTitle}</h2>
         <ul className="list-disc pl-6 space-y-2 text-sm text-zinc-300">
           {t.roadmap.map((line, i) => (
             <li key={i}>{line}</li>
@@ -359,7 +359,7 @@ export default async function AboutPage() {
         </ul>
       </section>
 
-      <footer className="text-xs text-zinc-400 border-t-2 border-[var(--ink)]/30 pt-4 flex flex-wrap gap-4">
+      <footer className="text-xs text-zinc-400 border-t border-[var(--ink)]/30 pt-4 flex flex-wrap gap-4">
         <Link href="/" className="underline">Späť na domov</Link>
         <Link href="/ochrana-sukromia" className="underline">Ochrana súkromia</Link>
         <a
@@ -378,10 +378,10 @@ export default async function AboutPage() {
 function StepCard({ n, title, body }: { n: number; title: string; body: string }) {
   return (
     <div className="card p-5 flex flex-col gap-2">
-      <span className="inline-flex items-center justify-center w-8 h-8 bg-[var(--accent)] text-[#0a0a0f] border-[3px] border-[var(--ink)] shadow-[3px_3px_0_0_var(--ink)] font-black">
+      <span className="inline-flex items-center justify-center w-8 h-8 bg-[var(--accent)] text-[var(--foreground)] border border-[var(--ink)] font-semibold">
         {n}
       </span>
-      <h3 className="text-lg font-black uppercase tracking-tight">{title}</h3>
+      <h3 className="text-lg font-semibold tracking-tight">{title}</h3>
       <p className="text-sm text-zinc-400">{body}</p>
     </div>
   );
@@ -397,12 +397,12 @@ function PipelineStep({
   detail: string[];
 }) {
   return (
-    <div className="rounded-2xl border-[3px] border-[var(--ink)] bg-[var(--surface)] p-4 flex flex-col gap-1.5">
+    <div className="rounded-2xl border border-[var(--ink)] bg-[var(--surface)] p-4 flex flex-col gap-1.5">
       <div className="flex items-center gap-2">
-        <span className="inline-flex items-center justify-center w-6 h-6 bg-[var(--neo-cyan)] text-[#0a0a0f] border-2 border-[var(--ink)] font-black text-xs">
+        <span className="inline-flex items-center justify-center w-6 h-6 bg-[var(--surface-2)] text-[var(--foreground)] border border-[var(--ink)] font-semibold text-xs">
           {n}
         </span>
-        <h4 className="font-black uppercase text-sm tracking-widest">
+        <h4 className="font-semibold text-sm">
           {name}
         </h4>
       </div>
@@ -417,8 +417,8 @@ function PipelineStep({
 
 function TechItem({ name, note }: { name: string; note: string }) {
   return (
-    <div className="rounded-xl border-[3px] border-[var(--ink)] bg-[var(--surface)] shadow-[3px_3px_0_0_var(--ink)] p-3">
-      <p className="font-black uppercase tracking-tight">{name}</p>
+    <div className="rounded-xl border border-[var(--ink)] bg-[var(--surface)] p-3">
+      <p className="font-semibold tracking-tight">{name}</p>
       <p className="text-xs text-zinc-400">{note}</p>
     </div>
   );

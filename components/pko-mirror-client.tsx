@@ -68,13 +68,13 @@ export function PkoMirrorClient({ initialAccount, initialAudit, wattCityCashZl, 
   if (!account) {
     return (
       <section className="card p-4 flex flex-col gap-3">
-        <h2 className="text-lg font-black uppercase">{copy.createAccount}</h2>
+        <h2 className="text-lg font-semibold">{copy.createAccount}</h2>
         <div className="flex gap-2">
           <input
             value={childName}
             onChange={(e) => setChildName(e.target.value)}
             placeholder={copy.childName}
-            className="flex-1 px-3 py-2 border-[3px] border-[var(--ink)] rounded bg-[var(--surface-2)]"
+            className="flex-1 px-3 py-2 border border-[var(--ink)] rounded bg-[var(--surface-2)]"
           />
           <button
             className="btn btn-primary"
@@ -96,15 +96,15 @@ export function PkoMirrorClient({ initialAccount, initialAudit, wattCityCashZl, 
     <div className="flex flex-col gap-6">
       {error && <div className="card p-3 text-rose-400 text-sm">{error}</div>}
       <section className="card p-4 flex flex-col gap-2">
-        <h2 className="text-sm font-black uppercase">{copy.balance}</h2>
-        <p className="text-3xl font-mono font-black">
+        <h2 className="text-sm font-semibold">{copy.balance}</h2>
+        <p className="text-3xl font-mono font-semibold">
           {account.balancePln.toLocaleString("pl-PL")} PLN
         </p>
         <p className="text-xs text-zinc-400">{account.childName}</p>
       </section>
 
       <section className="card p-4 flex flex-col gap-3">
-        <h2 className="text-lg font-black uppercase">{copy.mirror}</h2>
+        <h2 className="text-lg font-semibold">{copy.mirror}</h2>
         <p className="text-xs text-zinc-400">{copy.mirrorHint}</p>
         <div className="flex flex-wrap gap-2 items-center">
           <span className="text-xs">Watt City cashZl: {wattCityCashZl}</span>
@@ -129,7 +129,7 @@ export function PkoMirrorClient({ initialAccount, initialAudit, wattCityCashZl, 
       </section>
 
       <section className="card p-4 flex flex-col gap-3">
-        <h2 className="text-lg font-black uppercase">{copy.topup}</h2>
+        <h2 className="text-lg font-semibold">{copy.topup}</h2>
         <div className="flex gap-2">
           <input
             type="number"
@@ -137,7 +137,7 @@ export function PkoMirrorClient({ initialAccount, initialAudit, wattCityCashZl, 
             max={500}
             value={topupAmount}
             onChange={(e) => setTopupAmount(Number(e.target.value))}
-            className="w-24 px-2 py-1 border-[3px] border-[var(--ink)] rounded bg-[var(--surface-2)] font-mono"
+            className="w-24 px-2 py-1 border border-[var(--ink)] rounded bg-[var(--surface-2)] font-mono"
           />
           <button
             className="btn btn-primary"
@@ -150,7 +150,7 @@ export function PkoMirrorClient({ initialAccount, initialAudit, wattCityCashZl, 
       </section>
 
       <section className="card p-4 flex flex-col gap-2">
-        <h2 className="text-sm font-black uppercase">{copy.history}</h2>
+        <h2 className="text-sm font-semibold">{copy.history}</h2>
         {audit.length === 0 ? (
           <p className="text-xs text-zinc-400">{copy.empty}</p>
         ) : (

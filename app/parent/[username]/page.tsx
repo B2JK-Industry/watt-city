@@ -50,13 +50,13 @@ export default async function ParentChildView({
     <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex items-center gap-3">
         <span
-          className="w-12 h-12 border-[3px] border-[var(--ink)] rounded flex items-center justify-center text-3xl"
+          className="w-12 h-12 border border-[var(--ink)] rounded flex items-center justify-center text-3xl"
           style={{ color: av.hue }}
         >
           {av.emoji}
         </span>
         <div>
-          <h1 className="brutal-heading text-2xl">
+          <h1 className="section-heading text-2xl">
             {state.profile?.displayName ?? username}
           </h1>
           <div className="flex gap-2 text-xs">
@@ -68,7 +68,7 @@ export default async function ParentChildView({
       </header>
 
       <section className="card p-4 flex flex-col gap-2">
-        <h2 className="text-sm font-black uppercase">{copy.resources}</h2>
+        <h2 className="text-sm font-semibold">{copy.resources}</h2>
         <ul className="flex flex-wrap gap-2 text-sm">
           {RESOURCE_KEYS.map((k) => (
             <li key={k} className="chip" style={{ borderColor: RESOURCE_DEFS[k].color }}>
@@ -79,7 +79,7 @@ export default async function ParentChildView({
       </section>
 
       <section className="card p-4 flex flex-col gap-2">
-        <h2 className="text-sm font-black uppercase">
+        <h2 className="text-sm font-semibold">
           {copy.achievements} · {achievements.filter((a) => a.owned).length}
         </h2>
         <ul className="flex flex-wrap gap-2">
@@ -92,7 +92,7 @@ export default async function ParentChildView({
       </section>
 
       <section className="card p-4 flex flex-col gap-2">
-        <h2 className="text-sm font-black uppercase">{copy.buildings}</h2>
+        <h2 className="text-sm font-semibold">{copy.buildings}</h2>
         {privacy.hideBuildings ? (
           <p className="text-xs text-zinc-400">🔒 {copy.hidden}</p>
         ) : (
@@ -107,7 +107,7 @@ export default async function ParentChildView({
       </section>
 
       <section className="card p-4 flex flex-col gap-2">
-        <h2 className="text-sm font-black uppercase">{copy.ledger}</h2>
+        <h2 className="text-sm font-semibold">{copy.ledger}</h2>
         {privacy.hideLedger ? (
           <p className="text-xs text-zinc-400">🔒 {copy.hidden}</p>
         ) : (

@@ -57,7 +57,7 @@ export function TeacherOnboardingTour({
     >
       <div className="card max-w-md w-full p-6 flex flex-col gap-4 border-[var(--accent)]">
         <div className="flex items-baseline justify-between">
-          <h2 className="brutal-heading text-lg">{s.title}</h2>
+          <h2 className="section-heading text-lg">{s.title}</h2>
           <span className="text-xs opacity-60">
             Krok {step + 1}/{STEPS.length}
           </span>

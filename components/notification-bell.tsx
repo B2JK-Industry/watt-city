@@ -95,7 +95,7 @@ export function NotificationBell({ labels }: Props) {
         type="button"
         onClick={toggle}
         title={labels.bell}
-        className="relative w-8 h-8 flex items-center justify-center border-2 border-[var(--ink)] bg-[var(--surface)] rounded"
+        className="relative w-8 h-8 flex items-center justify-center border border-[var(--ink)] bg-[var(--surface)] rounded"
       >
         <span aria-hidden>🔔</span>
         {unread > 0 && (
@@ -108,9 +108,9 @@ export function NotificationBell({ labels }: Props) {
         <div
           role="region"
           aria-label={labels.bell}
-          className="absolute right-0 top-full mt-2 z-40 w-[min(95vw,22rem)] max-w-[calc(100vw-1rem)] card p-2 shadow-[6px_6px_0_0_var(--ink)] bg-[var(--surface)] border-2 border-[var(--ink)]"
+          className="absolute right-0 top-full mt-2 z-40 w-[min(95vw,22rem)] max-w-[calc(100vw-1rem)] card p-2 bg-[var(--surface)] border border-[var(--ink)]"
         >
-          <header className="flex items-center justify-between px-2 py-1 text-xs uppercase tracking-wider text-zinc-400 border-b border-[var(--ink)]/30 mb-1">
+          <header className="flex items-center justify-between px-2 py-1 text-xs text-zinc-400 border-b border-[var(--ink)]/30 mb-1">
             <span className="font-bold">{labels.bell}</span>
           </header>
           <ul className="flex flex-col max-h-96 overflow-y-auto divide-y divide-[var(--ink)]/20">

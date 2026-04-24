@@ -33,7 +33,7 @@ export default async function FriendCityPage({
   if (!canView) {
     return (
       <div className="card p-6 flex flex-col gap-3">
-        <h1 className="text-xl font-black">
+        <h1 className="text-xl font-semibold">
           {{ pl: "Profil niedostępny", uk: "Недоступно", cs: "Nedostupné", en: "Private profile" }[lang]}
         </h1>
         <p className="text-sm text-zinc-400">
@@ -60,13 +60,13 @@ export default async function FriendCityPage({
     <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex items-center gap-3">
         <span
-          className="w-12 h-12 border-[3px] border-[var(--ink)] rounded flex items-center justify-center text-3xl"
+          className="w-12 h-12 border border-[var(--ink)] rounded flex items-center justify-center text-3xl"
           style={{ color: av.hue }}
         >
           {av.emoji}
         </span>
         <div>
-          <h1 className="brutal-heading text-2xl">
+          <h1 className="section-heading text-2xl">
             {state.profile?.displayName ?? username}
           </h1>
           <div className="flex gap-2 text-xs">

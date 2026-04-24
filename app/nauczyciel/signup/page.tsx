@@ -54,7 +54,7 @@ export default function TeacherSignupPage() {
   return (
     <div className="max-w-lg mx-auto flex flex-col gap-6 animate-slide-up">
       <header className="flex flex-col gap-2">
-        <h1 className="brutal-heading text-3xl">Rejestracja nauczyciela</h1>
+        <h1 className="section-heading text-3xl">Rejestracja nauczyciela</h1>
         <p className="text-sm text-zinc-300">
           Jeden formularz. Po rejestracji stworzysz klasę i otrzymasz kod do
           wpisania dzieciom.
@@ -69,7 +69,7 @@ export default function TeacherSignupPage() {
             required
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
-            className="border-2 border-[var(--ink)] bg-[var(--surface)] px-3 py-2 rounded"
+            className="border border-[var(--ink)] bg-[var(--surface)] px-3 py-2 rounded"
           />
         </label>
         <label className="flex flex-col gap-1 text-sm">
@@ -78,7 +78,7 @@ export default function TeacherSignupPage() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="border-2 border-[var(--ink)] bg-[var(--surface)] px-3 py-2 rounded"
+            className="border border-[var(--ink)] bg-[var(--surface)] px-3 py-2 rounded"
           />
           <span className="text-[10px] opacity-60">
             Nie publikujemy. Używamy wyłącznie do odzyskania dostępu.
@@ -92,7 +92,7 @@ export default function TeacherSignupPage() {
             value={schoolName}
             onChange={(e) => setSchoolName(e.target.value)}
             placeholder="np. Szkoła Podstawowa nr 12, Katowice"
-            className="border-2 border-[var(--ink)] bg-[var(--surface)] px-3 py-2 rounded"
+            className="border border-[var(--ink)] bg-[var(--surface)] px-3 py-2 rounded"
           />
         </label>
         <label className="flex flex-col gap-1 text-sm">
@@ -104,7 +104,7 @@ export default function TeacherSignupPage() {
             pattern="^[A-Za-z0-9_.\\-]+$"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="border-2 border-[var(--ink)] bg-[var(--surface)] px-3 py-2 rounded font-mono"
+            className="border border-[var(--ink)] bg-[var(--surface)] px-3 py-2 rounded font-mono"
           />
         </label>
         <label className="flex flex-col gap-1 text-sm">
@@ -115,7 +115,7 @@ export default function TeacherSignupPage() {
             minLength={8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="border-2 border-[var(--ink)] bg-[var(--surface)] px-3 py-2 rounded font-mono"
+            className="border border-[var(--ink)] bg-[var(--surface)] px-3 py-2 rounded font-mono"
           />
         </label>
         <label className="flex items-start gap-2 text-sm mt-1">

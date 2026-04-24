@@ -19,7 +19,7 @@ export default async function MaterialsPage() {
     <div className="flex flex-col gap-8 animate-slide-up max-w-4xl">
       <header className="flex flex-wrap items-baseline justify-between gap-3">
         <div>
-          <h1 className="brutal-heading text-3xl sm:text-4xl">{t.title}</h1>
+          <h1 className="section-heading text-3xl sm:text-4xl">{t.title}</h1>
           <p className="text-sm text-zinc-300 mt-2">{t.subtitle}</p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -43,19 +43,19 @@ export default async function MaterialsPage() {
       <section className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {t.props.map((p) => (
           <div key={p.title} className="card p-4 flex flex-col gap-1">
-            <h2 className="font-black text-sm">{p.title}</h2>
+            <h2 className="font-semibold text-sm">{p.title}</h2>
             <p className="text-sm text-zinc-300">{p.body}</p>
           </div>
         ))}
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
-        <h2 className="brutal-heading text-lg">{t.coverageTitle}</h2>
+        <h2 className="section-heading text-lg">{t.coverageTitle}</h2>
         <ul className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-sm">
           {Object.entries(byArea).map(([area, codes]) => (
             <li key={area} className="card p-3 text-center">
               <div className="text-xs opacity-60">{area}</div>
-              <div className="text-2xl font-black mt-1">{codes.length}</div>
+              <div className="text-2xl font-semibold mt-1">{codes.length}</div>
               <div className="text-[10px] opacity-60">{t.codes}</div>
             </li>
           ))}
@@ -66,7 +66,7 @@ export default async function MaterialsPage() {
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
-        <h2 className="brutal-heading text-lg">{t.complianceTitle}</h2>
+        <h2 className="section-heading text-lg">{t.complianceTitle}</h2>
         <ul className="flex flex-col gap-1 text-sm">
           {t.compliance.map((line) => (
             <li key={line} className="flex gap-2">
@@ -78,7 +78,7 @@ export default async function MaterialsPage() {
       </section>
 
       <section className="card p-5 flex flex-col gap-2">
-        <h2 className="brutal-heading text-lg">{t.ctaTitle}</h2>
+        <h2 className="section-heading text-lg">{t.ctaTitle}</h2>
         <p className="text-sm">{t.ctaBody}</p>
       </section>
     </div>

@@ -32,7 +32,7 @@ export function ConsentClient({ token }: { token: string }) {
   if (status === "ok") {
     return (
       <div className="card p-6 flex flex-col gap-2 border-emerald-500/60">
-        <p className="text-lg font-black text-emerald-400">Dziękujemy ✓</p>
+        <p className="text-lg font-semibold text-emerald-400">Dziękujemy ✓</p>
         <p className="text-sm">
           Zgoda została zapisana. {child && <>Konto <strong>{child}</strong> jest aktywne.</>}
           Rodzic może łączyć się z kontem dziecka przez stronę <Link

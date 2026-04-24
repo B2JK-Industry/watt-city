@@ -157,8 +157,8 @@ export async function Web3MedalGallerySection({
 
   if (!optIn) {
     return (
-      <section className="card p-4 flex flex-col gap-2 border-[var(--neo-cyan)]">
-        <h2 className="text-lg font-black uppercase">{copy.title}</h2>
+      <section className="card p-4 flex flex-col gap-2 border-[var(--accent)]">
+        <h2 className="text-lg font-semibold">{copy.title}</h2>
         <p className="text-sm text-zinc-400">{copy.optInRequired}</p>
       </section>
     );
@@ -167,8 +167,8 @@ export async function Web3MedalGallerySection({
   const needsParent = ageBucket ? requiresParentalConsent(ageBucket) : true;
   if (needsParent && !parentalConsent) {
     return (
-      <section className="card p-4 flex flex-col gap-2 border-[var(--neo-cyan)]">
-        <h2 className="text-lg font-black uppercase">{copy.title}</h2>
+      <section className="card p-4 flex flex-col gap-2 border-[var(--accent)]">
+        <h2 className="text-lg font-semibold">{copy.title}</h2>
         <p className="text-sm text-zinc-400">{copy.parentConsentRequired}</p>
       </section>
     );

@@ -148,7 +148,7 @@ export function LoanComparison({ rows, lang, principal, termMonths }: Props) {
   return (
     <section className="card p-4 sm:p-6 flex flex-col gap-4">
       <div className="flex items-baseline justify-between flex-wrap gap-2">
-        <h2 className="brutal-heading text-xl sm:text-2xl">{t.heading}</h2>
+        <h2 className="section-heading text-xl sm:text-2xl">{t.heading}</h2>
         <p className="text-xs opacity-70">
           {t.principalLabel}: <strong>{principal.toLocaleString("pl-PL")} W$</strong> ·{" "}
           {t.termLabel}: <strong>{termMonths}</strong>
@@ -157,7 +157,7 @@ export function LoanComparison({ rows, lang, principal, termMonths }: Props) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr className="text-[10px] uppercase opacity-60 border-b-2 border-[var(--ink)]">
+            <tr className="text-[10px] opacity-60 border-b border-[var(--ink)]">
               <th className="text-left px-2 py-1">{t.colProduct}</th>
               <th className="text-right px-2 py-1">{t.colMonthly}</th>
               <th className="text-right px-2 py-1">{t.colTotalInterest}</th>
@@ -171,21 +171,21 @@ export function LoanComparison({ rows, lang, principal, termMonths }: Props) {
                 key={row.type}
                 className={`border-b border-[var(--ink)]/30 ${
                   !row.ok ? "opacity-50" : ""
-                } ${row.warning ? "bg-[color:color-mix(in_srgb,var(--neo-pink),transparent_85%)]" : ""} ${
-                  row.cheapest ? "bg-[color:color-mix(in_srgb,var(--neo-lime),transparent_85%)]" : ""
+                } ${row.warning ? "bg-[color:color-mix(in_srgb,var(--danger),transparent_85%)]" : ""} ${
+                  row.cheapest ? "bg-[color:color-mix(in_srgb,var(--success),transparent_85%)]" : ""
                 }`}
               >
                 <td className="px-2 py-2 font-bold">
                   <span className="block">{row.type.replace(/_/g, " ")}</span>
                   {row.cheapest && (
-                    <span className="text-[10px] font-black text-emerald-600 block">
+                    <span className="text-[10px] font-semibold text-emerald-600 block">
                       {t.cheapestBadge}
                     </span>
                   )}
                   {row.warning && (
                     <span
                       title={t.warningTooltip}
-                      className="text-[10px] font-black text-rose-500 block cursor-help"
+                      className="text-[10px] font-semibold text-rose-500 block cursor-help"
                     >
                       {t.warningBadge}
                     </span>

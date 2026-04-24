@@ -103,7 +103,7 @@ export function AiFillBlankClient({
               if (e.key === "Enter" && phase === "playing" && input.trim()) check();
             }}
             disabled={phase !== "playing"}
-            className="inline-block mx-1 px-2 py-0.5 border-b-2 border-[var(--accent)] bg-transparent focus:outline-none font-mono"
+            className="inline-block mx-1 px-2 py-0.5 border-b border-[var(--accent)] bg-transparent focus:outline-none font-mono"
             style={{ minWidth: "8ch" }}
           />
           {parts[1] ?? ""}

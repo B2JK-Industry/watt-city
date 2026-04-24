@@ -46,7 +46,7 @@ export default async function ClassDetailPage({
   return (
     <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex flex-col gap-1">
-        <h1 className="brutal-heading text-2xl">{cls.name}</h1>
+        <h1 className="section-heading text-2xl">{cls.name}</h1>
         <span className="chip">
           Kod: <span className="font-mono">{cls.code}</span>
         </span>
@@ -54,7 +54,7 @@ export default async function ClassDetailPage({
 
       {isTeacher && (
         <section className="card p-4 flex flex-col gap-2">
-          <h2 className="text-sm font-black uppercase">{copy.joinCodes}</h2>
+          <h2 className="text-sm font-semibold">{copy.joinCodes}</h2>
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-1 text-center font-mono text-[11px]">
             {cls.joinCodes.map((j) => (
               <code key={j} className="py-1 border border-[var(--ink)]/30 rounded">
@@ -66,7 +66,7 @@ export default async function ClassDetailPage({
       )}
 
       <section className="card p-4 flex flex-col gap-3">
-        <h2 className="text-lg font-black uppercase">{copy.leaderboard}</h2>
+        <h2 className="text-lg font-semibold">{copy.leaderboard}</h2>
         <ol className="flex flex-col gap-1 text-sm">
           {rows.length === 0 && <li className="text-xs text-zinc-400">—</li>}
           {rows.map((r, i) => (
@@ -87,14 +87,14 @@ export default async function ClassDetailPage({
       </section>
 
       <section className="card p-4 flex flex-col gap-1">
-        <h2 className="text-sm font-black uppercase">{copy.qofweek}</h2>
+        <h2 className="text-sm font-semibold">{copy.qofweek}</h2>
         <p className="text-sm">
           {cls.qOfWeekTheme ?? <span className="text-zinc-400">{copy.noQ}</span>}
         </p>
       </section>
 
       <section className="card p-4 flex flex-col gap-1">
-        <h2 className="text-sm font-black uppercase">{copy.curriculum}</h2>
+        <h2 className="text-sm font-semibold">{copy.curriculum}</h2>
         {cls.curriculum.length === 0 ? (
           <p className="text-xs text-zinc-400">—</p>
         ) : (
@@ -109,7 +109,7 @@ export default async function ClassDetailPage({
       </section>
 
       <section className="card p-4 flex flex-col gap-1 text-xs text-zinc-400">
-        <h2 className="text-sm font-black uppercase text-zinc-200">{copy.export}</h2>
+        <h2 className="text-sm font-semibold text-zinc-200">{copy.export}</h2>
         <p>{copy.exportHint}</p>
       </section>
     </div>

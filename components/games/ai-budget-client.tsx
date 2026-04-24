@@ -68,7 +68,7 @@ export function AiBudgetClient({
   return (
     <div className="flex flex-col gap-4">
       <div className="card p-4 flex flex-col gap-2">
-        <p className="text-xs uppercase tracking-wider text-zinc-400">{t.scenario}</p>
+        <p className="text-xs text-zinc-400">{t.scenario}</p>
         <p className="text-sm">{spec.scenario}</p>
         <p className="text-xs text-[var(--accent)] font-mono">{spec.incomeLabel}</p>
       </div>

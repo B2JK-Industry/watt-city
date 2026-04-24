@@ -93,10 +93,12 @@ describe("D6 — animation polish", () => {
       expect(CSS.includes("--delta-flash")).toBe(true);
     });
 
-    it("ResourceFlashChip watches value + picks lime/pink direction", () => {
+    it("ResourceFlashChip watches value + picks success/danger direction", () => {
       expect(FLASH.startsWith('"use client"')).toBe(true);
-      expect(FLASH.includes("var(--neo-lime)")).toBe(true);
-      expect(FLASH.includes("var(--neo-pink)")).toBe(true);
+      // Tokens moved to semantic --success (up) / --danger (down) in the
+      // PKO redesign; legacy neo-* aliases are no longer referenced.
+      expect(FLASH.includes("var(--success)")).toBe(true);
+      expect(FLASH.includes("var(--danger)")).toBe(true);
       expect(FLASH.includes("motion-safe:animate-[hud-delta-flash")).toBe(true);
     });
 

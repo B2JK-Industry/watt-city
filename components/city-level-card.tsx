@@ -92,10 +92,10 @@ export function CityLevelCard({ player, lang }: Props) {
       ? t.wattsSurplus
       : t.wattsBalanced;
   const gridColor = watts.inDeficit
-    ? "var(--neo-pink)"
+    ? "var(--danger)"
     : watts.net > 0
-      ? "var(--neo-lime)"
-      : "var(--neo-cyan)";
+      ? "var(--success)"
+      : "var(--accent)";
 
   return (
     <section
@@ -105,12 +105,12 @@ export function CityLevelCard({ player, lang }: Props) {
       <div className="flex items-center justify-between gap-3">
         <h2
           id="city-level-heading"
-          className="text-xs uppercase tracking-widest font-black text-[var(--accent)]"
+          className="text-xs font-semibold text-[var(--accent)]"
         >
           {t.heading}
         </h2>
         <span
-          className="text-[11px] font-mono font-bold border-2 border-[var(--ink)] px-2 py-0.5"
+          className="text-[11px] font-mono font-bold border border-[var(--ink)] px-2 py-0.5"
           style={{ background: gridColor, color: "#0a0a0f" }}
         >
           ⚡ {watts.net > 0 ? "+" : ""}
@@ -122,13 +122,13 @@ export function CityLevelCard({ player, lang }: Props) {
         {/* V3.1 — progress ring around level number */}
         <ProgressRing level={city.level} pct={pct} />
         <div className="text-right">
-          <div className="text-[10px] uppercase opacity-70">
+          <div className="text-[10px] opacity-70">
             {t.buildingsLabel}
           </div>
           <div className="text-xl font-bold tabular-nums">
             {player.buildings.length}
           </div>
-          <div className="text-[10px] uppercase opacity-70 mt-1">
+          <div className="text-[10px] opacity-70 mt-1">
             {t.level}
           </div>
         </div>
@@ -142,8 +142,8 @@ export function CityLevelCard({ player, lang }: Props) {
         </span>
       </div>
 
-      <div className="border-t-2 border-[var(--ink)]/40 pt-3">
-        <div className="text-[10px] uppercase tracking-widest opacity-70 mb-1">
+      <div className="border-t border-[var(--ink)]/40 pt-3">
+        <div className="text-[10px] opacity-70 mb-1">
           {t.nextUnlockLabel}
         </div>
         {nextUnlock ? (
@@ -185,7 +185,7 @@ function ProgressRing({ level, pct }: { level: number; pct: number }) {
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-2xl font-black tabular-nums">{level}</span>
+        <span className="text-2xl font-semibold tabular-nums">{level}</span>
       </div>
     </div>
   );

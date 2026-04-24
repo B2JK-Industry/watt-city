@@ -113,12 +113,12 @@ function GalleryInner({
 
   return (
     <section
-      className="card p-4 flex flex-col gap-4 border-[var(--neo-cyan)]"
+      className="card p-4 flex flex-col gap-4 border-[var(--accent)]"
       aria-labelledby="web3-gallery-heading"
     >
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 id="web3-gallery-heading" className="text-lg font-black uppercase">
+          <h2 id="web3-gallery-heading" className="text-lg font-semibold">
             {strings.mintedHeading}
           </h2>
         </div>
@@ -131,7 +131,7 @@ function GalleryInner({
 
       {!isConnected && (
         <div
-          className="border-[3px] border-[var(--ink)] rounded p-3 text-sm leading-snug bg-[var(--background)]/50"
+          className="border border-[var(--ink)] rounded p-3 text-sm leading-snug bg-[var(--background)]/50"
           role="status"
         >
           <p className="font-bold mb-1">{strings.connectPromptTitle}</p>
@@ -148,7 +148,7 @@ function GalleryInner({
       {error && (
         <div
           role="alert"
-          className="border-2 border-red-500 rounded p-2 text-xs text-red-400"
+          className="border border-red-500 rounded p-2 text-xs text-red-400"
         >
           <strong className="block">{strings.errorTitle}</strong>
           {error}
@@ -164,7 +164,7 @@ function GalleryInner({
           {medals.map((m) => (
             <li
               key={m.tokenId}
-              className="border-2 border-[var(--neo-cyan)]/40 rounded p-3 flex flex-col items-center gap-1 text-center"
+              className="border border-[var(--accent)]/40 rounded p-3 flex flex-col items-center gap-1 text-center"
             >
               <span className="text-3xl" aria-hidden>
                 {achievementIcons[m.achievementId] ?? "🏅"}
@@ -192,12 +192,12 @@ function GalleryInner({
 
       {isConnected && mintable.length > 0 && address && (
         <div className="flex flex-col gap-2">
-          <h3 className="text-sm font-black uppercase">{strings.mintableHeading}</h3>
+          <h3 className="text-sm font-semibold">{strings.mintableHeading}</h3>
           <ul className="flex flex-col gap-2">
             {mintable.map((id) => (
               <li
                 key={id}
-                className="flex items-center justify-between border-2 border-dashed border-[var(--ink)] rounded p-2 gap-2"
+                className="flex items-center justify-between border border-dashed border-[var(--ink)] rounded p-2 gap-2"
               >
                 <span className="flex items-center gap-2">
                   <span aria-hidden>{achievementIcons[id] ?? "🏅"}</span>

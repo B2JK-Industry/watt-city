@@ -53,20 +53,20 @@ export default async function GamesHubPage() {
     <div className="flex flex-col gap-8 animate-slide-up">
       <header className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="brutal-heading text-3xl sm:text-4xl">
+          <h1 className="section-heading text-3xl sm:text-4xl">
             {t.gamesHubTitle}
           </h1>
           {cityBadge && (
             <span
               className="brutal-tag"
-              style={{ background: "var(--neo-yellow)", color: "#0a0a0f" }}
+              style={{ background: "var(--accent)", color: "#0a0a0f" }}
             >
               {cityBadge}
             </span>
           )}
           <span
             className="brutal-tag"
-            style={{ background: "var(--neo-cyan)", color: "#0a0a0f" }}
+            style={{ background: "var(--accent)", color: "#0a0a0f" }}
           >
             {t.gamesHubTime}
           </span>
@@ -95,7 +95,7 @@ export default async function GamesHubPage() {
       </header>
       <CityScene games={cityGames} loggedIn={Boolean(session)} aiGames={cityAiGames} />
       <aside className="card p-5 flex flex-col gap-3 text-sm text-zinc-300">
-        <h2 className="brutal-heading text-lg">{t.buildingsMap}</h2>
+        <h2 className="section-heading text-lg">{t.buildingsMap}</h2>
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-1.5">
           {cityGames.map((g) => (
             <li key={g.meta.id}>
@@ -106,7 +106,7 @@ export default async function GamesHubPage() {
                 <span className="flex items-center gap-2 truncate">
                   <span
                     className={`inline-block w-2 h-2 rounded-full border border-[var(--ink)] ${
-                      g.plays > 0 ? "bg-[var(--neo-yellow)]" : "bg-zinc-700"
+                      g.plays > 0 ? "bg-[var(--sales)]" : "bg-zinc-700"
                     }`}
                   />
                   <span className="font-semibold truncate">

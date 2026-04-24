@@ -150,7 +150,7 @@ export function AiScrambleClient({
           {current.hint}
         </p>
         <p
-          className={`text-4xl sm:text-5xl font-black tracking-[0.25em] font-mono transition ${
+          className={`text-4xl sm:text-5xl font-semibold tracking-[0.25em] font-mono transition ${
             flash === "ok"
               ? "text-emerald-300"
               : flash === "bad"
@@ -168,7 +168,7 @@ export function AiScrambleClient({
           type="text"
           value={answer}
           onChange={(e) => setAnswer(e.target.value)}
-          className="input text-center text-xl font-mono tracking-widest"
+          className="input text-center text-xl font-mono"
           autoComplete="off"
           autoCapitalize="characters"
         />

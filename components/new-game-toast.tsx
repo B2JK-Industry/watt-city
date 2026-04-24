@@ -71,14 +71,14 @@ export function NewGameToast({
   return (
     <div
       role="status"
-      className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 max-w-md w-[min(92vw,24rem)] card p-4 shadow-[6px_6px_0_0_var(--ink)] bg-[var(--background)] border-[var(--accent)] flex flex-col gap-2"
+      className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 max-w-md w-[min(92vw,24rem)] card p-4 bg-[var(--background)] border-[var(--accent)] flex flex-col gap-2"
     >
       <div className="flex items-start gap-3">
         <span className="text-2xl" aria-hidden>
           {payload.glyph ?? "🤖"}
         </span>
         <div className="flex-1 flex flex-col">
-          <strong className="uppercase tracking-wider text-xs text-[var(--accent)]">
+          <strong className=" text-xs text-[var(--accent)]">
             {newChallengeLabel}
           </strong>
           <span className="text-sm font-bold mt-0.5">{payload.title}</span>

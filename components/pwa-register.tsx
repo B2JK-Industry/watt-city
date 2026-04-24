@@ -91,7 +91,7 @@ export function PwaRegister({ lang }: { lang: Lang }) {
   return (
     <div
       role="dialog"
-      className="fixed bottom-20 sm:bottom-4 left-1/2 -translate-x-1/2 z-30 w-[min(92vw,22rem)] card p-3 flex items-center justify-between gap-2 shadow-[6px_6px_0_0_var(--ink)]"
+      className="fixed bottom-20 sm:bottom-4 left-1/2 -translate-x-1/2 z-30 w-[min(92vw,22rem)] card p-3 flex items-center justify-between gap-2"
     >
       <span className="text-sm">📱</span>
       <div className="flex gap-2">

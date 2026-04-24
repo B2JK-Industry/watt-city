@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteNav } from "@/components/site-nav";
 import { NewGameToast } from "@/components/new-game-toast";
@@ -25,6 +25,13 @@ import { ensureSignupGift } from "@/lib/buildings";
 import { isFlagEnabled } from "@/lib/feature-flags";
 import { isTeacher } from "@/lib/class";
 import { parentKidUsername } from "@/lib/parent-link";
+
+const inter = Inter({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -53,7 +60,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport = {
-  themeColor: "#fde047",
+  themeColor: "#003574",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -119,22 +126,30 @@ export default async function RootLayout({
     }
     return `XP Lv ${level.level}`;
   })();
-  /* D8 polish — SKIN=pko only changed the brand chip colour before;
-   * the rest of the app kept the Watt City yellow from :root. Inject
-   * the PKO palette as a style override on <html> so every
-   * `var(--accent)` / `var(--background)` / `var(--surface)` /
-   * `var(--ink)` consumer picks up the PKO skin without per-component
-   * rewrites. data-skin attribute lets CSS or tests key off the skin. */
+  /* Inject full theme palette as inline CSS variables on <html> so every
+   * `var(--*)` consumer picks up the skin without per-component rewrites.
+   * data-skin attribute lets CSS / tests key off the skin id. */
   const skinVars: React.CSSProperties =
     theme.id === "pko"
       ? ({
           "--accent": theme.colors.accent,
+          "--accent-hover": theme.colors.accentHover,
+          "--accent-ink": theme.colors.accentInk,
           "--accent-2": theme.colors.accent,
+          "--sales": theme.colors.sales,
+          "--sales-hover": theme.colors.salesHover,
+          "--sales-ink": theme.colors.salesInk,
           "--background": theme.colors.background,
           "--surface": theme.colors.surface,
-          "--surface-2": theme.colors.surface,
+          "--surface-2": theme.colors.surfaceAlt,
           "--ink": theme.colors.ink,
+          "--ink-muted": theme.colors.inkMuted,
+          "--ink-subtle": theme.colors.inkSubtle,
           "--foreground": theme.colors.ink,
+          "--line": theme.colors.line,
+          "--success": theme.colors.success,
+          "--danger": theme.colors.danger,
+          "--focus-ring": theme.colors.accent,
           "--brand": theme.colors.accent,
         } as React.CSSProperties)
       : ({} as React.CSSProperties);
@@ -142,7 +157,7 @@ export default async function RootLayout({
     <html
       lang={LANG_HTML[lang]}
       data-skin={theme.id}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       style={skinVars}
     >
       <body className="min-h-full flex flex-col">
@@ -229,20 +244,20 @@ export default async function RootLayout({
             />
           </>
         )}
-        <footer className="w-full border-t-[3px] border-[var(--ink)] mt-12 bg-[var(--surface)]">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col gap-4">
+        <footer className="w-full border-t border-[var(--line)] mt-12 bg-[var(--surface)]">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col gap-6">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
               <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <span
-                    className="inline-flex items-center justify-center w-9 h-9 border-[3px] border-[var(--ink)] shadow-[3px_3px_0_0_var(--ink)] font-black text-sm"
+                    className="inline-flex items-center justify-center w-9 h-9 rounded-md font-semibold text-sm"
                     style={{ background: theme.colors.accent, color: theme.colors.accentInk }}
                   >
                     {theme.brandShort}
                   </span>
-                  <span className="font-black uppercase">{theme.brand}</span>
+                  <span className="font-semibold text-[var(--foreground)]">{theme.brand}</span>
                 </div>
-                <p className="text-sm text-zinc-400 max-w-md">
+                <p className="t-body-sm text-[var(--ink-muted)] max-w-md">
                   {dict.footer.body
                     .replace("{event}", "§EVENT§")
                     .replace("{track}", "§TRACK§")
@@ -250,13 +265,13 @@ export default async function RootLayout({
                     .map((p, i) => {
                       if (p === "§EVENT§")
                         return (
-                          <strong key={i} className="text-[var(--foreground)]">
+                          <strong key={i} className="text-[var(--foreground)] font-semibold">
                             {dict.footer.event}
                           </strong>
                         );
                       if (p === "§TRACK§")
                         return (
-                          <strong key={i} className="text-[var(--accent)]">
+                          <strong key={i} className="text-[var(--accent)] font-semibold">
                             {dict.footer.track}
                           </strong>
                         );
@@ -265,43 +280,33 @@ export default async function RootLayout({
                 </p>
               </div>
               <div className="flex flex-wrap gap-2 items-center">
-                <span className="brutal-tag" style={{ background: "var(--neo-cyan)", color: "#0a0a0f" }}>
-                  PKO XP: Gaming
-                </span>
-                <span className="brutal-tag" style={{ background: "var(--neo-pink)", color: "#0a0a0f" }}>
-                  ETHSilesia 2026
-                </span>
-                <span className="brutal-tag" style={{ background: "var(--neo-lime)", color: "#0a0a0f" }}>
-                  Katowice · PL
-                </span>
+                <span className="chip">PKO XP: Gaming</span>
+                <span className="chip">ETHSilesia 2026</span>
+                <span className="chip">Katowice · PL</span>
               </div>
             </div>
-            <div className="border-t-2 border-[var(--ink)]/30 pt-4 pb-1">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-amber-400">
-                ⚠️ {theme.disclaimer}
+            <div className="border-t border-[var(--line)] pt-4">
+              <p className="t-caption text-[var(--ink-muted)]">
+                {theme.disclaimer}
               </p>
             </div>
             {theme.mascot && (
-              <div className="flex items-center gap-3 border-t-2 border-[var(--ink)]/20 pt-3">
+              <div className="flex items-center gap-3 border-t border-[var(--line)] pt-3">
                 <div
                   className="w-12 h-16 flex-shrink-0"
                   aria-label={theme.mascot.label}
                   dangerouslySetInnerHTML={{ __html: theme.mascot.svg }}
                 />
-                <div className="flex flex-col gap-0.5 text-xs text-zinc-400">
-                  <span className="font-black uppercase tracking-widest text-[11px]">
+                <div className="flex flex-col gap-0.5 t-body-sm text-[var(--ink-muted)]">
+                  <span className="font-semibold text-[var(--foreground)]">
                     Powered by PKO Bank Polski
-                  </span>
-                  <span>
-                    {theme.mascot.label} + SKO 2.0 partnership — wspiera ekipę
-                    Watt City w PKO skinie.
                   </span>
                 </div>
               </div>
             )}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs text-zinc-400 pt-2">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 t-body-sm text-[var(--ink-muted)] pt-2">
               <span>{dict.footer.sponsors}</span>
-              <span className="flex flex-wrap gap-3">
+              <span className="flex flex-wrap gap-4">
                 <a href="/o-platforme" className="tap-target hover:text-[var(--accent)]">
                   {dict.nav.about}
                 </a>

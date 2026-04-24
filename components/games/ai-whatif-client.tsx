@@ -78,7 +78,7 @@ export function AiWhatIfClient({
   return (
     <div className="flex flex-col gap-4">
       <div className="card p-4 flex flex-col gap-1">
-        <p className="text-xs uppercase tracking-wider text-zinc-400">{t.scenario}</p>
+        <p className="text-xs text-zinc-400">{t.scenario}</p>
         <p className="text-sm">{spec.scenario}</p>
       </div>
       <div className="flex items-center justify-between text-xs text-zinc-400">
@@ -103,7 +103,7 @@ export function AiWhatIfClient({
                 key={i}
                 onClick={() => pick(i)}
                 disabled={revealed}
-                className={`rounded-2xl border-[3px] border-[var(--ink)] bg-[var(--surface-2)] p-3 text-left text-sm transition ${tone}`}
+                className={`rounded-2xl border border-[var(--ink)] bg-[var(--surface-2)] p-3 text-left text-sm transition ${tone}`}
               >
                 {opt}
               </button>

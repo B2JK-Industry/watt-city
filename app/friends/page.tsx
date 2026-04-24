@@ -84,7 +84,7 @@ export default async function FriendsPage() {
 
   return (
     <div className="flex flex-col gap-4 animate-slide-up">
-      <h1 className="brutal-heading text-3xl">{heading}</h1>
+      <h1 className="section-heading text-3xl">{heading}</h1>
       <FriendsClient copy={copy} />
     </div>
   );

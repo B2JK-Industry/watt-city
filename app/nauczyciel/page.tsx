@@ -30,10 +30,10 @@ export default async function TeacherDashboard() {
 
       <header className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-2">
-          <p className="text-xs uppercase tracking-widest text-zinc-400">
+          <p className="text-xs text-zinc-400">
             Witaj, nauczycielu
           </p>
-          <h1 className="brutal-heading text-3xl sm:text-4xl">
+          <h1 className="section-heading text-3xl sm:text-4xl">
             {teacher?.displayName ?? session.username}
           </h1>
           <p className="text-sm text-zinc-300">
@@ -50,7 +50,7 @@ export default async function TeacherDashboard() {
       </header>
 
       <section className="flex flex-col gap-3">
-        <h2 className="brutal-heading text-xl">Twoje klasy</h2>
+        <h2 className="section-heading text-xl">Twoje klasy</h2>
         {classes.length === 0 ? (
           <p className="text-sm text-zinc-400 italic">
             Nie masz jeszcze klasy. Utwórz pierwszą poniżej.
@@ -60,8 +60,8 @@ export default async function TeacherDashboard() {
             {classes.map((cls) => (
               <li key={cls.id} className="card p-4 flex flex-col gap-2">
                 <div className="flex items-baseline justify-between gap-2">
-                  <h3 className="font-black text-lg">{cls.name}</h3>
-                  <span className="text-[10px] uppercase opacity-70">
+                  <h3 className="font-semibold text-lg">{cls.name}</h3>
+                  <span className="text-[10px] opacity-70">
                     klasa {cls.grade}
                   </span>
                 </div>

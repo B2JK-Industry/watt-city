@@ -101,7 +101,7 @@ export function ParentClient({ role: initialRole, kids: initialKids, parents, pr
       {error && <div className="card p-3 text-rose-400 text-sm">{error}</div>}
 
       <section className="card p-4 flex flex-col gap-3">
-        <h2 className="text-sm font-black uppercase">{copy.generateCode}</h2>
+        <h2 className="text-sm font-semibold">{copy.generateCode}</h2>
         <button className="btn btn-ghost text-sm self-start" onClick={generate} disabled={busy}>
           {copy.generate}
         </button>
@@ -113,12 +113,12 @@ export function ParentClient({ role: initialRole, kids: initialKids, parents, pr
       </section>
 
       <section className="card p-4 flex flex-col gap-3">
-        <h2 className="text-sm font-black uppercase">{copy.linkAsParent}</h2>
+        <h2 className="text-sm font-semibold">{copy.linkAsParent}</h2>
         <div className="flex gap-2">
           <input
             value={linkCode}
             onChange={(e) => setLinkCode(e.target.value.toUpperCase())}
-            className="flex-1 px-3 py-2 border-[3px] border-[var(--ink)] rounded bg-[var(--surface-2)] font-mono"
+            className="flex-1 px-3 py-2 border border-[var(--ink)] rounded bg-[var(--surface-2)] font-mono"
             maxLength={16}
           />
           <button className="btn btn-primary" onClick={link} disabled={busy || linkCode.length < 4}>
@@ -129,7 +129,7 @@ export function ParentClient({ role: initialRole, kids: initialKids, parents, pr
 
       {role === "parent" && kids.length > 0 && (
         <section className="card p-4 flex flex-col gap-2">
-          <h2 className="text-sm font-black uppercase">{copy.children}</h2>
+          <h2 className="text-sm font-semibold">{copy.children}</h2>
           <ul className="flex flex-col gap-1">
             {kids.map((c) => (
               <li key={c} className="flex items-center justify-between">
@@ -145,7 +145,7 @@ export function ParentClient({ role: initialRole, kids: initialKids, parents, pr
 
       {parents.length > 0 && (
         <section className="card p-4 flex flex-col gap-2">
-          <h2 className="text-sm font-black uppercase">{copy.parents}</h2>
+          <h2 className="text-sm font-semibold">{copy.parents}</h2>
           <ul className="flex flex-col gap-1 text-sm">
             {parents.map((p) => (
               <li key={p}>{p}</li>
@@ -155,7 +155,7 @@ export function ParentClient({ role: initialRole, kids: initialKids, parents, pr
       )}
 
       <section className="card p-4 flex flex-col gap-2">
-        <h2 className="text-sm font-black uppercase">{copy.privacy}</h2>
+        <h2 className="text-sm font-semibold">{copy.privacy}</h2>
         <label className="flex items-center gap-2 text-sm">
           <input
             type="checkbox"

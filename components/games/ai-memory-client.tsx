@@ -122,12 +122,12 @@ export function AiMemoryClient({
               disabled={isShown || lock}
               onClick={() => onPick(card)}
               className={
-                "aspect-square rounded-xl border-[3px] border-[var(--ink)] p-2 text-xs sm:text-sm font-semibold transition " +
+                "aspect-square rounded-xl border border-[var(--ink)] p-2 text-xs sm:text-sm font-semibold transition " +
                 (matched[card.id]
                   ? "bg-emerald-500/20 border-emerald-400"
                   : isShown
                     ? "bg-[var(--surface-2)]"
-                    : "bg-[var(--accent)] text-[#0a0a0f] hover:opacity-80")
+                    : "bg-[var(--accent)] text-[var(--foreground)] hover:opacity-80")
               }
             >
               {isShown ? card.text : "?"}

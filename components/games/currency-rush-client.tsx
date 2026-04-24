@@ -201,7 +201,7 @@ export function CurrencyRushClient({ dict }: { dict: Dict }) {
       </div>
       <form onSubmit={onSubmit} className="card p-6 sm:p-8 flex flex-col gap-5">
         <div className="flex flex-col gap-2 items-center">
-          <span className="text-xs uppercase tracking-wider text-zinc-400">
+          <span className="text-xs text-zinc-400">
             {problem.pair.label} · tolerancia ±2 %
           </span>
           <div
