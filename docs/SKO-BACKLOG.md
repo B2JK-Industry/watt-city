@@ -835,4 +835,41 @@ A backlog item moves to **DONE** when:
 
 This is a living document. Items get added/removed as we learn. Status updates go in the table directly. Major scope changes go through ADR (`docs/adr/`).
 
-Last revised: 2026-04-22 — post-ETHSilesia status sweep.
+Last revised: 2026-04-24 — docs cleanup reconciliation.
+
+---
+
+## Reconciled 2026-04-24 — open items migrated from deleted docs
+
+On 2026-04-24 the following historical docs were deleted (archival content, retrievable via `git log --all -- <path>`). Their genuinely-open items are consolidated here so they don't get lost.
+
+### From `docs/progress/FOLLOW-UP-NEEDED.md` (V2-refactor deferrals)
+
+| Ref | Item | Unblocks with |
+|---|---|---|
+| R4 | Streaks & daily-special ladder | Design pass on streak multiplier under the `×3` cap — base value? daily/weekly interaction with building mults? |
+| R5 | Duel reframe — in-flight versioning + drain, AI-scenario moderation pipeline, speed-bonus inversion (reward reading not racing) | HIGH-6 moderation pipeline + HIGH-7 speed-bonus shape decision + scenario pool curation |
+| R6.2 | Building catalog — civic unlocks with pedagogical first-unlock modals | Pedagogical copy per civic building |
+| R6.3 | Building catalog — happiness penalty model | Happiness model design |
+| R7.1.3 | Loan comparison tool (side-by-side RRSO / monthly / total interest) | Design decision on comparison UX (table vs stacked cards) |
+| R8.4 / R8.5 | Animations + sound | R8.6 a11y baseline first (`prefers-reduced-motion`, keyboard nav, screen-reader labels, independent toggles) |
+| R9.3.4 | V1 sunset — remove `titleForLevel`, `tierForLevel`, retire XP-Arena vocabulary | All 5 criteria: 8 weeks elapsed, zero V1 users 14 days, V2 error rate < 0.1 % for 14 days, full monthly duel reset, PKO checkpoint. **AND** redirect rows from the deleted `VOCAB-AUDIT-v2.md` completed or re-classified (recover via `git show 5dd81e0:docs/VOCAB-AUDIT-v2.md`). |
+| R9.4 | GDPR-K / parental consent re-consent flow for existing <13 users on first V2 login + PKO legal sign-off on duel scenarios + loan language | Legal review engagement |
+
+**Mechanical follow-ups (low priority, one-file PRs):**
+- Per-game client wiring for `PostGameBreakdown` modal — API returns `multBreakdown`; each game client needs to render `<PostGameBreakdown>` on submit-success.
+- Dict-key population for `dashboard.multFactors.building.<id>` — currently falls back to `labelFallback`.
+- `TierUpToast` → `LevelUpToast` rename after R3.2 dashboard swap.
+- AI-pipeline system prompt: "XP Arena" → "Watt City" in `lib/ai-pipeline/generate.ts`.
+- Mentor-help one-tap UI (API ready via `issueMentorHelp` + `mentorHelpEligibility`, UI not wired).
+- Conversion-rate computation from ledger — offline admin tool to populate `xp:migration:v2:rates` with ledger-derived medians (replaces the current conservative 0.5× default).
+
+### From `docs/SECURITY-AUDIT-2026-04-19.md` (P3 deferred)
+
+- **P3** — rate-limit buckets use fixed-window keys; upgrade to ZSET-based sliding-log design for sophisticated-burst defence. Not launch-blocking.
+- **P3** — CSP allows `'unsafe-inline'` + `'unsafe-eval'` because Next.js dev / hydration needs them. Nonce-based CSP requires custom edge middleware — deferred to when partnership budget covers Vercel Pro.
+
+### From `docs/A11Y-AUDIT-2026-04-19.md` (external deferred)
+
+- **6.4.7** — NVDA / VoiceOver manual pass — requires Windows + Mac hardware + QA contractor. Bundle with Phase 6.1.1 pen-test engagement.
+- Pro-level color-blind simulation — axe-core flags obvious low-contrast issues but doesn't replace a human pass with Sim Daltonism or similar.
