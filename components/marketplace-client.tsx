@@ -109,7 +109,7 @@ export function MarketplaceClient({
       {error && <div className="card p-3 text-rose-400 text-sm">{error}</div>}
 
       <section className="card p-4 flex flex-col gap-3">
-        <h2 className="text-lg font-black uppercase">{copy.yourBuildings}</h2>
+        <h2 className="text-lg font-semibold">{copy.yourBuildings}</h2>
         {sellable.length === 0 ? (
           <p className="text-xs text-zinc-400">{copy.empty}</p>
         ) : (
@@ -121,7 +121,7 @@ export function MarketplaceClient({
                 <li
                   key={b.id}
                   className={
-                    "border-2 rounded p-3 flex flex-col gap-1 text-sm cursor-pointer " +
+                    "border rounded p-3 flex flex-col gap-1 text-sm cursor-pointer " +
                     (isSelected ? "border-[var(--accent)]" : "border-[var(--ink)]/30")
                   }
                   onClick={() => setSelected(b.id)}
@@ -145,7 +145,7 @@ export function MarketplaceClient({
                 min={1}
                 value={ask}
                 onChange={(e) => setAsk(Number(e.target.value))}
-                className="px-2 py-1 border-[3px] border-[var(--ink)] rounded bg-[var(--surface-2)]"
+                className="px-2 py-1 border border-[var(--ink)] rounded bg-[var(--surface-2)]"
               />
             </label>
             <button className="btn btn-primary" onClick={doList} disabled={busy || ask < 1}>
@@ -156,7 +156,7 @@ export function MarketplaceClient({
       </section>
 
       <section className="card p-4 flex flex-col gap-3">
-        <h2 className="text-lg font-black uppercase">
+        <h2 className="text-lg font-semibold">
           {copy.listings} · {listings.length}
         </h2>
         {listings.length === 0 ? (
@@ -170,7 +170,7 @@ export function MarketplaceClient({
               return (
                 <li
                   key={l.id}
-                  className="border-2 border-[var(--ink)]/40 rounded p-3 flex flex-col gap-2"
+                  className="border border-[var(--ink)]/40 rounded p-3 flex flex-col gap-2"
                 >
                   <div className="flex items-center justify-between">
                     <strong>
@@ -206,7 +206,7 @@ export function MarketplaceClient({
       </section>
 
       <section className="card p-4 flex flex-col gap-2">
-        <h2 className="text-sm font-black uppercase">{copy.historyLabel}</h2>
+        <h2 className="text-sm font-semibold">{copy.historyLabel}</h2>
         {history.length === 0 ? (
           <p className="text-xs text-zinc-400">{copy.empty}</p>
         ) : (

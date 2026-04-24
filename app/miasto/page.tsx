@@ -265,7 +265,7 @@ export default async function MiastoPage() {
   return (
     <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex flex-col gap-1">
-        <h1 className="brutal-heading text-3xl">{dict.heading}</h1>
+        <h1 className="section-heading text-3xl">{dict.heading}</h1>
         <p className="text-sm text-zinc-400">{dict.intro}</p>
       </header>
       <WattCityClient
@@ -422,18 +422,18 @@ function ComingSoonSection({ lang }: { lang: Lang }) {
   }[lang];
   return (
     <section className="card p-4 flex flex-col gap-3">
-      <h2 className="text-lg font-black uppercase">{heading}</h2>
+      <h2 className="text-lg font-semibold">{heading}</h2>
       <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-sm">
         {COMING_SOON_TILES.map((t) => (
           <li
             key={t.key}
-            className="border-2 border-[var(--ink)]/30 bg-[var(--surface)]/40 rounded p-3 flex flex-col gap-1 opacity-70"
+            className="border border-[var(--ink)]/30 bg-[var(--surface)]/40 rounded p-3 flex flex-col gap-1 opacity-70"
           >
             <div className="flex items-center gap-2">
               <span className="text-xl" aria-hidden>
                 {t.emoji}
               </span>
-              <strong className="uppercase text-xs tracking-wider">
+              <strong className="text-xs">
                 {t.labels[lang]}
               </strong>
               <span className="ml-auto text-[10px]">🔒</span>

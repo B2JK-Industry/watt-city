@@ -72,17 +72,18 @@ describe("PKO Junior mock", () => {
 });
 
 describe("theme resolution", () => {
-  it("defaults to core theme", () => {
+  it("core theme has the Watt City brand and no mascot", () => {
     const t = resolveTheme("core");
     expect(t.id).toBe("core");
     expect(t.mascot).toBeNull();
     expect(t.brand).toBe("Watt City");
   });
-  it("pko theme carries mascot + partnership disclaimer", () => {
+  it("pko theme is the light-mode default (mascot null until asset ships)", () => {
     const t = resolveTheme("pko");
     expect(t.id).toBe("pko");
-    expect(t.mascot?.id).toBe("zyrafa");
-    expect(t.disclaimer).toMatch(/PKO BP/);
+    // Placeholder mascot reads as broken image — SKO-revert lesson C.
+    expect(t.mascot).toBeNull();
+    expect(t.disclaimer).toMatch(/GRA EDUKACYJNA/);
   });
   it("exported constants match resolveTheme output", () => {
     expect(resolveTheme("core")).toEqual(CORE_THEME);

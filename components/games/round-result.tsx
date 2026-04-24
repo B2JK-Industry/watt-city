@@ -87,7 +87,7 @@ export function RoundResult({
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {lines.map((l) => (
           <div key={l.label} className="card p-3 flex flex-col items-center">
-            <span className="text-xs uppercase tracking-wider text-zinc-400">
+            <span className="text-xs text-zinc-400">
               {l.label}
             </span>
             <span className="text-xl font-mono font-bold">{l.value}</span>
@@ -102,23 +102,23 @@ export function RoundResult({
 
       {awarded !== null && state.result?.ok && (
         <div
-          className={`relative border-[3px] border-[var(--ink)] shadow-[6px_6px_0_0_var(--ink)] rounded-2xl p-5 flex flex-col gap-3 ${
+          className={`relative border border-[var(--ink)] rounded-2xl p-5 flex flex-col gap-3 ${
             isNewBest
-              ? "bg-[var(--accent)] text-[#0a0a0f]"
+              ? "bg-[var(--accent)] text-[var(--foreground)]"
               : "bg-[var(--surface-2)] text-[var(--foreground)]"
           }`}
         >
           <div className="flex items-end justify-between">
             <div className="flex flex-col">
               <span
-                className={`text-xs uppercase tracking-widest font-bold ${
+                className={`text-xs font-bold ${
                   isNewBest ? "opacity-70" : "text-zinc-400"
                 }`}
               >
                 {isNewBest ? t.newRecordHeader : t.currentScoreHeader}
               </span>
               <span
-                className={`text-5xl font-black tracking-tight ${
+                className={`text-5xl font-semibold tracking-tight ${
                   !isNewBest ? "text-zinc-300" : ""
                 }`}
               >
@@ -166,23 +166,23 @@ export function RoundResult({
             </div>
             {level && (
               <div
-                className={`text-right border-[3px] rounded-xl px-3 py-1.5 ${
+                className={`text-right border rounded-xl px-3 py-1.5 ${
                   isNewBest
                     ? "bg-[#0a0a0f] text-[var(--accent)] border-[#0a0a0f]"
                     : "bg-[#0a0a0f] text-[var(--accent)] border-[var(--ink)]"
                 }`}
               >
-                <span className="text-[10px] uppercase tracking-widest block opacity-70 text-zinc-300">
+                <span className="text-[10px] block opacity-70 text-zinc-300">
                   {t.tierLabel}
                 </span>
-                <span className="text-2xl font-black">{level.level}</span>
+                <span className="text-2xl font-semibold">{level.level}</span>
               </div>
             )}
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm font-semibold">
             <span>
               {t.yourCity}:{" "}
-              <strong className="font-black">
+              <strong className="font-semibold">
                 {state.result.globalXP.toLocaleString("pl-PL")}
               </strong>{" "}
               W
@@ -190,13 +190,13 @@ export function RoundResult({
             {rank !== null && (
               <span>
                 {t.leagueRank}:{" "}
-                <strong className="font-black">#{rank}</strong>
+                <strong className="font-semibold">#{rank}</strong>
               </span>
             )}
             {level && level.xpToNext > 0 && (
               <span>
                 {t.toNextTier}:{" "}
-                <strong className="font-black">{level.xpToNext}</strong> W
+                <strong className="font-semibold">{level.xpToNext}</strong> W
               </span>
             )}
           </div>

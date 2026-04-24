@@ -84,19 +84,19 @@ export function SiteNav({
     navLinks.push({ href: "/rodzic", label: PARENT_KID_LABEL[lang] });
   }
   return (
-    <header className="w-full border-b-[3px] border-[var(--ink)] sticky top-0 z-20 bg-[var(--background)]">
+    <header className="w-full border-b border-[var(--line)] sticky top-0 z-20 bg-[var(--surface)]">
       <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {(() => {
           const theme = resolveTheme();
           return (
-            <Link href="/" className="flex items-center gap-2.5 font-black text-lg tracking-tight">
+            <Link href="/" className="flex items-center gap-2.5 font-semibold text-lg">
               <span
-                className="inline-flex items-center justify-center w-9 h-9 border-[3px] border-[var(--ink)] shadow-[3px_3px_0_0_var(--ink)] font-black text-base"
+                className="inline-flex items-center justify-center w-9 h-9 rounded-md font-semibold text-base"
                 style={{ background: theme.colors.accent, color: theme.colors.accentInk }}
               >
                 {theme.brandShort}
               </span>
-              <span className="uppercase">{theme.brand}</span>
+              <span className="text-[var(--foreground)]">{theme.brand}</span>
             </Link>
           );
         })()}
@@ -105,7 +105,7 @@ export function SiteNav({
             <Link
               key={l.href}
               href={l.href}
-              className="tap-target hover:text-[var(--accent)] transition-colors"
+              className="tap-target text-[var(--ink-muted)] hover:text-[var(--accent)] transition-colors"
             >
               {l.label}
             </Link>
@@ -134,7 +134,7 @@ export function SiteNav({
                 )}
               </span>
               <span className="hidden md:flex flex-col leading-tight">
-                <span className="font-bold uppercase tracking-tight">{username}</span>
+                <span className="font-semibold">{username}</span>
                 {title && (
                   <span className="text-[11px] font-semibold text-[var(--accent)]">
                     {title}
@@ -155,10 +155,10 @@ export function SiteNav({
           ) : (
             <>
               <LanguageSwitcher current={lang} />
-              <Link href="/login" className="btn btn-ghost text-sm">
+              <Link href="/login" className="btn btn-secondary btn-sm">
                 {t.login}
               </Link>
-              <Link href="/register" className="btn btn-primary text-sm">
+              <Link href="/register" className="btn btn-sales btn-sm">
                 {t.register}
               </Link>
             </>
@@ -170,7 +170,7 @@ export function SiteNav({
           to hit + a proper landmark for screen readers. */}
       <nav
         aria-label={t.city}
-        className="sm:hidden border-t border-[var(--ink)]/30 bg-[var(--surface)]"
+        className="sm:hidden border-t border-[var(--line)] bg-[var(--surface)]"
       >
         <div className="max-w-6xl mx-auto px-3 py-1.5 overflow-x-auto">
           <ul className="flex items-center gap-3 text-xs font-semibold whitespace-nowrap">
@@ -188,7 +188,7 @@ export function SiteNav({
         </div>
       </nav>
       {username && resources && (
-        <div className="border-t border-[var(--ink)]/30 bg-[var(--background)]">
+        <div className="border-t border-[var(--line)] bg-[var(--surface)]">
           <div className="max-w-6xl mx-auto px-3 sm:px-6 py-2 overflow-x-auto">
             <ResourceBar resources={resources} lang={lang} />
           </div>

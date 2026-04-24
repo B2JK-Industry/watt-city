@@ -100,10 +100,10 @@ export function AiTrueFalseClient({
             type="button"
             onClick={() => choose(true)}
             disabled={phase !== "playing"}
-            className={`rounded-2xl border-[3px] border-[var(--ink)] p-5 text-lg font-black transition ${
+            className={`rounded-2xl border border-[var(--ink)] p-5 text-lg font-semibold transition ${
               phase === "reveal"
                 ? current.isTrue
-                  ? "bg-emerald-400 text-[#0a0a0f]"
+                  ? "bg-emerald-400 text-[var(--foreground)]"
                   : chosen === true
                     ? "bg-rose-400/30 opacity-70"
                     : "opacity-40"
@@ -116,10 +116,10 @@ export function AiTrueFalseClient({
             type="button"
             onClick={() => choose(false)}
             disabled={phase !== "playing"}
-            className={`rounded-2xl border-[3px] border-[var(--ink)] p-5 text-lg font-black transition ${
+            className={`rounded-2xl border border-[var(--ink)] p-5 text-lg font-semibold transition ${
               phase === "reveal"
                 ? !current.isTrue
-                  ? "bg-emerald-400 text-[#0a0a0f]"
+                  ? "bg-emerald-400 text-[var(--foreground)]"
                   : chosen === false
                     ? "bg-rose-400/30 opacity-70"
                     : "opacity-40"

@@ -119,7 +119,7 @@ export function CitySkylineHero({ buildings, lang, emptyStateCta }: Props) {
       {buildings.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-center px-4">
           <div className="max-w-md flex flex-col gap-2">
-            <p className="text-base sm:text-lg font-black uppercase tracking-tight">
+            <p className="text-base sm:text-lg font-semibold tracking-tight">
               {copy.empty}
             </p>
             <p className="text-xs sm:text-sm opacity-80">

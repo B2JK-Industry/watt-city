@@ -78,13 +78,13 @@ export function FriendsClient({ copy }: { copy: Copy }) {
   return (
     <div className="flex flex-col gap-6">
       <section className="card p-4 flex flex-col gap-3">
-        <h2 className="text-lg font-black uppercase">{copy.addByUsername}</h2>
+        <h2 className="text-lg font-semibold">{copy.addByUsername}</h2>
         <div className="flex gap-2">
           <input
             value={other}
             onChange={(e) => setOther(e.target.value)}
             placeholder="username"
-            className="flex-1 px-3 py-2 border-[3px] border-[var(--ink)] rounded bg-[var(--surface-2)]"
+            className="flex-1 px-3 py-2 border border-[var(--ink)] rounded bg-[var(--surface-2)]"
           />
           <button
             className="btn btn-primary"
@@ -99,7 +99,7 @@ export function FriendsClient({ copy }: { copy: Copy }) {
 
       {data.inbox.length > 0 && (
         <section className="card p-4 flex flex-col gap-2">
-          <h2 className="text-sm font-black uppercase">{copy.inboxLabel}</h2>
+          <h2 className="text-sm font-semibold">{copy.inboxLabel}</h2>
           <ul className="flex flex-col gap-2">
             {data.inbox.map((u) => (
               <li key={u} className="flex items-center justify-between gap-2">
@@ -119,7 +119,7 @@ export function FriendsClient({ copy }: { copy: Copy }) {
       )}
 
       <section className="card p-4 flex flex-col gap-2">
-        <h2 className="text-sm font-black uppercase">
+        <h2 className="text-sm font-semibold">
           {copy.friendsLabel} · {data.friends.length}
         </h2>
         {data.friends.length === 0 ? (
@@ -147,7 +147,7 @@ export function FriendsClient({ copy }: { copy: Copy }) {
 
       {data.outgoing.length > 0 && (
         <section className="card p-4 flex flex-col gap-1 text-xs text-zinc-400">
-          <h3 className="text-sm font-black uppercase">{copy.outgoingLabel}</h3>
+          <h3 className="text-sm font-semibold">{copy.outgoingLabel}</h3>
           {data.outgoing.map((u) => (
             <span key={u}>→ {u}</span>
           ))}
@@ -155,7 +155,7 @@ export function FriendsClient({ copy }: { copy: Copy }) {
       )}
 
       <section className="card p-4 flex flex-col gap-3">
-        <h2 className="text-sm font-black uppercase">{copy.privacyLabel}</h2>
+        <h2 className="text-sm font-semibold">{copy.privacyLabel}</h2>
         <div className="flex flex-wrap gap-2">
           {(["public", "friends", "private"] as const).map((v) => {
             const label = v === "public" ? copy.publicOpt : v === "friends" ? copy.friendsOpt : copy.privateOpt;

@@ -65,7 +65,7 @@ export function GameComments({ gameId, currentUser, labels }: Props) {
 
   return (
     <section className="card p-4 flex flex-col gap-3">
-      <h2 className="text-sm font-black uppercase">{labels.title}</h2>
+      <h2 className="text-sm font-semibold">{labels.title}</h2>
       <div className="flex gap-2">
         <textarea
           value={text}
@@ -73,7 +73,7 @@ export function GameComments({ gameId, currentUser, labels }: Props) {
           placeholder={labels.placeholder}
           maxLength={400}
           rows={2}
-          className="flex-1 px-3 py-2 border-[3px] border-[var(--ink)] rounded bg-[var(--surface-2)] text-sm"
+          className="flex-1 px-3 py-2 border border-[var(--ink)] rounded bg-[var(--surface-2)] text-sm"
         />
         <button className="btn btn-primary" onClick={post} disabled={busy || text.trim().length < 2}>
           {labels.post}

@@ -240,24 +240,24 @@ export default async function SchoolsLanding() {
         <div className="flex flex-wrap gap-2">
           <span
             className="brutal-tag"
-            style={{ background: "var(--neo-yellow)", color: "#0a0a0f" }}
+            style={{ background: "var(--accent)", color: "#0a0a0f" }}
           >
             ✅ MEN V–VIII
           </span>
           <span
             className="brutal-tag"
-            style={{ background: "var(--neo-cyan)", color: "#0a0a0f" }}
+            style={{ background: "var(--accent)", color: "#0a0a0f" }}
           >
             PKO SKO 2.0
           </span>
           <span
             className="brutal-tag"
-            style={{ background: "var(--neo-lime)", color: "#0a0a0f" }}
+            style={{ background: "var(--success)", color: "#0a0a0f" }}
           >
             GDPR-K
           </span>
         </div>
-        <h1 className="brutal-heading text-4xl sm:text-5xl leading-tight">
+        <h1 className="section-heading text-4xl sm:text-5xl leading-tight">
           {t.heroTitle}
         </h1>
         <p className="text-lg text-zinc-300 max-w-3xl leading-relaxed">
@@ -285,23 +285,23 @@ export default async function SchoolsLanding() {
 
       {/* -------- 3-audience value prop -------- */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">{t.audienceTitle}</h2>
+        <h2 className="section-heading text-2xl">{t.audienceTitle}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
             {
               title: t.audKidsTitle,
               body: t.audKidsBody,
-              accent: "var(--neo-yellow)",
+              accent: "var(--accent)",
             },
             {
               title: t.audTeachersTitle,
               body: t.audTeachersBody,
-              accent: "var(--neo-cyan)",
+              accent: "var(--accent)",
             },
             {
               title: t.audParentsTitle,
               body: t.audParentsBody,
-              accent: "var(--neo-pink)",
+              accent: "var(--danger)",
             },
           ].map((col) => (
             <div
@@ -309,7 +309,7 @@ export default async function SchoolsLanding() {
               className="card p-5 flex flex-col gap-2"
               style={{ borderTop: `4px solid ${col.accent}` }}
             >
-              <h3 className="font-black text-lg">{col.title}</h3>
+              <h3 className="font-semibold text-lg">{col.title}</h3>
               <p className="text-sm text-zinc-300 leading-relaxed">
                 {col.body}
               </p>
@@ -320,7 +320,7 @@ export default async function SchoolsLanding() {
 
       {/* -------- How it works (4-step diagram) -------- */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">{t.howTitle}</h2>
+        <h2 className="section-heading text-2xl">{t.howTitle}</h2>
         <ol className="grid grid-cols-1 md:grid-cols-4 gap-3">
           {[t.howStep1, t.howStep2, t.howStep3, t.howStep4].map(
             (step, i) => (
@@ -329,7 +329,7 @@ export default async function SchoolsLanding() {
                 className="card p-4 flex flex-col gap-2 relative"
               >
                 <span
-                  className="w-10 h-10 rounded-xl border-[3px] border-[var(--ink)] bg-[var(--accent)] text-[#0a0a0f] font-black text-xl flex items-center justify-center shadow-[3px_3px_0_0_var(--ink)]"
+                  className="w-10 h-10 rounded-xl border border-[var(--ink)] bg-[var(--accent)] text-[var(--foreground)] font-semibold text-xl flex items-center justify-center"
                 >
                   {i + 1}
                 </span>
@@ -337,7 +337,7 @@ export default async function SchoolsLanding() {
                 {i < 3 && (
                   <span
                     aria-hidden
-                    className="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 text-[var(--accent)] text-2xl font-black"
+                    className="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 text-[var(--accent)] text-2xl font-semibold"
                   >
                     →
                   </span>
@@ -350,30 +350,30 @@ export default async function SchoolsLanding() {
 
       {/* -------- Screenshots (SVG placeholders) -------- */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">{t.screensTitle}</h2>
+        <h2 className="section-heading text-2xl">{t.screensTitle}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {[t.screen1, t.screen2, t.screen3].map((caption, i) => (
             <div
               key={i}
-              className="aspect-video rounded-xl border-[4px] border-[var(--ink)] shadow-[4px_4px_0_0_var(--ink)] p-6 flex items-center justify-center text-center"
+              className="aspect-video rounded-xl border border-[var(--ink)] p-6 flex items-center justify-center text-center"
               style={{
-                background: `linear-gradient(135deg, var(--accent), var(--neo-cyan))`,
+                background: `linear-gradient(135deg, var(--accent), var(--accent))`,
                 color: "#0a0a0f",
               }}
             >
-              <p className="font-black text-sm leading-relaxed">{caption}</p>
+              <p className="font-semibold text-sm leading-relaxed">{caption}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* -------- Compliance badges row -------- */}
-      <section className="card p-5 flex flex-col gap-3 border-[var(--neo-lime)]">
-        <h2 className="brutal-heading text-lg">{t.complianceTitle}</h2>
+      <section className="card p-5 flex flex-col gap-3 border-[var(--success)]">
+        <h2 className="section-heading text-lg">{t.complianceTitle}</h2>
         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
           {t.complianceItems.map((line) => (
             <li key={line} className="flex items-start gap-2">
-              <span className="text-[var(--neo-lime)] font-bold">✓</span>
+              <span className="text-[var(--success)] font-bold">✓</span>
               <span>{line}</span>
             </li>
           ))}
@@ -382,13 +382,13 @@ export default async function SchoolsLanding() {
 
       {/* -------- Podstawa programowa preview -------- */}
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">{t.ppTitle}</h2>
+        <h2 className="section-heading text-2xl">{t.ppTitle}</h2>
         <p className="text-sm text-zinc-300 max-w-3xl">{t.ppLead}</p>
         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
           {preview.map((c) => (
             <li
               key={c.code}
-              className="border-2 border-[var(--ink)]/40 rounded p-3 flex flex-col gap-1"
+              className="border border-[var(--ink)]/40 rounded p-3 flex flex-col gap-1"
             >
               <div className="flex items-center gap-2">
                 <code className="font-mono text-[10px] px-1.5 py-0.5 bg-[var(--surface-2)] rounded">
@@ -406,9 +406,9 @@ export default async function SchoolsLanding() {
       </section>
 
       {/* -------- Download brochure -------- */}
-      <aside className="card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-[var(--neo-yellow)]">
+      <aside className="card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-[var(--accent)]">
         <div className="flex flex-col gap-1">
-          <h2 className="brutal-heading text-lg">{t.downloadTitle}</h2>
+          <h2 className="section-heading text-lg">{t.downloadTitle}</h2>
           <p className="text-sm text-zinc-300">{t.downloadBody}</p>
         </div>
         <div className="flex flex-wrap gap-2">

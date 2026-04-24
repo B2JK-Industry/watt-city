@@ -77,15 +77,15 @@ export function CookieConsent({
       role="dialog"
       aria-live="polite"
       style={{ ["--cc-bot" as string]: bottomOffset }}
-      className="fixed inset-x-0 z-40 bottom-[var(--cc-bot)] sm:bottom-0 bg-[var(--background)] border-t-[3px] border-[var(--ink)] p-3 sm:p-4 text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+      className="fixed inset-x-0 z-40 bottom-[var(--cc-bot)] sm:bottom-0 bg-[var(--surface)] border-t border-[var(--line)] elev-soft-lg p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
     >
-      <p className="flex-1 text-zinc-300">{copy.body}</p>
+      <p className="flex-1 t-body-sm text-[var(--ink-muted)]">{copy.body}</p>
       <div className="flex gap-2 flex-wrap">
-        <a href="/ochrana-sukromia" className="btn btn-ghost text-xs">
+        <a href="/ochrana-sukromia" className="btn btn-ghost btn-sm">
           {copy.more}
         </a>
         <button
-          className="btn btn-primary text-xs"
+          className="btn btn-sm"
           onClick={() => {
             try {
               localStorage.setItem(LOCAL_KEY, String(Date.now()));

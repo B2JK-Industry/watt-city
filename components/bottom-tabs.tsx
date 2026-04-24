@@ -23,7 +23,7 @@ export function BottomTabs({ lang }: { lang: Lang }) {
   ];
   return (
     <nav
-      className="bottom-tabs sm:hidden fixed bottom-0 inset-x-0 z-20 bg-[var(--surface)] border-t-[3px] border-[var(--ink)]"
+      className="bottom-tabs sm:hidden fixed bottom-0 inset-x-0 z-20 bg-[var(--surface)] border-t border-[var(--line)]"
       aria-label={lang === "pl" ? "Nawigacja dolna" : "Bottom navigation"}
     >
       <ul className="grid grid-cols-4 text-[11px]">
@@ -31,12 +31,12 @@ export function BottomTabs({ lang }: { lang: Lang }) {
           <li key={t.href}>
             <Link
               href={t.href}
-              className="flex flex-col items-center justify-center py-2 gap-0.5 text-zinc-300 hover:text-[var(--accent)]"
+              className="flex flex-col items-center justify-center py-2 gap-0.5 text-[var(--ink-muted)] hover:text-[var(--accent)] transition-colors"
             >
               <span aria-hidden className="text-lg leading-none">
                 {t.icon}
               </span>
-              <span className="font-semibold">{t.label}</span>
+              <span className="font-medium">{t.label}</span>
             </Link>
           </li>
         ))}

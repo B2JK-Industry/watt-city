@@ -54,7 +54,7 @@ export function ProfileEdit({
   return (
     <div className="card p-4 flex flex-col gap-4">
       <div>
-        <p className="text-xs uppercase tracking-wider text-zinc-400 mb-2">{copy.avatar}</p>
+        <p className="text-xs text-zinc-400 mb-2">{copy.avatar}</p>
         <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
           {AVATARS.map((a) => {
             const selected = avatar === a.id;
@@ -63,7 +63,7 @@ export function ProfileEdit({
                 key={a.id}
                 onClick={() => setAvatar(a.id)}
                 className={
-                  "aspect-square text-2xl rounded border-[3px] transition " +
+                  "aspect-square text-2xl rounded border transition " +
                   (selected
                     ? "border-[var(--accent)] bg-[var(--accent)]/10"
                     : "border-[var(--ink)]/30 hover:border-[var(--ink)]")
@@ -84,7 +84,7 @@ export function ProfileEdit({
           onChange={(e) => setDisplayName(e.target.value)}
           placeholder={copy.placeholder}
           maxLength={32}
-          className="px-3 py-2 border-[3px] border-[var(--ink)] rounded bg-[var(--surface-2)]"
+          className="px-3 py-2 border border-[var(--ink)] rounded bg-[var(--surface-2)]"
         />
       </label>
       <div className="flex items-center gap-3">

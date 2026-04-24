@@ -16,10 +16,10 @@ export default async function PrivacyPage() {
     <div className="flex flex-col gap-6 animate-slide-up max-w-3xl">
       <header className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="brutal-heading text-3xl sm:text-4xl">{t.title}</h1>
+          <h1 className="section-heading text-3xl sm:text-4xl">{t.title}</h1>
           <span
             className="brutal-tag"
-            style={{ background: "var(--neo-lime)", color: "#0a0a0f" }}
+            style={{ background: "var(--success)", color: "#0a0a0f" }}
           >
             {t.tag}
           </span>
@@ -28,12 +28,12 @@ export default async function PrivacyPage() {
       </header>
 
       <section className="card p-5 flex flex-col gap-3">
-        <h2 className="brutal-heading text-lg">1 · {t.whoTitle}</h2>
+        <h2 className="section-heading text-lg">1 · {t.whoTitle}</h2>
         <p className="text-sm text-zinc-300">{t.whoBody}</p>
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
-        <h2 className="brutal-heading text-lg">2 · {t.whatTitle}</h2>
+        <h2 className="section-heading text-lg">2 · {t.whatTitle}</h2>
         <p className="text-sm text-zinc-400">{t.whatIntro}</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
           <DataRow
@@ -73,7 +73,7 @@ export default async function PrivacyPage() {
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
-        <h2 className="brutal-heading text-lg">3 · {t.whereTitle}</h2>
+        <h2 className="section-heading text-lg">3 · {t.whereTitle}</h2>
         <ul className="text-sm text-zinc-300 space-y-1.5 list-disc pl-5">
           {t.whereList.map((line, i) => (
             <li key={i}>{line}</li>
@@ -82,7 +82,7 @@ export default async function PrivacyPage() {
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
-        <h2 className="brutal-heading text-lg">4 · {t.rightsTitle}</h2>
+        <h2 className="section-heading text-lg">4 · {t.rightsTitle}</h2>
         <ul className="text-sm text-zinc-300 space-y-2 list-disc pl-5">
           {t.rightsList.map((line, i) => (
             <li key={i}>{line}</li>
@@ -91,7 +91,7 @@ export default async function PrivacyPage() {
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
-        <h2 className="brutal-heading text-lg">5 · {t.aiTitle}</h2>
+        <h2 className="section-heading text-lg">5 · {t.aiTitle}</h2>
         <p className="text-sm text-zinc-300">{t.aiIntro}</p>
         <ul className="text-sm text-zinc-300 space-y-1.5 list-disc pl-5">
           {t.aiList.map((line, i) => (
@@ -101,7 +101,7 @@ export default async function PrivacyPage() {
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
-        <h2 className="brutal-heading text-lg">6 · {t.securityTitle}</h2>
+        <h2 className="section-heading text-lg">6 · {t.securityTitle}</h2>
         <ul className="text-sm text-zinc-300 space-y-1.5 list-disc pl-5">
           {t.securityList.map((line, i) => (
             <li key={i}>{line}</li>
@@ -110,22 +110,22 @@ export default async function PrivacyPage() {
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
-        <h2 className="brutal-heading text-lg">7 · {t.minorsTitle}</h2>
+        <h2 className="section-heading text-lg">7 · {t.minorsTitle}</h2>
         <p className="text-sm text-zinc-300">{t.minorsBody}</p>
       </section>
 
       <section className="card p-5 flex flex-col gap-3 border-[var(--accent)]">
-        <h2 className="brutal-heading text-lg">8 · {t.disclaimerTitle}</h2>
+        <h2 className="section-heading text-lg">8 · {t.disclaimerTitle}</h2>
         <p className="text-sm text-zinc-300">{t.disclaimerBody}</p>
       </section>
 
-      <section className="card p-5 flex flex-col gap-3 border-[var(--neo-lime)]">
-        <h2 className="brutal-heading text-lg">9 · {t.web3Title}</h2>
+      <section className="card p-5 flex flex-col gap-3 border-[var(--success)]">
+        <h2 className="section-heading text-lg">9 · {t.web3Title}</h2>
         <p className="text-sm text-zinc-300 leading-relaxed">{t.web3Body}</p>
       </section>
 
-      <section className="card p-5 flex flex-col gap-3 border-[var(--neo-cyan)]">
-        <h2 className="brutal-heading text-lg">
+      <section className="card p-5 flex flex-col gap-3 border-[var(--accent)]">
+        <h2 className="section-heading text-lg">
           10 · {
             ({
               pl: "Twoje prawa — jak skorzystać",
@@ -179,7 +179,7 @@ export default async function PrivacyPage() {
         </ul>
       </section>
 
-      <footer className="text-xs text-zinc-400 border-t-2 border-[var(--ink)]/30 pt-4">
+      <footer className="text-xs text-zinc-400 border-t border-[var(--ink)]/30 pt-4">
         {t.version}{" "}
         <Link href="/" className="underline">
           {t.backHome}
@@ -203,8 +203,8 @@ function DataRow({
   note?: string;
 }) {
   return (
-    <div className="rounded-xl border-[3px] border-[var(--ink)] bg-[var(--surface-2)] p-3">
-      <p className="font-black uppercase text-xs tracking-widest text-[var(--accent)]">
+    <div className="rounded-xl border border-[var(--ink)] bg-[var(--surface-2)] p-3">
+      <p className="font-semibold text-xs text-[var(--accent)]">
         {field}
       </p>
       <p className="text-xs font-mono text-zinc-300 mt-1">{value}</p>

@@ -24,11 +24,11 @@ export function ParentDigestCard(props: Props) {
   return (
     <section
       className="card p-4 flex gap-3"
-      style={{ borderColor: "var(--neo-cyan)", borderLeftWidth: "4px" }}
+      style={{ borderColor: "var(--accent)", borderLeftWidth: "4px" }}
     >
       <div className="flex-1 flex flex-col gap-3">
         <div className="flex items-baseline justify-between">
-          <h2 className="text-xs uppercase tracking-widest font-black text-[var(--accent)]">
+          <h2 className="text-xs font-semibold text-[var(--accent)]">
             📬 Co się działo w tym tygodniu
           </h2>
         </div>

@@ -63,7 +63,7 @@ export function KnfDisclaimer({ lang, variant = "card" }: Props) {
   if (variant === "inline") {
     return (
       <p
-        className="text-[11px] leading-snug px-2 py-1.5 border-2 border-[var(--ink)] bg-[var(--surface-2)]"
+        className="text-[11px] leading-snug px-2 py-1.5 border border-[var(--ink)] bg-[var(--surface-2)]"
         role="note"
       >
         <strong>{t.title}</strong> {t.body}{" "}
@@ -74,24 +74,24 @@ export function KnfDisclaimer({ lang, variant = "card" }: Props) {
   return (
     <aside
       className="card p-3 sm:p-4 flex flex-col gap-2"
-      style={{ borderColor: "var(--neo-pink)" }}
+      style={{ borderColor: "var(--danger)" }}
       role="note"
       aria-label={t.title}
     >
       <div className="flex items-center gap-2">
         <span
-          className="text-[10px] uppercase tracking-widest font-black px-1.5 py-0.5 border-2 border-[var(--ink)]"
-          style={{ background: "var(--neo-pink)", color: "#0a0a0f" }}
+          className="text-[10px] font-semibold px-1.5 py-0.5 border border-[var(--ink)]"
+          style={{ background: "var(--danger)", color: "#0a0a0f" }}
         >
           KNF / UOKiK
         </span>
-        <h3 className="text-sm font-black uppercase tracking-tight">
+        <h3 className="text-sm font-semibold tracking-tight">
           {t.title}
         </h3>
       </div>
       <p className="text-xs leading-snug">{t.body}</p>
       <p className="text-xs leading-snug opacity-80">{t.rrsoNote}</p>
-      <p className="text-[10px] leading-snug opacity-60 border-t-2 border-[var(--ink)]/40 pt-2 mt-1">
+      <p className="text-[10px] leading-snug opacity-60 border-t border-[var(--ink)]/40 pt-2 mt-1">
         {t.footnote}
       </p>
     </aside>

@@ -39,7 +39,7 @@ export default async function ClassPage() {
   return (
     <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex items-center gap-3">
-        <h1 className="brutal-heading text-3xl">{copy.heading}</h1>
+        <h1 className="section-heading text-3xl">{copy.heading}</h1>
         {role === "teacher" && <span className="chip">{copy.teacherBadge}</span>}
       </header>
       <ClassClient

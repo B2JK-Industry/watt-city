@@ -215,11 +215,11 @@ function MemoryCard({ card, onClick, hiddenLabel }: { card: Card; onClick: () =>
       onClick={onClick}
       disabled={card.matched || card.revealed}
       aria-label={faceUp ? card.text : hiddenLabel}
-      className={`relative aspect-[5/4] rounded-2xl border-[3px] border-[var(--ink)] transition-all overflow-hidden shadow-[4px_4px_0_0_var(--ink)] ${
+      className={`relative aspect-[5/4] rounded-2xl border border-[var(--ink)] transition-all overflow-hidden ${
         card.matched
           ? "opacity-95 ring-4 ring-emerald-400"
           : !faceUp
-          ? "hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_var(--ink)] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_0_var(--ink)]"
+          ? "hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 active:"
           : ""
       }`}
     >
@@ -227,8 +227,8 @@ function MemoryCard({ card, onClick, hiddenLabel }: { card: Card; onClick: () =>
         <span
           className={`absolute inset-0 flex items-center justify-center text-center p-3 ${
             isDefinition
-              ? "bg-emerald-500 text-[#0a0a0f] text-xs sm:text-sm font-semibold leading-snug"
-              : "bg-[var(--neo-cyan)] text-[#0a0a0f] text-base sm:text-lg font-black uppercase tracking-tight"
+              ? "bg-emerald-500 text-[var(--foreground)] text-xs sm:text-sm font-semibold leading-snug"
+              : "bg-[var(--surface-2)] text-[var(--foreground)] text-base sm:text-lg font-semibold tracking-tight"
           }`}
         >
           {card.text}
@@ -242,7 +242,7 @@ function MemoryCard({ card, onClick, hiddenLabel }: { card: Card; onClick: () =>
           }}
           aria-hidden="true"
         >
-          <span className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-md border-[3px] border-[var(--ink)] bg-[var(--accent)] text-[#0a0a0f] font-black text-xl shadow-[2px_2px_0_0_var(--ink)]">
+          <span className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-md border border-[var(--ink)] bg-[var(--accent)] text-[var(--foreground)] font-semibold text-xl">
             ?
           </span>
         </span>

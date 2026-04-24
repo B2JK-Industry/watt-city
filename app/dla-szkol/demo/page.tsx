@@ -16,10 +16,10 @@ export default function DemoStartPage() {
   return (
     <div className="flex flex-col gap-6 max-w-2xl mx-auto animate-slide-up">
       <section className="flex flex-col gap-3">
-        <p className="text-xs uppercase tracking-widest opacity-70">
+        <p className="text-xs opacity-70">
           🎬 Demo dla partnera / dyrekcji
         </p>
-        <h1 className="brutal-heading text-3xl sm:text-4xl">
+        <h1 className="section-heading text-3xl sm:text-4xl">
           Zaloguj się jako nauczyciel demo — 1 klik
         </h1>
         <p className="text-base text-zinc-300 leading-relaxed">
@@ -35,7 +35,7 @@ export default function DemoStartPage() {
       <DemoStartButton />
 
       <section className="card p-4 flex flex-col gap-2 text-sm">
-        <h2 className="text-xs uppercase tracking-widest font-black text-[var(--accent)]">
+        <h2 className="text-xs font-semibold text-[var(--accent)]">
           Co zobaczysz
         </h2>
         <ul className="flex flex-col gap-1.5 list-disc list-inside opacity-80">
@@ -48,7 +48,7 @@ export default function DemoStartPage() {
       </section>
 
       <section className="card p-4 flex flex-col gap-2 text-xs opacity-80">
-        <h2 className="text-[10px] uppercase tracking-widest font-black">
+        <h2 className="text-[10px] font-semibold">
           ⚠️ Tryb demo
         </h2>
         <p>

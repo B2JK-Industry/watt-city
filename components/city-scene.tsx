@@ -114,7 +114,7 @@ export function CityScene({
 
   return (
     <div
-      className="relative w-full rounded-2xl border-[3px] border-[var(--ink)] overflow-hidden shadow-[6px_6px_0_0_var(--ink)]"
+      className="city-scene-root relative w-full rounded-lg border border-[var(--line)] overflow-hidden"
       style={{
         background: "#07071a",
         aspectRatio: `${VB_W} / ${VB_H}`,

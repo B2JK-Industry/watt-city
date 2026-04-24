@@ -55,10 +55,10 @@ export default async function ProfilePage() {
   return (
     <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex flex-col gap-2">
-        <h1 className="brutal-heading text-3xl">{heading}</h1>
+        <h1 className="section-heading text-3xl">{heading}</h1>
         <div className="flex flex-wrap gap-3 items-center">
           <span
-            className="w-10 h-10 rounded border-[3px] border-[var(--ink)] flex items-center justify-center text-2xl"
+            className="w-10 h-10 rounded border border-[var(--ink)] flex items-center justify-center text-2xl"
             aria-hidden
             style={{ color: av.hue }}
           >
@@ -92,20 +92,20 @@ export default async function ProfilePage() {
           affordance, so the full kid→code→parent flow was unreachable. */}
       <ParentInviteCard lang={lang} />
       <section className="card p-4 flex flex-col gap-3">
-        <h2 className="text-lg font-black uppercase">{achLabel}</h2>
+        <h2 className="text-lg font-semibold">{achLabel}</h2>
         <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {status.map(({ id, owned, def }) => (
             <li
               key={id}
               className={
-                "border-2 border-[var(--ink)]/40 rounded p-3 flex flex-col items-center gap-1 text-center " +
+                "border border-[var(--ink)]/40 rounded p-3 flex flex-col items-center gap-1 text-center " +
                 (owned ? "" : "opacity-50")
               }
             >
               <span className="text-3xl" aria-hidden>
                 {owned ? def.icon : "🔒"}
               </span>
-              <strong className="text-xs uppercase tracking-wider">
+              <strong className="text-xs">
                 {def.labels[lang]}
               </strong>
               <p className="text-[11px] text-zinc-400 leading-snug">

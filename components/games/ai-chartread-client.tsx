@@ -154,7 +154,7 @@ export function AiChartReadClient({
                 key={i}
                 disabled={revealed}
                 onClick={() => setChosen(i)}
-                className={`rounded-2xl border-[3px] border-[var(--ink)] bg-[var(--surface-2)] p-3 text-left text-sm transition ${tone}`}
+                className={`rounded-2xl border border-[var(--ink)] bg-[var(--surface-2)] p-3 text-left text-sm transition ${tone}`}
               >
                 {opt}
               </button>

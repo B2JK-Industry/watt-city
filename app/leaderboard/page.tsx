@@ -40,12 +40,12 @@ export default async function LeaderboardPage({ searchParams }: Props) {
     <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight">
             {t.title}
           </h1>
           <span
             className="brutal-tag"
-            style={{ background: "var(--neo-yellow)", color: "#0a0a0f" }}
+            style={{ background: "var(--accent)", color: "#0a0a0f" }}
           >
             {t.tag}
           </span>
@@ -88,7 +88,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
             entry={podium[0]}
             height="h-36"
             badge="🥇"
-            bg="bg-[var(--neo-yellow)]"
+            bg="bg-[var(--sales)]"
             isMe={podium[0].username === session?.username}
             crown
           />
@@ -96,7 +96,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
             entry={podium[2]}
             height="h-24"
             badge="🥉"
-            bg="bg-[var(--neo-orange)]"
+            bg="bg-[var(--sales)]"
             isMe={podium[2].username === session?.username}
           />
         </div>
@@ -111,7 +111,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
       ) : (
         <div className="card overflow-hidden">
           <table className="w-full">
-            <thead className="bg-[var(--surface-2)]/60 text-xs uppercase tracking-wider text-zinc-400">
+            <thead className="bg-[var(--surface-2)]/60 text-xs text-zinc-400">
               <tr>
                 <th className="text-left px-4 py-3 w-16">{t.position}</th>
                 <th className="text-left px-4 py-3">{t.player}</th>
@@ -186,18 +186,18 @@ function PodiumCard({
       <div
         className={`w-full ${height} ${bg} podium-tile flex items-end justify-center p-3 text-3xl sm:text-4xl ${
           crown ? "animate-[glow-ring_2.4s_ease-in-out_infinite]" : ""
-        } ${isMe ? "ring-4 ring-[var(--neo-pink)] ring-offset-4 ring-offset-[var(--background)]" : ""}`}
+        } ${isMe ? "ring-4 ring-[var(--danger)] ring-offset-4 ring-offset-[var(--background)]" : ""}`}
       >
         <span>{badge}</span>
       </div>
       <div className="text-center">
-        <div className="text-sm font-black truncate max-w-[120px] sm:max-w-[160px] uppercase tracking-tight">
+        <div className="text-sm font-semibold truncate max-w-[120px] sm:max-w-[160px] tracking-tight">
           {entry.username}
           {isMe && (
-            <span className="text-[var(--neo-pink)] ml-1 text-xs">(ty)</span>
+            <span className="text-[var(--danger)] ml-1 text-xs">(ty)</span>
           )}
         </div>
-        <div className="text-xs font-mono font-black text-[var(--ink)]">
+        <div className="text-xs font-mono font-semibold text-[var(--ink)]">
           {entry.xp.toLocaleString("pl-PL")} W
         </div>
       </div>

@@ -129,7 +129,7 @@ export function ParentInviteCard({ lang }: { lang: Lang }) {
 
   return (
     <section className="card p-5 flex flex-col gap-3">
-      <h2 className="brutal-heading text-lg">{t.heading}</h2>
+      <h2 className="section-heading text-lg">{t.heading}</h2>
       <p className="text-sm text-zinc-300">{t.lead}</p>
       {!code && (
         <button
@@ -143,8 +143,8 @@ export function ParentInviteCard({ lang }: { lang: Lang }) {
       )}
       {code && (
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-3 border-2 border-[var(--ink)] p-4 rounded bg-[var(--surface-2)]">
-            <span className="text-3xl font-mono font-black tracking-widest">
+          <div className="flex items-center gap-3 border border-[var(--ink)] p-4 rounded bg-[var(--surface-2)]">
+            <span className="text-3xl font-mono font-semibold">
               {code}
             </span>
             <button

@@ -46,7 +46,7 @@ export default async function ParentPage() {
 
   return (
     <div className="flex flex-col gap-6 animate-slide-up">
-      <h1 className="brutal-heading text-3xl">{copy.heading}</h1>
+      <h1 className="section-heading text-3xl">{copy.heading}</h1>
       <ParentClient
         role={role}
         kids={children}

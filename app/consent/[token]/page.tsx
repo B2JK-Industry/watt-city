@@ -18,7 +18,7 @@ export default async function ConsentPage({
   return (
     <div className="flex flex-col gap-6 animate-slide-up max-w-2xl">
       <header className="flex flex-col gap-2">
-        <h1 className="brutal-heading text-3xl">Zgoda rodzica</h1>
+        <h1 className="section-heading text-3xl">Zgoda rodzica</h1>
         <p className="text-sm text-zinc-400">
           Twoje dziecko zarejestrowało się w Watt City — grze edukacyjnej
           uczącej finansów osobistych. Potwierdź, że wyrażasz zgodę na

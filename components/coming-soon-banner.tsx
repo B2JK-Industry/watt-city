@@ -32,12 +32,12 @@ export function ComingSoonBanner({ lang }: { lang: Lang }) {
     <section
       className="card px-4 py-3 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between"
       style={{
-        borderColor: "var(--neo-pink)",
+        borderColor: "var(--danger)",
         borderLeftWidth: "4px",
       }}
       aria-label="Coming soon"
     >
-      <p className="font-black text-sm sm:text-base tracking-tight">
+      <p className="font-semibold text-sm sm:text-base tracking-tight">
         {t.hero}
       </p>
       <p className="text-xs opacity-80">{t.sub}</p>
@@ -107,7 +107,7 @@ export const COMING_SOON_TILES: ComingSoonTile[] = [
 export function ComingSoonGrid({ lang }: { lang: Lang }) {
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="brutal-heading text-xl">
+      <h2 className="section-heading text-xl">
         🔒 Wkrótce · Coming Soon
       </h2>
       <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -119,7 +119,7 @@ export function ComingSoonGrid({ lang }: { lang: Lang }) {
           >
             <div className="flex items-baseline justify-between">
               <span className="text-3xl">{tile.emoji}</span>
-              <span className="text-[10px] uppercase tracking-widest font-black opacity-60">
+              <span className="text-[10px] font-semibold opacity-60">
                 Wkrótce
               </span>
             </div>

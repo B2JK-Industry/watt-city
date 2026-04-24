@@ -188,11 +188,11 @@ export function CashflowHud({ hud, lang }: Props) {
 
   const severityColor =
     hud.alertLevel === "critical"
-      ? "var(--neo-pink)"
+      ? "var(--danger)"
       : hud.alertLevel === "warn"
         ? "#f97316" // amber
         : hud.alertLevel === "info"
-          ? "var(--neo-cyan)"
+          ? "var(--accent)"
           : "var(--surface)";
 
   return (
@@ -215,13 +215,13 @@ export function CashflowHud({ hud, lang }: Props) {
       aria-label={copy.balance}
     >
       <div
-        className="border-[3px] border-[var(--ink)] shadow-[4px_4px_0_0_var(--ink)] bg-[var(--surface)]"
+        className="border border-[var(--ink)] bg-[var(--surface)]"
         style={{ borderColor: severityColor }}
       >
         {/* Core row: balance + per-hour + watt chip */}
         <div className="flex items-center gap-2 px-2 py-1.5 sm:px-3 sm:py-2">
           <div className="flex-1 flex items-center gap-2 min-w-0">
-            <span className="text-[10px] uppercase opacity-60">
+            <span className="text-[10px] opacity-60">
               {copy.balance}
             </span>
             <span className="font-bold text-sm sm:text-base truncate">
@@ -253,10 +253,10 @@ export function CashflowHud({ hud, lang }: Props) {
             but narrative-incompatible). Single source of truth. */}
         {inDeficit && !hud.brownoutBannerActive && (
           <div
-            className="px-2 py-2 sm:px-3 border-t-2 border-[var(--ink)]"
+            className="px-2 py-2 sm:px-3 border-t border-[var(--ink)]"
             style={{ background: severityColor + "30" }}
           >
-            <div className="font-bold text-[11px] uppercase">
+            <div className="font-bold text-[11px]">
               {hud.watts.brownout <= 0.25
                 ? copy.brownoutSustained
                 : hud.watts.brownout <= 0.5
@@ -283,7 +283,7 @@ export function CashflowHud({ hud, lang }: Props) {
               )}
             <Link
               href="/miasto?build=mala-elektrownia"
-              className="mt-1 inline-flex items-center gap-1 px-2 py-1 border-2 border-[var(--ink)] bg-[var(--neo-yellow,#fde047)] font-bold text-[11px] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[2px_2px_0_0_var(--ink)] transition-transform"
+              className="mt-1 inline-flex items-center gap-1 px-2 py-1 border border-[var(--ink)] bg-[var(--sales)] font-bold text-[11px] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-transform"
             >
               ⚡ {copy.rescueBuild}
             </Link>
@@ -293,7 +293,7 @@ export function CashflowHud({ hud, lang }: Props) {
         {/* Loan-risk banner (secondary — only when no watt deficit) */}
         {!inDeficit && hud.loanRisk.length > 0 && (
           <div
-            className="px-2 py-1.5 sm:px-3 border-t-2 border-[var(--ink)] text-[11px]"
+            className="px-2 py-1.5 sm:px-3 border-t border-[var(--ink)] text-[11px]"
             style={{ background: "#f97316" + "30" }}
           >
             {copy.loanRisk}
@@ -302,7 +302,7 @@ export function CashflowHud({ hud, lang }: Props) {
 
         {/* Stale-state pill */}
         {stale && !inDeficit && hud.loanRisk.length === 0 && (
-          <div className="px-2 py-1 sm:px-3 border-t-2 border-[var(--ink)] flex items-center justify-between text-[11px] opacity-80">
+          <div className="px-2 py-1 sm:px-3 border-t border-[var(--ink)] flex items-center justify-between text-[11px] opacity-80">
             <span>🕓 {copy.stale}</span>
             <button
               type="button"
@@ -328,9 +328,9 @@ function WattChip({
 }) {
   return (
     <span
-      className="inline-flex items-center gap-0.5 font-bold text-[11px] border-2 border-[var(--ink)] px-1.5 py-0.5"
+      className="inline-flex items-center gap-0.5 font-bold text-[11px] border border-[var(--ink)] px-1.5 py-0.5"
       style={{
-        background: inDeficit ? "var(--neo-pink)" : "var(--neo-lime)",
+        background: inDeficit ? "var(--danger)" : "var(--success)",
         color: "#0a0a0f",
       }}
     >

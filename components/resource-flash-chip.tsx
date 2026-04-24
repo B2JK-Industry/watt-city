@@ -38,15 +38,15 @@ export function ResourceFlashChip({ value, icon, color, title }: Props) {
 
   const flashColor =
     flash === "up"
-      ? "var(--neo-lime)"
+      ? "var(--success)"
       : flash === "down"
-        ? "var(--neo-pink)"
+        ? "var(--danger)"
         : "transparent";
 
   return (
     <span
       title={title}
-      className={`flex items-center gap-1 px-2 py-1 rounded border-2 font-mono tabular-nums text-xs bg-[var(--surface)] ${
+      className={`flex items-center gap-1 px-2 py-1 rounded border font-mono tabular-nums text-xs bg-[var(--surface)] ${
         flash ? "motion-safe:animate-[hud-delta-flash_640ms_ease-out]" : ""
       }`}
       style={

@@ -41,17 +41,17 @@ export function LanguageSwitcher({ current }: Props) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-1.5 h-9 px-2.5 border-2 border-[var(--ink)] rounded-lg bg-[var(--surface)] font-bold text-sm shadow-[2px_2px_0_0_var(--ink)] hover:shadow-[3px_3px_0_0_var(--ink)] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all"
+        className="inline-flex items-center gap-1.5 h-9 px-2.5 border border-[var(--ink)] rounded-lg bg-[var(--surface)] font-bold text-sm hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all"
         aria-label={`Language: ${LANG_LABEL[current]}`}
       >
         <span className="text-base">{LANG_FLAG[current]}</span>
-        <span className="hidden sm:inline uppercase tracking-wide">
+        <span className="hidden sm:inline tracking-wide">
           {current}
         </span>
         <span aria-hidden className="text-xs">▾</span>
       </button>
       {open && (
-        <div className="absolute right-0 top-[calc(100%+6px)] min-w-[170px] z-30 rounded-xl border-[3px] border-[var(--ink)] bg-[var(--surface)] shadow-[5px_5px_0_0_var(--ink)] p-1.5 flex flex-col gap-1">
+        <div className="absolute right-0 top-[calc(100%+6px)] min-w-[170px] z-30 rounded-xl border border-[var(--ink)] bg-[var(--surface)] p-1.5 flex flex-col gap-1">
           {LANGS.map((lang) => (
             <button
               key={lang}
@@ -59,7 +59,7 @@ export function LanguageSwitcher({ current }: Props) {
               onClick={() => pick(lang)}
               className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-sm font-semibold text-left ${
                 lang === current
-                  ? "bg-[var(--accent)] text-[#0a0a0f]"
+                  ? "bg-[var(--accent)] text-[var(--foreground)]"
                   : "hover:bg-[var(--surface-2)]"
               }`}
             >

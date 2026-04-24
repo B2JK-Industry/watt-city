@@ -165,7 +165,7 @@ export function WordScrambleClient({ words, dict }: { words: ScrambleWord[]; dic
         </div>
         <input
           ref={inputRef}
-          className={`input text-center text-xl uppercase font-mono tracking-widest ${
+          className={`input text-center text-xl font-mono ${
             flash === "bad"
               ? "border-rose-500 animate-[shake_0.35s]"
               : flash === "ok"

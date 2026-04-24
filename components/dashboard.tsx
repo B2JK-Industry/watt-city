@@ -83,10 +83,10 @@ export function Dashboard({
         <div className="card p-6 sm:p-8 flex flex-col gap-5">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="text-sm uppercase tracking-wider text-zinc-400">
+              <p className="text-sm text-zinc-400">
                 {d.welcome}
               </p>
-              <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight">
+              <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight">
                 {username}
               </h1>
               {/* V3.1: city identity lives in CityLevelCard above the hero;
@@ -122,10 +122,10 @@ export function Dashboard({
                 </defs>
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-[10px] text-zinc-400 uppercase">
+                <span className="text-[10px] text-zinc-400">
                   XP
                 </span>
-                <span className="text-xl font-black leading-none">{level.level}</span>
+                <span className="text-xl font-semibold leading-none">{level.level}</span>
                 <span className="text-[10px] text-zinc-400">{progressPct}%</span>
               </div>
             </div>
@@ -159,7 +159,7 @@ export function Dashboard({
         </div>
 
         <div className="card p-6 flex flex-col gap-3">
-          <h2 className="text-sm uppercase tracking-widest font-black text-[var(--accent)]">
+          <h2 className="text-sm font-semibold text-[var(--accent)]">
             {d.topSilesia}
           </h2>
           {top.length === 0 ? (
@@ -191,7 +191,7 @@ export function Dashboard({
           Players see their actual 20-slot city, not a single growing avatar. */}
       {player && (
         <section className="flex flex-col gap-4">
-          <h2 className="brutal-heading text-xl sm:text-2xl">{d.yourBuildingTitle}</h2>
+          <h2 className="section-heading text-xl sm:text-2xl">{d.yourBuildingTitle}</h2>
           <CitySkylineHero buildings={player.buildings} lang={lang} />
         </section>
       )}
@@ -257,7 +257,7 @@ export function Dashboard({
 
       <section className="flex flex-col gap-4">
         <div className="flex items-end justify-between">
-          <h2 className="brutal-heading text-2xl">{d.cityNightTitle}</h2>
+          <h2 className="section-heading text-2xl">{d.cityNightTitle}</h2>
           <Link
             href="/games"
             className="text-sm text-[var(--accent)] hover:underline"
@@ -270,10 +270,10 @@ export function Dashboard({
 
       <section className="flex flex-col gap-3 card p-5">
         <div className="flex flex-wrap items-center gap-2">
-          <h2 className="brutal-heading text-lg">{d.dataRightsTitle}</h2>
+          <h2 className="section-heading text-lg">{d.dataRightsTitle}</h2>
           <span
             className="brutal-tag"
-            style={{ background: "var(--neo-lime)", color: "#0a0a0f" }}
+            style={{ background: "var(--success)", color: "#0a0a0f" }}
           >
             GDPR
           </span>
@@ -301,20 +301,20 @@ function Stat({
 }) {
   return (
     <div
-      className={`rounded-xl border-[3px] border-[var(--ink)] px-3 py-2 shadow-[3px_3px_0_0_var(--ink)] ${
+      className={`rounded-xl border border-[var(--ink)] px-3 py-2 ${
         accent
-          ? "bg-[var(--accent)] text-[#0a0a0f]"
+          ? "bg-[var(--accent)] text-[var(--foreground)]"
           : "bg-[var(--surface-2)]"
       }`}
     >
       <div
-        className={`text-[10px] uppercase tracking-widest font-bold ${
+        className={`text-[10px] font-bold ${
           accent ? "opacity-70" : "text-zinc-400"
         }`}
       >
         {label}
       </div>
-      <div className="text-xl font-black font-mono">{value}</div>
+      <div className="text-xl font-semibold font-mono">{value}</div>
     </div>
   );
 }

@@ -27,13 +27,13 @@ export default async function StatusPage() {
   return (
     <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex flex-col gap-2">
-        <h1 className="brutal-heading text-3xl">Watt City — status</h1>
+        <h1 className="section-heading text-3xl">Watt City — status</h1>
         <p className="text-xs text-zinc-400">
           Public status page. Generated {new Date(now).toISOString()}.
         </p>
       </header>
       <section className="card p-4 flex flex-col gap-2">
-        <h2 className="text-sm font-black uppercase">Rotation AI</h2>
+        <h2 className="text-sm font-semibold">Rotation AI</h2>
         <p className="text-sm">
           Status:{" "}
           <strong className={rotationOk ? "text-emerald-400" : "text-rose-400"}>
@@ -50,7 +50,7 @@ export default async function StatusPage() {
         )}
       </section>
       <section className="card p-4 flex flex-col gap-1">
-        <h2 className="text-sm font-black uppercase">Komponenty</h2>
+        <h2 className="text-sm font-semibold">Komponenty</h2>
         <ul className="text-xs text-zinc-400 flex flex-col gap-1">
           <li>✅ Storage: Upstash Redis</li>
           <li>✅ Authentication: cookie sessions (scrypt + HMAC)</li>

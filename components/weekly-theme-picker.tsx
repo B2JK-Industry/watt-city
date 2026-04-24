@@ -87,7 +87,7 @@ export function WeeklyThemePicker({
   return (
     <section className="card p-4 flex flex-col gap-3">
       <div className="flex items-baseline justify-between gap-2">
-        <h3 className="text-xs uppercase tracking-widest font-black text-[var(--accent)]">
+        <h3 className="text-xs font-semibold text-[var(--accent)]">
           🧩 Ustaw temat tygodnia
         </h3>
         {currentTheme && (
@@ -104,7 +104,7 @@ export function WeeklyThemePicker({
             setSelectedCode(e.target.value);
             setSaved("idle");
           }}
-          className="bg-[var(--surface-2)] border-2 border-[var(--ink)] rounded p-2 text-sm font-mono"
+          className="bg-[var(--surface-2)] border border-[var(--ink)] rounded p-2 text-sm font-mono"
         >
           <option value="">— wybierz —</option>
           {(Object.keys(byArea) as CurriculumArea[]).map((area) => (
@@ -120,7 +120,7 @@ export function WeeklyThemePicker({
         </select>
       </label>
       {selectedCurriculum && (
-        <div className="text-xs opacity-80 leading-relaxed border-l-2 border-[var(--accent)] pl-3">
+        <div className="text-xs opacity-80 leading-relaxed border-l border-[var(--accent)] pl-3">
           <p>
             <strong>{selectedCurriculum.code}</strong> · {selectedCurriculum.subarea} · klasa{" "}
             {selectedCurriculum.grade}
@@ -154,12 +154,12 @@ export function WeeklyThemePicker({
           </button>
         )}
         {saved === "ok" && (
-          <span className="text-xs text-[var(--neo-lime)] motion-safe:animate-pulse">
+          <span className="text-xs text-[var(--success)] motion-safe:animate-pulse">
             ✅ Zapisano
           </span>
         )}
         {saved === "err" && (
-          <span className="text-xs text-[var(--neo-pink)]">
+          <span className="text-xs text-[var(--danger)]">
             ❌ Błąd zapisu — spróbuj ponownie
           </span>
         )}

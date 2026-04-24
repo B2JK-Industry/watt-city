@@ -23,7 +23,7 @@ export default async function ParentDashboard() {
   if (!kid) {
     return (
       <div className="max-w-md mx-auto flex flex-col gap-4 animate-slide-up">
-        <h1 className="brutal-heading text-3xl">Dashboard rodzica</h1>
+        <h1 className="section-heading text-3xl">Dashboard rodzica</h1>
         <p className="text-sm">Nie jesteś jeszcze połączony z kontem dziecka.</p>
         <Link href="/rodzic/dolacz" className="btn btn-primary self-start">
           Wpisz kod od dziecka
@@ -58,10 +58,10 @@ export default async function ParentDashboard() {
   return (
     <div className="flex flex-col gap-6 animate-slide-up max-w-4xl">
       <header className="flex flex-col gap-1">
-        <p className="text-xs uppercase tracking-widest opacity-60">
+        <p className="text-xs opacity-60">
           Obserwujesz
         </p>
-        <h1 className="brutal-heading text-3xl">
+        <h1 className="section-heading text-3xl">
           {state.profile?.displayName ?? kid}
         </h1>
         <p className="text-xs opacity-70">
@@ -85,7 +85,7 @@ export default async function ParentDashboard() {
       />
 
       <section className="card p-4 flex flex-col gap-2">
-        <h2 className="text-xs uppercase tracking-widest font-black text-[var(--accent)]">
+        <h2 className="text-xs font-semibold text-[var(--accent)]">
           Top 3 budynki
         </h2>
         {state.buildings.length === 0 ? (
@@ -114,10 +114,10 @@ export default async function ParentDashboard() {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="card p-3 text-center">
-      <div className="text-[10px] uppercase tracking-widest opacity-60">
+      <div className="text-[10px] opacity-60">
         {label}
       </div>
-      <div className="text-xl font-black tabular-nums mt-1">{value}</div>
+      <div className="text-xl font-semibold tabular-nums mt-1">{value}</div>
     </div>
   );
 }

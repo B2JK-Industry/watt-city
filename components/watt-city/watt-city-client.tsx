@@ -295,7 +295,7 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
             <span className="font-mono">{state.creditScore}/100</span>
           </span>
         </div>
-        <p className="text-[11px] uppercase tracking-wider text-zinc-400 max-w-md">
+        <p className="text-[11px] text-zinc-400 max-w-md">
           {dict.disclaimer}
         </p>
       </header>
@@ -399,7 +399,7 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
       {selected && selectedSlotDef && (
         <section className="card p-4 flex flex-col gap-3">
           <header className="flex items-center justify-between">
-            <h2 className="text-lg font-black uppercase">
+            <h2 className="text-lg font-semibold">
               {selectedSnap?.building
                 ? (selectedSnap.building.labels?.[lang] ?? selectedSnap.building.catalogId)
                 : `${dict.pickSlot} — #${selectedSlotDef.id}`}
@@ -499,7 +499,7 @@ function BuildingDetail({
       {/* Actionable shortfall — renders only when the player is short on
           the upgrade. Hidden otherwise to keep the common path quiet. */}
       {missingText && (
-        <p className="text-xs text-[var(--neo-orange)]">
+        <p className="text-xs text-[var(--sales)]">
           {dict.insufficientResources.replace("{missing}", missingText)}
         </p>
       )}
@@ -566,12 +566,12 @@ function CatalogList({
           <li
             key={entry.id}
             className={
-              "border-2 border-[var(--ink)]/40 rounded p-3 flex flex-col gap-2 text-sm " +
+              "border border-[var(--ink)]/40 rounded p-3 flex flex-col gap-2 text-sm " +
               (canBuild ? "" : "opacity-60")
             }
           >
             <header className="flex items-center justify-between">
-              <strong className="uppercase text-xs tracking-wider">
+              <strong className="text-xs">
                 {entry.labels[lang]}
               </strong>
               <span className="text-[10px] opacity-70">T{entry.tier}</span>
@@ -591,7 +591,7 @@ function CatalogList({
                 unlocked but short on resources. Tier-locked or coming-soon
                 entries fall through to the <span> below. */}
             {missingText && (
-              <p className="text-[11px] text-[var(--neo-orange)] leading-snug">
+              <p className="text-[11px] text-[var(--sales)] leading-snug">
                 {dict.insufficientResources.replace("{missing}", missingText)}
               </p>
             )}
@@ -663,7 +663,7 @@ function MortgageCard({
   return (
     <section className="card p-4 flex flex-col gap-3">
       <header className="flex items-center justify-between">
-        <h2 className="text-lg font-black uppercase">{dict.mortgageTitle}</h2>
+        <h2 className="text-lg font-semibold">{dict.mortgageTitle}</h2>
         <button
           className="btn btn-ghost text-xs"
           onClick={() => {
@@ -680,7 +680,7 @@ function MortgageCard({
       <p className="text-sm text-zinc-400">{dict.mortgageBody}</p>
 
       {open && (
-        <div className="flex flex-col gap-3 border-t-2 border-[var(--ink)]/30 pt-3">
+        <div className="flex flex-col gap-3 border-t border-[var(--ink)]/30 pt-3">
           <label className="flex flex-col gap-1 text-xs">
             <span>{dict.principal} (W$)</span>
             <input
@@ -777,7 +777,7 @@ function MortgageCard({
 
       {/* Active loan list */}
       <div className="mt-2">
-        <h3 className="text-sm font-black uppercase mb-1">{dict.loansTitle}</h3>
+        <h3 className="text-sm font-semibold mb-1">{dict.loansTitle}</h3>
         {activeLoans.length === 0 ? (
           <p className="text-xs text-zinc-400">{dict.noLoans}</p>
         ) : (

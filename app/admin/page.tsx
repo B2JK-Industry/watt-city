@@ -20,7 +20,7 @@ export default async function AdminHome() {
   if (role !== "admin") {
     return (
       <div className="card p-6 flex flex-col gap-3">
-        <h1 className="text-xl font-black">Admin</h1>
+        <h1 className="text-xl font-semibold">Admin</h1>
         <p className="text-sm text-zinc-400">
           Nie masz roli admin. Jeśli jesteś operatorem, używaj endpointów z
           nagłówkiem <code>Authorization: Bearer $ADMIN_SECRET</code>.
@@ -66,13 +66,13 @@ export default async function AdminHome() {
   return (
     <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex items-center gap-3">
-        <h1 className="brutal-heading text-3xl">Admin</h1>
+        <h1 className="section-heading text-3xl">Admin</h1>
         <span className="chip">role: admin</span>
       </header>
       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {cards.map((c) => (
           <li key={c.href} className="card p-4 flex flex-col gap-1">
-            <Link href={c.href} className="text-lg font-black uppercase underline">
+            <Link href={c.href} className="text-lg font-semibold underline">
               {c.title}
             </Link>
             <p className="text-sm text-zinc-400">{c.body}</p>

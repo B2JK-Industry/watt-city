@@ -93,43 +93,35 @@ export default async function Home() {
   return (
     <div className="flex flex-col gap-12 animate-slide-up">
       <ComingSoonBanner lang={lang} />
-      <section className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-8 items-center">
+      <section className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-10 items-center">
         <div className="flex flex-col gap-6">
           <div className="flex flex-wrap gap-2">
-            <span className="brutal-tag" style={{ background: "var(--neo-cyan)", color: "#0a0a0f" }}>
-              {t.tagTrack}
-            </span>
-            <span className="brutal-tag" style={{ background: "var(--neo-pink)", color: "#0a0a0f" }}>
-              {t.tagEvent}
-            </span>
-            <span className="brutal-tag" style={{ background: "var(--neo-lime)", color: "#0a0a0f" }}>
-              {t.tagPlace}
-            </span>
+            <span className="chip">{t.tagTrack}</span>
+            <span className="chip">{t.tagEvent}</span>
+            <span className="chip">{t.tagPlace}</span>
           </div>
-          <h1 className="text-4xl sm:text-6xl font-black leading-[0.95] uppercase tracking-tight">
-            {t.titleGenerate}{" "}
-            <span className="inline-block bg-[var(--accent)] text-[#0a0a0f] px-3 py-1 border-[3px] border-[var(--ink)] shadow-[6px_6px_0_0_var(--ink)] my-1">
-              {t.titleWatts}
-            </span>
-            . {t.titleBuild}{" "}
-            <span className="inline-block bg-[var(--neo-cyan)] text-[#0a0a0f] px-3 py-1 border-[3px] border-[var(--ink)] shadow-[6px_6px_0_0_var(--ink)] my-1">
-              {t.titleHouse}
-            </span>{" "}
+          <h1 className="t-display text-[var(--accent)]">
+            {t.titleGenerate} <span className="text-[var(--foreground)]">{t.titleWatts}</span>
+            . {t.titleBuild} <span className="text-[var(--foreground)]">{t.titleHouse}</span>{" "}
             {t.titleIn}
           </h1>
-          <p className="text-lg text-zinc-300 max-w-xl">
+          <p className="t-body-lg text-[var(--ink-muted)] max-w-xl">
             {bodyParts.map((part, i) => {
               if (part === "§WATTS§")
                 return (
-                  <strong key={i} className="text-[var(--accent)]">
+                  <strong key={i} className="text-[var(--foreground)] font-semibold">
                     {t.bodyWatts}
                   </strong>
                 );
               if (part === "§SINGLE§")
-                return <strong key={i}>{t.bodySingle}</strong>;
+                return (
+                  <strong key={i} className="text-[var(--foreground)] font-semibold">
+                    {t.bodySingle}
+                  </strong>
+                );
               if (part === "§VARSO§")
                 return (
-                  <strong key={i} className="text-[var(--neo-cyan)]">
+                  <strong key={i} className="text-[var(--accent)] font-semibold">
                     {t.bodyVarso}
                   </strong>
                 );
@@ -137,70 +129,71 @@ export default async function Home() {
             })}
           </p>
           <div className="flex flex-wrap gap-3">
-            <Link href="/register" className="btn btn-primary">
+            <Link href="/register" className="btn btn-sales">
               {t.ctaRegister}
             </Link>
-            <Link href="/o-platforme" className="btn btn-cyan">
+            <Link href="/o-platforme" className="btn btn-secondary">
               {t.ctaAbout}
             </Link>
             <Link href="/games" className="btn btn-ghost">
               {t.ctaGames}
             </Link>
           </div>
-          <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+          <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {GAMES.slice(0, 4).map((g) => (
-              <li key={g.id} className="card p-3 flex items-center gap-2">
+              <li key={g.id} className="card card--interactive p-4 flex items-center gap-3">
                 <span
-                  className={`w-8 h-8 rounded-lg bg-gradient-to-br ${g.accent} flex items-center justify-center`}
+                  aria-hidden
+                  className="w-10 h-10 rounded-md flex items-center justify-center bg-[var(--surface-2)] border border-[var(--line)] text-lg"
                 >
                   {g.emoji}
                 </span>
-                <span className="font-medium">{g.title}</span>
+                <span className="t-body-sm font-medium text-[var(--foreground)]">{g.title}</span>
               </li>
             ))}
           </ul>
         </div>
-        <div className="card p-6">
-          <h2 className="text-sm uppercase tracking-wider text-zinc-400 mb-3">
+        <div className="card card--elevated">
+          <h2 className="t-overline text-[var(--ink-muted)] mb-3">
             {showCities
               ? { pl: "Trzy największe miasta", uk: "Три найбільші міста", cs: "Tři největší města", en: "Top 3 cities" }[lang]
               : t.topTitle}
           </h2>
           {showCities ? (
-            <ol className="flex flex-col gap-2">
+            <ol className="flex flex-col">
               {cities.map((c, i) => (
                 <li
                   key={c.username}
-                  className="flex items-center justify-between py-2 border-b border-[var(--border)]/60 last:border-b-0"
+                  className="flex items-center justify-between py-3 border-b border-[var(--line)] last:border-b-0"
                 >
                   <span className="flex items-center gap-3">
-                    <span className="w-6 text-center font-bold opacity-70">
+                    <span className="w-6 text-center t-body-sm text-[var(--ink-muted)]">
                       #{i + 1}
                     </span>
-                    <span>{c.username}</span>
+                    <span className="t-body text-[var(--foreground)]">{c.username}</span>
                   </span>
-                  <span className="font-mono font-semibold text-[var(--neo-cyan)]">
+                  <span className="tabular-nums font-semibold text-[var(--accent)]">
                     {Math.floor(c.xp).toLocaleString("pl-PL")} W$
                   </span>
                 </li>
               ))}
             </ol>
           ) : v1Fallback.length === 0 ? (
-            <p className="text-zinc-400 text-sm">{t.topEmpty}</p>
+            <p className="t-body-sm text-[var(--ink-muted)]">{t.topEmpty}</p>
           ) : (
-            <ol className="flex flex-col gap-2">
+            <ol className="flex flex-col">
               {v1Fallback.slice(0, 3).map((e) => (
                 <li
                   key={e.username}
-                  className="flex items-center justify-between py-2 border-b border-[var(--border)]/60 last:border-b-0"
+                  className="flex items-center justify-between py-3 border-b border-[var(--line)] last:border-b-0"
                 >
                   <span className="flex items-center gap-3">
-                    <span className="w-6 text-center font-bold opacity-70">
+                    <span className="w-6 text-center t-body-sm text-[var(--ink-muted)]">
                       #{e.rank}
                     </span>
-                    <span>{e.username}</span>
+                    <span className="t-body text-[var(--foreground)]">{e.username}</span>
                   </span>
-                  <span className="font-mono font-semibold text-[var(--accent)]">
+                  <span className="tabular-nums font-semibold text-[var(--accent)]">
                     {e.xp.toLocaleString("pl-PL")} W
                   </span>
                 </li>
@@ -211,8 +204,8 @@ export default async function Home() {
       </section>
 
       <section className="flex flex-col gap-4">
-        <h2 className="brutal-heading text-2xl">{t.scenesTitle}</h2>
-        <p className="text-zinc-400 max-w-xl -mt-2">{t.scenesBody}</p>
+        <h2 className="section-heading">{t.scenesTitle}</h2>
+        <p className="t-body-lg text-[var(--ink-muted)] max-w-xl -mt-2">{t.scenesBody}</p>
         <CityScene interactive={false} compact aiGames={cityAiGames} />
       </section>
     </div>
