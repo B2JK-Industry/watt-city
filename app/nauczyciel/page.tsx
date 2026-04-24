@@ -30,13 +30,13 @@ export default async function TeacherDashboard() {
 
       <header className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-2">
-          <p className="text-xs text-zinc-400">
+          <p className="text-xs text-[var(--ink-muted)]">
             Witaj, nauczycielu
           </p>
           <h1 className="section-heading text-3xl sm:text-4xl">
             {teacher?.displayName ?? session.username}
           </h1>
-          <p className="text-sm text-zinc-300">
+          <p className="text-sm text-[var(--ink-muted)]">
             {teacher?.schoolName ?? "Szkoła"} ·{" "}
             <span className="opacity-70">
               {classes.length === 0
@@ -52,7 +52,7 @@ export default async function TeacherDashboard() {
       <section className="flex flex-col gap-3">
         <h2 className="section-heading text-xl">Twoje klasy</h2>
         {classes.length === 0 ? (
-          <p className="text-sm text-zinc-400 italic">
+          <p className="text-sm text-[var(--ink-muted)] italic">
             Nie masz jeszcze klasy. Utwórz pierwszą poniżej.
           </p>
         ) : (

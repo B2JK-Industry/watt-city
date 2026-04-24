@@ -194,10 +194,10 @@ export function EnergyDashClient({ dict }: { dict: Dict }) {
         <div className="flex flex-wrap gap-4">
           <div className="flex-1 min-w-[220px]">
             <h2 className="text-xl font-semibold">{t.ready}</h2>
-            <p className="text-zinc-400 mt-2">{t.readyBody}</p>
+            <p className="text-[var(--ink-muted)] mt-2">{t.readyBody}</p>
           </div>
-          <div className="flex-1 min-w-[220px] flex flex-col gap-2 text-sm text-zinc-300">
-            <span className="text-xs text-zinc-400">
+          <div className="flex-1 min-w-[220px] flex flex-col gap-2 text-sm text-[var(--ink-muted)]">
+            <span className="text-xs text-[var(--ink-muted)]">
               {t.comboBonus}
             </span>
             <div className="grid grid-cols-3 gap-2 text-center">
@@ -207,7 +207,7 @@ export function EnergyDashClient({ dict }: { dict: Dict }) {
               <div className="rounded-lg bg-[var(--surface-2)] px-2 py-1 border border-[var(--accent-2)]/50 text-[var(--accent-2)]">
                 10+ = <strong>×2</strong>
               </div>
-              <div className="rounded-lg bg-[var(--surface-2)] px-2 py-1 border border-rose-400/50 text-rose-300">
+              <div className="rounded-lg bg-[var(--surface-2)] px-2 py-1 border border-[var(--danger)] text-[var(--danger)]">
                 20+ = <strong>×3</strong>
               </div>
             </div>
@@ -274,8 +274,8 @@ export function EnergyDashClient({ dict }: { dict: Dict }) {
                   aria-label={tile.label}
                   className={`absolute inset-0 rounded-xl flex items-center justify-center text-3xl sm:text-4xl transition-transform active:scale-90 ${
                     tile.kind === "oze"
-                      ? "bg-gradient-to-br from-emerald-400/30 to-emerald-600/20 border border-emerald-400/60 text-emerald-100"
-                      : "bg-gradient-to-br from-zinc-700/50 to-zinc-900/80 border border-zinc-500/60 text-zinc-100"
+                      ? "bg-gradient-to-br from-emerald-400/30 to-emerald-600/20 border border-[var(--success)] text-[var(--success)]"
+                      : "bg-gradient-to-br from-[var(--surface-2)] to-[var(--surface-2)] border border-[var(--line)]/60 text-[var(--foreground)]"
                   }`}
                 >
                   <span>{tile.icon}</span>
@@ -286,7 +286,7 @@ export function EnergyDashClient({ dict }: { dict: Dict }) {
         })}
         <FloatingFxLayer items={fxItems} />
       </div>
-      <p className="text-xs text-zinc-400">{t.footNote}</p>
+      <p className="text-xs text-[var(--ink-muted)]">{t.footNote}</p>
     </div>
   );
 }

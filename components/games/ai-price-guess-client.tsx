@@ -112,7 +112,7 @@ export function AiPriceGuessClient({
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex items-center justify-between text-sm text-zinc-400">
+      <div className="flex items-center justify-between text-sm text-[var(--ink-muted)]">
         <span>
           {t.progress
             .replace("{i}", String(index + 1))
@@ -126,7 +126,7 @@ export function AiPriceGuessClient({
 
       <div className="card p-6 flex flex-col gap-4">
         <p className="text-lg font-semibold">{current.prompt}</p>
-        <p className="text-xs text-zinc-400">
+        <p className="text-xs text-[var(--ink-muted)]">
           {t.guessHint.replace(
             "{pct}",
             String(Math.round(current.tolerancePct * 100)),
@@ -135,7 +135,7 @@ export function AiPriceGuessClient({
 
         {phase === "playing" && (
           <form onSubmit={onSubmit} className="flex flex-col gap-3">
-            <label className="text-sm text-zinc-400">
+            <label className="text-sm text-[var(--ink-muted)]">
               {t.guessLabel.replace("{unit}", current.unit)}
             </label>
             <div className="flex gap-3">
@@ -160,14 +160,14 @@ export function AiPriceGuessClient({
             <div
               className={`rounded-xl p-3 border ${
                 isWithin
-                  ? "border-emerald-500/40 bg-emerald-500/5"
-                  : "border-rose-500/40 bg-rose-500/5"
+                  ? "border-[var(--success)] bg-[color-mix(in_oklab,var(--success)_12%,white)]"
+                  : "border-[var(--danger)] bg-[color-mix(in_oklab,var(--danger)_12%,white)]"
               }`}
             >
               <p className="font-semibold mb-1">
                 {isWithin ? t.correctMark : t.wrongMark}
               </p>
-              <p className="text-sm text-zinc-300">
+              <p className="text-sm text-[var(--ink-muted)]">
                 {t.truthLabel}:{" "}
                 <strong className="font-mono">
                   {current.truth} {current.unit}
@@ -175,7 +175,7 @@ export function AiPriceGuessClient({
                 {lastGuess !== null && (
                   <>
                     {" · "}
-                    <span className="text-zinc-400">
+                    <span className="text-[var(--ink-muted)]">
                       Δ {(lastGuess - current.truth).toFixed(2)} {current.unit}
                     </span>
                   </>

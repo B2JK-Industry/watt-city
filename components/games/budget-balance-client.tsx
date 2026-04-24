@@ -111,7 +111,7 @@ export function BudgetBalanceClient({
     return (
       <div className="flex flex-col gap-4">
         <div className="card p-5 bg-gradient-to-br from-[var(--surface)] to-[var(--surface-2)]">
-          <p className="text-sm text-zinc-400 mb-1">{t.takeaway}</p>
+          <p className="text-sm text-[var(--ink-muted)] mb-1">{t.takeaway}</p>
           <p className="text-base">💡 {scenario.takeaway}</p>
         </div>
         <RoundResult
@@ -129,7 +129,7 @@ export function BudgetBalanceClient({
     <div className="flex flex-col gap-5">
       <div className="card p-5 flex flex-col gap-2">
         <span className="chip w-fit">{scenario.title}</span>
-        <p className="text-sm text-zinc-300">{scenario.persona}</p>
+        <p className="text-sm text-[var(--ink-muted)]">{scenario.persona}</p>
         <p className="font-mono text-xl font-bold">
           {formatMoney(scenario.income)} {t.incomeMonthly}
         </p>
@@ -137,12 +137,12 @@ export function BudgetBalanceClient({
 
       <div className="card p-5 flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-zinc-400">{t.distribution}</span>
+          <span className="text-sm text-[var(--ink-muted)]">{t.distribution}</span>
           <span
             className={`chip ${
               isValid
-                ? "border-emerald-400 text-emerald-300"
-                : "border-rose-400 text-rose-300"
+                ? "border-[var(--success)] text-[var(--success)]"
+                : "border-[var(--danger)] text-[var(--danger)]"
             }`}
           >
             {t.total} <strong>{total}%</strong>
@@ -177,11 +177,11 @@ export function BudgetBalanceClient({
                   <span className="flex items-center gap-2">
                     <span>{tgt.emoji}</span>
                     <strong>{tgt.label}</strong>
-                    <span className="text-zinc-400 text-xs">· {tgt.hint}</span>
+                    <span className="text-[var(--ink-muted)] text-xs">· {tgt.hint}</span>
                   </span>
                   <span
                     className={`font-mono ${
-                      inBand ? "text-emerald-300" : "text-zinc-300"
+                      inBand ? "text-[var(--success)]" : "text-[var(--ink-muted)]"
                     }`}
                   >
                     {pct}% · {formatMoney(amount)}
@@ -198,14 +198,14 @@ export function BudgetBalanceClient({
                     className="w-full accent-[var(--accent)]"
                   />
                   <div
-                    className="absolute top-1/2 -translate-y-1/2 h-1.5 pointer-events-none bg-emerald-400/30 rounded-full"
+                    className="absolute top-1/2 -translate-y-1/2 h-1.5 pointer-events-none bg-[color-mix(in_oklab,var(--success)_12%,white)] rounded-full"
                     style={{
                       left: `${tgt.min}%`,
                       width: `${tgt.max - tgt.min}%`,
                     }}
                   />
                 </div>
-                <div className="text-[11px] text-zinc-400">
+                <div className="text-[11px] text-[var(--ink-muted)]">
                   {t.recommendation
                     .replace("{min}", String(tgt.min))
                     .replace("{max}", String(tgt.max))}
@@ -217,7 +217,7 @@ export function BudgetBalanceClient({
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="text-sm text-zinc-400">
+        <div className="text-sm text-[var(--ink-muted)]">
           {t.projection}{" "}
           <strong className="text-[var(--accent)] font-mono">
             {projectedXp}/{XP_CAP}

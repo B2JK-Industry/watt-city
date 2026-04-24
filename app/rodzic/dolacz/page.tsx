@@ -37,7 +37,7 @@ export default function ParentJoinPage() {
     <div className="max-w-md mx-auto flex flex-col gap-5 animate-slide-up">
       <header>
         <h1 className="section-heading text-3xl">Dołącz jako rodzic</h1>
-        <p className="text-sm text-zinc-300 mt-2">
+        <p className="text-sm text-[var(--ink-muted)] mt-2">
           Twoje dziecko wygenerowało w swoim profilu 6-znakowy kod. Wpisz
           go poniżej, żeby obserwować jego postępy.
         </p>
@@ -57,11 +57,11 @@ export default function ParentJoinPage() {
             className="border border-[var(--ink)] bg-[var(--surface)] px-3 py-3 rounded font-mono text-xl text-center"
           />
         </label>
-        {error && <p className="text-rose-500 text-sm">Błąd: {error}</p>}
+        {error && <p className="text-[var(--danger)] text-sm">Błąd: {error}</p>}
         <button type="submit" disabled={busy} className="btn btn-primary disabled:opacity-50">
           {busy ? "Łączę…" : "Zacznij obserwować"}
         </button>
-        <p className="text-[11px] text-zinc-400 leading-snug mt-2">
+        <p className="text-[11px] text-[var(--ink-muted)] leading-snug mt-2">
           Twój dostęp jest tylko do odczytu (tryb obserwatora). Nie możesz
           edytować konta dziecka. Dziecko kontroluje, co widzisz, w swoich
           ustawieniach prywatności.

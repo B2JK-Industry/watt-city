@@ -227,7 +227,7 @@ function MemoryCard({ card, onClick, hiddenLabel }: { card: Card; onClick: () =>
         <span
           className={`absolute inset-0 flex items-center justify-center text-center p-3 ${
             isDefinition
-              ? "bg-emerald-500 text-[var(--foreground)] text-xs sm:text-sm font-semibold leading-snug"
+              ? "bg-[var(--success)] text-[var(--foreground)] text-xs sm:text-sm font-semibold leading-snug"
               : "bg-[var(--surface-2)] text-[var(--foreground)] text-base sm:text-lg font-semibold tracking-tight"
           }`}
         >

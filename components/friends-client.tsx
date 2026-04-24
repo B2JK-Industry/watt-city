@@ -73,7 +73,7 @@ export function FriendsClient({ copy }: { copy: Copy }) {
     }
   };
 
-  if (!data) return <p className="text-zinc-400 text-sm">…</p>;
+  if (!data) return <p className="text-[var(--ink-muted)] text-sm">…</p>;
 
   return (
     <div className="flex flex-col gap-6">
@@ -94,7 +94,7 @@ export function FriendsClient({ copy }: { copy: Copy }) {
             {copy.send}
           </button>
         </div>
-        {error && <p className="text-rose-400 text-xs">{error}</p>}
+        {error && <p className="text-[var(--danger)] text-xs">{error}</p>}
       </section>
 
       {data.inbox.length > 0 && (
@@ -123,7 +123,7 @@ export function FriendsClient({ copy }: { copy: Copy }) {
           {copy.friendsLabel} · {data.friends.length}
         </h2>
         {data.friends.length === 0 ? (
-          <p className="text-xs text-zinc-400">{copy.empty}</p>
+          <p className="text-xs text-[var(--ink-muted)]">{copy.empty}</p>
         ) : (
           <ul className="flex flex-col gap-2">
             {data.friends.map((u) => (
@@ -146,7 +146,7 @@ export function FriendsClient({ copy }: { copy: Copy }) {
       </section>
 
       {data.outgoing.length > 0 && (
-        <section className="card p-4 flex flex-col gap-1 text-xs text-zinc-400">
+        <section className="card p-4 flex flex-col gap-1 text-xs text-[var(--ink-muted)]">
           <h3 className="text-sm font-semibold">{copy.outgoingLabel}</h3>
           {data.outgoing.map((u) => (
             <span key={u}>→ {u}</span>

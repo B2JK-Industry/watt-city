@@ -89,7 +89,7 @@ export default async function MarketplacePage() {
         <span className="chip">Tier T{tier}</span>
       </header>
       {tier < 7 ? (
-        <div className="card p-6 text-sm text-amber-300">🔒 {copy.tierGate}</div>
+        <div className="card p-6 t-body font-medium text-[var(--foreground)]">🔒 {copy.tierGate}</div>
       ) : (
         <MarketplaceClient
           username={session.username}

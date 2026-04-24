@@ -151,7 +151,7 @@ export function CurrencyRushClient({ dict }: { dict: Dict }) {
     return (
       <div className="card p-8 flex flex-col items-start gap-4">
         <h2 className="text-xl font-semibold">{t.ready}</h2>
-        <p className="text-zinc-400">{t.readyBody}</p>
+        <p className="text-[var(--ink-muted)]">{t.readyBody}</p>
         <button type="button" className="btn btn-primary" onClick={start}>
           {t.startShort}
         </button>
@@ -201,22 +201,22 @@ export function CurrencyRushClient({ dict }: { dict: Dict }) {
       </div>
       <form onSubmit={onSubmit} className="card p-6 sm:p-8 flex flex-col gap-5">
         <div className="flex flex-col gap-2 items-center">
-          <span className="text-xs text-zinc-400">
+          <span className="text-xs text-[var(--ink-muted)]">
             {problem.pair.label} · tolerancia ±2 %
           </span>
           <div
             className={`text-center text-4xl sm:text-5xl font-mono font-bold transition-colors ${
               lastResult === "ok"
-                ? "text-emerald-400"
+                ? "text-[var(--success)]"
                 : lastResult === "bad"
-                ? "text-rose-400"
+                ? "text-[var(--danger)]"
                 : ""
             }`}
           >
             {problem.amount} {problem.pair.from} → ? {problem.pair.to}
           </div>
           {lastResult === "bad" && lastAnswerShown && (
-            <span className="text-xs text-rose-300">
+            <span className="text-xs text-[var(--danger)]">
               Správne: {lastAnswerShown}
             </span>
           )}

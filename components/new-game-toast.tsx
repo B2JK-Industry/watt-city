@@ -82,7 +82,7 @@ export function NewGameToast({
             {newChallengeLabel}
           </strong>
           <span className="text-sm font-bold mt-0.5">{payload.title}</span>
-          <span className="text-xs text-zinc-400">{payload.theme}</span>
+          <span className="text-xs text-[var(--ink-muted)]">{payload.theme}</span>
         </div>
       </div>
       <div className="flex gap-2">

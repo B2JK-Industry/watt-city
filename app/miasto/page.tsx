@@ -266,7 +266,7 @@ export default async function MiastoPage() {
     <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex flex-col gap-1">
         <h1 className="section-heading text-3xl">{dict.heading}</h1>
-        <p className="text-sm text-zinc-400">{dict.intro}</p>
+        <p className="text-sm text-[var(--ink-muted)]">{dict.intro}</p>
       </header>
       <WattCityClient
         bootstrap={{
@@ -438,7 +438,7 @@ function ComingSoonSection({ lang }: { lang: Lang }) {
               </strong>
               <span className="ml-auto text-[10px]">🔒</span>
             </div>
-            <p className="text-xs leading-snug text-zinc-400">
+            <p className="text-xs leading-snug text-[var(--ink-muted)]">
               {t.teasers[lang]}
             </p>
           </li>

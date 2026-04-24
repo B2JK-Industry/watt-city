@@ -130,7 +130,7 @@ export function PostGameBreakdown({
         {breakdown.capped && (
           <p
             className="text-xs px-2 py-1 border border-[var(--ink)]"
-            style={{ background: "var(--danger)", color: "#0a0a0f" }}
+            style={{ background: "var(--danger)", color: "var(--accent-ink)" }}
           >
             {t.capNote}
           </p>
@@ -152,7 +152,7 @@ export function PostGameBreakdown({
           </ul>
         )}
 
-        <p className="text-[11px] text-zinc-400 leading-snug">{t.explainer}</p>
+        <p className="text-[11px] text-[var(--ink-muted)] leading-snug">{t.explainer}</p>
 
         <button
           type="button"

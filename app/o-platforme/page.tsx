@@ -18,7 +18,7 @@ export default async function AboutPage() {
     <div className="flex flex-col gap-10 animate-slide-up max-w-4xl">
       <header className="flex flex-col gap-3">
         {lang !== "pl" && (
-          <p className="text-xs text-zinc-400 italic">{t.note}</p>
+          <p className="text-xs text-[var(--ink-muted)] italic">{t.note}</p>
         )}
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="section-heading text-3xl sm:text-5xl">
@@ -26,24 +26,24 @@ export default async function AboutPage() {
           </h1>
           <span
             className="brutal-tag"
-            style={{ background: "var(--accent)", color: "#0a0a0f" }}
+            style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
           >
             PKO XP · Gaming
           </span>
           <span
             className="brutal-tag"
-            style={{ background: "var(--accent)", color: "#0a0a0f" }}
+            style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
           >
             ETHSilesia 2026
           </span>
           <span
             className="brutal-tag"
-            style={{ background: "var(--danger)", color: "#0a0a0f" }}
+            style={{ background: "var(--danger)", color: "var(--accent-ink)" }}
           >
             Katowice
           </span>
         </div>
-        <p className="text-lg text-zinc-300 max-w-3xl">{t.heroBody}</p>
+        <p className="text-lg text-[var(--ink-muted)] max-w-3xl">{t.heroBody}</p>
         {session && (
           <div className="flex">
             <OpenTutorialButton lang={lang} />
@@ -54,7 +54,7 @@ export default async function AboutPage() {
       {/* -------- Myšlienka -------- */}
       <section className="flex flex-col gap-4">
         <h2 className="section-heading text-2xl">{t.ideaTitle}</h2>
-        <div className="card p-6 flex flex-col gap-3 text-zinc-300">
+        <div className="card p-6 flex flex-col gap-3 text-[var(--ink-muted)]">
           <p>
             {t.ideaBody1}{" "}
             <a
@@ -81,7 +81,7 @@ export default async function AboutPage() {
           No hardcoded locale lives here anymore. */}
       <section className="flex flex-col gap-4">
         <h2 className="section-heading text-2xl">{t.scienceTitle}</h2>
-        <div className="card p-6 flex flex-col gap-4 text-zinc-300">
+        <div className="card p-6 flex flex-col gap-4 text-[var(--ink-muted)]">
           <p>{t.scienceIntro}</p>
           <ul className="list-disc pl-6 space-y-3">
             {t.scienceBullets.map((bullet) => (
@@ -99,7 +99,7 @@ export default async function AboutPage() {
               </li>
             ))}
           </ul>
-          <p className="text-sm text-zinc-400 italic">
+          <p className="text-sm text-[var(--ink-muted)] italic">
             {t.scienceConclusion}
           </p>
         </div>
@@ -125,7 +125,7 @@ export default async function AboutPage() {
           leak in this file anymore. */}
       <section className="flex flex-col gap-4">
         <h2 className="section-heading text-2xl">{t.pipelineTitle}</h2>
-        <div className="card p-6 flex flex-col gap-5 text-zinc-300">
+        <div className="card p-6 flex flex-col gap-5 text-[var(--ink-muted)]">
           <p>{t.pipelineIntro}</p>
 
           <div className="rounded-2xl border border-[var(--ink)] bg-[var(--surface-2)] p-5 sm:p-6">
@@ -147,7 +147,7 @@ export default async function AboutPage() {
                     <p className="font-semibold text-sm leading-tight">
                       {step.label}
                     </p>
-                    <p className="text-[11px] text-zinc-400 leading-tight">
+                    <p className="text-[11px] text-[var(--ink-muted)] leading-tight">
                       {step.meta}
                     </p>
                   </div>
@@ -179,7 +179,7 @@ export default async function AboutPage() {
             <strong>{t.pipelineSecurityLabel}</strong> {t.pipelineSecurityBody}
           </div>
 
-          <p className="text-xs text-zinc-400">
+          <p className="text-xs text-[var(--ink-muted)]">
             Source of truth:{" "}
             <a
               href="https://github.com/B2JK-Industry/watt-city/tree/main/lib/ai-pipeline"
@@ -226,11 +226,11 @@ export default async function AboutPage() {
               </span>
               <div className="flex flex-col gap-1">
                 <p className="font-bold text-base leading-tight">{row.title}</p>
-                <p className="text-sm text-zinc-300">
+                <p className="text-sm text-[var(--ink-muted)]">
                   <span className="opacity-60">{t.tiersUnlockLabel} </span>
                   <strong>{row.unlock}</strong>
                 </p>
-                <p className="text-[11px] text-zinc-400 italic leading-snug">
+                <p className="text-[11px] text-[var(--ink-muted)] italic leading-snug">
                   💡 {row.eduMoment}
                 </p>
               </div>
@@ -259,20 +259,20 @@ export default async function AboutPage() {
       {/* -------- Tím -------- */}
       <section className="flex flex-col gap-4">
         <h2 className="section-heading text-2xl">{t.teamTitle}</h2>
-        <div className="card p-6 flex flex-col gap-3 text-zinc-300">
+        <div className="card p-6 flex flex-col gap-3 text-[var(--ink-muted)]">
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-3xl">🛠️</span>
             <div>
               <p className="font-semibold text-lg tracking-tight">
                 B2JK-Industry
               </p>
-              <p className="text-xs text-zinc-400">
+              <p className="text-xs text-[var(--ink-muted)]">
                 Hackathonový tím · ETHSilesia 2026 · Katowice
               </p>
             </div>
           </div>
           <p>{t.teamBody}</p>
-          <p className="text-sm text-zinc-400">
+          <p className="text-sm text-[var(--ink-muted)]">
             Kontakt:{" "}
             <a
               href="https://github.com/B2JK-Industry"
@@ -290,7 +290,7 @@ export default async function AboutPage() {
       {/* -------- Sponzori / thanks -------- */}
       <section className="flex flex-col gap-4">
         <h2 className="section-heading text-2xl">{t.sponsorsTitle}</h2>
-        <div className="card p-6 flex flex-col gap-3 text-sm text-zinc-300">
+        <div className="card p-6 flex flex-col gap-3 text-sm text-[var(--ink-muted)]">
           <p>{t.sponsorsBody}</p>
           <p>
             {t.sponsorsStack}{" "}
@@ -301,7 +301,7 @@ export default async function AboutPage() {
               /ochrana-sukromia
             </Link>
           </p>
-          <p className="text-xs text-zinc-400">
+          <p className="text-xs text-[var(--ink-muted)]">
             Vďaka: PKO Bank Polski · Tauron · ETHWarsaw · AKMF ·
             Katowicki.Hub.
           </p>
@@ -316,12 +316,12 @@ export default async function AboutPage() {
             {t.web3StatusLabel} {t.web3StatusValue}
           </span>
         </div>
-        <p className="text-sm text-zinc-300 leading-relaxed">{t.web3Body}</p>
+        <p className="text-sm text-[var(--ink-muted)] leading-relaxed">{t.web3Body}</p>
         <div className="flex flex-col gap-1">
           <h3 className="text-xs font-semibold">
             {t.web3TenetsTitle}
           </h3>
-          <ul className="list-disc pl-6 space-y-1 text-sm text-zinc-300">
+          <ul className="list-disc pl-6 space-y-1 text-sm text-[var(--ink-muted)]">
             {t.web3Tenets.map((line, i) => (
               <li key={i}>{line}</li>
             ))}
@@ -352,14 +352,14 @@ export default async function AboutPage() {
       {/* -------- Roadmap -------- */}
       <section className="flex flex-col gap-4">
         <h2 className="section-heading text-2xl">{t.roadmapTitle}</h2>
-        <ul className="list-disc pl-6 space-y-2 text-sm text-zinc-300">
+        <ul className="list-disc pl-6 space-y-2 text-sm text-[var(--ink-muted)]">
           {t.roadmap.map((line, i) => (
             <li key={i}>{line}</li>
           ))}
         </ul>
       </section>
 
-      <footer className="text-xs text-zinc-400 border-t border-[var(--ink)]/30 pt-4 flex flex-wrap gap-4">
+      <footer className="text-xs text-[var(--ink-muted)] border-t border-[var(--ink)]/30 pt-4 flex flex-wrap gap-4">
         <Link href="/" className="underline">Späť na domov</Link>
         <Link href="/ochrana-sukromia" className="underline">Ochrana súkromia</Link>
         <a
@@ -382,7 +382,7 @@ function StepCard({ n, title, body }: { n: number; title: string; body: string }
         {n}
       </span>
       <h3 className="text-lg font-semibold tracking-tight">{title}</h3>
-      <p className="text-sm text-zinc-400">{body}</p>
+      <p className="text-sm text-[var(--ink-muted)]">{body}</p>
     </div>
   );
 }
@@ -406,7 +406,7 @@ function PipelineStep({
           {name}
         </h4>
       </div>
-      <ul className="list-disc pl-5 space-y-0.5 text-xs text-zinc-400">
+      <ul className="list-disc pl-5 space-y-0.5 text-xs text-[var(--ink-muted)]">
         {detail.map((d, i) => (
           <li key={i}>{d}</li>
         ))}
@@ -419,7 +419,7 @@ function TechItem({ name, note }: { name: string; note: string }) {
   return (
     <div className="rounded-xl border border-[var(--ink)] bg-[var(--surface)] p-3">
       <p className="font-semibold tracking-tight">{name}</p>
-      <p className="text-xs text-zinc-400">{note}</p>
+      <p className="text-xs text-[var(--ink-muted)]">{note}</p>
     </div>
   );
 }

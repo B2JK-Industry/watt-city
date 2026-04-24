@@ -146,15 +146,15 @@ export function AiScrambleClient({
       </div>
 
       <div className="card p-6 flex flex-col gap-5 items-center">
-        <p className="text-sm text-zinc-400 text-center max-w-md">
+        <p className="text-sm text-[var(--ink-muted)] text-center max-w-md">
           {current.hint}
         </p>
         <p
           className={`text-4xl sm:text-5xl font-semibold tracking-[0.25em] font-mono transition ${
             flash === "ok"
-              ? "text-emerald-300"
+              ? "text-[var(--success)]"
               : flash === "bad"
-                ? "text-rose-300"
+                ? "text-[var(--danger)]"
                 : ""
           }`}
         >

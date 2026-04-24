@@ -68,7 +68,7 @@ export default async function ClassDetailPage({
       <section className="card p-4 flex flex-col gap-3">
         <h2 className="text-lg font-semibold">{copy.leaderboard}</h2>
         <ol className="flex flex-col gap-1 text-sm">
-          {rows.length === 0 && <li className="text-xs text-zinc-400">—</li>}
+          {rows.length === 0 && <li className="text-xs text-[var(--ink-muted)]">—</li>}
           {rows.map((r, i) => (
             <li
               key={r.username}
@@ -89,14 +89,14 @@ export default async function ClassDetailPage({
       <section className="card p-4 flex flex-col gap-1">
         <h2 className="text-sm font-semibold">{copy.qofweek}</h2>
         <p className="text-sm">
-          {cls.qOfWeekTheme ?? <span className="text-zinc-400">{copy.noQ}</span>}
+          {cls.qOfWeekTheme ?? <span className="text-[var(--ink-muted)]">{copy.noQ}</span>}
         </p>
       </section>
 
       <section className="card p-4 flex flex-col gap-1">
         <h2 className="text-sm font-semibold">{copy.curriculum}</h2>
         {cls.curriculum.length === 0 ? (
-          <p className="text-xs text-zinc-400">—</p>
+          <p className="text-xs text-[var(--ink-muted)]">—</p>
         ) : (
           <div className="flex flex-wrap gap-1">
             {cls.curriculum.map((t) => (
@@ -108,8 +108,8 @@ export default async function ClassDetailPage({
         )}
       </section>
 
-      <section className="card p-4 flex flex-col gap-1 text-xs text-zinc-400">
-        <h2 className="text-sm font-semibold text-zinc-200">{copy.export}</h2>
+      <section className="card p-4 flex flex-col gap-1 text-xs text-[var(--ink-muted)]">
+        <h2 className="text-sm font-semibold text-[var(--foreground)]">{copy.export}</h2>
         <p>{copy.exportHint}</p>
       </section>
     </div>

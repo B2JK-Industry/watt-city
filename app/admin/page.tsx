@@ -21,7 +21,7 @@ export default async function AdminHome() {
     return (
       <div className="card p-6 flex flex-col gap-3">
         <h1 className="text-xl font-semibold">Admin</h1>
-        <p className="text-sm text-zinc-400">
+        <p className="text-sm text-[var(--ink-muted)]">
           Nie masz roli admin. Jeśli jesteś operatorem, używaj endpointów z
           nagłówkiem <code>Authorization: Bearer $ADMIN_SECRET</code>.
           Admin-secret skonfigurowany: {hasSecret ? "✓" : "✗"}.
@@ -75,7 +75,7 @@ export default async function AdminHome() {
             <Link href={c.href} className="text-lg font-semibold underline">
               {c.title}
             </Link>
-            <p className="text-sm text-zinc-400">{c.body}</p>
+            <p className="text-sm text-[var(--ink-muted)]">{c.body}</p>
           </li>
         ))}
       </ul>

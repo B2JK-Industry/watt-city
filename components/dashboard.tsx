@@ -83,7 +83,7 @@ export function Dashboard({
         <div className="card p-6 sm:p-8 flex flex-col gap-5">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm text-[var(--ink-muted)]">
                 {d.welcome}
               </p>
               <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight">
@@ -122,11 +122,11 @@ export function Dashboard({
                 </defs>
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-[10px] text-zinc-400">
+                <span className="text-[10px] text-[var(--ink-muted)]">
                   XP
                 </span>
                 <span className="text-xl font-semibold leading-none">{level.level}</span>
-                <span className="text-[10px] text-zinc-400">{progressPct}%</span>
+                <span className="text-[10px] text-[var(--ink-muted)]">{progressPct}%</span>
               </div>
             </div>
           </div>
@@ -163,7 +163,7 @@ export function Dashboard({
             {d.topSilesia}
           </h2>
           {top.length === 0 ? (
-            <p className="text-zinc-400 text-sm">{d.topEmpty}</p>
+            <p className="text-[var(--ink-muted)] text-sm">{d.topEmpty}</p>
           ) : (
             <ol className="flex flex-col gap-1">
               {top.map((e) => (
@@ -212,7 +212,7 @@ export function Dashboard({
           </Link>
         </div>
         {recent.length === 0 ? (
-          <div className="card p-8 text-center text-zinc-400">
+          <div className="card p-8 text-center text-[var(--ink-muted)]">
             {d.continueEmpty.split("{game}")[0]}
             <Link
               href={`/games/${recommended.id}`}
@@ -238,12 +238,12 @@ export function Dashboard({
                   </div>
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold">{localizedTitle(game, dict)}</h3>
-                    <span className="text-xs text-zinc-400">
+                    <span className="text-xs text-[var(--ink-muted)]">
                       {timeAgo(gs.lastPlayedAt, d)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-zinc-400">{d.record}</span>
+                    <span className="text-[var(--ink-muted)]">{d.record}</span>
                     <span className="font-mono text-[var(--accent)] font-semibold">
                       {gs.bestScore}/{game.xpCap}
                     </span>
@@ -273,12 +273,12 @@ export function Dashboard({
           <h2 className="section-heading text-lg">{d.dataRightsTitle}</h2>
           <span
             className="brutal-tag"
-            style={{ background: "var(--success)", color: "#0a0a0f" }}
+            style={{ background: "var(--success)", color: "var(--accent-ink)" }}
           >
             GDPR
           </span>
         </div>
-        <p className="text-sm text-zinc-400">{d.dataRightsBody}</p>
+        <p className="text-sm text-[var(--ink-muted)]">{d.dataRightsBody}</p>
         <div className="flex flex-wrap items-center gap-3">
           <Link href="/ochrana-sukromia" className="btn btn-ghost text-xs">
             {d.privacyReceipt}
@@ -309,7 +309,7 @@ function Stat({
     >
       <div
         className={`text-[10px] font-bold ${
-          accent ? "opacity-70" : "text-zinc-400"
+          accent ? "opacity-70" : "text-[var(--ink-muted)]"
         }`}
       >
         {label}

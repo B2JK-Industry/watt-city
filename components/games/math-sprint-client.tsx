@@ -134,7 +134,7 @@ export function MathSprintClient({ dict }: { dict: Dict }) {
     return (
       <div className="card p-8 flex flex-col gap-4 items-start">
         <h2 className="text-xl font-semibold">{t.ready}</h2>
-        <p className="text-zinc-400">{t.readyBody}</p>
+        <p className="text-[var(--ink-muted)]">{t.readyBody}</p>
         <button type="button" className="btn btn-primary" onClick={start}>
           {t.startShort}
         </button>
@@ -186,9 +186,9 @@ export function MathSprintClient({ dict }: { dict: Dict }) {
         <div
           className={`text-center text-5xl sm:text-6xl font-mono font-bold tracking-wide transition-colors ${
             lastResult === "ok"
-              ? "text-emerald-400"
+              ? "text-[var(--success)]"
               : lastResult === "bad"
-              ? "text-rose-400"
+              ? "text-[var(--danger)]"
               : ""
           }`}
         >

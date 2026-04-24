@@ -19,11 +19,11 @@ export default async function StockTapPage() {
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
-        <Link href="/games" className="text-sm text-zinc-400 hover:underline">
+        <Link href="/games" className="text-sm text-[var(--ink-muted)] hover:underline">
           {dict.games.back}
         </Link>
         <h1 className="text-3xl font-bold">{t.headerTitle}</h1>
-        <p className="text-zinc-400">{body}</p>
+        <p className="text-[var(--ink-muted)]">{body}</p>
       </header>
       <StockTapClient dict={dict} />
     </div>

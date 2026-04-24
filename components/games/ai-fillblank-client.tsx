@@ -86,7 +86,7 @@ export function AiFillBlankClient({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between text-sm text-zinc-400">
+      <div className="flex items-center justify-between text-sm text-[var(--ink-muted)]">
         <span>{t.progress.replace("{i}", String(index + 1)).replace("{n}", String(total))}</span>
         <span>
           {t.correct}: <strong className="text-[var(--accent)]">{correctCount}</strong>
@@ -108,13 +108,13 @@ export function AiFillBlankClient({
           />
           {parts[1] ?? ""}
         </p>
-        <p className="text-xs text-zinc-400">💡 {current.hint}</p>
+        <p className="text-xs text-[var(--ink-muted)]">💡 {current.hint}</p>
         {phase === "reveal" && (
           <div
             className={`rounded-xl p-3 border ${
               isAcceptable(input, current.answer, current.alternatives)
-                ? "border-emerald-500/40 bg-emerald-500/5"
-                : "border-rose-500/40 bg-rose-500/5"
+                ? "border-[var(--success)] bg-[color-mix(in_oklab,var(--success)_12%,white)]"
+                : "border-[var(--danger)] bg-[color-mix(in_oklab,var(--danger)_12%,white)]"
             }`}
           >
             <p className="font-semibold mb-1">

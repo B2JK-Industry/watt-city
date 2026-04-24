@@ -108,7 +108,7 @@ export default async function ProfilePage() {
               <strong className="text-xs">
                 {def.labels[lang]}
               </strong>
-              <p className="text-[11px] text-zinc-400 leading-snug">
+              <p className="text-[11px] text-[var(--ink-muted)] leading-snug">
                 {owned ? def.descriptions[lang] : lockedLabel}
               </p>
             </li>

@@ -87,7 +87,7 @@ export function RoundResult({
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {lines.map((l) => (
           <div key={l.label} className="card p-3 flex flex-col items-center">
-            <span className="text-xs text-zinc-400">
+            <span className="text-xs text-[var(--ink-muted)]">
               {l.label}
             </span>
             <span className="text-xl font-mono font-bold">{l.value}</span>
@@ -96,9 +96,9 @@ export function RoundResult({
       </div>
 
       {state.submitting && (
-        <p className="text-zinc-400 text-sm">{t.writing}</p>
+        <p className="text-[var(--ink-muted)] text-sm">{t.writing}</p>
       )}
-      {state.error && <p className="text-rose-400 text-sm">{state.error}</p>}
+      {state.error && <p className="text-[var(--danger)] text-sm">{state.error}</p>}
 
       {awarded !== null && state.result?.ok && (
         <div
@@ -112,14 +112,14 @@ export function RoundResult({
             <div className="flex flex-col">
               <span
                 className={`text-xs font-bold ${
-                  isNewBest ? "opacity-70" : "text-zinc-400"
+                  isNewBest ? "opacity-70" : "text-[var(--ink-muted)]"
                 }`}
               >
                 {isNewBest ? t.newRecordHeader : t.currentScoreHeader}
               </span>
               <span
                 className={`text-5xl font-semibold tracking-tight ${
-                  !isNewBest ? "text-zinc-300" : ""
+                  !isNewBest ? "text-[var(--ink-muted)]" : ""
                 }`}
               >
                 <CountUp value={awarded} durationMs={850} /> W
@@ -145,7 +145,7 @@ export function RoundResult({
                     .replace("{beat}", "§BEAT§")
                     .split(/(§SCORE§|§BEAT§)/g);
                   return (
-                    <span className="text-sm font-semibold text-zinc-400">
+                    <span className="text-sm font-semibold text-[var(--ink-muted)]">
                       {parts.map((p, i) => {
                         if (p === "§SCORE§")
                           return (
@@ -172,7 +172,7 @@ export function RoundResult({
                     : "bg-[#0a0a0f] text-[var(--accent)] border-[var(--ink)]"
                 }`}
               >
-                <span className="text-[10px] block opacity-70 text-zinc-300">
+                <span className="text-[10px] block opacity-70 text-[var(--ink-muted)]">
                   {t.tierLabel}
                 </span>
                 <span className="text-2xl font-semibold">{level.level}</span>

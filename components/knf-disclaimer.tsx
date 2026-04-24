@@ -81,7 +81,7 @@ export function KnfDisclaimer({ lang, variant = "card" }: Props) {
       <div className="flex items-center gap-2">
         <span
           className="text-[10px] font-semibold px-1.5 py-0.5 border border-[var(--ink)]"
-          style={{ background: "var(--danger)", color: "#0a0a0f" }}
+          style={{ background: "var(--danger)", color: "var(--accent-ink)" }}
         >
           KNF / UOKiK
         </span>

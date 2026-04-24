@@ -61,7 +61,7 @@ export default async function PublicProfilePage({
           · {owned.length}/{status.length}
         </h2>
         {owned.length === 0 ? (
-          <p className="text-zinc-400 text-sm">
+          <p className="text-[var(--ink-muted)] text-sm">
             {{
               pl: "Jeszcze żadnych odznak.",
               uk: "Ще немає значків.",
@@ -87,7 +87,7 @@ export default async function PublicProfilePage({
           </ul>
         )}
       </section>
-      <Link href="/leaderboard" className="text-sm text-zinc-400 underline">
+      <Link href="/leaderboard" className="text-sm text-[var(--ink-muted)] underline">
         ← leaderboard
       </Link>
     </div>

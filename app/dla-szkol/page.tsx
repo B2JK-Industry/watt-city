@@ -240,19 +240,19 @@ export default async function SchoolsLanding() {
         <div className="flex flex-wrap gap-2">
           <span
             className="brutal-tag"
-            style={{ background: "var(--accent)", color: "#0a0a0f" }}
+            style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
           >
             ✅ MEN V–VIII
           </span>
           <span
             className="brutal-tag"
-            style={{ background: "var(--accent)", color: "#0a0a0f" }}
+            style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
           >
             PKO SKO 2.0
           </span>
           <span
             className="brutal-tag"
-            style={{ background: "var(--success)", color: "#0a0a0f" }}
+            style={{ background: "var(--success)", color: "var(--accent-ink)" }}
           >
             GDPR-K
           </span>
@@ -260,7 +260,7 @@ export default async function SchoolsLanding() {
         <h1 className="section-heading text-4xl sm:text-5xl leading-tight">
           {t.heroTitle}
         </h1>
-        <p className="text-lg text-zinc-300 max-w-3xl leading-relaxed">
+        <p className="t-body-lg text-[var(--foreground)] max-w-3xl leading-relaxed">
           {t.heroSubtitle}
         </p>
         <div className="flex flex-wrap gap-3 mt-2">
@@ -310,7 +310,7 @@ export default async function SchoolsLanding() {
               style={{ borderTop: `4px solid ${col.accent}` }}
             >
               <h3 className="font-semibold text-lg">{col.title}</h3>
-              <p className="text-sm text-zinc-300 leading-relaxed">
+              <p className="text-sm text-[var(--ink-muted)] leading-relaxed">
                 {col.body}
               </p>
             </div>
@@ -358,7 +358,7 @@ export default async function SchoolsLanding() {
               className="aspect-video rounded-xl border border-[var(--ink)] p-6 flex items-center justify-center text-center"
               style={{
                 background: `linear-gradient(135deg, var(--accent), var(--accent))`,
-                color: "#0a0a0f",
+                color: "var(--accent-ink)",
               }}
             >
               <p className="font-semibold text-sm leading-relaxed">{caption}</p>
@@ -383,7 +383,7 @@ export default async function SchoolsLanding() {
       {/* -------- Podstawa programowa preview -------- */}
       <section className="flex flex-col gap-4">
         <h2 className="section-heading text-2xl">{t.ppTitle}</h2>
-        <p className="text-sm text-zinc-300 max-w-3xl">{t.ppLead}</p>
+        <p className="text-sm text-[var(--ink-muted)] max-w-3xl">{t.ppLead}</p>
         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
           {preview.map((c) => (
             <li
@@ -409,7 +409,7 @@ export default async function SchoolsLanding() {
       <aside className="card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-[var(--accent)]">
         <div className="flex flex-col gap-1">
           <h2 className="section-heading text-lg">{t.downloadTitle}</h2>
-          <p className="text-sm text-zinc-300">{t.downloadBody}</p>
+          <p className="text-sm text-[var(--ink-muted)]">{t.downloadBody}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Link

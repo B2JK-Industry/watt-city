@@ -135,7 +135,7 @@ export function AiMatchPairsClient({
 
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-2">
-          <p className="text-[10px] font-bold text-zinc-400">{spec.leftLabel}</p>
+          <p className="text-[10px] font-bold text-[var(--ink-muted)]">{spec.leftLabel}</p>
           {leftItems.map((it) => {
             const m = matched[it.key];
             const sel = pickedLeft === it.key;
@@ -148,9 +148,9 @@ export function AiMatchPairsClient({
                 disabled={m}
                 className={`text-left rounded-xl border border-[var(--ink)] px-3 py-2 transition font-semibold text-sm ${
                   m
-                    ? "bg-emerald-400/30 text-emerald-200 line-through opacity-60"
+                    ? "bg-[color-mix(in_oklab,var(--success)_12%,white)] text-[var(--success)] line-through opacity-60"
                     : wrong
-                      ? "bg-rose-500/30"
+                      ? "bg-[color-mix(in_oklab,var(--danger)_12%,white)]"
                       : sel
                         ? "bg-[var(--accent)]/20 border-[var(--accent)]"
                         : "bg-[var(--surface-2)] hover:border-[var(--accent)]/50"
@@ -163,7 +163,7 @@ export function AiMatchPairsClient({
         </div>
 
         <div className="flex flex-col gap-2">
-          <p className="text-[10px] font-bold text-zinc-400">{spec.rightLabel}</p>
+          <p className="text-[10px] font-bold text-[var(--ink-muted)]">{spec.rightLabel}</p>
           {rightItems.map((it) => {
             const m = matched[it.key];
             const sel = pickedRight === it.key;
@@ -176,9 +176,9 @@ export function AiMatchPairsClient({
                 disabled={m}
                 className={`text-left rounded-xl border border-[var(--ink)] px-3 py-2 transition text-xs ${
                   m
-                    ? "bg-emerald-400/30 text-emerald-200 line-through opacity-60"
+                    ? "bg-[color-mix(in_oklab,var(--success)_12%,white)] text-[var(--success)] line-through opacity-60"
                     : wrong
-                      ? "bg-rose-500/30"
+                      ? "bg-[color-mix(in_oklab,var(--danger)_12%,white)]"
                       : sel
                         ? "bg-[var(--accent)]/20 border-[var(--accent)]"
                         : "bg-[var(--surface-2)] hover:border-[var(--accent)]/50"

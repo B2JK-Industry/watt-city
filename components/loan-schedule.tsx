@@ -176,7 +176,7 @@ function LoanRow({
         </span>
         <span
           className="text-[10px] px-2 py-0.5 border border-[var(--ink)] font-semibold"
-          style={{ background: statusColor, color: "#0a0a0f" }}
+          style={{ background: statusColor, color: "var(--accent-ink)" }}
         >
           {statusLabel}
         </span>

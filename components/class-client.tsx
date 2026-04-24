@@ -89,7 +89,7 @@ export function ClassClient({
 
   return (
     <div className="flex flex-col gap-6">
-      {error && <div className="card p-3 text-rose-400 text-sm">{error}</div>}
+      {error && <div className="card p-3 text-[var(--danger)] text-sm">{error}</div>}
 
       {role !== "parent" && (
         <section className="card p-4 flex flex-col gap-3">
@@ -128,13 +128,13 @@ export function ClassClient({
       <section className="flex flex-col gap-2">
         <h2 className="text-sm font-semibold">{copy.yourClasses}</h2>
         {classes.length === 0 ? (
-          <p className="text-xs text-zinc-400">—</p>
+          <p className="text-xs text-[var(--ink-muted)]">—</p>
         ) : (
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {classes.map((cls) => (
               <li key={cls.code} className="card p-3 flex flex-col gap-1">
                 <strong>{cls.name}</strong>
-                <span className="text-xs text-zinc-400">
+                <span className="text-xs text-[var(--ink-muted)]">
                   {copy.code}: <span className="font-mono">{cls.code}</span> ·{" "}
                   {copy.members}: {cls.members.length}
                 </span>

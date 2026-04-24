@@ -78,10 +78,10 @@ export function AiWhatIfClient({
   return (
     <div className="flex flex-col gap-4">
       <div className="card p-4 flex flex-col gap-1">
-        <p className="text-xs text-zinc-400">{t.scenario}</p>
+        <p className="text-xs text-[var(--ink-muted)]">{t.scenario}</p>
         <p className="text-sm">{spec.scenario}</p>
       </div>
-      <div className="flex items-center justify-between text-xs text-zinc-400">
+      <div className="flex items-center justify-between text-xs text-[var(--ink-muted)]">
         <span>{t.progress.replace("{i}", String(index + 1)).replace("{n}", String(total))}</span>
       </div>
       <div className="card p-5 flex flex-col gap-4">
@@ -94,9 +94,9 @@ export function AiWhatIfClient({
             const tone = !revealed
               ? "hover:border-[var(--accent)]"
               : isAnswer
-                ? "border-emerald-400 bg-emerald-400/10"
+                ? "border-[var(--success)] bg-[color-mix(in_oklab,var(--success)_12%,white)]"
                 : isChosen
-                  ? "border-rose-400 bg-rose-400/10"
+                  ? "border-[var(--danger)] bg-[color-mix(in_oklab,var(--danger)_12%,white)]"
                   : "opacity-50";
             return (
               <button
@@ -115,14 +115,14 @@ export function AiWhatIfClient({
             <div
               className={`rounded-xl p-3 border ${
                 chosen === current.correctIndex
-                  ? "border-emerald-500/40 bg-emerald-500/5"
-                  : "border-rose-500/40 bg-rose-500/5"
+                  ? "border-[var(--success)] bg-[color-mix(in_oklab,var(--success)_12%,white)]"
+                  : "border-[var(--danger)] bg-[color-mix(in_oklab,var(--danger)_12%,white)]"
               }`}
             >
               <p className="font-semibold mb-1">
                 {chosen === current.correctIndex ? t.correctMark : t.wrongMark}
               </p>
-              <p className="text-sm text-zinc-300">{current.explanation}</p>
+              <p className="text-sm text-[var(--ink-muted)]">{current.explanation}</p>
             </div>
             <button className="btn btn-primary self-end" onClick={next}>
               {index + 1 < total ? t.next : t.finish}

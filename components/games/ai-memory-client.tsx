@@ -111,7 +111,7 @@ export function AiMemoryClient({
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-sm text-zinc-400">{spec.hint}</p>
+      <p className="text-sm text-[var(--ink-muted)]">{spec.hint}</p>
       <div className="grid grid-cols-4 gap-2 sm:gap-3">
         {deck.map((card) => {
           const isShown = revealed[card.id] || matched[card.id];
@@ -124,7 +124,7 @@ export function AiMemoryClient({
               className={
                 "aspect-square rounded-xl border border-[var(--ink)] p-2 text-xs sm:text-sm font-semibold transition " +
                 (matched[card.id]
-                  ? "bg-emerald-500/20 border-emerald-400"
+                  ? "bg-[color-mix(in_oklab,var(--success)_12%,white)] border-[var(--success)]"
                   : isShown
                     ? "bg-[var(--surface-2)]"
                     : "bg-[var(--accent)] text-[var(--foreground)] hover:opacity-80")

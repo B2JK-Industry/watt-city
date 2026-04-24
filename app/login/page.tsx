@@ -15,10 +15,10 @@ export default async function LoginPage() {
     <div className="max-w-md mx-auto card p-8 flex flex-col gap-6">
       <div>
         <h1 className="text-2xl font-bold">{t.loginTitle}</h1>
-        <p className="text-sm text-zinc-400 mt-1">{t.loginBody}</p>
+        <p className="text-sm text-[var(--ink-muted)] mt-1">{t.loginBody}</p>
       </div>
       <AuthForm mode="login" dict={dict} />
-      <p className="text-sm text-zinc-400">
+      <p className="text-sm text-[var(--ink-muted)]">
         {t.switchToRegister}{" "}
         <Link href="/register" className="text-[var(--accent)] hover:underline">
           {t.switchToRegisterAction}

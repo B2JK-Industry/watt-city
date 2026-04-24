@@ -79,7 +79,7 @@ export function FinanceQuizClient({ questions, dict }: Props) {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex items-center justify-between text-sm text-zinc-400">
+      <div className="flex items-center justify-between text-sm text-[var(--ink-muted)]">
         <span>
           {t.progressQuestion
             .replace("{i}", String(index + 1))
@@ -106,9 +106,9 @@ export function FinanceQuizClient({ questions, dict }: Props) {
               "bg-[var(--surface-2)] border-[var(--border)] hover:border-[var(--accent)]";
             if (phase === "reveal") {
               if (isCorrect) {
-                variant = "bg-emerald-900/30 border-emerald-500/60";
+                variant = "bg-[color-mix(in_oklab,var(--success)_8%,white)] border-[var(--success)]";
               } else if (isChosen) {
-                variant = "bg-rose-900/30 border-rose-500/60";
+                variant = "bg-[color-mix(in_oklab,var(--danger)_12%,white)] border-[var(--danger)]";
               } else {
                 variant =
                   "bg-[var(--surface-2)] border-[var(--border)] opacity-70";
@@ -135,14 +135,14 @@ export function FinanceQuizClient({ questions, dict }: Props) {
             <div
               className={`rounded-xl px-4 py-3 border ${
                 chosen === current.correctIndex
-                  ? "bg-emerald-900/30 border-emerald-700/60"
-                  : "bg-rose-900/30 border-rose-800/60"
+                  ? "bg-[color-mix(in_oklab,var(--success)_8%,white)] border-[var(--success)]"
+                  : "bg-[color-mix(in_oklab,var(--danger)_12%,white)] border-[var(--danger)]"
               }`}
             >
               <p className="font-semibold mb-1">
                 {chosen === current.correctIndex ? t.correctMark : t.wrongMark}
               </p>
-              <p className="text-sm text-zinc-300">{current.explanation}</p>
+              <p className="text-sm text-[var(--ink-muted)]">{current.explanation}</p>
             </div>
             <button
               type="button"
