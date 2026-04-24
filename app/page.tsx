@@ -15,6 +15,8 @@ import { xpCapForAnyLang } from "@/lib/ai-pipeline/types";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 import { ComingSoonBanner } from "@/components/coming-soon-banner";
+import { PkoHero } from "@/components/pko-hero";
+import { resolveTheme } from "@/lib/theme";
 
 export const dynamic = "force-dynamic";
 
@@ -56,6 +58,15 @@ export default async function Home() {
         player={playerState}
       />
     );
+  }
+
+  // Under the PKO skin the anonymous landing is a banking-clean hero
+  // (navy gradient + trust band + perks + how-it-works) per
+  // docs/partnerships/pko-visual-system-v1/07-LANDING-HERO-REDESIGN.md.
+  // The core (yellow) skin keeps the existing brutalist pitch layout.
+  const theme = resolveTheme();
+  if (theme.id === "pko") {
+    return <PkoHero dict={dict} />;
   }
 
   // V2 R3.1.2 — anonymous landing shows the top 3 CITY-VALUE ranks

@@ -21,9 +21,9 @@ Source of truth for what is unresolved:
 ## Q2 — Official PKO BP logo SVG
 
 - **Status:** pending PKO BP brand team
-- **Substitute shipped:** none yet — PR-2 will ship a navy text chip (`{theme.brandShort}` on navy-700) in place of a logomark.
-- **Swap location:** `components/site-nav.tsx` brand chip + `lib/theme.ts` `PKO_THEME.mascot` block.
-- **First shipped in:** pending PR-2.
+- **Substitute shipped:** navy text chip (`{theme.brandShort} → "PKO"` on navy-700, white text, 6 px radius via shield §13) in site-nav brand; text-only wordmark in footer brand chip. No logomark image until the licensed SVG lands.
+- **Swap location:** `components/site-nav.tsx` brand chip (inline `style.background = theme.colors.accent`) + `app/layout.tsx` footer brand chip. Swap the `{theme.brandShort}` span for a `<Image>` tag pointing at `/icons/pko-logo.svg` once the asset ships.
+- **First shipped in:** PR-2 (`feat/sko-visual-pr2-components-landing-nav`).
 
 ## Q3 — Żyrafa Lokatka pose library
 
@@ -42,16 +42,30 @@ Source of truth for what is unresolved:
 ## Q5 — Hero CTA copy (`Otwórz konto SKO` vs `Naucz się oszczędzać`)
 
 - **Status:** pending product + parent pilot
-- **Substitute shipped:** pending PR-2 landing hero rewrite. `09-VOICE-AND-COPY-PL.md` enumerates both variants.
-- **Swap location:** `app/page.tsx` hero block; `lib/locales/pl.ts` + peers.
-- **First shipped in:** pending PR-2.
+- **Substitute shipped:** `Naucz się oszczędzać.` + `Załóż konto` CTA (shorter, imperative, matches pkobp.pl/junior register). Secondary CTA is `Zobacz, jak działa`.
+- **Swap location:** `lib/locales/pl.ts` `pkoHero.title` + `pkoHero.ctaPrimary`. UK/CS/EN peers translate at the same keys (`Навчися заощаджувати.` / `Nauč se spořit.` / `Learn to save.`).
+- **First shipped in:** PR-2.
 
 ## Q6 — EN locale for `W-dolary`
 
 - **Status:** DESIGN-CALL, pending PKO-approved term
-- **Substitute shipped:** `W$` inline abbreviation in resource chips (PR-1: no user-facing EN copy changes).
+- **Substitute shipped:** `W$` inline abbreviation in resource chips (PR-2 unchanged — no user-facing EN copy gained a translation here; the existing PL resource labels + W$ carry through).
 - **Swap location:** `lib/locales/en.ts` resource labels; `lib/resources.ts` if a dedicated field is added.
-- **First shipped in:** pending PR-2.
+- **First shipped in:** pending dedicated locale PR.
+
+## Q7 — Icon set for the "Co dostajesz?" perks (PR-2)
+
+- **Status:** DESIGN-CALL
+- **Substitute shipped:** three inline 48×48 navy stroke icons (shield / game controller / line chart) inside `components/pko-hero.tsx`. No sprite sheet, no optimisation work until the brand-approved iconography lands.
+- **Swap location:** `components/pko-hero.tsx` `PerkIcon` switch; replace the inline SVG fragments with `<img src="/icons/perk-*.svg">`.
+- **First shipped in:** PR-2.
+
+## Q8 — Hero skyline illustration (PR-2)
+
+- **Status:** DESIGN-CALL, pending PR-3 city-scene refactor to expose the 6-var palette
+- **Substitute shipped:** stylised 480×300 silhouette inside `components/pko-hero.tsx` `PkoSkylineIcon`. Uses CSS variables (`--sko-navy-500/700/900`, `--sko-accent-orange-light`) so once PR-3 ships the `--scene-*` palette, a single import-swap can swap to the full skyline.
+- **Swap location:** `components/pko-hero.tsx` `PkoSkylineIcon` JSX.
+- **First shipped in:** PR-2.
 
 ---
 

@@ -706,6 +706,32 @@ const pl = {
     sponsors:
       "Sponsorzy: PKO Bank Polski · Tauron · ETHWarsaw · AKMF · Katowicki.Hub",
     sourceLink: "Kod źródłowy →",
+    pkoTrustLine:
+      "W partnerstwie z PKO Bank Polski. Bez reklam i zakupów w aplikacji.",
+  },
+  pkoHero: {
+    title: "Naucz się oszczędzać.",
+    sub: "SKO × Watt City to gra, która łączy program SKO z prawdziwymi decyzjami finansowymi dla dzieci 9–14 lat.",
+    ctaPrimary: "Załóż konto",
+    ctaSecondary: "Zobacz, jak działa",
+    trustLine:
+      "W partnerstwie z PKO Bank Polski. Bez reklam. Bez zakupów w aplikacji.",
+    perksTitle: "Co dostajesz?",
+    perkSafetyTitle: "Bezpieczeństwo",
+    perkSafetyBody:
+      "Bez reklam, bez zakupów, bez prawdziwych pieniędzy. RODO i SKO w jednym.",
+    perkGameTitle: "Gra",
+    perkGameBody:
+      "9 minigier i AI wyzwania zmieniają lekcje finansów w grę o miasto.",
+    perkGrowthTitle: "Rozwój",
+    perkGrowthBody:
+      "Każda decyzja w grze odpowiada zagadnieniom z podstawy programowej V–VIII klasy.",
+    stepsTitle: "Jak to działa",
+    step1: "Załóż konto z rodzicem",
+    step2: "Graj minigry, buduj miasto",
+    step3: "Co tydzień: raport dla rodzica",
+    skylineCaption: "Twoje miasto",
+    skylineBadge: "Demo",
   },
 };
 

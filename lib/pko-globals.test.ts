@@ -55,6 +55,48 @@ describe("PKO globals shield — verified navy tokens", () => {
   });
 });
 
+describe("PKO landing hero (PR-2) + component regression guards", () => {
+  it("ships hero/trust/perks/steps selectors keyed to components/pko-hero.tsx", () => {
+    expect(PKO_CSS).toMatch(/data-skin="pko"\]\s+\.pko-hero-band/);
+    expect(PKO_CSS).toMatch(/data-skin="pko"\]\s+\.pko-trust-band/);
+    expect(PKO_CSS).toMatch(/data-skin="pko"\]\s+\.pko-perks-row/);
+    expect(PKO_CSS).toMatch(/data-skin="pko"\]\s+\.pko-steps-row/);
+  });
+
+  it("regresses the nav brand chip (inline-style target) to soft radius", () => {
+    expect(PKO_CSS).toMatch(
+      /header\s+span\[style\*="background:\s*rgb\(0,\s*53,\s*116\)"\]/,
+    );
+    expect(PKO_CSS).toMatch(/border-radius:\s*var\(--sko-radius-sm\)\s*!important/);
+  });
+
+  it("drives resource-bar chip colours from [data-resource] attributes", () => {
+    expect(PKO_CSS).toMatch(
+      /\.resource-chip\[data-resource="watts"\]\s+\.resource-chip-value/,
+    );
+    expect(PKO_CSS).toMatch(
+      /\.resource-chip\[data-resource="coins"\]\s+\.resource-chip-value/,
+    );
+  });
+
+  it("drives cashflow-hud severity via [data-severity] attribute", () => {
+    expect(PKO_CSS).toMatch(
+      /\.cashflow-hud\[data-severity="critical"\]\s+\.cashflow-hud-frame/,
+    );
+    expect(PKO_CSS).toMatch(
+      /\.cashflow-hud\[data-severity="warn"\]\s+\.cashflow-hud-frame/,
+    );
+  });
+
+  it("ships the banking-clean .toast (tier-up) shape — white surface, navy border-left", () => {
+    const match = PKO_CSS.match(/data-skin="pko"\]\s+\.toast\s*\{[^}]*\}/);
+    expect(match).not.toBeNull();
+    const block = match![0];
+    expect(block).toContain("background: var(--sko-white)");
+    expect(block).toContain("border-left: 4px solid var(--sko-navy-300)");
+  });
+});
+
 describe("PKO globals shield — brutalism overrides", () => {
   it(".btn loses the 3px ink border and the hard-offset shadow", () => {
     // Extract the PKO .btn block and verify shape primitives flip.

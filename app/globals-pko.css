@@ -511,4 +511,293 @@
   color: var(--sko-white) !important;
 }
 
+/* ============================================================
+ * §9 — LANDING HERO (anonymous visitor, app/page.tsx)
+ * ============================================================
+ * Rendered by components/pko-hero.tsx when theme.id === "pko".
+ * Drops the brutalist yellow-tag / offset-shadow hero in favour of
+ * a banking-clean navy band + trust band + perks row + steps. */
+
+:root[data-skin="pko"] .pko-landing {
+  font-family: var(--sko-font-sans);
+  color: var(--sko-white);
+}
+
+:root[data-skin="pko"] .pko-hero-band {
+  background: linear-gradient(180deg, var(--sko-navy-700) 0%, var(--sko-navy-900) 100%);
+  color: var(--sko-white);
+  padding: 64px 32px 80px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+@media (max-width: 1024px) {
+  :root[data-skin="pko"] .pko-hero-band {
+    grid-template-columns: 1fr;
+    padding: 48px 24px 56px;
+    gap: 32px;
+  }
+}
+
+:root[data-skin="pko"] .pko-hero-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 560px;
+}
+
+:root[data-skin="pko"] .pko-hero-title {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+:root[data-skin="pko"] .pko-hero-sub {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+  max-width: 540px;
+}
+
+:root[data-skin="pko"] .pko-hero-cta-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+:root[data-skin="pko"] .btn.btn-cta-hero {
+  font-size: 18px;
+  padding: 14px 24px;
+}
+
+:root[data-skin="pko"] .pko-hero-skyline {
+  background: var(--sko-white);
+  border-radius: var(--sko-radius-md);
+  box-shadow: var(--sko-shadow-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+:root[data-skin="pko"] .pko-hero-skyline-svg {
+  border-radius: var(--sko-radius-sm);
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+:root[data-skin="pko"] .pko-hero-skyline-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--sko-ink);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+:root[data-skin="pko"] .pko-hero-skyline-badge {
+  background: var(--sko-surface);
+  color: var(--sko-text-secondary);
+  border-radius: var(--sko-radius-full);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 10px;
+}
+
+/* ============================================================
+ * §10 — TRUST BAND
+ * ============================================================ */
+:root[data-skin="pko"] .pko-trust-band {
+  background: var(--sko-white);
+  color: var(--sko-ink);
+  padding: 18px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  border-top: 1px solid var(--sko-border-light);
+  border-bottom: 1px solid var(--sko-border-light);
+}
+
+/* ============================================================
+ * §11 — PERKS ROW (3-up "Co dostajesz?")
+ * ============================================================ */
+:root[data-skin="pko"] .pko-perks {
+  padding: 56px 24px;
+}
+
+:root[data-skin="pko"] .pko-perks-title {
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--sko-white);
+  margin: 0 0 24px;
+}
+
+:root[data-skin="pko"] .pko-perks-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  :root[data-skin="pko"] .pko-perks-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+:root[data-skin="pko"] .pko-perk-card {
+  background: var(--sko-white);
+  color: var(--sko-ink);
+  border-radius: var(--sko-radius-md);
+  padding: 24px;
+  box-shadow: var(--sko-shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+:root[data-skin="pko"] .pko-perk-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--sko-ink);
+}
+
+:root[data-skin="pko"] .pko-perk-card p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--sko-text-secondary);
+  margin: 0;
+}
+
+:root[data-skin="pko"] .pko-perk-icon {
+  color: var(--sko-navy-700);
+}
+
+/* ============================================================
+ * §12 — STEPS ROW (how-it-works)
+ * ============================================================ */
+:root[data-skin="pko"] .pko-steps {
+  padding: 16px 24px 64px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+:root[data-skin="pko"] .pko-steps-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--sko-white);
+  text-align: center;
+  margin: 0 0 20px;
+}
+
+:root[data-skin="pko"] .pko-steps-row {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  :root[data-skin="pko"] .pko-steps-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+:root[data-skin="pko"] .pko-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--sko-white);
+}
+
+:root[data-skin="pko"] .pko-step-circle {
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  background: var(--sko-white);
+  color: var(--sko-navy-700);
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* ============================================================
+ * §13 — REGRESSION GUARDS (component-specific)
+ * ============================================================ */
+
+/* site-nav.tsx brand chip: inline style forces background: #003574
+ * under PKO (theme.colors.accent). The §7 shield already converts the
+ * border-[3px] + shadow-[3px_3px_0_0_var(--ink)] + font-black +
+ * uppercase utilities; this block just tidies the border radius
+ * from 0 to 6 px so the chip reads as a brand lockup, not a tile. */
+:root[data-skin="pko"] header span[style*="background: rgb(0, 53, 116)"],
+:root[data-skin="pko"] header span[style*="background:#003574"] {
+  border-radius: var(--sko-radius-sm) !important;
+  box-shadow: none !important;
+  font-weight: 700 !important;
+}
+
+/* resource-bar.tsx chips: inline `style.borderColor = def.color` +
+ * `style.color = def.color` drag neon per-resource hex into a navy
+ * nav strip. `[data-resource]` is injected by components/resource-bar.tsx;
+ * `.resource-chip-value` carries the numeric value so its inline
+ * color can be surgically recolored per resource. */
+:root[data-skin="pko"] .resource-chip {
+  border-color: rgba(255, 255, 255, 0.10) !important;
+  background: var(--sko-navy-500) !important;
+  color: var(--sko-white) !important;
+  border-radius: var(--sko-radius-full) !important;
+  padding: 4px 10px !important;
+}
+:root[data-skin="pko"] .resource-chip[data-resource="watts"] .resource-chip-value { color: var(--sko-accent-orange-light) !important; }
+:root[data-skin="pko"] .resource-chip[data-resource="coins"] .resource-chip-value { color: var(--sko-accent-orange) !important; }
+:root[data-skin="pko"] .resource-chip[data-resource="bricks"] .resource-chip-value { color: #B97A3D !important; }
+:root[data-skin="pko"] .resource-chip[data-resource="cashZl"] .resource-chip-value { color: #4ADE80 !important; }
+
+/* cashflow-hud.tsx: the outer container picks up the shield's 1px
+ * border + soft shadow. The per-severity inline borderColor (assigned
+ * only when alertLevel !== "ok") maps to the §C11 spec's border-left
+ * accent — [data-severity] on the outer wrapper switches the
+ * shield-tamed 1 px border between navy / warn / danger without
+ * fighting inline styles. */
+:root[data-skin="pko"] .cashflow-hud[data-severity="critical"] .cashflow-hud-frame { border-left: 4px solid var(--sko-danger) !important; }
+:root[data-skin="pko"] .cashflow-hud[data-severity="warn"] .cashflow-hud-frame     { border-left: 4px solid var(--sko-warning) !important; }
+:root[data-skin="pko"] .cashflow-hud[data-severity="info"] .cashflow-hud-frame     { border-left: 4px solid var(--sko-navy-300) !important; }
+
+/* Toast (tier-up-toast.tsx PKO branch). JSX ships .toast +
+ * .toast-tier-up already; §C5 CSS lives here rather than in §4 so
+ * it's adjacent to the JSX override in case future edits move the
+ * classes around. */
+:root[data-skin="pko"] .toast {
+  position: relative;
+  background: var(--sko-white);
+  color: var(--sko-ink);
+  border: 1px solid var(--sko-border-light);
+  border-left: 4px solid var(--sko-navy-300);
+  border-radius: var(--sko-radius-md);
+  box-shadow: var(--sko-shadow-lg);
+  padding: 12px 16px;
+  font-family: var(--sko-font-sans);
+  font-size: 14px;
+}
+:root[data-skin="pko"] .toast.toast-tier-up {
+  border-left-color: var(--sko-accent-orange);
+}
+
 /* End of globals-pko.css */

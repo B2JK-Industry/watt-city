@@ -25,10 +25,20 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: "pl-PL",
     categories: ["education", "games"],
     icons: [
-      { src: "/icons/icon-192.svg", sizes: "192x192", type: "image/svg+xml" },
-      { src: "/icons/icon-512.svg", sizes: "512x512", type: "image/svg+xml" },
       {
-        src: "/icons/icon-maskable.svg",
+        src: isPko ? "/icons/icon-192-pko.svg" : "/icons/icon-192.svg",
+        sizes: "192x192",
+        type: "image/svg+xml",
+      },
+      {
+        src: isPko ? "/icons/icon-512-pko.svg" : "/icons/icon-512.svg",
+        sizes: "512x512",
+        type: "image/svg+xml",
+      },
+      {
+        src: isPko
+          ? "/icons/icon-maskable-pko.svg"
+          : "/icons/icon-maskable.svg",
         sizes: "512x512",
         type: "image/svg+xml",
         purpose: "maskable",
@@ -39,13 +49,23 @@ export default function manifest(): MetadataRoute.Manifest {
         name: "Miasteczko",
         short_name: "Miasto",
         url: "/miasto",
-        icons: [{ src: "/icons/icon-192.svg", sizes: "192x192" }],
+        icons: [
+          {
+            src: isPko ? "/icons/icon-192-pko.svg" : "/icons/icon-192.svg",
+            sizes: "192x192",
+          },
+        ],
       },
       {
         name: "Gry",
         short_name: "Gry",
         url: "/games",
-        icons: [{ src: "/icons/icon-192.svg", sizes: "192x192" }],
+        icons: [
+          {
+            src: isPko ? "/icons/icon-192-pko.svg" : "/icons/icon-192.svg",
+            sizes: "192x192",
+          },
+        ],
       },
     ],
   };

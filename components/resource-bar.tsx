@@ -37,13 +37,17 @@ export function ResourceBar({ resources, lang, compact = false }: Props) {
           <li
             key={k}
             title={title}
-            className="flex items-center gap-1 px-2 py-1 rounded border-2 transition-opacity border-[var(--ink)] bg-[var(--surface)]"
+            data-resource={k}
+            className="resource-chip flex items-center gap-1 px-2 py-1 rounded border-2 transition-opacity border-[var(--ink)] bg-[var(--surface)]"
             style={{ borderColor: def.color }}
           >
             <span aria-hidden className="text-sm leading-none">
               {def.icon}
             </span>
-            <span className="font-bold" style={{ color: def.color }}>
+            <span
+              className="font-bold resource-chip-value"
+              style={{ color: def.color }}
+            >
               {v.toLocaleString("pl-PL")}
             </span>
           </li>

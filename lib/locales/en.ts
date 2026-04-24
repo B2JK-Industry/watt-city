@@ -651,6 +651,32 @@ const en: typeof plDict = {
     sponsors:
       "Sponsors: PKO Bank Polski · Tauron · ETHWarsaw · AKMF · Katowicki.Hub",
     sourceLink: "Source code →",
+    pkoTrustLine:
+      "In partnership with PKO Bank Polski. No ads or in-app purchases.",
+  },
+  pkoHero: {
+    title: "Learn to save.",
+    sub: "SKO × Watt City is a game that links the SKO programme with real financial decisions for kids aged 9–14.",
+    ctaPrimary: "Create account",
+    ctaSecondary: "See how it works",
+    trustLine:
+      "In partnership with PKO Bank Polski. No ads. No in-app purchases.",
+    perksTitle: "What you get",
+    perkSafetyTitle: "Safety",
+    perkSafetyBody:
+      "No ads, no purchases, no real money. GDPR and SKO rolled into one.",
+    perkGameTitle: "Game",
+    perkGameBody:
+      "9 mini-games and AI challenges turn finance lessons into a game about your city.",
+    perkGrowthTitle: "Growth",
+    perkGrowthBody:
+      "Every in-game decision maps to the Polish V–VIII grade curriculum.",
+    stepsTitle: "How it works",
+    step1: "Set up with a parent",
+    step2: "Play mini-games, build your city",
+    step3: "Weekly: a report for the parent",
+    skylineCaption: "Your city",
+    skylineBadge: "Demo",
   },
 };
 
