@@ -159,7 +159,7 @@ export async function Web3MedalGallerySection({
     return (
       <section className="card p-4 flex flex-col gap-2 border-[var(--accent)]">
         <h2 className="text-lg font-semibold">{copy.title}</h2>
-        <p className="text-sm text-zinc-400">{copy.optInRequired}</p>
+        <p className="text-sm text-[var(--ink-muted)]">{copy.optInRequired}</p>
       </section>
     );
   }
@@ -169,7 +169,7 @@ export async function Web3MedalGallerySection({
     return (
       <section className="card p-4 flex flex-col gap-2 border-[var(--accent)]">
         <h2 className="text-lg font-semibold">{copy.title}</h2>
-        <p className="text-sm text-zinc-400">{copy.parentConsentRequired}</p>
+        <p className="text-sm text-[var(--ink-muted)]">{copy.parentConsentRequired}</p>
       </section>
     );
   }

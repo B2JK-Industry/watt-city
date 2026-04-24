@@ -111,7 +111,7 @@ export function CityLevelCard({ player, lang }: Props) {
         </h2>
         <span
           className="text-[11px] font-mono font-bold border border-[var(--ink)] px-2 py-0.5"
-          style={{ background: gridColor, color: "#0a0a0f" }}
+          style={{ background: gridColor, color: "var(--accent-ink)" }}
         >
           ⚡ {watts.net > 0 ? "+" : ""}
           {watts.net}

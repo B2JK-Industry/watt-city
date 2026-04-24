@@ -331,7 +331,7 @@ function WattChip({
       className="inline-flex items-center gap-0.5 font-bold text-[11px] border border-[var(--ink)] px-1.5 py-0.5"
       style={{
         background: inDeficit ? "var(--danger)" : "var(--success)",
-        color: "#0a0a0f",
+        color: "var(--accent-ink)",
       }}
     >
       ⚡ {net > 0 ? "+" : ""}

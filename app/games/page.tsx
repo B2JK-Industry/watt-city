@@ -59,19 +59,19 @@ export default async function GamesHubPage() {
           {cityBadge && (
             <span
               className="brutal-tag"
-              style={{ background: "var(--accent)", color: "#0a0a0f" }}
+              style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
             >
               {cityBadge}
             </span>
           )}
           <span
             className="brutal-tag"
-            style={{ background: "var(--accent)", color: "#0a0a0f" }}
+            style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
           >
             {t.gamesHubTime}
           </span>
         </div>
-        <p className="text-zinc-400 max-w-2xl">
+        <p className="text-[var(--ink-muted)] max-w-2xl">
           {bodyParts.map((p, i) => {
             if (p === "§LIGHT§")
               return (
@@ -94,7 +94,7 @@ export default async function GamesHubPage() {
         </p>
       </header>
       <CityScene games={cityGames} loggedIn={Boolean(session)} aiGames={cityAiGames} />
-      <aside className="card p-5 flex flex-col gap-3 text-sm text-zinc-300">
+      <aside className="card p-5 flex flex-col gap-3 text-sm text-[var(--ink-muted)]">
         <h2 className="section-heading text-lg">{t.buildingsMap}</h2>
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-1.5">
           {cityGames.map((g) => (
@@ -106,13 +106,13 @@ export default async function GamesHubPage() {
                 <span className="flex items-center gap-2 truncate">
                   <span
                     className={`inline-block w-2 h-2 rounded-full border border-[var(--ink)] ${
-                      g.plays > 0 ? "bg-[var(--sales)]" : "bg-zinc-700"
+                      g.plays > 0 ? "bg-[var(--sales)]" : "bg-[var(--ink-subtle)]"
                     }`}
                   />
                   <span className="font-semibold truncate">
                     {g.meta.building.name}
                   </span>
-                  <span className="text-zinc-400 truncate">
+                  <span className="text-[var(--ink-muted)] truncate">
                     — {localizedTitle(g.meta, dict)}
                   </span>
                 </span>

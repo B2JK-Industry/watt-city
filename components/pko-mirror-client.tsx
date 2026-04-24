@@ -87,25 +87,25 @@ export function PkoMirrorClient({ initialAccount, initialAudit, wattCityCashZl, 
             {copy.create}
           </button>
         </div>
-        {error && <p className="text-rose-400 text-xs">{error}</p>}
+        {error && <p className="text-[var(--danger)] text-xs">{error}</p>}
       </section>
     );
   }
 
   return (
     <div className="flex flex-col gap-6">
-      {error && <div className="card p-3 text-rose-400 text-sm">{error}</div>}
+      {error && <div className="card p-3 text-[var(--danger)] text-sm">{error}</div>}
       <section className="card p-4 flex flex-col gap-2">
         <h2 className="text-sm font-semibold">{copy.balance}</h2>
         <p className="text-3xl font-mono font-semibold">
           {account.balancePln.toLocaleString("pl-PL")} PLN
         </p>
-        <p className="text-xs text-zinc-400">{account.childName}</p>
+        <p className="text-xs text-[var(--ink-muted)]">{account.childName}</p>
       </section>
 
       <section className="card p-4 flex flex-col gap-3">
         <h2 className="text-lg font-semibold">{copy.mirror}</h2>
-        <p className="text-xs text-zinc-400">{copy.mirrorHint}</p>
+        <p className="text-xs text-[var(--ink-muted)]">{copy.mirrorHint}</p>
         <div className="flex flex-wrap gap-2 items-center">
           <span className="text-xs">Watt City cashZl: {wattCityCashZl}</span>
           <input
@@ -152,7 +152,7 @@ export function PkoMirrorClient({ initialAccount, initialAudit, wattCityCashZl, 
       <section className="card p-4 flex flex-col gap-2">
         <h2 className="text-sm font-semibold">{copy.history}</h2>
         {audit.length === 0 ? (
-          <p className="text-xs text-zinc-400">{copy.empty}</p>
+          <p className="text-xs text-[var(--ink-muted)]">{copy.empty}</p>
         ) : (
           <ul className="flex flex-col gap-1 text-xs font-mono">
             {audit.map((t) => (

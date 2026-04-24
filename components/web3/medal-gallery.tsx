@@ -135,12 +135,12 @@ function GalleryInner({
           role="status"
         >
           <p className="font-bold mb-1">{strings.connectPromptTitle}</p>
-          <p className="text-zinc-400">{strings.connectPromptBody}</p>
+          <p className="text-[var(--ink-muted)]">{strings.connectPromptBody}</p>
         </div>
       )}
 
       {isConnected && loading && (
-        <p className="text-xs text-zinc-400" role="status">
+        <p className="text-xs text-[var(--ink-muted)]" role="status">
           …
         </p>
       )}
@@ -156,7 +156,7 @@ function GalleryInner({
       )}
 
       {isConnected && medals.length === 0 && !loading && !error && (
-        <p className="text-xs text-zinc-400">{strings.noMedalsYet}</p>
+        <p className="text-xs text-[var(--ink-muted)]">{strings.noMedalsYet}</p>
       )}
 
       {medals.length > 0 && (
@@ -172,7 +172,7 @@ function GalleryInner({
               <span className="text-[11px] font-bold">
                 {achievementLabels[m.achievementId] ?? m.achievementId}
               </span>
-              <span className="text-[10px] text-zinc-400">
+              <span className="text-[10px] text-[var(--ink-muted)]">
                 {m.alive ? strings.minted : strings.burned}
               </span>
               {m.explorerUrl && (

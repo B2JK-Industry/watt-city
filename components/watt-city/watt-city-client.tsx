@@ -295,7 +295,7 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
             <span className="font-mono">{state.creditScore}/100</span>
           </span>
         </div>
-        <p className="text-[11px] text-zinc-400 max-w-md">
+        <p className="text-[11px] text-[var(--ink-muted)] max-w-md">
           {dict.disclaimer}
         </p>
       </header>
@@ -518,7 +518,7 @@ function BuildingDetail({
             {dict.upgrade} (L{building.level + 1})
           </button>
         ) : (
-          <span className="text-xs text-zinc-400">🏁 {dict.atMaxLevel}</span>
+          <span className="text-xs text-[var(--ink-muted)]">🏁 {dict.atMaxLevel}</span>
         )}
         {!isDomek && (
           <button
@@ -604,7 +604,7 @@ function CatalogList({
                 {dict.buildHere}
               </button>
             ) : (
-              <span className="text-[11px] text-zinc-400">
+              <span className="text-[11px] text-[var(--ink-muted)]">
                 🔒 {reasonLocked === "coming-soon"
                   ? dict.lockedComing
                   : reasonLocked ?? dict.locked}
@@ -677,7 +677,7 @@ function MortgageCard({
           {dict.mortgageOpen}
         </button>
       </header>
-      <p className="text-sm text-zinc-400">{dict.mortgageBody}</p>
+      <p className="text-sm text-[var(--ink-muted)]">{dict.mortgageBody}</p>
 
       {open && (
         <div className="flex flex-col gap-3 border-t border-[var(--ink)]/30 pt-3">
@@ -779,7 +779,7 @@ function MortgageCard({
       <div className="mt-2">
         <h3 className="text-sm font-semibold mb-1">{dict.loansTitle}</h3>
         {activeLoans.length === 0 ? (
-          <p className="text-xs text-zinc-400">{dict.noLoans}</p>
+          <p className="text-xs text-[var(--ink-muted)]">{dict.noLoans}</p>
         ) : (
           <ul className="flex flex-col gap-1 text-xs font-mono">
             {activeLoans.map((l) => (
@@ -793,7 +793,7 @@ function MortgageCard({
                 </span>
                 <span
                   className={
-                    l.missedConsecutive > 0 ? "text-red-400" : "text-emerald-400"
+                    l.missedConsecutive > 0 ? "text-red-400" : "text-[var(--success)]"
                   }
                 >
                   {l.missedConsecutive > 0

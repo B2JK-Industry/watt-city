@@ -95,8 +95,8 @@ export default async function PkoJuniorPage() {
     <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex flex-col gap-2">
         <h1 className="section-heading text-3xl">{copy.heading}</h1>
-        <p className="text-sm text-zinc-400">{copy.subtitle}</p>
-        <p className="text-xs text-amber-400">
+        <p className="text-sm text-[var(--ink-muted)]">{copy.subtitle}</p>
+        <p className="text-xs text-[var(--ink-muted)]">
           {copy.warn}
         </p>
       </header>

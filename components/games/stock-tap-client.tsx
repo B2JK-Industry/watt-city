@@ -172,7 +172,7 @@ export function StockTapClient({ dict }: { dict: Dict }) {
     return (
       <div className="card p-8 flex flex-col gap-4 items-start">
         <h2 className="text-xl font-semibold">{t.ready}</h2>
-        <p className="text-zinc-400 max-w-prose">{t.readyBody}</p>
+        <p className="text-[var(--ink-muted)] max-w-prose">{t.readyBody}</p>
         <button type="button" className="btn btn-primary" onClick={start}>
           {t.startShort}
         </button>
@@ -213,7 +213,7 @@ export function StockTapClient({ dict }: { dict: Dict }) {
   const priceDelta =
     position !== null ? price - position : 0;
   const priceDeltaTone =
-    priceDelta > 0 ? "text-emerald-300" : priceDelta < 0 ? "text-rose-300" : "";
+    priceDelta > 0 ? "text-[var(--success)]" : priceDelta < 0 ? "text-[var(--danger)]" : "";
 
   return (
     <div className="flex flex-col gap-4">
@@ -229,7 +229,7 @@ export function StockTapClient({ dict }: { dict: Dict }) {
         </span>
         <span className="chip">
           <span className="opacity-70">{t.profit}</span>
-          <strong className={cash >= 0 ? "text-emerald-300" : "text-rose-300"}>
+          <strong className={cash >= 0 ? "text-[var(--success)]" : "text-[var(--danger)]"}>
             {cash.toFixed(1)} zł
           </strong>
         </span>
@@ -247,7 +247,7 @@ export function StockTapClient({ dict }: { dict: Dict }) {
       >
         <div className="flex items-end justify-between">
           <div className="flex flex-col">
-            <span className="text-xs text-zinc-400">
+            <span className="text-xs text-[var(--ink-muted)]">
               {t.price}
             </span>
             <span className="font-mono text-3xl sm:text-4xl font-bold">
@@ -256,7 +256,7 @@ export function StockTapClient({ dict }: { dict: Dict }) {
           </div>
           {position !== null && (
             <div className="flex flex-col items-end text-sm">
-              <span className="text-xs text-zinc-400">
+              <span className="text-xs text-[var(--ink-muted)]">
                 {t.openPos}
               </span>
               <span className="font-mono">
@@ -313,7 +313,7 @@ export function StockTapClient({ dict }: { dict: Dict }) {
             className={`btn ${
               position !== null
                 ? "btn-ghost opacity-40"
-                : "bg-emerald-500 text-black hover:bg-emerald-400"
+                : "bg-[var(--success)] text-black hover:bg-[var(--success)]"
             } ${flash === "buy" ? "animate-[tile-flash-ok_320ms]" : ""}`}
           >
             {t.buy} @ {price.toFixed(1)}
@@ -325,7 +325,7 @@ export function StockTapClient({ dict }: { dict: Dict }) {
             className={`btn ${
               position === null
                 ? "btn-ghost opacity-40"
-                : "bg-rose-500 text-black hover:bg-rose-400"
+                : "bg-[var(--danger)] text-black hover:bg-[var(--danger)]"
             } ${
               flash === "sell-ok"
                 ? "animate-[tile-flash-ok_320ms]"
@@ -337,7 +337,7 @@ export function StockTapClient({ dict }: { dict: Dict }) {
             {t.sell} @ {price.toFixed(1)}
           </button>
         </div>
-        <p className="text-xs text-zinc-400">{t.tip}</p>
+        <p className="text-xs text-[var(--ink-muted)]">{t.tip}</p>
       </div>
     </div>
   );

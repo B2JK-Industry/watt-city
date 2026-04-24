@@ -79,19 +79,19 @@ export function GameComments({ gameId, currentUser, labels }: Props) {
           {labels.post}
         </button>
       </div>
-      {error && <p className="text-rose-400 text-xs">{error}</p>}
+      {error && <p className="text-[var(--danger)] text-xs">{error}</p>}
       {comments.length === 0 ? (
-        <p className="text-xs text-zinc-400">{labels.empty}</p>
+        <p className="text-xs text-[var(--ink-muted)]">{labels.empty}</p>
       ) : (
         <ul className="flex flex-col gap-2 text-sm">
           {comments.map((c) => (
             <li key={c.id} className="border border-[var(--ink)]/20 rounded p-2 flex justify-between gap-2">
               <div className="flex flex-col">
-                <span className="text-xs text-zinc-400">{c.author}</span>
+                <span className="text-xs text-[var(--ink-muted)]">{c.author}</span>
                 <span>{c.text}</span>
               </div>
               {c.author !== currentUser && (
-                <button className="text-[10px] underline text-zinc-400" onClick={() => report(c.id)}>
+                <button className="text-[10px] underline text-[var(--ink-muted)]" onClick={() => report(c.id)}>
                   {labels.report}
                 </button>
               )}

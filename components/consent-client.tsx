@@ -31,8 +31,8 @@ export function ConsentClient({ token }: { token: string }) {
 
   if (status === "ok") {
     return (
-      <div className="card p-6 flex flex-col gap-2 border-emerald-500/60">
-        <p className="text-lg font-semibold text-emerald-400">Dziękujemy ✓</p>
+      <div className="card p-6 flex flex-col gap-2 border-[var(--success)]">
+        <p className="text-lg font-semibold text-[var(--success)]">Dziękujemy ✓</p>
         <p className="text-sm">
           Zgoda została zapisana. {child && <>Konto <strong>{child}</strong> jest aktywne.</>}
           Rodzic może łączyć się z kontem dziecka przez stronę <Link
@@ -55,7 +55,7 @@ export function ConsentClient({ token }: { token: string }) {
         {status === "busy" ? "Wysyłam…" : "Potwierdzam zgodę"}
       </button>
       {error && (
-        <p className="text-rose-400 text-sm">
+        <p className="text-[var(--danger)] text-sm">
           Błąd: {error}. Link mógł wygasnąć (ważny 48h) lub już został użyty.
         </p>
       )}

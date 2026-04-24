@@ -98,7 +98,7 @@ export function ParentClient({ role: initialRole, kids: initialKids, parents, pr
 
   return (
     <div className="flex flex-col gap-6">
-      {error && <div className="card p-3 text-rose-400 text-sm">{error}</div>}
+      {error && <div className="card p-3 text-[var(--danger)] text-sm">{error}</div>}
 
       <section className="card p-4 flex flex-col gap-3">
         <h2 className="text-sm font-semibold">{copy.generateCode}</h2>

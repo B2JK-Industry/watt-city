@@ -88,12 +88,12 @@ export function ThemeProposalsClient({
             {copy.submit}
           </button>
         </div>
-        {error && <p className="text-rose-400 text-xs">{error}</p>}
+        {error && <p className="text-[var(--danger)] text-xs">{error}</p>}
       </section>
       <section className="card p-4 flex flex-col gap-2">
         <h2 className="text-sm font-semibold">{copy.ranking}</h2>
         {proposals.length === 0 ? (
-          <p className="text-xs text-zinc-400">{copy.empty}</p>
+          <p className="text-xs text-[var(--ink-muted)]">{copy.empty}</p>
         ) : (
           <ul className="flex flex-col gap-1">
             {proposals.map((p) => (
@@ -103,7 +103,7 @@ export function ThemeProposalsClient({
               >
                 <div className="flex flex-col">
                   <span className="text-sm">{p.text}</span>
-                  <span className="text-[11px] text-zinc-400">
+                  <span className="text-[11px] text-[var(--ink-muted)]">
                     {p.author} · {p.voteCount} 👍
                   </span>
                 </div>

@@ -48,7 +48,7 @@ export function CityPreview() {
       </div>
       <div
         aria-hidden="true"
-        className="mt-3 h-5 rounded-lg border border-[var(--ink)] bg-zinc-700"
+        className="mt-3 h-5 rounded-lg border border-[var(--ink)] bg-[var(--ink-subtle)]"
         style={{
           backgroundImage:
             "repeating-linear-gradient(45deg, rgba(0,0,0,0.25) 0 6px, transparent 6px 12px)",

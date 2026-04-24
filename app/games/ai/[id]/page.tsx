@@ -76,7 +76,7 @@ export default async function AiGamePage({
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-3">
-        <Link href="/games" className="text-sm text-zinc-400 hover:underline">
+        <Link href="/games" className="text-sm text-[var(--ink-muted)] hover:underline">
           {dict.games.back}
         </Link>
         <div className="flex flex-wrap items-center gap-2">
@@ -94,8 +94,8 @@ export default async function AiGamePage({
           )}
         </div>
         <h1 className="text-3xl font-bold">{game.title}</h1>
-        <p className="text-zinc-300">{game.tagline}</p>
-        <p className="text-sm text-zinc-400">{game.description}</p>
+        <p className="text-[var(--ink-muted)]">{game.tagline}</p>
+        <p className="text-sm text-[var(--ink-muted)]">{game.description}</p>
       </header>
 
       {spec.kind === "quiz" && (

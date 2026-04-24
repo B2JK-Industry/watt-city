@@ -22,7 +22,7 @@ export default function DemoStartPage() {
         <h1 className="section-heading text-3xl sm:text-4xl">
           Zaloguj się jako nauczyciel demo — 1 klik
         </h1>
-        <p className="text-base text-zinc-300 leading-relaxed">
+        <p className="text-base text-[var(--ink-muted)] leading-relaxed">
           Po kliknięciu utworzymy sesję konta <code className="font-mono text-[var(--accent)]">
             {DEMO_TEACHER_USERNAME}
           </code>{" "}

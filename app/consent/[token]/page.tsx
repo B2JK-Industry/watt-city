@@ -19,13 +19,13 @@ export default async function ConsentPage({
     <div className="flex flex-col gap-6 animate-slide-up max-w-2xl">
       <header className="flex flex-col gap-2">
         <h1 className="section-heading text-3xl">Zgoda rodzica</h1>
-        <p className="text-sm text-zinc-400">
+        <p className="text-sm text-[var(--ink-muted)]">
           Twoje dziecko zarejestrowało się w Watt City — grze edukacyjnej
           uczącej finansów osobistych. Potwierdź, że wyrażasz zgodę na
           założenie konta. Możesz ją cofnąć w dowolnym momencie, pisząc na
           adres dpo@watt-city.example.
         </p>
-        <p className="text-xs text-amber-400">
+        <p className="text-xs text-[var(--ink-muted)]">
           ⚠️ GRA EDUKACYJNA — brak prawdziwych pieniędzy. Brak zewnętrznych
           trackerów. Przechowujemy tylko: nazwę użytkownika, zahaszowane
           hasło, rok urodzenia dziecka, ten adres e-mail rodzica.

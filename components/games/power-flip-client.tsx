@@ -130,7 +130,7 @@ export function PowerFlipClient({ rounds, dict }: { rounds: PowerRound[]; dict: 
     return (
       <div className="card p-8 flex flex-col gap-4 items-start">
         <h2 className="text-xl font-semibold">{t.ready}</h2>
-        <p className="text-zinc-400">{t.readyBody}</p>
+        <p className="text-[var(--ink-muted)]">{t.readyBody}</p>
         <button type="button" className="btn btn-primary" onClick={start}>
           {t.startShort}
         </button>
@@ -193,7 +193,7 @@ export function PowerFlipClient({ rounds, dict }: { rounds: PowerRound[]; dict: 
           />
           <FloatingFxLayer items={fxItems} />
         </div>
-        <p className="text-xs text-zinc-400 italic min-h-[1.5em] text-center">
+        <p className="text-xs text-[var(--ink-muted)] italic min-h-[1.5em] text-center">
           {lastFact ? `💡 ${lastFact}` : t.tapFast}
         </p>
       </div>
@@ -221,14 +221,14 @@ function Choice({
       onClick={onClick}
       className={`rounded-2xl p-5 sm:p-6 flex flex-col gap-2 items-start text-left transition-all border ${
         isCorrect
-          ? "border-emerald-400 bg-emerald-500/20 animate-[tile-flash-ok_320ms]"
+          ? "border-[var(--success)] bg-[color-mix(in_oklab,var(--success)_12%,white)] animate-[tile-flash-ok_320ms]"
           : isWrong
-          ? "border-rose-500 bg-rose-500/20 animate-[tile-flash-bad_320ms]"
+          ? "border-[var(--danger)] bg-[color-mix(in_oklab,var(--danger)_12%,white)] animate-[tile-flash-bad_320ms]"
           : "border-[var(--border)] bg-[var(--surface-2)]/70 hover:border-[var(--accent)] hover:-translate-y-0.5"
       }`}
     >
       <span className="text-2xl sm:text-3xl font-bold">{choice.label}</span>
-      <span className="text-xs sm:text-sm text-zinc-400">{choice.detail}</span>
+      <span className="text-xs sm:text-sm text-[var(--ink-muted)]">{choice.detail}</span>
     </button>
   );
 }

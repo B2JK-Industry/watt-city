@@ -58,7 +58,7 @@ export default async function ProposeThemePage() {
     <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex flex-col gap-2">
         <h1 className="section-heading text-3xl">{copy.heading}</h1>
-        <p className="text-sm text-zinc-400">{copy.intro}</p>
+        <p className="text-sm text-[var(--ink-muted)]">{copy.intro}</p>
       </header>
       <ThemeProposalsClient
         currentUser={session.username}

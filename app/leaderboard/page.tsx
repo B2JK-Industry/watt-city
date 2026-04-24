@@ -13,8 +13,8 @@ type Props = {
 };
 
 function rankBadge(rank: number): { icon: string; tone: string } | null {
-  if (rank === 1) return { icon: "🥇", tone: "text-amber-300" };
-  if (rank === 2) return { icon: "🥈", tone: "text-zinc-200" };
+  if (rank === 1) return { icon: "🥇", tone: "text-[var(--foreground)]" };
+  if (rank === 2) return { icon: "🥈", tone: "text-[var(--foreground)]" };
   if (rank === 3) return { icon: "🥉", tone: "text-amber-700" };
   return null;
 }
@@ -45,12 +45,12 @@ export default async function LeaderboardPage({ searchParams }: Props) {
           </h1>
           <span
             className="brutal-tag"
-            style={{ background: "var(--accent)", color: "#0a0a0f" }}
+            style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
           >
             {t.tag}
           </span>
         </div>
-        <p className="text-zinc-400">
+        <p className="text-[var(--ink-muted)]">
           {game
             ? t.gameBody.replace("{title}", game.title)
             : t.globalBody}
@@ -81,7 +81,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
             entry={podium[1]}
             height="h-28"
             badge="🥈"
-            bg="bg-zinc-300"
+            bg="bg-[var(--ink-subtle)]"
             isMe={podium[1].username === session?.username}
           />
           <PodiumCard
@@ -103,7 +103,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
       )}
 
       {entries.length === 0 ? (
-        <div className="card p-10 text-center text-zinc-400">
+        <div className="card p-10 text-center text-[var(--ink-muted)]">
           {game
             ? t.emptyGame.replace("{title}", game.title)
             : t.empty}
@@ -111,7 +111,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
       ) : (
         <div className="card overflow-hidden">
           <table className="w-full">
-            <thead className="bg-[var(--surface-2)]/60 text-xs text-zinc-400">
+            <thead className="bg-[var(--surface-2)]/60 text-xs text-[var(--ink-muted)]">
               <tr>
                 <th className="text-left px-4 py-3 w-16">{t.position}</th>
                 <th className="text-left px-4 py-3">{t.player}</th>

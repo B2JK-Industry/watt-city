@@ -99,7 +99,7 @@ export function NotificationBell({ labels }: Props) {
       >
         <span aria-hidden>🔔</span>
         {unread > 0 && (
-          <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 text-[10px] font-bold flex items-center justify-center bg-rose-500 text-white rounded-full">
+          <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 text-[10px] font-bold flex items-center justify-center bg-[var(--danger)] text-white rounded-full">
             {unread > 9 ? "9+" : unread}
           </span>
         )}
@@ -110,12 +110,12 @@ export function NotificationBell({ labels }: Props) {
           aria-label={labels.bell}
           className="absolute right-0 top-full mt-2 z-40 w-[min(95vw,22rem)] max-w-[calc(100vw-1rem)] card p-2 bg-[var(--surface)] border border-[var(--ink)]"
         >
-          <header className="flex items-center justify-between px-2 py-1 text-xs text-zinc-400 border-b border-[var(--ink)]/30 mb-1">
+          <header className="flex items-center justify-between px-2 py-1 text-xs text-[var(--ink-muted)] border-b border-[var(--ink)]/30 mb-1">
             <span className="font-bold">{labels.bell}</span>
           </header>
           <ul className="flex flex-col max-h-96 overflow-y-auto divide-y divide-[var(--ink)]/20">
             {(data?.entries ?? []).length === 0 && (
-              <li className="p-3 text-sm text-zinc-400">{labels.empty}</li>
+              <li className="p-3 text-sm text-[var(--ink-muted)]">{labels.empty}</li>
             )}
             {(data?.entries ?? []).map((e) => {
               const isUnread = e.ts > (data?.seenAt ?? 0);
@@ -129,9 +129,9 @@ export function NotificationBell({ labels }: Props) {
                       <p className={"text-sm font-semibold " + (isUnread ? "" : "opacity-60")}>
                         {e.title}
                       </p>
-                      <p className="text-xs text-zinc-400">{e.body}</p>
+                      <p className="text-xs text-[var(--ink-muted)]">{e.body}</p>
                       {e.silent && (
-                        <p className="text-[10px] text-zinc-400 mt-0.5">
+                        <p className="text-[10px] text-[var(--ink-muted)] mt-0.5">
                           🌙 {labels.quietActive}
                         </p>
                       )}

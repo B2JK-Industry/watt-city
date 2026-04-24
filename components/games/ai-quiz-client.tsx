@@ -82,7 +82,7 @@ export function AiQuizClient({
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex items-center justify-between text-sm text-zinc-400">
+      <div className="flex items-center justify-between text-sm text-[var(--ink-muted)]">
         <span>
           {t.progress
             .replace("{i}", String(index + 1))
@@ -104,9 +104,9 @@ export function AiQuizClient({
             const tone = !revealed
               ? "hover:border-[var(--accent)]"
               : isAnswer
-                ? "border-emerald-400 bg-emerald-400/10"
+                ? "border-[var(--success)] bg-[color-mix(in_oklab,var(--success)_12%,white)]"
                 : isChosen
-                  ? "border-rose-400 bg-rose-400/10"
+                  ? "border-[var(--danger)] bg-[color-mix(in_oklab,var(--danger)_12%,white)]"
                   : "opacity-50";
             return (
               <button
@@ -127,8 +127,8 @@ export function AiQuizClient({
             <div
               className={`rounded-xl p-3 border ${
                 chosen === current.correctIndex
-                  ? "border-emerald-500/40 bg-emerald-500/5"
-                  : "border-rose-500/40 bg-rose-500/5"
+                  ? "border-[var(--success)] bg-[color-mix(in_oklab,var(--success)_12%,white)]"
+                  : "border-[var(--danger)] bg-[color-mix(in_oklab,var(--danger)_12%,white)]"
               }`}
             >
               <p className="font-semibold mb-1">
@@ -136,7 +136,7 @@ export function AiQuizClient({
                   ? t.correctMark
                   : t.wrongMark}
               </p>
-              <p className="text-sm text-zinc-300">{current.explanation}</p>
+              <p className="text-sm text-[var(--ink-muted)]">{current.explanation}</p>
             </div>
             <button
               type="button"

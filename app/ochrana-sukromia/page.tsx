@@ -19,22 +19,22 @@ export default async function PrivacyPage() {
           <h1 className="section-heading text-3xl sm:text-4xl">{t.title}</h1>
           <span
             className="brutal-tag"
-            style={{ background: "var(--success)", color: "#0a0a0f" }}
+            style={{ background: "var(--success)", color: "var(--accent-ink)" }}
           >
             {t.tag}
           </span>
         </div>
-        <p className="text-zinc-400">{t.note}</p>
+        <p className="text-[var(--ink-muted)]">{t.note}</p>
       </header>
 
       <section className="card p-5 flex flex-col gap-3">
         <h2 className="section-heading text-lg">1 · {t.whoTitle}</h2>
-        <p className="text-sm text-zinc-300">{t.whoBody}</p>
+        <p className="text-sm text-[var(--ink-muted)]">{t.whoBody}</p>
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
         <h2 className="section-heading text-lg">2 · {t.whatTitle}</h2>
-        <p className="text-sm text-zinc-400">{t.whatIntro}</p>
+        <p className="text-sm text-[var(--ink-muted)]">{t.whatIntro}</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
           <DataRow
             field={dict.auth.usernameLabel}
@@ -69,12 +69,12 @@ export default async function PrivacyPage() {
             retention={f.sessionTtl}
           />
         </div>
-        <p className="text-xs text-zinc-400 mt-2">{t.whatNotStored}</p>
+        <p className="text-xs text-[var(--ink-muted)] mt-2">{t.whatNotStored}</p>
       </section>
 
       <section className="card p-5 flex flex-col gap-3">
         <h2 className="section-heading text-lg">3 · {t.whereTitle}</h2>
-        <ul className="text-sm text-zinc-300 space-y-1.5 list-disc pl-5">
+        <ul className="text-sm text-[var(--ink-muted)] space-y-1.5 list-disc pl-5">
           {t.whereList.map((line, i) => (
             <li key={i}>{line}</li>
           ))}
@@ -83,7 +83,7 @@ export default async function PrivacyPage() {
 
       <section className="card p-5 flex flex-col gap-3">
         <h2 className="section-heading text-lg">4 · {t.rightsTitle}</h2>
-        <ul className="text-sm text-zinc-300 space-y-2 list-disc pl-5">
+        <ul className="text-sm text-[var(--ink-muted)] space-y-2 list-disc pl-5">
           {t.rightsList.map((line, i) => (
             <li key={i}>{line}</li>
           ))}
@@ -92,8 +92,8 @@ export default async function PrivacyPage() {
 
       <section className="card p-5 flex flex-col gap-3">
         <h2 className="section-heading text-lg">5 · {t.aiTitle}</h2>
-        <p className="text-sm text-zinc-300">{t.aiIntro}</p>
-        <ul className="text-sm text-zinc-300 space-y-1.5 list-disc pl-5">
+        <p className="text-sm text-[var(--ink-muted)]">{t.aiIntro}</p>
+        <ul className="text-sm text-[var(--ink-muted)] space-y-1.5 list-disc pl-5">
           {t.aiList.map((line, i) => (
             <li key={i}>{line}</li>
           ))}
@@ -102,7 +102,7 @@ export default async function PrivacyPage() {
 
       <section className="card p-5 flex flex-col gap-3">
         <h2 className="section-heading text-lg">6 · {t.securityTitle}</h2>
-        <ul className="text-sm text-zinc-300 space-y-1.5 list-disc pl-5">
+        <ul className="text-sm text-[var(--ink-muted)] space-y-1.5 list-disc pl-5">
           {t.securityList.map((line, i) => (
             <li key={i}>{line}</li>
           ))}
@@ -111,17 +111,17 @@ export default async function PrivacyPage() {
 
       <section className="card p-5 flex flex-col gap-3">
         <h2 className="section-heading text-lg">7 · {t.minorsTitle}</h2>
-        <p className="text-sm text-zinc-300">{t.minorsBody}</p>
+        <p className="text-sm text-[var(--ink-muted)]">{t.minorsBody}</p>
       </section>
 
       <section className="card p-5 flex flex-col gap-3 border-[var(--accent)]">
         <h2 className="section-heading text-lg">8 · {t.disclaimerTitle}</h2>
-        <p className="text-sm text-zinc-300">{t.disclaimerBody}</p>
+        <p className="text-sm text-[var(--ink-muted)]">{t.disclaimerBody}</p>
       </section>
 
       <section className="card p-5 flex flex-col gap-3 border-[var(--success)]">
         <h2 className="section-heading text-lg">9 · {t.web3Title}</h2>
-        <p className="text-sm text-zinc-300 leading-relaxed">{t.web3Body}</p>
+        <p className="text-sm text-[var(--ink-muted)] leading-relaxed">{t.web3Body}</p>
       </section>
 
       <section className="card p-5 flex flex-col gap-3 border-[var(--accent)]">
@@ -135,7 +135,7 @@ export default async function PrivacyPage() {
             } as const)[lang]
           }
         </h2>
-        <ul className="text-sm text-zinc-300 space-y-2 list-disc pl-5">
+        <ul className="text-sm text-[var(--ink-muted)] space-y-2 list-disc pl-5">
           <li>
             <strong>Art. 20 (portability)</strong>:{" "}
             <Link
@@ -179,7 +179,7 @@ export default async function PrivacyPage() {
         </ul>
       </section>
 
-      <footer className="text-xs text-zinc-400 border-t border-[var(--ink)]/30 pt-4">
+      <footer className="text-xs text-[var(--ink-muted)] border-t border-[var(--ink)]/30 pt-4">
         {t.version}{" "}
         <Link href="/" className="underline">
           {t.backHome}
@@ -207,14 +207,14 @@ function DataRow({
       <p className="font-semibold text-xs text-[var(--accent)]">
         {field}
       </p>
-      <p className="text-xs font-mono text-zinc-300 mt-1">{value}</p>
-      <p className="text-xs text-zinc-400 mt-2">
-        <span className="text-zinc-400">Retention:</span> {retention}
+      <p className="text-xs font-mono text-[var(--ink-muted)] mt-1">{value}</p>
+      <p className="text-xs text-[var(--ink-muted)] mt-2">
+        <span className="text-[var(--ink-muted)]">Retention:</span> {retention}
       </p>
-      <p className="text-xs text-zinc-400">
-        <span className="text-zinc-400">Purpose:</span> {purpose}
+      <p className="text-xs text-[var(--ink-muted)]">
+        <span className="text-[var(--ink-muted)]">Purpose:</span> {purpose}
       </p>
-      {note && <p className="text-[11px] text-zinc-400 mt-1 italic">{note}</p>}
+      {note && <p className="text-[11px] text-[var(--ink-muted)] mt-1 italic">{note}</p>}
     </div>
   );
 }

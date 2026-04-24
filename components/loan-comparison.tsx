@@ -140,7 +140,7 @@ export function LoanComparison({ rows, lang, principal, termMonths }: Props) {
   if (rows.length === 0) {
     return (
       <section className="card p-4">
-        <p className="text-sm text-zinc-400">{t.noRows}</p>
+        <p className="text-sm text-[var(--ink-muted)]">{t.noRows}</p>
       </section>
     );
   }
@@ -178,14 +178,14 @@ export function LoanComparison({ rows, lang, principal, termMonths }: Props) {
                 <td className="px-2 py-2 font-bold">
                   <span className="block">{row.type.replace(/_/g, " ")}</span>
                   {row.cheapest && (
-                    <span className="text-[10px] font-semibold text-emerald-600 block">
+                    <span className="text-[10px] font-semibold text-[var(--success)] block">
                       {t.cheapestBadge}
                     </span>
                   )}
                   {row.warning && (
                     <span
                       title={t.warningTooltip}
-                      className="text-[10px] font-semibold text-rose-500 block cursor-help"
+                      className="text-[10px] font-semibold text-[var(--danger)] block cursor-help"
                     >
                       {t.warningBadge}
                     </span>
@@ -223,7 +223,7 @@ export function LoanComparison({ rows, lang, principal, termMonths }: Props) {
           </tbody>
         </table>
       </div>
-      {error && <p className="text-xs text-rose-500">Error: {error}</p>}
+      {error && <p className="text-xs text-[var(--danger)]">Error: {error}</p>}
     </section>
   );
 }

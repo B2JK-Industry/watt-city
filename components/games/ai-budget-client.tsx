@@ -68,7 +68,7 @@ export function AiBudgetClient({
   return (
     <div className="flex flex-col gap-4">
       <div className="card p-4 flex flex-col gap-2">
-        <p className="text-xs text-zinc-400">{t.scenario}</p>
+        <p className="text-xs text-[var(--ink-muted)]">{t.scenario}</p>
         <p className="text-sm">{spec.scenario}</p>
         <p className="text-xs text-[var(--accent)] font-mono">{spec.incomeLabel}</p>
       </div>
@@ -80,7 +80,7 @@ export function AiBudgetClient({
               <span
                 className={
                   "text-sm font-mono " +
-                  (onTarget[i] ? "text-emerald-400" : "text-zinc-400")
+                  (onTarget[i] ? "text-[var(--success)]" : "text-[var(--ink-muted)]")
                 }
               >
                 {values[i]}% {onTarget[i] ? "✓" : ""}
@@ -97,7 +97,7 @@ export function AiBudgetClient({
                 setValues(next);
               }}
             />
-            <p className="text-[11px] text-zinc-400">{cat.explanation}</p>
+            <p className="text-[11px] text-[var(--ink-muted)]">{cat.explanation}</p>
           </div>
         ))}
       </div>
@@ -105,9 +105,9 @@ export function AiBudgetClient({
         className={
           "card p-3 text-sm font-mono " +
           (total === 100
-            ? "border-emerald-400"
+            ? "border-[var(--success)]"
             : total > 100
-              ? "border-rose-400"
+              ? "border-[var(--danger)]"
               : "")
         }
       >

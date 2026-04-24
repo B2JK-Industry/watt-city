@@ -36,7 +36,7 @@ export default async function FriendCityPage({
         <h1 className="text-xl font-semibold">
           {{ pl: "Profil niedostępny", uk: "Недоступно", cs: "Nedostupné", en: "Private profile" }[lang]}
         </h1>
-        <p className="text-sm text-zinc-400">
+        <p className="text-sm text-[var(--ink-muted)]">
           {{
             pl: "Ten użytkownik ograniczył widoczność swojego miasta do znajomych.",
             uk: "Користувач дозволив бачити місто тільки друзям.",
@@ -124,7 +124,7 @@ export default async function FriendCityPage({
           })}
         </svg>
       </section>
-      <Link href="/friends" className="text-sm underline text-zinc-400">
+      <Link href="/friends" className="text-sm underline text-[var(--ink-muted)]">
         ← {{ pl: "Moi znajomi", uk: "Мої друзі", cs: "Moji přátelé", en: "My friends" }[lang]}
       </Link>
     </div>

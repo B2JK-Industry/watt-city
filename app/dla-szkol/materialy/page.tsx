@@ -20,7 +20,7 @@ export default async function MaterialsPage() {
       <header className="flex flex-wrap items-baseline justify-between gap-3">
         <div>
           <h1 className="section-heading text-3xl sm:text-4xl">{t.title}</h1>
-          <p className="text-sm text-zinc-300 mt-2">{t.subtitle}</p>
+          <p className="text-sm text-[var(--ink-muted)] mt-2">{t.subtitle}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Link
@@ -44,7 +44,7 @@ export default async function MaterialsPage() {
         {t.props.map((p) => (
           <div key={p.title} className="card p-4 flex flex-col gap-1">
             <h2 className="font-semibold text-sm">{p.title}</h2>
-            <p className="text-sm text-zinc-300">{p.body}</p>
+            <p className="text-sm text-[var(--ink-muted)]">{p.body}</p>
           </div>
         ))}
       </section>

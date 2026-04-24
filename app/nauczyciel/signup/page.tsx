@@ -55,7 +55,7 @@ export default function TeacherSignupPage() {
     <div className="max-w-lg mx-auto flex flex-col gap-6 animate-slide-up">
       <header className="flex flex-col gap-2">
         <h1 className="section-heading text-3xl">Rejestracja nauczyciela</h1>
-        <p className="text-sm text-zinc-300">
+        <p className="text-sm text-[var(--ink-muted)]">
           Jeden formularz. Po rejestracji stworzysz klasę i otrzymasz kod do
           wpisania dzieciom.
         </p>
@@ -130,7 +130,7 @@ export default function TeacherSignupPage() {
             w ramach pracy dydaktycznej.
           </span>
         </label>
-        {error && <p className="text-rose-500 text-sm">Błąd: {error}</p>}
+        {error && <p className="text-[var(--danger)] text-sm">Błąd: {error}</p>}
         <button
           type="submit"
           disabled={busy}

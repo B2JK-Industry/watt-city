@@ -161,15 +161,15 @@ export function WordScrambleClient({ words, dict }: { words: ScrambleWord[]; dic
               </span>
             ))}
           </div>
-          <p className="text-sm text-zinc-400 italic">💡 {current.hint}</p>
+          <p className="text-sm text-[var(--ink-muted)] italic">💡 {current.hint}</p>
         </div>
         <input
           ref={inputRef}
           className={`input text-center text-xl font-mono ${
             flash === "bad"
-              ? "border-rose-500 animate-[shake_0.35s]"
+              ? "border-[var(--danger)] animate-[shake_0.35s]"
               : flash === "ok"
-              ? "border-emerald-500"
+              ? "border-[var(--success)]"
               : ""
           }`}
           value={answer}

@@ -28,7 +28,7 @@ export default async function StatusPage() {
     <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex flex-col gap-2">
         <h1 className="section-heading text-3xl">Watt City — status</h1>
-        <p className="text-xs text-zinc-400">
+        <p className="text-xs text-[var(--ink-muted)]">
           Public status page. Generated {new Date(now).toISOString()}.
         </p>
       </header>
@@ -36,29 +36,29 @@ export default async function StatusPage() {
         <h2 className="text-sm font-semibold">Rotation AI</h2>
         <p className="text-sm">
           Status:{" "}
-          <strong className={rotationOk ? "text-emerald-400" : "text-rose-400"}>
+          <strong className={rotationOk ? "text-[var(--success)]" : "text-[var(--danger)]"}>
             {rotationOk ? "OK" : "degraded"}
           </strong>
         </p>
-        <p className="text-xs text-zinc-400">
+        <p className="text-xs text-[var(--ink-muted)]">
           Live AI games: {liveCount}
         </p>
         {minutesSinceLastRotation !== null && (
-          <p className="text-xs text-zinc-400">
+          <p className="text-xs text-[var(--ink-muted)]">
             Last rotation: {minutesSinceLastRotation} min ago
           </p>
         )}
       </section>
       <section className="card p-4 flex flex-col gap-1">
         <h2 className="text-sm font-semibold">Komponenty</h2>
-        <ul className="text-xs text-zinc-400 flex flex-col gap-1">
+        <ul className="text-xs text-[var(--ink-muted)] flex flex-col gap-1">
           <li>✅ Storage: Upstash Redis</li>
           <li>✅ Authentication: cookie sessions (scrypt + HMAC)</li>
           <li>{rotationOk ? "✅" : "❌"} AI rotation: external pinger + Vercel cron backstop</li>
           <li>✅ Static assets: Vercel CDN</li>
         </ul>
       </section>
-      <p className="text-xs text-zinc-400">
+      <p className="text-xs text-[var(--ink-muted)]">
         Szczegóły dla on-call: <a href="/admin" className="underline">/admin</a>
         . W razie incydentu zobacz <a href="/admin/health" className="underline">/admin/health</a>.
       </p>

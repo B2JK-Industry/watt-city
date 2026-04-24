@@ -83,7 +83,7 @@ export function AiTrueFalseClient({
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex items-center justify-between text-sm text-zinc-400">
+      <div className="flex items-center justify-between text-sm text-[var(--ink-muted)]">
         <span>
           {t.progress.replace("{i}", String(index + 1)).replace("{n}", String(total))}
         </span>
@@ -103,11 +103,11 @@ export function AiTrueFalseClient({
             className={`rounded-2xl border border-[var(--ink)] p-5 text-lg font-semibold transition ${
               phase === "reveal"
                 ? current.isTrue
-                  ? "bg-emerald-400 text-[var(--foreground)]"
+                  ? "bg-[var(--success)] text-[var(--foreground)]"
                   : chosen === true
-                    ? "bg-rose-400/30 opacity-70"
+                    ? "bg-[color-mix(in_oklab,var(--danger)_12%,white)] opacity-70"
                     : "opacity-40"
-                : "bg-emerald-500/15 hover:bg-emerald-500/30 text-emerald-200"
+                : "bg-[color-mix(in_oklab,var(--success)_12%,white)] hover:bg-[color-mix(in_oklab,var(--success)_12%,white)] text-[var(--success)]"
             }`}
           >
             ✓ {t.tFTrueLabel}
@@ -119,11 +119,11 @@ export function AiTrueFalseClient({
             className={`rounded-2xl border border-[var(--ink)] p-5 text-lg font-semibold transition ${
               phase === "reveal"
                 ? !current.isTrue
-                  ? "bg-emerald-400 text-[var(--foreground)]"
+                  ? "bg-[var(--success)] text-[var(--foreground)]"
                   : chosen === false
-                    ? "bg-rose-400/30 opacity-70"
+                    ? "bg-[color-mix(in_oklab,var(--danger)_12%,white)] opacity-70"
                     : "opacity-40"
-                : "bg-rose-500/15 hover:bg-rose-500/30 text-rose-200"
+                : "bg-[color-mix(in_oklab,var(--danger)_12%,white)] hover:bg-[color-mix(in_oklab,var(--danger)_12%,white)] text-[var(--danger)]"
             }`}
           >
             ✗ {t.tFFalseLabel}
@@ -135,14 +135,14 @@ export function AiTrueFalseClient({
             <div
               className={`rounded-xl p-3 border ${
                 wasCorrect
-                  ? "border-emerald-500/40 bg-emerald-500/5"
-                  : "border-rose-500/40 bg-rose-500/5"
+                  ? "border-[var(--success)] bg-[color-mix(in_oklab,var(--success)_12%,white)]"
+                  : "border-[var(--danger)] bg-[color-mix(in_oklab,var(--danger)_12%,white)]"
               }`}
             >
               <p className="font-semibold mb-1">
                 {wasCorrect ? t.correctMark : t.wrongMark}
               </p>
-              <p className="text-sm text-zinc-300">{current.explanation}</p>
+              <p className="text-sm text-[var(--ink-muted)]">{current.explanation}</p>
             </div>
             <button
               type="button"

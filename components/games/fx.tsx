@@ -33,9 +33,9 @@ export function FloatingFxLayer({ items }: { items: FloatingFx[] }) {
           key={it.id}
           className={`absolute font-bold text-xl sm:text-2xl select-none animate-[fx-rise_800ms_cubic-bezier(0.2,0.8,0.2,1)_forwards] ${
             it.tone === "ok"
-              ? "text-emerald-300"
+              ? "text-[var(--success)]"
               : it.tone === "bad"
-              ? "text-rose-400"
+              ? "text-[var(--danger)]"
               : "text-[var(--accent)] drop-"
           }`}
           style={{
@@ -61,7 +61,7 @@ export function ComboBadge({
   if (combo < 2) return null;
   const tier =
     multiplier >= 3
-      ? "border-rose-400 text-rose-300"
+      ? "border-[var(--danger)] text-[var(--danger)]"
       : multiplier >= 2
       ? "border-[var(--accent-2)] text-[var(--accent-2)]"
       : "border-[var(--accent)] text-[var(--accent)]";

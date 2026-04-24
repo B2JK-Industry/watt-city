@@ -62,12 +62,12 @@ export default async function HallOfFamePage() {
           <h1 className="section-heading text-3xl sm:text-4xl">{t.title}</h1>
           <span
             className="brutal-tag"
-            style={{ background: "var(--accent)", color: "#0a0a0f" }}
+            style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
           >
             {t.tag}
           </span>
         </div>
-        <p className="text-zinc-400 max-w-2xl">{t.body}</p>
+        <p className="text-[var(--ink-muted)] max-w-2xl">{t.body}</p>
       </header>
 
       {/* Today's AI challenge — live list if any, placeholder otherwise */}
@@ -77,12 +77,12 @@ export default async function HallOfFamePage() {
             <h2 className="section-heading text-xl">{t.todayTitle}</h2>
             <span
               className="brutal-tag"
-              style={{ background: "var(--accent)", color: "#0a0a0f" }}
+              style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
             >
               LIVE
             </span>
           </div>
-          <p className="text-sm text-zinc-400 max-w-2xl">
+          <p className="text-sm text-[var(--ink-muted)] max-w-2xl">
             {t.liveMedalNote}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -109,8 +109,8 @@ export default async function HallOfFamePage() {
                         ⏱ {hoursLeft}h
                       </span>
                     </div>
-                    <p className="text-xs text-zinc-400">{g.theme}</p>
-                    <p className="text-xs text-zinc-400">
+                    <p className="text-xs text-[var(--ink-muted)]">{g.theme}</p>
+                    <p className="text-xs text-[var(--ink-muted)]">
                       {g.model} · {specKind(g.spec)}
                     </p>
                   </Link>
@@ -120,7 +120,7 @@ export default async function HallOfFamePage() {
                       const medal = ["🥇", "🥈", "🥉"][i];
                       const tone = [
                         "bg-[var(--sales)]",
-                        "bg-zinc-300",
+                        "bg-[var(--ink-subtle)]",
                         "bg-[var(--sales)]",
                       ][i];
                       return (
@@ -129,7 +129,7 @@ export default async function HallOfFamePage() {
                           className={`flex items-center justify-between rounded-lg border border-[var(--ink)] px-2.5 py-1.5 ${
                             entry
                               ? `${tone} text-[var(--foreground)]`
-                              : "bg-[var(--surface-2)] text-zinc-400"
+                              : "bg-[var(--surface-2)] text-[var(--ink-muted)]"
                           } ${
                             entry && entry.username === session?.username
                               ? "ring-2 ring-[var(--danger)]"
@@ -169,12 +169,12 @@ export default async function HallOfFamePage() {
             <h2 className="section-heading text-xl">{t.todayTitle}</h2>
             <span
               className="brutal-tag"
-              style={{ background: "var(--danger)", color: "#0a0a0f" }}
+              style={{ background: "var(--danger)", color: "var(--accent-ink)" }}
             >
               {t.comingSoon}
             </span>
           </div>
-          <p className="text-sm text-zinc-300 max-w-2xl">
+          <p className="text-sm text-[var(--ink-muted)] max-w-2xl">
             {t.todayBody.split("{permBadge}").map((part, i, arr) =>
               i < arr.length - 1 ? (
                 <span key={i}>
@@ -201,7 +201,7 @@ export default async function HallOfFamePage() {
           <h2 className="section-heading text-xl sm:text-2xl">
             {t.aiArchiveTitle}
           </h2>
-          <p className="text-sm text-zinc-400 max-w-2xl">
+          <p className="text-sm text-[var(--ink-muted)] max-w-2xl">
             {t.aiArchiveBody}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -219,10 +219,10 @@ export default async function HallOfFamePage() {
                         <p className="font-semibold tracking-tight truncate">
                           {record.title}
                         </p>
-                        <p className="text-[11px] text-zinc-400 font-semibold truncate">
+                        <p className="text-[11px] text-[var(--ink-muted)] font-semibold truncate">
                           {record.theme}
                         </p>
-                        <p className="text-[10px] text-zinc-400 font-mono">
+                        <p className="text-[10px] text-[var(--ink-muted)] font-mono">
                           {date.toLocaleDateString(lang === "en" ? "en-US" : "pl-PL")}{" "}
                           · {record.model} · {record.kind}
                         </p>
@@ -235,7 +235,7 @@ export default async function HallOfFamePage() {
                       const medal = ["🥇", "🥈", "🥉"][i];
                       const tone = [
                         "bg-[var(--sales)]",
-                        "bg-zinc-300",
+                        "bg-[var(--ink-subtle)]",
                         "bg-[var(--sales)]",
                       ][i];
                       return (
@@ -244,7 +244,7 @@ export default async function HallOfFamePage() {
                           className={`flex items-center justify-between rounded-lg border border-[var(--ink)] px-2.5 py-1.5 ${
                             entry
                               ? `${tone} text-[var(--foreground)]`
-                              : "bg-[var(--surface-2)] text-zinc-400"
+                              : "bg-[var(--surface-2)] text-[var(--ink-muted)]"
                           } ${
                             entry && entry.username === session?.username
                               ? "ring-2 ring-[var(--danger)]"
@@ -299,7 +299,7 @@ export default async function HallOfFamePage() {
                     <p className="font-semibold tracking-tight">
                       {localizedTitle(game, dict)}
                     </p>
-                    <p className="text-[11px] text-zinc-400 font-semibold">
+                    <p className="text-[11px] text-[var(--ink-muted)] font-semibold">
                       {game.building.name}
                     </p>
                   </div>
@@ -317,7 +317,7 @@ export default async function HallOfFamePage() {
                   const medal = ["🥇", "🥈", "🥉"][i];
                   const tone = [
                     "bg-[var(--sales)]",
-                    "bg-zinc-300",
+                    "bg-[var(--ink-subtle)]",
                     "bg-[var(--sales)]",
                   ][i];
                   return (
@@ -326,7 +326,7 @@ export default async function HallOfFamePage() {
                       className={`flex items-center justify-between rounded-lg border border-[var(--ink)] px-2.5 py-1.5 ${
                         entry
                           ? `${tone} text-[var(--foreground)]`
-                          : "bg-[var(--surface-2)] text-zinc-400"
+                          : "bg-[var(--surface-2)] text-[var(--ink-muted)]"
                       } ${
                         entry && entry.username === session?.username
                           ? "ring-2 ring-[var(--danger)]"
@@ -360,9 +360,9 @@ export default async function HallOfFamePage() {
         </div>
       </section>
 
-      <aside className="card p-5 text-sm text-zinc-400">
+      <aside className="card p-5 text-sm text-[var(--ink-muted)]">
         <p>
-          <strong className="text-zinc-200">{t.whyTitle}</strong> {t.whyBody}
+          <strong className="text-[var(--foreground)]">{t.whyTitle}</strong> {t.whyBody}
         </p>
       </aside>
     </div>

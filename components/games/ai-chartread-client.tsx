@@ -33,22 +33,22 @@ function Chart({ spec }: { spec: Spec }) {
     <svg viewBox={`0 0 ${VB_W} ${VB_H}`} className="w-full h-auto card">
       <title>{spec.chartTitle}</title>
       {/* axes */}
-      <line x1={PAD} y1={VB_H - PAD} x2={VB_W - PAD} y2={VB_H - PAD} stroke="#475569" strokeWidth={2} />
-      <line x1={PAD} y1={PAD} x2={PAD} y2={VB_H - PAD} stroke="#475569" strokeWidth={2} />
+      <line x1={PAD} y1={VB_H - PAD} x2={VB_W - PAD} y2={VB_H - PAD} stroke="var(--line)" strokeWidth={1} />
+      <line x1={PAD} y1={PAD} x2={PAD} y2={VB_H - PAD} stroke="var(--line)" strokeWidth={1} />
       {/* title */}
-      <text x={VB_W / 2} y={20} textAnchor="middle" fontSize={14} fontWeight={700} fill="#e2e8f0">
+      <text x={VB_W / 2} y={20} textAnchor="middle" fontSize={14} fontWeight={700} fill="var(--accent)">
         {spec.chartTitle}
       </text>
       {/* y-label */}
-      <text x={12} y={PAD - 6} fontSize={10} fill="#94a3b8">
+      <text x={12} y={PAD - 6} fontSize={10} fill="var(--ink-muted)">
         {spec.yLabel}
       </text>
       {/* x-label */}
-      <text x={VB_W - PAD} y={VB_H - 10} textAnchor="end" fontSize={10} fill="#94a3b8">
+      <text x={VB_W - PAD} y={VB_H - 10} textAnchor="end" fontSize={10} fill="var(--ink-muted)">
         {spec.xLabel}
       </text>
       {spec.chartType === "line" ? (
-        <path d={path} fill="none" stroke="#fde047" strokeWidth={3} />
+        <path d={path} fill="none" stroke="var(--accent)" strokeWidth={2} />
       ) : (
         spec.points.map((p, i) => {
           const x = PAD + i * xStep - 10;
@@ -61,8 +61,8 @@ function Chart({ spec }: { spec: Spec }) {
               y={y}
               width={20}
               height={h}
-              fill="#22d3ee"
-              stroke="#0f172a"
+              fill="var(--sales)"
+              stroke="var(--accent)"
               strokeWidth={1}
             />
           );
@@ -70,13 +70,13 @@ function Chart({ spec }: { spec: Spec }) {
       )}
       {spec.points.map((p, i) => (
         <g key={i}>
-          <circle cx={PAD + i * xStep} cy={mapY(p.y)} r={3} fill="#fde047" />
+          <circle cx={PAD + i * xStep} cy={mapY(p.y)} r={3} fill="var(--sales)" />
           <text
             x={PAD + i * xStep}
             y={VB_H - PAD + 14}
             textAnchor="middle"
             fontSize={9}
-            fill="#94a3b8"
+            fill="var(--ink-muted)"
           >
             {String(p.x)}
           </text>
@@ -145,9 +145,9 @@ export function AiChartReadClient({
                 ? "border-[var(--accent)]"
                 : "hover:border-[var(--accent)]"
               : isAnswer
-                ? "border-emerald-400 bg-emerald-400/10"
+                ? "border-[var(--success)] bg-[color-mix(in_oklab,var(--success)_12%,white)]"
                 : isChosen
-                  ? "border-rose-400 bg-rose-400/10"
+                  ? "border-[var(--danger)] bg-[color-mix(in_oklab,var(--danger)_12%,white)]"
                   : "opacity-50";
             return (
               <button
@@ -166,14 +166,14 @@ export function AiChartReadClient({
             <div
               className={`rounded-xl p-3 border ${
                 isCorrect
-                  ? "border-emerald-500/40 bg-emerald-500/5"
-                  : "border-rose-500/40 bg-rose-500/5"
+                  ? "border-[var(--success)] bg-[color-mix(in_oklab,var(--success)_12%,white)]"
+                  : "border-[var(--danger)] bg-[color-mix(in_oklab,var(--danger)_12%,white)]"
               }`}
             >
               <p className="font-semibold mb-1">
                 {isCorrect ? t.correctMark : t.wrongMark}
               </p>
-              <p className="text-sm text-zinc-300">{spec.explanation}</p>
+              <p className="text-sm text-[var(--ink-muted)]">{spec.explanation}</p>
             </div>
             <button
               className="btn btn-primary self-end"

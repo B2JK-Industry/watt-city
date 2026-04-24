@@ -24,7 +24,7 @@ export function DeleteAccountButton({ t }: { t: T }) {
   if (stage === "confirm") {
     return (
       <div className="flex flex-col gap-2">
-        <p className="text-xs text-zinc-300 max-w-xs">
+        <p className="text-xs text-[var(--ink-muted)] max-w-xs">
           {t.deleteAccountWarn}{" "}
           <strong>{t.deleteAccountIrreversible}</strong>
         </p>
@@ -60,10 +60,10 @@ export function DeleteAccountButton({ t }: { t: T }) {
             {t.deleteAccountCancel}
           </button>
         </div>
-        {error && <p className="text-rose-400 text-xs">{error}</p>}
+        {error && <p className="text-[var(--danger)] text-xs">{error}</p>}
       </div>
     );
   }
 
-  return <span className="text-xs text-zinc-400">{t.deleteAccountDeleting}</span>;
+  return <span className="text-xs text-[var(--ink-muted)]">{t.deleteAccountDeleting}</span>;
 }

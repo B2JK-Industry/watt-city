@@ -97,7 +97,7 @@ export function AiCalcSprintClient({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between text-sm text-zinc-400">
+      <div className="flex items-center justify-between text-sm text-[var(--ink-muted)]">
         <span>
           {t.timeLeft}: <strong className="text-[var(--accent)] font-mono">{secondsLeft}s</strong>
         </span>

@@ -54,7 +54,7 @@ export function ProfileEdit({
   return (
     <div className="card p-4 flex flex-col gap-4">
       <div>
-        <p className="text-xs text-zinc-400 mb-2">{copy.avatar}</p>
+        <p className="text-xs text-[var(--ink-muted)] mb-2">{copy.avatar}</p>
         <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
           {AVATARS.map((a) => {
             const selected = avatar === a.id;
@@ -91,8 +91,8 @@ export function ProfileEdit({
         <button onClick={save} disabled={saving} className="btn btn-primary">
           {copy.save}
         </button>
-        {saved && <span className="text-emerald-400 text-sm">{copy.saved}</span>}
-        {error && <span className="text-rose-400 text-sm">{error}</span>}
+        {saved && <span className="text-[var(--success)] text-sm">{copy.saved}</span>}
+        {error && <span className="text-[var(--danger)] text-sm">{error}</span>}
       </div>
     </div>
   );

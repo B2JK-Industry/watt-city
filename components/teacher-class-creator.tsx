@@ -128,7 +128,7 @@ export function TeacherClassCreator() {
           className="border border-[var(--ink)] bg-[var(--surface)] px-3 py-2 rounded"
         />
       </label>
-      {error && <p className="text-rose-500 text-sm">Błąd: {error}</p>}
+      {error && <p className="text-[var(--danger)] text-sm">Błąd: {error}</p>}
       <button type="submit" disabled={busy} className="btn btn-primary disabled:opacity-50">
         {busy ? "Tworzę…" : "Utwórz klasę"}
       </button>
