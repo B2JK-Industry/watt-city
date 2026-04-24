@@ -69,7 +69,7 @@ export default function TeacherSignupPage() {
             required
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
-            className="border border-[var(--ink)] bg-[var(--surface)] px-3 py-2 rounded"
+            className="input"
           />
         </label>
         <label className="flex flex-col gap-1 text-sm">
@@ -78,7 +78,7 @@ export default function TeacherSignupPage() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="border border-[var(--ink)] bg-[var(--surface)] px-3 py-2 rounded"
+            className="input"
           />
           <span className="text-[10px] opacity-60">
             Nie publikujemy. Używamy wyłącznie do odzyskania dostępu.
@@ -92,7 +92,7 @@ export default function TeacherSignupPage() {
             value={schoolName}
             onChange={(e) => setSchoolName(e.target.value)}
             placeholder="np. Szkoła Podstawowa nr 12, Katowice"
-            className="border border-[var(--ink)] bg-[var(--surface)] px-3 py-2 rounded"
+            className="input"
           />
         </label>
         <label className="flex flex-col gap-1 text-sm">
@@ -104,7 +104,7 @@ export default function TeacherSignupPage() {
             pattern="^[A-Za-z0-9_.\\-]+$"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="border border-[var(--ink)] bg-[var(--surface)] px-3 py-2 rounded font-mono"
+            className="input font-mono"
           />
         </label>
         <label className="flex flex-col gap-1 text-sm">
@@ -115,7 +115,7 @@ export default function TeacherSignupPage() {
             minLength={8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="border border-[var(--ink)] bg-[var(--surface)] px-3 py-2 rounded font-mono"
+            className="input font-mono"
           />
         </label>
         <label className="flex items-start gap-2 text-sm mt-1">

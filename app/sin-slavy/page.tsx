@@ -126,7 +126,7 @@ export default async function HallOfFamePage() {
                       return (
                         <li
                           key={i}
-                          className={`flex items-center justify-between rounded-lg border border-[var(--ink)] px-2.5 py-1.5 ${
+                          className={`flex items-center justify-between rounded-lg border border-[var(--line)] px-2.5 py-1.5 ${
                             entry
                               ? `${tone} text-[var(--foreground)]`
                               : "bg-[var(--surface-2)] text-[var(--ink-muted)]"
@@ -241,7 +241,7 @@ export default async function HallOfFamePage() {
                       return (
                         <li
                           key={i}
-                          className={`flex items-center justify-between rounded-lg border border-[var(--ink)] px-2.5 py-1.5 ${
+                          className={`flex items-center justify-between rounded-lg border border-[var(--line)] px-2.5 py-1.5 ${
                             entry
                               ? `${tone} text-[var(--foreground)]`
                               : "bg-[var(--surface-2)] text-[var(--ink-muted)]"
@@ -323,7 +323,7 @@ export default async function HallOfFamePage() {
                   return (
                     <li
                       key={i}
-                      className={`flex items-center justify-between rounded-lg border border-[var(--ink)] px-2.5 py-1.5 ${
+                      className={`flex items-center justify-between rounded-lg border border-[var(--line)] px-2.5 py-1.5 ${
                         entry
                           ? `${tone} text-[var(--foreground)]`
                           : "bg-[var(--surface-2)] text-[var(--ink-muted)]"

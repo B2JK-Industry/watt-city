@@ -53,7 +53,7 @@ export function TeacherClassCreator() {
           <code className="font-mono bg-[var(--surface-2)] px-1">/uczen/dolacz</code>
           :
         </p>
-        <div className="flex items-center gap-3 border border-[var(--ink)] p-4 rounded bg-[var(--surface-2)]">
+        <div className="flex items-center gap-3 border border-[var(--line)] p-4 rounded bg-[var(--surface-2)]">
           <span className="text-3xl font-mono font-semibold">
             {created.joinCode}
           </span>
@@ -101,7 +101,7 @@ export function TeacherClassCreator() {
           placeholder="np. V.B — Matematyka finansowa"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="border border-[var(--ink)] bg-[var(--surface)] px-3 py-2 rounded"
+          className="border border-[var(--line)] bg-[var(--surface)] px-3 py-2 rounded"
         />
       </label>
       <label className="flex flex-col gap-1 text-sm">
@@ -109,7 +109,7 @@ export function TeacherClassCreator() {
         <select
           value={grade}
           onChange={(e) => setGrade(Number(e.target.value))}
-          className="border border-[var(--ink)] bg-[var(--surface)] px-3 py-2 rounded"
+          className="border border-[var(--line)] bg-[var(--surface)] px-3 py-2 rounded"
         >
           {[5, 6, 7, 8].map((g) => (
             <option key={g} value={g}>
@@ -125,7 +125,7 @@ export function TeacherClassCreator() {
           placeholder="np. WOS, EDB, Matematyka"
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
-          className="border border-[var(--ink)] bg-[var(--surface)] px-3 py-2 rounded"
+          className="border border-[var(--line)] bg-[var(--surface)] px-3 py-2 rounded"
         />
       </label>
       {error && <p className="text-[var(--danger)] text-sm">Błąd: {error}</p>}

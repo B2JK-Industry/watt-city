@@ -110,7 +110,7 @@ export function CityLevelCard({ player, lang }: Props) {
           {t.heading}
         </h2>
         <span
-          className="text-[11px] font-mono font-bold border border-[var(--ink)] px-2 py-0.5"
+          className="text-[11px] font-mono font-semibold tabular-nums rounded-sm px-2 py-0.5"
           style={{ background: gridColor, color: "var(--accent-ink)" }}
         >
           ⚡ {watts.net > 0 ? "+" : ""}
@@ -142,7 +142,7 @@ export function CityLevelCard({ player, lang }: Props) {
         </span>
       </div>
 
-      <div className="border-t border-[var(--ink)]/40 pt-3">
+      <div className="border-t border-[var(--line)] pt-3">
         <div className="text-[10px] opacity-70 mb-1">
           {t.nextUnlockLabel}
         </div>

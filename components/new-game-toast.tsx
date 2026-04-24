@@ -78,7 +78,7 @@ export function NewGameToast({
           {payload.glyph ?? "🤖"}
         </span>
         <div className="flex-1 flex flex-col">
-          <strong className=" text-xs text-[var(--accent)]">
+          <strong className="text-xs text-[var(--accent)]">
             {newChallengeLabel}
           </strong>
           <span className="text-sm font-bold mt-0.5">{payload.title}</span>

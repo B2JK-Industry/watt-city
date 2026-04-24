@@ -201,7 +201,7 @@ export function EnergyDashClient({ dict }: { dict: Dict }) {
               {t.comboBonus}
             </span>
             <div className="grid grid-cols-3 gap-2 text-center">
-              <div className="rounded-lg bg-[var(--surface-2)] px-2 py-1 border border-[var(--border)]">
+              <div className="rounded-lg bg-[var(--surface-2)] px-2 py-1 border border-[var(--line)]">
                 5+ = <strong>×1.5</strong>
               </div>
               <div className="rounded-lg bg-[var(--surface-2)] px-2 py-1 border border-[var(--accent-2)]/50 text-[var(--accent-2)]">
@@ -265,7 +265,7 @@ export function EnergyDashClient({ dict }: { dict: Dict }) {
           return (
             <div
               key={i}
-              className="relative rounded-xl bg-[var(--surface-2)]/60 border border-[var(--border)]"
+              className="relative rounded-xl bg-[var(--surface-2)]/60 border border-[var(--line)]"
             >
               {tile && (
                 <button

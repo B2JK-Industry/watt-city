@@ -99,7 +99,7 @@ export function ClassClient({
               value={joinCodeInput}
               onChange={(e) => setJoinCodeInput(e.target.value.toUpperCase())}
               placeholder={copy.joinCode}
-              className="flex-1 px-3 py-2 border border-[var(--ink)] rounded bg-[var(--surface-2)] font-mono"
+              className="flex-1 px-3 py-2 border border-[var(--line)] rounded bg-[var(--surface-2)] font-mono"
               maxLength={8}
             />
             <button className="btn btn-primary" onClick={join} disabled={busy || joinCodeInput.length < 4}>
@@ -116,7 +116,7 @@ export function ClassClient({
             value={className}
             onChange={(e) => setClassName(e.target.value)}
             placeholder={copy.className}
-            className="flex-1 px-3 py-2 border border-[var(--ink)] rounded bg-[var(--surface-2)]"
+            className="flex-1 px-3 py-2 border border-[var(--line)] rounded bg-[var(--surface-2)]"
             maxLength={60}
           />
           <button className="btn btn-primary" onClick={create} disabled={busy || className.length < 2}>

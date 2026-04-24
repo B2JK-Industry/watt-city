@@ -74,7 +74,7 @@ export function PkoMirrorClient({ initialAccount, initialAudit, wattCityCashZl, 
             value={childName}
             onChange={(e) => setChildName(e.target.value)}
             placeholder={copy.childName}
-            className="flex-1 px-3 py-2 border border-[var(--ink)] rounded bg-[var(--surface-2)]"
+            className="flex-1 px-3 py-2 border border-[var(--line)] rounded bg-[var(--surface-2)]"
           />
           <button
             className="btn btn-primary"
@@ -137,7 +137,7 @@ export function PkoMirrorClient({ initialAccount, initialAudit, wattCityCashZl, 
             max={500}
             value={topupAmount}
             onChange={(e) => setTopupAmount(Number(e.target.value))}
-            className="w-24 px-2 py-1 border border-[var(--ink)] rounded bg-[var(--surface-2)] font-mono"
+            className="w-24 px-2 py-1 border border-[var(--line)] rounded bg-[var(--surface-2)] font-mono"
           />
           <button
             className="btn btn-primary"

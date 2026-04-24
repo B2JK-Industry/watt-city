@@ -215,7 +215,7 @@ export function CashflowHud({ hud, lang }: Props) {
       aria-label={copy.balance}
     >
       <div
-        className="border border-[var(--ink)] bg-[var(--surface)]"
+        className="border border-[var(--line)] bg-[var(--surface)]"
         style={{ borderColor: severityColor }}
       >
         {/* Core row: balance + per-hour + watt chip */}
@@ -253,7 +253,7 @@ export function CashflowHud({ hud, lang }: Props) {
             but narrative-incompatible). Single source of truth. */}
         {inDeficit && !hud.brownoutBannerActive && (
           <div
-            className="px-2 py-2 sm:px-3 border-t border-[var(--ink)]"
+            className="px-2 py-2 sm:px-3 border-t border-[var(--line)]"
             style={{ background: severityColor + "30" }}
           >
             <div className="font-bold text-[11px]">
@@ -283,7 +283,7 @@ export function CashflowHud({ hud, lang }: Props) {
               )}
             <Link
               href="/miasto?build=mala-elektrownia"
-              className="mt-1 inline-flex items-center gap-1 px-2 py-1 border border-[var(--ink)] bg-[var(--sales)] font-bold text-[11px] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-transform"
+              className="mt-1 inline-flex items-center gap-1 px-2 py-1 border border-[var(--line)] bg-[var(--sales)] font-bold text-[11px] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-transform"
             >
               ⚡ {copy.rescueBuild}
             </Link>
@@ -293,7 +293,7 @@ export function CashflowHud({ hud, lang }: Props) {
         {/* Loan-risk banner (secondary — only when no watt deficit) */}
         {!inDeficit && hud.loanRisk.length > 0 && (
           <div
-            className="px-2 py-1.5 sm:px-3 border-t border-[var(--ink)] text-[11px]"
+            className="px-2 py-1.5 sm:px-3 border-t border-[var(--line)] text-[11px]"
             style={{ background: "#f97316" + "30" }}
           >
             {copy.loanRisk}
@@ -302,7 +302,7 @@ export function CashflowHud({ hud, lang }: Props) {
 
         {/* Stale-state pill */}
         {stale && !inDeficit && hud.loanRisk.length === 0 && (
-          <div className="px-2 py-1 sm:px-3 border-t border-[var(--ink)] flex items-center justify-between text-[11px] opacity-80">
+          <div className="px-2 py-1 sm:px-3 border-t border-[var(--line)] flex items-center justify-between text-[11px] opacity-80">
             <span>🕓 {copy.stale}</span>
             <button
               type="button"
@@ -328,7 +328,7 @@ function WattChip({
 }) {
   return (
     <span
-      className="inline-flex items-center gap-0.5 font-bold text-[11px] border border-[var(--ink)] px-1.5 py-0.5"
+      className="inline-flex items-center gap-0.5 font-bold text-[11px] border border-[var(--line)] px-1.5 py-0.5"
       style={{
         background: inDeficit ? "var(--danger)" : "var(--success)",
         color: "var(--accent-ink)",

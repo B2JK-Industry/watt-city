@@ -104,7 +104,7 @@ export function WeeklyThemePicker({
             setSelectedCode(e.target.value);
             setSaved("idle");
           }}
-          className="bg-[var(--surface-2)] border border-[var(--ink)] rounded p-2 text-sm font-mono"
+          className="bg-[var(--surface-2)] border border-[var(--line)] rounded p-2 text-sm font-mono"
         >
           <option value="">— wybierz —</option>
           {(Object.keys(byArea) as CurriculumArea[]).map((area) => (

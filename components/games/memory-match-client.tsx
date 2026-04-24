@@ -215,11 +215,11 @@ function MemoryCard({ card, onClick, hiddenLabel }: { card: Card; onClick: () =>
       onClick={onClick}
       disabled={card.matched || card.revealed}
       aria-label={faceUp ? card.text : hiddenLabel}
-      className={`relative aspect-[5/4] rounded-2xl border border-[var(--ink)] transition-all overflow-hidden ${
+      className={`relative aspect-[5/4] rounded-2xl border border-[var(--line)] transition-all overflow-hidden ${
         card.matched
           ? "opacity-95 ring-4 ring-emerald-400"
           : !faceUp
-          ? "hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 active:"
+          ? " active:"
           : ""
       }`}
     >
@@ -242,7 +242,7 @@ function MemoryCard({ card, onClick, hiddenLabel }: { card: Card; onClick: () =>
           }}
           aria-hidden="true"
         >
-          <span className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-md border border-[var(--ink)] bg-[var(--accent)] text-[var(--foreground)] font-semibold text-xl">
+          <span className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-md border border-[var(--line)] bg-[var(--accent)] text-[var(--foreground)] font-semibold text-xl">
             ?
           </span>
         </span>

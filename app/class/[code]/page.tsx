@@ -57,7 +57,7 @@ export default async function ClassDetailPage({
           <h2 className="text-sm font-semibold">{copy.joinCodes}</h2>
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-1 text-center font-mono text-[11px]">
             {cls.joinCodes.map((j) => (
-              <code key={j} className="py-1 border border-[var(--ink)]/30 rounded">
+              <code key={j} className="py-1 border border-[var(--line)] rounded">
                 {j}
               </code>
             ))}
@@ -72,7 +72,7 @@ export default async function ClassDetailPage({
           {rows.map((r, i) => (
             <li
               key={r.username}
-              className="flex items-center justify-between py-1 border-b border-[var(--ink)]/20 last:border-0"
+              className="flex items-center justify-between py-1 border-b border-[var(--line)] last:border-0"
             >
               <span className="flex items-center gap-2">
                 <span className="w-6 text-right font-bold opacity-60">#{i + 1}</span>

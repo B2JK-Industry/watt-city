@@ -37,7 +37,7 @@ export function ResourceBar({ resources, lang, compact = false }: Props) {
           <li
             key={k}
             title={title}
-            className="flex items-center gap-1 px-2 py-1 rounded border transition-opacity border-[var(--ink)] bg-[var(--surface)]"
+            className="flex items-center gap-1 px-2 py-1 rounded border transition-opacity border-[var(--line)] bg-[var(--surface)]"
             style={{ borderColor: def.color }}
           >
             <span aria-hidden className="text-sm leading-none">
@@ -59,7 +59,7 @@ export function ResourceBar({ resources, lang, compact = false }: Props) {
               en: "V1 legacy resources — merging into coins during the migration.",
             }[lang]
           }
-          className="flex items-center gap-1 px-2 py-1 rounded border border-dashed border-[var(--ink)]/40 opacity-60"
+          className="flex items-center gap-1 px-2 py-1 rounded border border-[var(--line)] opacity-60"
         >
           <span aria-hidden className="text-sm leading-none">
             📦

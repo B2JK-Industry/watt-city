@@ -63,7 +63,7 @@ export function KnfDisclaimer({ lang, variant = "card" }: Props) {
   if (variant === "inline") {
     return (
       <p
-        className="text-[11px] leading-snug px-2 py-1.5 border border-[var(--ink)] bg-[var(--surface-2)]"
+        className="text-[11px] leading-snug px-2 py-1.5 border border-[var(--line)] bg-[var(--surface-2)]"
         role="note"
       >
         <strong>{t.title}</strong> {t.body}{" "}
@@ -80,7 +80,7 @@ export function KnfDisclaimer({ lang, variant = "card" }: Props) {
     >
       <div className="flex items-center gap-2">
         <span
-          className="text-[10px] font-semibold px-1.5 py-0.5 border border-[var(--ink)]"
+          className="text-[10px] font-semibold px-1.5 py-0.5 border border-[var(--line)]"
           style={{ background: "var(--danger)", color: "var(--accent-ink)" }}
         >
           KNF / UOKiK
@@ -91,7 +91,7 @@ export function KnfDisclaimer({ lang, variant = "card" }: Props) {
       </div>
       <p className="text-xs leading-snug">{t.body}</p>
       <p className="text-xs leading-snug opacity-80">{t.rrsoNote}</p>
-      <p className="text-[10px] leading-snug opacity-60 border-t border-[var(--ink)]/40 pt-2 mt-1">
+      <p className="text-[10px] leading-snug opacity-60 border-t border-[var(--line)] pt-2 mt-1">
         {t.footnote}
       </p>
     </aside>

@@ -66,7 +66,7 @@ export function ProfileEdit({
                   "aspect-square text-2xl rounded border transition " +
                   (selected
                     ? "border-[var(--accent)] bg-[var(--accent)]/10"
-                    : "border-[var(--ink)]/30 hover:border-[var(--ink)]")
+                    : "border-[var(--line)] hover:border-[var(--line)]")
                 }
                 style={{ color: selected ? a.hue : undefined }}
                 aria-label={a.id}
@@ -84,7 +84,7 @@ export function ProfileEdit({
           onChange={(e) => setDisplayName(e.target.value)}
           placeholder={copy.placeholder}
           maxLength={32}
-          className="px-3 py-2 border border-[var(--ink)] rounded bg-[var(--surface-2)]"
+          className="px-3 py-2 border border-[var(--line)] rounded bg-[var(--surface-2)]"
         />
       </label>
       <div className="flex items-center gap-3">

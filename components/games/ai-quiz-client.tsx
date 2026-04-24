@@ -114,7 +114,7 @@ export function AiQuizClient({
                 type="button"
                 onClick={() => choose(i)}
                 disabled={revealed}
-                className={`rounded-2xl border border-[var(--ink)] bg-[var(--surface-2)] p-4 text-left transition ${tone}`}
+                className={`rounded-2xl border border-[var(--line)] bg-[var(--surface-2)] p-4 text-left transition ${tone}`}
               >
                 <span className="text-sm">{option}</span>
               </button>

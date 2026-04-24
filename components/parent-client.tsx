@@ -118,7 +118,7 @@ export function ParentClient({ role: initialRole, kids: initialKids, parents, pr
           <input
             value={linkCode}
             onChange={(e) => setLinkCode(e.target.value.toUpperCase())}
-            className="flex-1 px-3 py-2 border border-[var(--ink)] rounded bg-[var(--surface-2)] font-mono"
+            className="flex-1 px-3 py-2 border border-[var(--line)] rounded bg-[var(--surface-2)] font-mono"
             maxLength={16}
           />
           <button className="btn btn-primary" onClick={link} disabled={busy || linkCode.length < 4}>

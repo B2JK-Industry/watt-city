@@ -43,7 +43,7 @@ export function CurriculumChart({ grade, observedThemes, observedGames }: Props)
                   <span className="opacity-50">({pct}%)</span>
                 </span>
               </div>
-              <div className="h-2 border border-[var(--ink)] bg-[var(--surface-2)] relative overflow-hidden">
+              <div className="h-2 border border-[var(--line)] bg-[var(--surface-2)] relative overflow-hidden">
                 <div
                   className="h-full"
                   style={{ width: `${pct}%`, background: color[a] }}

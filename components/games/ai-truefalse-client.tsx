@@ -100,7 +100,7 @@ export function AiTrueFalseClient({
             type="button"
             onClick={() => choose(true)}
             disabled={phase !== "playing"}
-            className={`rounded-2xl border border-[var(--ink)] p-5 text-lg font-semibold transition ${
+            className={`rounded-2xl border border-[var(--line)] p-5 text-lg font-semibold transition ${
               phase === "reveal"
                 ? current.isTrue
                   ? "bg-[var(--success)] text-[var(--foreground)]"
@@ -116,7 +116,7 @@ export function AiTrueFalseClient({
             type="button"
             onClick={() => choose(false)}
             disabled={phase !== "playing"}
-            className={`rounded-2xl border border-[var(--ink)] p-5 text-lg font-semibold transition ${
+            className={`rounded-2xl border border-[var(--line)] p-5 text-lg font-semibold transition ${
               phase === "reveal"
                 ? !current.isTrue
                   ? "bg-[var(--success)] text-[var(--foreground)]"

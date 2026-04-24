@@ -143,7 +143,7 @@ export function ParentInviteCard({ lang }: { lang: Lang }) {
       )}
       {code && (
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-3 border border-[var(--ink)] p-4 rounded bg-[var(--surface-2)]">
+          <div className="flex items-center gap-3 border border-[var(--line)] p-4 rounded bg-[var(--surface-2)]">
             <span className="text-3xl font-mono font-semibold">
               {code}
             </span>

@@ -122,7 +122,7 @@ export function MarketplaceClient({
                   key={b.id}
                   className={
                     "border rounded p-3 flex flex-col gap-1 text-sm cursor-pointer " +
-                    (isSelected ? "border-[var(--accent)]" : "border-[var(--ink)]/30")
+                    (isSelected ? "border-[var(--accent)]" : "border-[var(--line)]")
                   }
                   onClick={() => setSelected(b.id)}
                 >
@@ -145,7 +145,7 @@ export function MarketplaceClient({
                 min={1}
                 value={ask}
                 onChange={(e) => setAsk(Number(e.target.value))}
-                className="px-2 py-1 border border-[var(--ink)] rounded bg-[var(--surface-2)]"
+                className="px-2 py-1 border border-[var(--line)] rounded bg-[var(--surface-2)]"
               />
             </label>
             <button className="btn btn-primary" onClick={doList} disabled={busy || ask < 1}>
@@ -170,7 +170,7 @@ export function MarketplaceClient({
               return (
                 <li
                   key={l.id}
-                  className="border border-[var(--ink)]/40 rounded p-3 flex flex-col gap-2"
+                  className="border border-[var(--line)] rounded p-3 flex flex-col gap-2"
                 >
                   <div className="flex items-center justify-between">
                     <strong>

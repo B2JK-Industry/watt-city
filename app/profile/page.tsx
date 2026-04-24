@@ -58,7 +58,7 @@ export default async function ProfilePage() {
         <h1 className="section-heading text-3xl">{heading}</h1>
         <div className="flex flex-wrap gap-3 items-center">
           <span
-            className="w-10 h-10 rounded border border-[var(--ink)] flex items-center justify-center text-2xl"
+            className="w-10 h-10 rounded border border-[var(--line)] flex items-center justify-center text-2xl"
             aria-hidden
             style={{ color: av.hue }}
           >
@@ -98,7 +98,7 @@ export default async function ProfilePage() {
             <li
               key={id}
               className={
-                "border border-[var(--ink)]/40 rounded p-3 flex flex-col items-center gap-1 text-center " +
+                "border border-[var(--line)] rounded p-3 flex flex-col items-center gap-1 text-center " +
                 (owned ? "" : "opacity-50")
               }
             >

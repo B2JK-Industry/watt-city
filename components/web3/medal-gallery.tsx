@@ -131,7 +131,7 @@ function GalleryInner({
 
       {!isConnected && (
         <div
-          className="border border-[var(--ink)] rounded p-3 text-sm leading-snug bg-[var(--background)]/50"
+          className="border border-[var(--line)] rounded p-3 text-sm leading-snug bg-[var(--background)]/50"
           role="status"
         >
           <p className="font-bold mb-1">{strings.connectPromptTitle}</p>
@@ -197,7 +197,7 @@ function GalleryInner({
             {mintable.map((id) => (
               <li
                 key={id}
-                className="flex items-center justify-between border border-dashed border-[var(--ink)] rounded p-2 gap-2"
+                className="flex items-center justify-between border border-[var(--line)] rounded p-2 gap-2"
               >
                 <span className="flex items-center gap-2">
                   <span aria-hidden>{achievementIcons[id] ?? "🏅"}</span>

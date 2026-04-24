@@ -105,7 +105,7 @@ export default async function GamesHubPage() {
               >
                 <span className="flex items-center gap-2 truncate">
                   <span
-                    className={`inline-block w-2 h-2 rounded-full border border-[var(--ink)] ${
+                    className={`inline-block w-2 h-2 rounded-full border border-[var(--line)] ${
                       g.plays > 0 ? "bg-[var(--sales)]" : "bg-[var(--ink-subtle)]"
                     }`}
                   />

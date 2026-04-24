@@ -120,7 +120,7 @@ export function AiOrderClient({
             key={it.key}
             className="card p-3 flex items-center gap-3"
           >
-            <span className="inline-flex items-center justify-center w-7 h-7 bg-[var(--accent)] text-[var(--foreground)] border border-[var(--ink)] font-semibold text-sm">
+            <span className="inline-flex items-center justify-center w-7 h-7 bg-[var(--accent)] text-[var(--foreground)] border border-[var(--line)] font-semibold text-sm">
               {i + 1}
             </span>
             <div className="flex-1 min-w-0">
@@ -134,7 +134,7 @@ export function AiOrderClient({
                 type="button"
                 onClick={() => moveUp(i)}
                 disabled={i === 0}
-                className="px-2 py-0.5 rounded border border-[var(--ink)] bg-[var(--surface-2)] disabled:opacity-30 hover:bg-[var(--accent)]/20 text-xs"
+                className="px-2 py-0.5 rounded border border-[var(--line)] bg-[var(--surface-2)] disabled:opacity-30 hover:bg-[var(--accent)]/20 text-xs"
                 aria-label="up"
               >
                 ▲
@@ -143,7 +143,7 @@ export function AiOrderClient({
                 type="button"
                 onClick={() => moveDown(i)}
                 disabled={i === sequence.length - 1}
-                className="px-2 py-0.5 rounded border border-[var(--ink)] bg-[var(--surface-2)] disabled:opacity-30 hover:bg-[var(--accent)]/20 text-xs"
+                className="px-2 py-0.5 rounded border border-[var(--line)] bg-[var(--surface-2)] disabled:opacity-30 hover:bg-[var(--accent)]/20 text-xs"
                 aria-label="down"
               >
                 ▼

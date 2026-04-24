@@ -60,7 +60,7 @@ export default async function FriendCityPage({
     <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex items-center gap-3">
         <span
-          className="w-12 h-12 border border-[var(--ink)] rounded flex items-center justify-center text-3xl"
+          className="w-12 h-12 border border-[var(--line)] rounded flex items-center justify-center text-3xl"
           style={{ color: av.hue }}
         >
           {av.emoji}

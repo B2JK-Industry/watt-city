@@ -103,7 +103,7 @@ export function AiWhatIfClient({
                 key={i}
                 onClick={() => pick(i)}
                 disabled={revealed}
-                className={`rounded-2xl border border-[var(--ink)] bg-[var(--surface-2)] p-3 text-left text-sm transition ${tone}`}
+                className={`rounded-2xl border border-[var(--line)] bg-[var(--surface-2)] p-3 text-left text-sm transition ${tone}`}
               >
                 {opt}
               </button>

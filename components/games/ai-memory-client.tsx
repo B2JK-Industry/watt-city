@@ -122,7 +122,7 @@ export function AiMemoryClient({
               disabled={isShown || lock}
               onClick={() => onPick(card)}
               className={
-                "aspect-square rounded-xl border border-[var(--ink)] p-2 text-xs sm:text-sm font-semibold transition " +
+                "aspect-square rounded-xl border border-[var(--line)] p-2 text-xs sm:text-sm font-semibold transition " +
                 (matched[card.id]
                   ? "bg-[color-mix(in_oklab,var(--success)_12%,white)] border-[var(--success)]"
                   : isShown
