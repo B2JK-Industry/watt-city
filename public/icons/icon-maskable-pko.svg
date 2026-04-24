@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <!-- Maskable: safe zone is the inner 80% (r=204 centered at 256). -->
-  <rect width="512" height="512" fill="#003574"/>
-  <circle cx="256" cy="256" r="200" fill="#001E4B"/>
-  <text x="256" y="322" font-family="system-ui, sans-serif" font-size="170" font-weight="700" letter-spacing="-2" text-anchor="middle" fill="#FFFFFF">SKO</text>
-</svg>

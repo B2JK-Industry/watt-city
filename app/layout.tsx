@@ -13,7 +13,6 @@ import { BottomTabs } from "@/components/bottom-tabs";
 import { WattDeficitPanel } from "@/components/watt-deficit-panel";
 import { deficitState } from "@/lib/watts";
 import { resolveTheme } from "@/lib/theme";
-import { getCurrentSkin } from "@/lib/skin-server";
 import { getSession } from "@/lib/session";
 import { userStats } from "@/lib/leaderboard";
 import { levelFromXP } from "@/lib/level";
@@ -37,55 +36,37 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export async function generateMetadata(): Promise<Metadata> {
-  // Request-aware: honours the xp_skin cookie so a preview user gets
-  // PKO manifest metadata on the same deployment where anonymous
-  // users still get core.
-  const theme = resolveTheme(await getCurrentSkin());
-  const isPko = theme.id === "pko";
-  return {
-    title: "Watt City · Edukacja finansowa dla dzieci · Katowice",
-    description:
-      "Watt City — gra edukacyjna ucząca dzieci finansów osobistych. Graj w minigry → zarabiaj zasoby → buduj miasto → zaciągaj kredyt → spłacaj. SKO 2.0 prototype. Pitched to PKO BP at ETHSilesia 2026.",
-    // Manifest is auto-served from app/manifest.ts — Next 16 injects
-    // the <link rel="manifest"> tag, so no explicit `manifest` field.
-    appleWebApp: {
-      capable: true,
-      statusBarStyle: "black-translucent",
-      title: isPko ? "PKO Junior" : "Watt City",
-    },
-    icons: {
-      icon: isPko ? "/icons/icon-192-pko.svg" : "/icons/icon-192.svg",
-      apple: isPko ? "/icons/icon-192-pko.svg" : "/icons/icon-192.svg",
-    },
-  };
-}
+export const metadata: Metadata = {
+  title: "Watt City · Edukacja finansowa dla dzieci · Katowice",
+  description:
+    "Watt City — gra edukacyjna ucząca dzieci finansów osobistych. Graj w minigry → zarabiaj zasoby → buduj miasto → zaciągaj kredyt → spłacaj. SKO 2.0 prototype. Pitched to PKO BP at ETHSilesia 2026.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Watt City",
+  },
+  icons: {
+    icon: "/icons/icon-192.svg",
+    apple: "/icons/icon-192.svg",
+  },
+};
 
-export async function generateViewport() {
-  // Request-aware for the same reason as generateMetadata — the
-  // `<meta name="theme-color">` chrome tint must match whatever skin
-  // this request will actually render.
-  const theme = resolveTheme(await getCurrentSkin());
-  return {
-    themeColor: theme.colors.accent,
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 5,
-  };
-}
+export const viewport = {
+  themeColor: "#fde047",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
 
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [session, lang, skin] = await Promise.all([
-    getSession(),
-    getLang(),
-    getCurrentSkin(),
-  ]);
+  const [session, lang] = await Promise.all([getSession(), getLang()]);
   const dict = dictFor(lang);
-  const theme = resolveTheme(skin);
+  const theme = resolveTheme();
   // Lazy tick on every authenticated render (idempotent, lock-guarded,
   // ledger-deduped). Must run before we read PlayerState so the
   // resource bar reflects the just-ticked balance.
@@ -186,7 +167,6 @@ export default async function RootLayout({
           lang={lang}
           dict={dict}
           resources={player?.resources ?? null}
-          skin={skin}
         />
         <main
           id="main-content"
@@ -241,7 +221,6 @@ export default async function RootLayout({
                   en: "Dismiss",
                 }[lang]
               }
-              skin={theme.id}
               /* Cleanup issue 2 — `titleByTier` map dropped. The V1 tier-
                  name vocabulary leaked to every logged-in user on level-up.
                  V3.1 city-first progression doesn't map 1-to-1 onto the
@@ -285,33 +264,22 @@ export default async function RootLayout({
                     })}
                 </p>
               </div>
-              {theme.id !== "pko" && (
-                <div className="flex flex-wrap gap-2 items-center">
-                  <span className="brutal-tag" style={{ background: "var(--neo-cyan)", color: "#0a0a0f" }}>
-                    PKO XP: Gaming
-                  </span>
-                  <span className="brutal-tag" style={{ background: "var(--neo-pink)", color: "#0a0a0f" }}>
-                    ETHSilesia 2026
-                  </span>
-                  <span className="brutal-tag" style={{ background: "var(--neo-lime)", color: "#0a0a0f" }}>
-                    Katowice · PL
-                  </span>
-                </div>
-              )}
-              {theme.id === "pko" && (
-                <p className="text-sm text-zinc-300 max-w-md">
-                  {dict.footer.pkoTrustLine}
-                </p>
-              )}
+              <div className="flex flex-wrap gap-2 items-center">
+                <span className="brutal-tag" style={{ background: "var(--neo-cyan)", color: "#0a0a0f" }}>
+                  PKO XP: Gaming
+                </span>
+                <span className="brutal-tag" style={{ background: "var(--neo-pink)", color: "#0a0a0f" }}>
+                  ETHSilesia 2026
+                </span>
+                <span className="brutal-tag" style={{ background: "var(--neo-lime)", color: "#0a0a0f" }}>
+                  Katowice · PL
+                </span>
+              </div>
             </div>
             <div className="border-t-2 border-[var(--ink)]/30 pt-4 pb-1">
-              {theme.id === "pko" ? (
-                <p className="text-[12px] text-zinc-300">{theme.disclaimer}</p>
-              ) : (
-                <p className="text-[11px] font-bold uppercase tracking-wider text-amber-400">
-                  ⚠️ {theme.disclaimer}
-                </p>
-              )}
+              <p className="text-[11px] font-bold uppercase tracking-wider text-amber-400">
+                ⚠️ {theme.disclaimer}
+              </p>
             </div>
             {theme.mascot && (
               <div className="flex items-center gap-3 border-t-2 border-[var(--ink)]/20 pt-3">
@@ -320,14 +288,8 @@ export default async function RootLayout({
                   aria-label={theme.mascot.label}
                   dangerouslySetInnerHTML={{ __html: theme.mascot.svg }}
                 />
-                <div className="flex flex-col gap-0.5 text-xs text-zinc-300">
-                  <span
-                    className={
-                      theme.id === "pko"
-                        ? "font-semibold text-[12px]"
-                        : "font-black uppercase tracking-widest text-[11px]"
-                    }
-                  >
+                <div className="flex flex-col gap-0.5 text-xs text-zinc-400">
+                  <span className="font-black uppercase tracking-widest text-[11px]">
                     Powered by PKO Bank Polski
                   </span>
                   <span>

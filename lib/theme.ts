@@ -73,14 +73,10 @@ export const PKO_THEME: ThemeTokens = {
   brand: "PKO Junior × Watt City",
   brandShort: "PKO",
   colors: {
-    // Verified against pkobp.pl/junior 2026-04-24 — see
-    // docs/partnerships/pko-visual-system-v1/04-DESIGN-TOKENS.json.
-    // `accent` is the DOMINANT navy (97× occurrences on pkobp.pl/junior),
-    // not PKO corporate red — red is reserved for co-branding lockups only.
-    accent: "#003574", // PKO navy-700 (PRIMARY)
+    accent: "#d31f26", // PKO red (public brand)
     accentInk: "#ffffff",
-    background: "#001E4B", // PKO navy-900 (darkest — hero, page BG)
-    surface: "#003574", // PKO navy-700 (card surface on navy BG)
+    background: "#052c65", // PKO navy
+    surface: "#0b3a7a",
     ink: "#ffffff",
   },
   disclaimer:
@@ -98,15 +94,8 @@ export function resolveTheme(skin: SkinId = currentSkin()): ThemeTokens {
 }
 
 /** Reads `SKIN` env var at call time. Safe in both server and client (the
- *  client only sees what the server injects into the layout).
- *
- *  Default: "pko" — the SKO partnership skin is what prod should show by
- *  default so stakeholders visiting watt-city.vercel.app/ see the latest
- *  visual work immediately. To force the original core skin, set
- *  `SKIN=core` or `NEXT_PUBLIC_SKIN=core` explicitly; the `xp_skin=core`
- *  cookie (via /api/skin?value=core) also overrides per-browser. */
+ *  client only sees what the server injects into the layout). */
 export function currentSkin(): SkinId {
   const raw = process.env.SKIN ?? process.env.NEXT_PUBLIC_SKIN;
-  if (raw === "core") return "core";
-  return "pko";
+  return raw === "pko" ? "pko" : "core";
 }

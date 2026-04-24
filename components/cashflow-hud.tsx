@@ -198,7 +198,6 @@ export function CashflowHud({ hud, lang }: Props) {
   return (
     <div
       data-hud-mode={onCityPage ? "side" : "corner"}
-      data-severity={hud.alertLevel}
       className={[
         "cashflow-hud fixed z-[35] font-mono tabular-nums text-xs",
         // Mobile portrait & landscape: bottom strip above BottomTabs (h-14).
@@ -216,12 +215,8 @@ export function CashflowHud({ hud, lang }: Props) {
       aria-label={copy.balance}
     >
       <div
-        className="cashflow-hud-frame border-[3px] border-[var(--ink)] shadow-[4px_4px_0_0_var(--ink)] bg-[var(--surface)]"
-        style={
-          hud.alertLevel === "none"
-            ? undefined
-            : { borderColor: severityColor }
-        }
+        className="border-[3px] border-[var(--ink)] shadow-[4px_4px_0_0_var(--ink)] bg-[var(--surface)]"
+        style={{ borderColor: severityColor }}
       >
         {/* Core row: balance + per-hour + watt chip */}
         <div className="flex items-center gap-2 px-2 py-1.5 sm:px-3 sm:py-2">
@@ -288,7 +283,7 @@ export function CashflowHud({ hud, lang }: Props) {
               )}
             <Link
               href="/miasto?build=mala-elektrownia"
-              className="btn btn-primary mt-1 text-[11px]"
+              className="mt-1 inline-flex items-center gap-1 px-2 py-1 border-2 border-[var(--ink)] bg-[var(--neo-yellow,#fde047)] font-bold text-[11px] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[2px_2px_0_0_var(--ink)] transition-transform"
             >
               ⚡ {copy.rescueBuild}
             </Link>

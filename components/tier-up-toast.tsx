@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Confetti } from "@/components/confetti";
-import type { SkinId } from "@/lib/theme";
 
 type Props = {
   /** Optional map of tier → display title. Cleanup issue 2 dropped the
@@ -14,10 +13,6 @@ type Props = {
   levelWord?: string;
   headline: string; // "Awans!" headline
   dismissLabel: string;
-  /** Active skin, passed from app/layout.tsx. Under PKO the toast
-   *  renders as a banking-clean white card with a navy border-left and
-   *  no emoji; the yellow brutalist card with confetti stays on core. */
-  skin?: SkinId;
 };
 
 // Polls /api/me/tier every 20s. If the server reports a pending celebration
@@ -30,7 +25,6 @@ export function TierUpToast({
   levelWord,
   headline,
   dismissLabel,
-  skin = "core",
 }: Props) {
   const [visible, setVisible] = useState(false);
   const [tier, setTier] = useState<number | null>(null);
@@ -61,40 +55,6 @@ export function TierUpToast({
   if (!visible || tier === null) return null;
   const word = levelWord ?? "Level";
   const customTitle = titleByTier?.[tier];
-  const isPko = skin === "pko";
-
-  if (isPko) {
-    // Banking-clean tier-up: white surface, navy border-left accent, no
-    // emoji, no confetti. Per 05-COMPONENTS-SPEC.md §C5 toast-tier-up.
-    return (
-      <div
-        role="status"
-        className="toast toast-tier-up fixed bottom-24 left-1/2 -translate-x-1/2 z-40 w-[min(92vw,26rem)] motion-safe:animate-[tier-up-enter_420ms_cubic-bezier(0.2,0.9,0.2,1.2)]"
-      >
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <span
-              aria-hidden
-              className="inline-block w-6 h-6 rounded-full bg-[var(--sko-accent-orange,#CC7A09)]"
-            />
-            <div className="flex flex-col">
-              <strong className="text-sm">{headline}</strong>
-              <span className="text-base font-bold">
-                {word} {tier}
-                {customTitle ? ` — ${customTitle}` : ""}
-              </span>
-            </div>
-          </div>
-          <button
-            className="text-xs font-bold underline"
-            onClick={() => setVisible(false)}
-          >
-            {dismissLabel}
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div

@@ -74,8 +74,8 @@ export function CitySkylineHero({ buildings, lang, emptyStateCta }: Props) {
         {/* Sky gradient */}
         <defs>
           <linearGradient id="hero-sky" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="var(--scene-sky-top)" />
-            <stop offset="100%" stopColor="var(--scene-sky-bottom)" />
+            <stop offset="0%" stopColor="#1e1b4b" />
+            <stop offset="100%" stopColor="#0f172a" />
           </linearGradient>
           <pattern
             id="hero-ground"
@@ -85,8 +85,8 @@ export function CitySkylineHero({ buildings, lang, emptyStateCta }: Props) {
             height="20"
             patternUnits="userSpaceOnUse"
           >
-            <rect width="40" height="20" fill="var(--scene-ground)" />
-            <line x1="0" y1="0" x2="40" y2="0" stroke="var(--scene-ground)" strokeWidth="2" />
+            <rect width="40" height="20" fill="#1f2937" />
+            <line x1="0" y1="0" x2="40" y2="0" stroke="#0a0a0f" strokeWidth="2" />
           </pattern>
         </defs>
         <rect width={VB_W} height={GROUND_Y} fill="url(#hero-sky)" />
@@ -140,7 +140,7 @@ function EmptySlot({ slot }: { slot: SlotDef }) {
       width={slot.w}
       height={slot.h * 0.4}
       fill="none"
-      stroke="var(--scene-ground)"
+      stroke="#1f2937"
       strokeWidth="2"
       strokeDasharray="6 4"
       rx="4"
@@ -193,7 +193,7 @@ function BuildingSilhouette({
         y={y + roofH + bodyH - 4}
         fontSize="14"
         fontWeight="900"
-        fill="var(--scene-ground)"
+        fill="#0a0a0f"
         style={{ paintOrder: "stroke", stroke: "white", strokeWidth: 2 }}
       >
         L{level}
