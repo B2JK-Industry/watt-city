@@ -54,10 +54,22 @@ export async function POST(request: NextRequest) {
     const state = await getPlayerState(session.username);
     const result = await placeBuilding(state, body.slotId, body.catalogId);
     if (!result.ok) {
-      return Response.json(
-        { ok: false, error: result.error, detail: result.detail },
-        { status: 400 },
-      );
+      // Propagate `missing` on not-affordable so the client can render an
+      // actionable breakdown without a second round trip.
+      const payload: {
+        ok: false;
+        error: string;
+        detail?: string;
+        missing?: Partial<typeof state.resources>;
+      } = {
+        ok: false,
+        error: result.error,
+        detail: result.detail,
+      };
+      if (result.error === "not-affordable" && result.missing) {
+        payload.missing = result.missing;
+      }
+      return Response.json(payload, { status: 400 });
     }
     return Response.json({
       ok: true,

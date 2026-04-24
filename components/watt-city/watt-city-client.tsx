@@ -4,8 +4,6 @@ import { useCallback, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { Lang } from "@/lib/i18n";
 import {
-  RESOURCE_DEFS,
-  RESOURCE_KEYS,
   type Resources,
 } from "@/lib/resources";
 import {
@@ -16,6 +14,12 @@ import {
 } from "@/lib/building-catalog";
 import type { Loan } from "@/lib/player";
 import { KnfDisclaimer } from "@/components/knf-disclaimer";
+import {
+  formatResourceBundle,
+  formatResourceCost,
+  formatResourceDelta,
+  formatResourceMissing,
+} from "@/lib/resource-format";
 
 const VB_W = 1800;
 const VB_H = 460;
@@ -29,9 +33,20 @@ export type WattCityBootstrap = {
     unlocked: boolean;
     affordable: boolean;
     reasonLocked: string | null;
+    /** Shortfall when !affordable — renders "Brakuje: 48 🧱, 30 🪙"
+     *  beside the Buy CTA. `{}` when affordable. */
+    missing: Partial<Resources>;
   }>;
   slots: Array<{
     slot: SlotDef;
+    /** Pre-computed L+1 preview (cost/yield/affordability/missing) for the
+     *  occupied building, null when slot is empty or building is L10. */
+    upgrade: {
+      nextLevelCost: Partial<Resources> | null;
+      nextLevelYield: Partial<Resources> | null;
+      nextLevelAffordable: boolean;
+      missing: Partial<Resources>;
+    } | null;
     building: {
       id: string;
       slotId: number;
@@ -77,23 +92,15 @@ export type WattCityBootstrap = {
     principal: string;
     comingSoon: string;
     disclaimer: string;
+    nextLevelLabel: string;
+    insufficientResources: string;
+    demolishConfirm: string;
+    atMaxLevel: string;
+    errorUnknown: string;
+    errorRateLimited: string;
+    errorScoreInProgress: string;
   };
 };
-
-function formatResourceDelta(
-  delta: Partial<Resources>,
-  _lang: Lang,
-): string {
-  const parts: string[] = [];
-  for (const k of RESOURCE_KEYS) {
-    const v = delta[k];
-    if (!v) continue;
-    const def = RESOURCE_DEFS[k];
-    const sign = v > 0 ? "+" : "";
-    parts.push(`${sign}${v} ${def.icon}`);
-  }
-  return parts.length ? parts.join(" · ") : "—";
-}
 
 function categoryLabel(cat: SlotCategory, lang: Lang): string {
   const map: Record<SlotCategory, Record<Lang, string>> = {
@@ -133,8 +140,34 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
     return freeSlot ? { kind: "slot", slotId: freeSlot.slot.id } : null;
   });
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  /** Structured error info so the banner can render a localized message
+   *  with an actionable `missing` breakdown on affordability failures.
+   *  Raw string codes (e.g. "rate-limited") map to `dict.errorX` keys;
+   *  unknown codes fall through to `dict.errorUnknown`. */
+  const [error, setError] = useState<
+    | { code: string; missing?: Partial<Resources>; detail?: string }
+    | null
+  >(null);
   const { dict, lang } = state;
+
+  /** Translate a server error code + optional missing breakdown into a
+   *  display string. Centralised so every mutation handler shares the
+   *  same rendering rules — if a new error code is introduced, we
+   *  add one branch here instead of touching every call site. */
+  const renderError = useCallback(
+    (info: { code: string; missing?: Partial<Resources>; detail?: string }): string => {
+      if (info.code === "not-affordable" && info.missing) {
+        const missingText = formatResourceMissing(info.missing, lang);
+        if (missingText) {
+          return dict.insufficientResources.replace("{missing}", missingText);
+        }
+      }
+      if (info.code === "rate-limited") return dict.errorRateLimited;
+      if (info.code === "score-in-progress") return dict.errorScoreInProgress;
+      return dict.errorUnknown.replace("{code}", info.code);
+    },
+    [dict, lang],
+  );
 
   const refresh = useCallback(async () => {
     const r = await fetch("/api/buildings", { cache: "no-store" });
@@ -187,7 +220,7 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
         });
         const j = await res.json();
         if (!j.ok) {
-          setError(j.error);
+          setError({ code: j.error, missing: j.missing, detail: j.detail });
         } else {
           setSelected({ kind: "building", slotId });
           await refresh();
@@ -208,7 +241,7 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
           instanceId,
         });
         const j = await res.json();
-        if (!j.ok) setError(j.error);
+        if (!j.ok) setError({ code: j.error, missing: j.missing });
         await refresh();
       } finally {
         setBusy(false);
@@ -219,7 +252,9 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
 
   const doDemolish = useCallback(
     async (instanceId: string) => {
-      if (!confirm("Zburzyć budynek? Otrzymasz 50% kosztów.")) return;
+      // i18n: the confirm copy is sourced from the per-locale dict so UK/CS/EN
+      // sessions don't see Polish. Previously hardcoded in this function.
+      if (!confirm(dict.demolishConfirm)) return;
       setBusy(true);
       setError(null);
       try {
@@ -227,13 +262,13 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
           instanceId,
         });
         const j = await res.json();
-        if (!j.ok) setError(j.error);
+        if (!j.ok) setError({ code: j.error, missing: j.missing });
         await refresh();
       } finally {
         setBusy(false);
       }
     },
-    [refresh, postWithRetry],
+    [refresh, postWithRetry, dict.demolishConfirm],
   );
 
   const selectedSlotDef = useMemo(() => {
@@ -356,7 +391,7 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
 
       {error && (
         <div className="card p-3 border-red-500 text-sm text-red-400">
-          {error}
+          {renderError(error)}
         </div>
       )}
 
@@ -377,6 +412,7 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
           {selectedSnap?.building ? (
             <BuildingDetail
               building={selectedSnap.building}
+              upgrade={selectedSnap.upgrade}
               dict={dict}
               lang={lang}
               onUpgrade={() => doUpgrade(selectedSnap.building!.id)}
@@ -411,6 +447,7 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
 
 function BuildingDetail({
   building,
+  upgrade,
   dict,
   lang,
   onUpgrade,
@@ -418,6 +455,10 @@ function BuildingDetail({
   busy,
 }: {
   building: NonNullable<WattCityBootstrap["slots"][number]["building"]>;
+  /** Server-computed L+1 preview. `null` for L10 (max-level) or missing
+   *  catalog. Drives both the cost/yield chips and the affordability
+   *  disable state on the upgrade button. */
+  upgrade: WattCityBootstrap["slots"][number]["upgrade"];
   dict: WattCityBootstrap["dict"];
   lang: Lang;
   onUpgrade: () => void;
@@ -425,26 +466,59 @@ function BuildingDetail({
   busy: boolean;
 }) {
   const isDomek = building.catalogId === "domek";
+  const atMax = building.level >= 10 || upgrade === null;
+  const canUpgrade =
+    upgrade !== null && upgrade.nextLevelAffordable && !busy;
+  const missingText =
+    upgrade && !upgrade.nextLevelAffordable
+      ? formatResourceMissing(upgrade.missing, lang)
+      : "";
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap gap-4 items-center">
+      <div className="flex flex-wrap gap-2 items-center">
         <span className="chip">
           {dict.level}:&nbsp;<strong>L{building.level}</strong>
         </span>
         <span className="chip">
           {dict.yields}:&nbsp;
           <strong>{formatResourceDelta(building.currentYield, lang)}/h</strong>
+          {upgrade?.nextLevelYield && (
+            <>
+              &nbsp;→&nbsp;
+              <strong>{formatResourceBundle(upgrade.nextLevelYield, lang, { signed: true })}/h</strong>
+            </>
+          )}
         </span>
+        {upgrade?.nextLevelCost && (
+          <span className="chip">
+            {dict.nextLevelLabel}&nbsp;{dict.cost}:&nbsp;
+            <strong>{formatResourceCost(upgrade.nextLevelCost, lang)}</strong>
+          </span>
+        )}
       </div>
+      {/* Actionable shortfall — renders only when the player is short on
+          the upgrade. Hidden otherwise to keep the common path quiet. */}
+      {missingText && (
+        <p className="text-xs text-[var(--neo-orange)]">
+          {dict.insufficientResources.replace("{missing}", missingText)}
+        </p>
+      )}
       <div className="flex flex-wrap gap-2">
-        {building.level < 10 && (
+        {!atMax ? (
           <button
             className="btn btn-primary text-sm"
             onClick={onUpgrade}
-            disabled={busy}
+            disabled={!canUpgrade}
+            title={
+              upgrade && !upgrade.nextLevelAffordable
+                ? dict.insufficientResources.replace("{missing}", missingText)
+                : undefined
+            }
           >
             {dict.upgrade} (L{building.level + 1})
           </button>
+        ) : (
+          <span className="text-xs text-zinc-400">🏁 {dict.atMaxLevel}</span>
         )}
         {!isDomek && (
           <button
@@ -482,8 +556,12 @@ function CatalogList({
   );
   return (
     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-      {compatible.map(({ entry, unlocked, affordable, reasonLocked }) => {
+      {compatible.map(({ entry, unlocked, affordable, reasonLocked, missing }) => {
         const canBuild = entry.mvpActive && unlocked && affordable;
+        const missingText =
+          entry.mvpActive && unlocked && !affordable
+            ? formatResourceMissing(missing, lang)
+            : "";
         return (
           <li
             key={entry.id}
@@ -501,14 +579,22 @@ function CatalogList({
             <p className="text-xs leading-snug">{entry.teasers[lang]}</p>
             <div className="flex flex-wrap gap-1 text-[11px] font-mono">
               <span className="chip">
-                {dict.cost}: {formatResourceDelta(entry.baseCost, lang)}
+                {dict.cost}: {formatResourceCost(entry.baseCost, lang)}
               </span>
               {Object.keys(entry.baseYieldPerHour).length > 0 && (
                 <span className="chip">
-                  {dict.yields}: {formatResourceDelta(entry.baseYieldPerHour, lang)}/h
+                  {dict.yields}: {formatResourceCost(entry.baseYieldPerHour, lang)}/h
                 </span>
               )}
             </div>
+            {/* Actionable shortfall — renders only when the player is
+                unlocked but short on resources. Tier-locked or coming-soon
+                entries fall through to the <span> below. */}
+            {missingText && (
+              <p className="text-[11px] text-[var(--neo-orange)] leading-snug">
+                {dict.insufficientResources.replace("{missing}", missingText)}
+              </p>
+            )}
             {canBuild ? (
               <button
                 className="btn btn-primary text-xs"

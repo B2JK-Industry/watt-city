@@ -49,6 +49,25 @@ const DICT: Record<Lang, {
   disclaimer: string;
   heading: string;
   intro: string;
+  /** Upgrade-panel prefix — "Następny poziom" / "Next level". */
+  nextLevelLabel: string;
+  /** Error banner on insufficient resources. Includes `{missing}` placeholder
+   *  replaced client-side with the formatted resource bundle. */
+  insufficientResources: string;
+  /** Confirm dialog shown before the demolish mutation. Must not hardcode a
+   *  language — previously this was a plain `confirm("Zburzyć...")` which
+   *  leaked PL into UK/CS/EN sessions. */
+  demolishConfirm: string;
+  /** Chip/tooltip when a building is at L10 and further upgrades are
+   *  blocked by the max-level cap. */
+  atMaxLevel: string;
+  /** Error banner fallback when the server returns an error code the client
+   *  doesn't have a translation for. Parametrised with `{code}`. */
+  errorUnknown: string;
+  /** Error banner when rate-limited on mutation routes. */
+  errorRateLimited: string;
+  /** Error banner when a concurrent score submission holds the building lock. */
+  errorScoreInProgress: string;
 }> = {
   pl: {
     pickSlot: "Wybierz slot",
@@ -82,6 +101,13 @@ const DICT: Record<Lang, {
       "GRA EDUKACYJNA — to nie są prawdziwe pieniądze.",
     heading: "Watt City",
     intro: "Twoje miasto. Graj → zarabiaj → buduj → spłacaj.",
+    nextLevelLabel: "Następny poziom",
+    insufficientResources: "Brakuje: {missing}. Zagraj w kilka gier, żeby dobrać surowce.",
+    demolishConfirm: "Zburzyć budynek? Otrzymasz 50% kosztów w zwrocie.",
+    atMaxLevel: "Maksymalny poziom (L10) — nie można ulepszać dalej.",
+    errorUnknown: "Coś nam uciekło (kod: {code}). Spróbuj jeszcze raz.",
+    errorRateLimited: "Za szybko — daj chwilę i spróbuj ponownie.",
+    errorScoreInProgress: "Trwa zapisywanie wyniku. Spróbuj ponownie za sekundę.",
   },
   uk: {
     pickSlot: "Вибери слот",
@@ -114,6 +140,13 @@ const DICT: Record<Lang, {
     disclaimer: "Навчальна гра — це не справжні гроші.",
     heading: "Watt City",
     intro: "Твоє місто. Грай → заробляй → будуй → виплачуй.",
+    nextLevelLabel: "Наступний рівень",
+    insufficientResources: "Не вистачає: {missing}. Зіграй у кілька ігор, щоб зібрати ресурси.",
+    demolishConfirm: "Знести будівлю? Отримаєш 50% вартості назад.",
+    atMaxLevel: "Максимальний рівень (L10) — покращити далі неможливо.",
+    errorUnknown: "Щось пішло не так (код: {code}). Спробуй ще раз.",
+    errorRateLimited: "Занадто швидко — зачекай і спробуй знову.",
+    errorScoreInProgress: "Зберігаємо результат гри. Спробуй ще раз за секунду.",
   },
   cs: {
     pickSlot: "Vyber slot",
@@ -146,6 +179,13 @@ const DICT: Record<Lang, {
     disclaimer: "Vzdělávací hra — nejsou to skutečné peníze.",
     heading: "Watt City",
     intro: "Tvé město. Hraj → vyděláš → stavíš → splácíš.",
+    nextLevelLabel: "Další úroveň",
+    insufficientResources: "Chybí: {missing}. Zahraj si pár her, abys doplnil suroviny.",
+    demolishConfirm: "Zbourat budovu? Dostaneš zpět 50 % nákladů.",
+    atMaxLevel: "Maximální úroveň (L10) — dál už vylepšit nelze.",
+    errorUnknown: "Něco se pokazilo (kód: {code}). Zkus to znovu.",
+    errorRateLimited: "Příliš rychle — počkej chvíli a zkus to znovu.",
+    errorScoreInProgress: "Ukládáme výsledek hry. Zkus to znovu za sekundu.",
   },
   en: {
     pickSlot: "Pick a slot",
@@ -179,6 +219,13 @@ const DICT: Record<Lang, {
       "EDUCATIONAL GAME — these are not real money.",
     heading: "Watt City",
     intro: "Your city. Play → earn → build → repay.",
+    nextLevelLabel: "Next level",
+    insufficientResources: "You're short: {missing}. Play a few games to top up.",
+    demolishConfirm: "Demolish this building? You'll get 50% of the cost back.",
+    atMaxLevel: "Max level (L10) — no further upgrades available.",
+    errorUnknown: "Something slipped (code: {code}). Please try again.",
+    errorRateLimited: "Too fast — pause for a moment and retry.",
+    errorScoreInProgress: "Saving your game result. Try again in a second.",
   },
 };
 
@@ -193,11 +240,15 @@ export default async function MiastoPage() {
 
   const state = await getPlayerState(session.username);
   const [catalog] = await Promise.all([catalogForPlayer(state)]);
-  const snapshot = slotSnapshot(state).map(({ slot, building }) => {
-    if (!building) return { slot, building: null };
+  const snapshot = slotSnapshot(state).map(({ slot, building, upgrade }) => {
+    if (!building) return { slot, building: null, upgrade: null };
     const c = getCatalogEntry(building.catalogId);
     return {
       slot,
+      // `upgrade` carries nextLevelCost / nextLevelYield / affordability /
+      // missing — computed server-side by slotSnapshot so the client never
+      // needs to duplicate the × 1.6 / × 1.4 formula.
+      upgrade,
       building: {
         ...building,
         currentYield: c ? yieldAtLevel(c.baseYieldPerHour, building.level) : {},

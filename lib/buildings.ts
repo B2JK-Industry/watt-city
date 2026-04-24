@@ -27,6 +27,7 @@ import {
   type Resources,
   type ResourceKey,
 } from "@/lib/resources";
+import { computeMissing } from "@/lib/resource-format";
 import { refreshCityValue } from "@/lib/city-value";
 import { refreshWattDeficit } from "@/lib/watts";
 import { isFlagEnabled } from "@/lib/feature-flags";
@@ -104,7 +105,15 @@ export type PlaceError =
 
 export type PlaceResult =
   | { ok: true; state: PlayerState; building: BuildingInstance }
-  | { ok: false; error: PlaceError; detail?: string };
+  | {
+      ok: false;
+      error: PlaceError;
+      detail?: string;
+      /** Populated when `error === "not-affordable"` — positive shortfall
+       *  per resource so the UI can render "Brakuje: 48 🧱, 30 🪙" without a
+       *  follow-up round trip. Empty / undefined for all other error kinds. */
+      missing?: Partial<Resources>;
+    };
 
 export async function placeBuilding(
   state: PlayerState,
@@ -132,7 +141,11 @@ export async function placeBuilding(
     return { ok: false, error: "locked" };
   }
   if (!canAfford(state.resources, entry.baseCost)) {
-    return { ok: false, error: "not-affordable" };
+    return {
+      ok: false,
+      error: "not-affordable",
+      missing: computeMissing(state.resources, entry.baseCost),
+    };
   }
 
   // Deduct cost (ledger entry) + append building instance.
@@ -167,9 +180,17 @@ export async function placeBuilding(
 // Upgrade / demolish
 // ---------------------------------------------------------------------------
 
+export type UpgradeError = "unknown-instance" | "not-affordable" | "max-level";
+
 export type UpgradeResult =
   | { ok: true; state: PlayerState; building: BuildingInstance }
-  | { ok: false; error: "unknown-instance" | "not-affordable" | "max-level" };
+  | {
+      ok: false;
+      error: UpgradeError;
+      /** Populated when `error === "not-affordable"` — positive shortfall
+       *  per resource. See `PlaceResult.missing` for the rationale. */
+      missing?: Partial<Resources>;
+    };
 
 export async function upgradeBuilding(
   state: PlayerState,
@@ -183,7 +204,11 @@ export async function upgradeBuilding(
 
   const nextLevelCost = costAtLevel(entry.baseCost, b.level + 1);
   if (!canAfford(state.resources, nextLevelCost)) {
-    return { ok: false, error: "not-affordable" };
+    return {
+      ok: false,
+      error: "not-affordable",
+      missing: computeMissing(state.resources, nextLevelCost),
+    };
   }
 
   await creditResources(
@@ -317,6 +342,11 @@ export type CatalogListEntry = {
   unlocked: boolean;
   affordable: boolean;
   reasonLocked: string | null;
+  /** Positive shortfall per resource when !affordable. Empty `{}` when
+   *  affordable or when unaffordability isn't the binding reason (e.g.
+   *  tier-locked). Clients render this to show "Brakuje: 48 🧱, 30 🪙"
+   *  beside the Buy button. */
+  missing: Partial<Resources>;
 };
 
 export async function catalogForPlayer(
@@ -327,6 +357,9 @@ export async function catalogForPlayer(
   return BUILDING_CATALOG.map((entry) => {
     const unlocked = isUnlocked(entry, earned, tier, state.buildings);
     const affordable = canAfford(state.resources, entry.baseCost);
+    const missing = affordable
+      ? {}
+      : computeMissing(state.resources, entry.baseCost);
     let reasonLocked: string | null = null;
     if (!entry.mvpActive) {
       reasonLocked = "coming-soon";
@@ -341,7 +374,7 @@ export async function catalogForPlayer(
     } else if (!affordable) {
       reasonLocked = "not-affordable";
     }
-    return { entry, unlocked, affordable, reasonLocked };
+    return { entry, unlocked, affordable, reasonLocked, missing };
   });
 }
 
@@ -350,13 +383,41 @@ export type SlotOccupant = {
   slot: SlotDef;
   building: BuildingInstance | null;
   catalog: BuildingCatalogEntry | null;
+  /** Upgrade preview — populated when `building !== null` and the building
+   *  is below level 10. Lets the UI render "Ulepsz (L4) — Koszt: 128 🧱
+   *  · 80 🪙 → Dochód: 11 ⚡/h" without duplicating the `× 1.6 / × 1.4`
+   *  formula on the client.
+   *
+   *  `nextLevelCost` / `nextLevelYield` are `null` when the building is
+   *  at max level (L10) or when the catalog entry is missing (legacy
+   *  state). `nextLevelAffordable` mirrors `missing` emptiness for a
+   *  quick boolean check. `missing` is always defined — empty `{}` when
+   *  affordable. */
+  upgrade: {
+    nextLevelCost: Partial<Resources> | null;
+    nextLevelYield: Partial<Resources> | null;
+    nextLevelAffordable: boolean;
+    missing: Partial<Resources>;
+  } | null;
 };
 
 export function slotSnapshot(state: PlayerState): SlotOccupant[] {
   return SLOT_MAP.map((slot) => {
     const building = state.buildings.find((b) => b.slotId === slot.id) ?? null;
     const catalog = building ? getCatalogEntry(building.catalogId) : null;
-    return { slot, building, catalog };
+    const upgrade =
+      building && catalog && building.level < 10
+        ? (() => {
+            const nextLevelCost = costAtLevel(catalog.baseCost, building.level + 1);
+            const nextLevelYield = yieldAtLevel(catalog.baseYieldPerHour, building.level + 1);
+            const nextLevelAffordable = canAfford(state.resources, nextLevelCost);
+            const missing = nextLevelAffordable
+              ? {}
+              : computeMissing(state.resources, nextLevelCost);
+            return { nextLevelCost, nextLevelYield, nextLevelAffordable, missing };
+          })()
+        : null;
+    return { slot, building, catalog, upgrade };
   });
 }
 
