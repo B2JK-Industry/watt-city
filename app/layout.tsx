@@ -13,6 +13,7 @@ import { BottomTabs } from "@/components/bottom-tabs";
 import { WattDeficitPanel } from "@/components/watt-deficit-panel";
 import { deficitState } from "@/lib/watts";
 import { resolveTheme } from "@/lib/theme";
+import { getCurrentSkin } from "@/lib/skin-server";
 import { getSession } from "@/lib/session";
 import { userStats } from "@/lib/leaderboard";
 import { levelFromXP } from "@/lib/level";
@@ -36,8 +37,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export function generateMetadata(): Metadata {
-  const theme = resolveTheme();
+export async function generateMetadata(): Promise<Metadata> {
+  // Request-aware: honours the xp_skin cookie so a preview user gets
+  // PKO manifest metadata on the same deployment where anonymous
+  // users still get core.
+  const theme = resolveTheme(await getCurrentSkin());
   const isPko = theme.id === "pko";
   return {
     title: "Watt City · Edukacja finansowa dla dzieci · Katowice",
@@ -57,8 +61,11 @@ export function generateMetadata(): Metadata {
   };
 }
 
-export function generateViewport() {
-  const theme = resolveTheme();
+export async function generateViewport() {
+  // Request-aware for the same reason as generateMetadata — the
+  // `<meta name="theme-color">` chrome tint must match whatever skin
+  // this request will actually render.
+  const theme = resolveTheme(await getCurrentSkin());
   return {
     themeColor: theme.colors.accent,
     width: "device-width",
@@ -72,9 +79,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [session, lang] = await Promise.all([getSession(), getLang()]);
+  const [session, lang, skin] = await Promise.all([
+    getSession(),
+    getLang(),
+    getCurrentSkin(),
+  ]);
   const dict = dictFor(lang);
-  const theme = resolveTheme();
+  const theme = resolveTheme(skin);
   // Lazy tick on every authenticated render (idempotent, lock-guarded,
   // ledger-deduped). Must run before we read PlayerState so the
   // resource bar reflects the just-ticked balance.
@@ -175,6 +186,7 @@ export default async function RootLayout({
           lang={lang}
           dict={dict}
           resources={player?.resources ?? null}
+          skin={skin}
         />
         <main
           id="main-content"

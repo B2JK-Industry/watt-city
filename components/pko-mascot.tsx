@@ -10,16 +10,26 @@
  * asset is provided by the partner.
  */
 
-import { resolveTheme } from "@/lib/theme";
+import { resolveTheme, type SkinId } from "@/lib/theme";
+import { getCurrentSkin } from "@/lib/skin-server";
 
 type Props = {
   size?: "badge" | "hero";
   /** When true, only render if SKIN=pko. Otherwise never shown. */
   onlyWhenPko?: boolean;
+  /** Optional override — callers that already resolved the skin
+   *  synchronously can pass it to skip the `getCurrentSkin()` round
+   *  trip. Left undefined in the common case. */
+  skin?: SkinId;
 };
 
-export function PkoMascot({ size = "badge", onlyWhenPko = true }: Props) {
-  const theme = resolveTheme();
+/** Server component. Reads the `xp_skin` cookie via `getCurrentSkin`
+ *  so it renders correctly regardless of whether the parent page
+ *  threaded skin through as a prop. Safe to render from any server-
+ *  component tree. */
+export async function PkoMascot({ size = "badge", onlyWhenPko = true, skin }: Props) {
+  const resolved = skin ?? (await getCurrentSkin());
+  const theme = resolveTheme(resolved);
   if (onlyWhenPko && theme.id !== "pko") return null;
   const mascot = theme.mascot;
   if (!mascot) return null;

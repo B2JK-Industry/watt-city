@@ -3,7 +3,7 @@ import { LogoutButton } from "@/components/logout-button";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ResourceBar } from "@/components/resource-bar";
 import { NotificationBell } from "@/components/notification-bell";
-import { resolveTheme } from "@/lib/theme";
+import { resolveTheme, type SkinId } from "@/lib/theme";
 import type { Lang, Dict } from "@/lib/i18n";
 import type { Resources } from "@/lib/resources";
 
@@ -23,6 +23,10 @@ type Props = {
    *  flags. Defaults to `"kid"` when omitted so existing callers keep
    *  working. */
   role?: "kid" | "teacher" | "parent" | "anon";
+  /** Request-resolved skin from the layout. When omitted we fall back
+   *  to env-based resolution — fine for static nav, but breaks the
+   *  xp_skin cookie path. Layout always passes this. */
+  skin?: SkinId;
 };
 
 const SCHOOL_LABEL: Record<Lang, string> = {
@@ -57,6 +61,7 @@ export function SiteNav({
   dict,
   resources,
   role = username ? "kid" : "anon",
+  skin,
 }: Props) {
   const pct = Math.round(levelProgress * 100);
   const t = dict.nav;
@@ -87,7 +92,7 @@ export function SiteNav({
     <header className="w-full border-b-[3px] border-[var(--ink)] sticky top-0 z-20 bg-[var(--background)]">
       <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {(() => {
-          const theme = resolveTheme();
+          const theme = resolveTheme(skin);
           return (
             <Link href="/" className="flex items-center gap-2.5 font-black text-lg tracking-tight">
               <span

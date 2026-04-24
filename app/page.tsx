@@ -17,6 +17,7 @@ import { getLang } from "@/lib/i18n-server";
 import { ComingSoonBanner } from "@/components/coming-soon-banner";
 import { PkoHero } from "@/components/pko-hero";
 import { resolveTheme } from "@/lib/theme";
+import { getCurrentSkin } from "@/lib/skin-server";
 
 export const dynamic = "force-dynamic";
 
@@ -64,7 +65,9 @@ export default async function Home() {
   // (navy gradient + trust band + perks + how-it-works) per
   // docs/partnerships/pko-visual-system-v1/07-LANDING-HERO-REDESIGN.md.
   // The core (yellow) skin keeps the existing brutalist pitch layout.
-  const theme = resolveTheme();
+  // Request-aware so a stakeholder who set the xp_skin=pko cookie sees
+  // PkoHero on the anonymous landing of a deployment where SKIN= is unset.
+  const theme = resolveTheme(await getCurrentSkin());
   if (theme.id === "pko") {
     return <PkoHero dict={dict} />;
   }

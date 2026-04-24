@@ -1,16 +1,18 @@
 import type { MetadataRoute } from "next";
 import { resolveTheme } from "@/lib/theme";
+import { getCurrentSkin } from "@/lib/skin-server";
 
 /* Dynamic PWA manifest — replaces the static public/manifest.webmanifest
  * so `theme_color` and `background_color` pick up the active skin at
- * build time (SKIN=pko → navy, default → yellow). Next 16 serves this
- * at /manifest.webmanifest and auto-injects the <link> tag, so the
- * static metadata no longer needs `manifest:` field.
+ * request time. Request-aware (reads `xp_skin` cookie via
+ * getCurrentSkin) so a preview user who flipped to PKO on
+ * watt-city.vercel.app also gets a PKO-tinted manifest injected into
+ * their installed PWA — not the core yellow from env default.
  *
  * Icons stay on the core asset set in PR-1; skin-specific variants
  * (icon-192-pko.svg etc.) ship in PR-2 per execution plan item 26. */
-export default function manifest(): MetadataRoute.Manifest {
-  const theme = resolveTheme();
+export default async function manifest(): Promise<MetadataRoute.Manifest> {
+  const theme = resolveTheme(await getCurrentSkin());
   const isPko = theme.id === "pko";
   return {
     name: theme.brand,
