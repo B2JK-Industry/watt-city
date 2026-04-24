@@ -98,8 +98,15 @@ export function resolveTheme(skin: SkinId = currentSkin()): ThemeTokens {
 }
 
 /** Reads `SKIN` env var at call time. Safe in both server and client (the
- *  client only sees what the server injects into the layout). */
+ *  client only sees what the server injects into the layout).
+ *
+ *  Default: "pko" — the SKO partnership skin is what prod should show by
+ *  default so stakeholders visiting watt-city.vercel.app/ see the latest
+ *  visual work immediately. To force the original core skin, set
+ *  `SKIN=core` or `NEXT_PUBLIC_SKIN=core` explicitly; the `xp_skin=core`
+ *  cookie (via /api/skin?value=core) also overrides per-browser. */
 export function currentSkin(): SkinId {
   const raw = process.env.SKIN ?? process.env.NEXT_PUBLIC_SKIN;
-  return raw === "pko" ? "pko" : "core";
+  if (raw === "core") return "core";
+  return "pko";
 }

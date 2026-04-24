@@ -48,15 +48,23 @@ describe("skin-server — getCurrentSkin cookie precedence", () => {
     expect(await getCurrentSkin()).toBe("pko");
   });
 
-  it("falls back to 'core' when neither cookie nor env is set", async () => {
+  it("falls back to 'pko' when neither cookie nor env is set (prod default)", async () => {
+    // Prod default flipped to pko so watt-city.vercel.app/ shows the
+    // latest SKO visual without requiring stakeholders to set a cookie
+    // first. Opt back to core via SKIN=core env or xp_skin=core cookie.
+    expect(await getCurrentSkin()).toBe("pko");
+  });
+
+  it("honours explicit SKIN=core env override", async () => {
+    process.env.SKIN = "core";
     expect(await getCurrentSkin()).toBe("core");
   });
 
   it("ignores invalid cookie values and falls back to env/default", async () => {
     cookieState[SKIN_COOKIE_NAME] = "purple";
-    expect(await getCurrentSkin()).toBe("core");
-    process.env.SKIN = "pko";
-    expect(await getCurrentSkin()).toBe("pko");
+    expect(await getCurrentSkin()).toBe("pko"); // default
+    process.env.SKIN = "core";
+    expect(await getCurrentSkin()).toBe("core"); // env override
   });
 
   it("cookie takes precedence over env — the whole point of the toggle", async () => {
