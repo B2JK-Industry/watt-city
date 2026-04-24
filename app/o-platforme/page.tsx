@@ -128,7 +128,7 @@ export default async function AboutPage() {
         <div className="card p-6 flex flex-col gap-5 text-[var(--ink-muted)]">
           <p>{t.pipelineIntro}</p>
 
-          <div className="rounded-2xl border border-[var(--ink)] bg-[var(--surface-2)] p-5 sm:p-6">
+          <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface-2)] p-5 sm:p-6">
             <ol className="flex flex-wrap gap-x-3 gap-y-4 text-xs sm:text-sm">
               {[
                 { label: "Vercel Cron", meta: "0 9 * * *" },
@@ -143,7 +143,7 @@ export default async function AboutPage() {
                   key={step.label}
                   className="flex items-center gap-2"
                 >
-                  <div className="min-w-[128px] rounded-xl border border-[var(--ink)] bg-[var(--surface)] px-3 py-2 font-mono">
+                  <div className="min-w-[128px] rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3 py-2 font-mono">
                     <p className="font-semibold text-sm leading-tight">
                       {step.label}
                     </p>
@@ -220,7 +220,7 @@ export default async function AboutPage() {
               key={i}
               className="card p-4 flex flex-col sm:flex-row gap-3 sm:items-start"
             >
-              <span className="flex-shrink-0 w-14 h-14 rounded-xl border border-[var(--ink)] bg-[var(--accent)] text-[var(--foreground)] font-semibold text-lg flex flex-col items-center justify-center">
+              <span className="flex-shrink-0 w-14 h-14 rounded-xl border border-[var(--line)] bg-[var(--accent)] text-[var(--foreground)] font-semibold text-lg flex flex-col items-center justify-center">
                 <span className="text-[9px] leading-none">Lvl</span>
                 <span className="text-xl leading-none">{i + 1}</span>
               </span>
@@ -359,7 +359,7 @@ export default async function AboutPage() {
         </ul>
       </section>
 
-      <footer className="text-xs text-[var(--ink-muted)] border-t border-[var(--ink)]/30 pt-4 flex flex-wrap gap-4">
+      <footer className="text-xs text-[var(--ink-muted)] border-t border-[var(--line)] pt-4 flex flex-wrap gap-4">
         <Link href="/" className="underline">Späť na domov</Link>
         <Link href="/ochrana-sukromia" className="underline">Ochrana súkromia</Link>
         <a
@@ -378,7 +378,7 @@ export default async function AboutPage() {
 function StepCard({ n, title, body }: { n: number; title: string; body: string }) {
   return (
     <div className="card p-5 flex flex-col gap-2">
-      <span className="inline-flex items-center justify-center w-8 h-8 bg-[var(--accent)] text-[var(--foreground)] border border-[var(--ink)] font-semibold">
+      <span className="inline-flex items-center justify-center w-8 h-8 bg-[var(--accent)] text-[var(--foreground)] border border-[var(--line)] font-semibold">
         {n}
       </span>
       <h3 className="text-lg font-semibold tracking-tight">{title}</h3>
@@ -397,9 +397,9 @@ function PipelineStep({
   detail: string[];
 }) {
   return (
-    <div className="rounded-2xl border border-[var(--ink)] bg-[var(--surface)] p-4 flex flex-col gap-1.5">
+    <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-4 flex flex-col gap-1.5">
       <div className="flex items-center gap-2">
-        <span className="inline-flex items-center justify-center w-6 h-6 bg-[var(--surface-2)] text-[var(--foreground)] border border-[var(--ink)] font-semibold text-xs">
+        <span className="inline-flex items-center justify-center w-6 h-6 bg-[var(--surface-2)] text-[var(--foreground)] border border-[var(--line)] font-semibold text-xs">
           {n}
         </span>
         <h4 className="font-semibold text-sm">
@@ -417,7 +417,7 @@ function PipelineStep({
 
 function TechItem({ name, note }: { name: string; note: string }) {
   return (
-    <div className="rounded-xl border border-[var(--ink)] bg-[var(--surface)] p-3">
+    <div className="rounded-xl border border-[var(--line)] bg-[var(--surface)] p-3">
       <p className="font-semibold tracking-tight">{name}</p>
       <p className="text-xs text-[var(--ink-muted)]">{note}</p>
     </div>

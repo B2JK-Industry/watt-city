@@ -119,7 +119,7 @@ export function AiCalcSprintClient({
           onKeyDown={(e) => {
             if (e.key === "Enter" && input.trim()) check();
           }}
-          className="text-center text-2xl font-mono w-40 px-3 py-2 border border-[var(--ink)] bg-[var(--surface-2)] rounded-xl"
+          className="text-center text-2xl font-mono w-40 px-3 py-2 border border-[var(--line)] bg-[var(--surface-2)] rounded-xl"
         />
         <button className="btn btn-primary" onClick={check} disabled={!input.trim()}>
           {t.check}

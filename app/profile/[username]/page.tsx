@@ -74,7 +74,7 @@ export default async function PublicProfilePage({
             {owned.map(({ id, def }) => (
               <li
                 key={id}
-                className="border border-[var(--ink)]/40 rounded p-3 flex flex-col items-center gap-1 text-center"
+                className="border border-[var(--line)] rounded p-3 flex flex-col items-center gap-1 text-center"
               >
                 <span className="text-3xl" aria-hidden>
                   {def.icon}

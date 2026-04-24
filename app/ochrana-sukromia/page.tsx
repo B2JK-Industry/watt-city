@@ -179,7 +179,7 @@ export default async function PrivacyPage() {
         </ul>
       </section>
 
-      <footer className="text-xs text-[var(--ink-muted)] border-t border-[var(--ink)]/30 pt-4">
+      <footer className="text-xs text-[var(--ink-muted)] border-t border-[var(--line)] pt-4">
         {t.version}{" "}
         <Link href="/" className="underline">
           {t.backHome}
@@ -203,7 +203,7 @@ function DataRow({
   note?: string;
 }) {
   return (
-    <div className="rounded-xl border border-[var(--ink)] bg-[var(--surface-2)] p-3">
+    <div className="rounded-xl border border-[var(--line)] bg-[var(--surface-2)] p-3">
       <p className="font-semibold text-xs text-[var(--accent)]">
         {field}
       </p>

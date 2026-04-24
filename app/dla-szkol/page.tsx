@@ -329,7 +329,7 @@ export default async function SchoolsLanding() {
                 className="card p-4 flex flex-col gap-2 relative"
               >
                 <span
-                  className="w-10 h-10 rounded-xl border border-[var(--ink)] bg-[var(--accent)] text-[var(--foreground)] font-semibold text-xl flex items-center justify-center"
+                  className="w-10 h-10 rounded-xl border border-[var(--line)] bg-[var(--accent)] text-[var(--foreground)] font-semibold text-xl flex items-center justify-center"
                 >
                   {i + 1}
                 </span>
@@ -355,7 +355,7 @@ export default async function SchoolsLanding() {
           {[t.screen1, t.screen2, t.screen3].map((caption, i) => (
             <div
               key={i}
-              className="aspect-video rounded-xl border border-[var(--ink)] p-6 flex items-center justify-center text-center"
+              className="aspect-video rounded-xl border border-[var(--line)] p-6 flex items-center justify-center text-center"
               style={{
                 background: `linear-gradient(135deg, var(--accent), var(--accent))`,
                 color: "var(--accent-ink)",
@@ -388,7 +388,7 @@ export default async function SchoolsLanding() {
           {preview.map((c) => (
             <li
               key={c.code}
-              className="border border-[var(--ink)]/40 rounded p-3 flex flex-col gap-1"
+              className="border border-[var(--line)] rounded p-3 flex flex-col gap-1"
             >
               <div className="flex items-center gap-2">
                 <code className="font-mono text-[10px] px-1.5 py-0.5 bg-[var(--surface-2)] rounded">

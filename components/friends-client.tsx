@@ -84,7 +84,7 @@ export function FriendsClient({ copy }: { copy: Copy }) {
             value={other}
             onChange={(e) => setOther(e.target.value)}
             placeholder="username"
-            className="flex-1 px-3 py-2 border border-[var(--ink)] rounded bg-[var(--surface-2)]"
+            className="flex-1 px-3 py-2 border border-[var(--line)] rounded bg-[var(--surface-2)]"
           />
           <button
             className="btn btn-primary"

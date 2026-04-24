@@ -224,7 +224,7 @@ function Choice({
           ? "border-[var(--success)] bg-[color-mix(in_oklab,var(--success)_12%,white)] animate-[tile-flash-ok_320ms]"
           : isWrong
           ? "border-[var(--danger)] bg-[color-mix(in_oklab,var(--danger)_12%,white)] animate-[tile-flash-bad_320ms]"
-          : "border-[var(--border)] bg-[var(--surface-2)]/70 hover:border-[var(--accent)] hover:-translate-y-0.5"
+          : "border-[var(--line)] bg-[var(--surface-2)]/70 hover:border-[var(--accent)]"
       }`}
     >
       <span className="text-2xl sm:text-3xl font-bold">{choice.label}</span>

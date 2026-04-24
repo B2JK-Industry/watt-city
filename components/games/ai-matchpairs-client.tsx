@@ -146,7 +146,7 @@ export function AiMatchPairsClient({
                 type="button"
                 onClick={() => clickLeft(it.key)}
                 disabled={m}
-                className={`text-left rounded-xl border border-[var(--ink)] px-3 py-2 transition font-semibold text-sm ${
+                className={`text-left rounded-xl border border-[var(--line)] px-3 py-2 transition font-semibold text-sm ${
                   m
                     ? "bg-[color-mix(in_oklab,var(--success)_12%,white)] text-[var(--success)] line-through opacity-60"
                     : wrong
@@ -174,7 +174,7 @@ export function AiMatchPairsClient({
                 type="button"
                 onClick={() => clickRight(it.key)}
                 disabled={m}
-                className={`text-left rounded-xl border border-[var(--ink)] px-3 py-2 transition text-xs ${
+                className={`text-left rounded-xl border border-[var(--line)] px-3 py-2 transition text-xs ${
                   m
                     ? "bg-[color-mix(in_oklab,var(--success)_12%,white)] text-[var(--success)] line-through opacity-60"
                     : wrong

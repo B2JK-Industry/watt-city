@@ -103,7 +103,7 @@ export function FinanceQuizClient({ questions, dict }: Props) {
             const isCorrect = i === current.correctIndex;
             const isChosen = i === chosen;
             let variant =
-              "bg-[var(--surface-2)] border-[var(--border)] hover:border-[var(--accent)]";
+              "bg-[var(--surface-2)] border-[var(--line)] hover:border-[var(--accent)]";
             if (phase === "reveal") {
               if (isCorrect) {
                 variant = "bg-[color-mix(in_oklab,var(--success)_8%,white)] border-[var(--success)]";
@@ -111,7 +111,7 @@ export function FinanceQuizClient({ questions, dict }: Props) {
                 variant = "bg-[color-mix(in_oklab,var(--danger)_12%,white)] border-[var(--danger)]";
               } else {
                 variant =
-                  "bg-[var(--surface-2)] border-[var(--border)] opacity-70";
+                  "bg-[var(--surface-2)] border-[var(--line)] opacity-70";
               }
             }
             return (

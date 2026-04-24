@@ -97,7 +97,7 @@ export function PostGameBreakdown({
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-md border border-[var(--ink)] bg-[var(--surface)] p-5 flex flex-col gap-4"
+        className="relative w-full max-w-md border border-[var(--line)] bg-[var(--surface)] p-5 flex flex-col gap-4"
         onClick={(e) => e.stopPropagation()}
       >
         <h2
@@ -109,7 +109,7 @@ export function PostGameBreakdown({
 
         {/* Ladder */}
         <ol className="flex flex-col gap-1 text-sm">
-          <li className="flex items-center justify-between border-b border-[var(--ink)] pb-1">
+          <li className="flex items-center justify-between border-b border-[var(--line)] pb-1">
             <span>{t.basePoints}</span>
             <span className="font-mono font-bold">{baseValue}</span>
           </li>
@@ -121,7 +121,7 @@ export function PostGameBreakdown({
               </span>
             </li>
           ))}
-          <li className="flex items-center justify-between border-t border-[var(--ink)] pt-1 mt-1">
+          <li className="flex items-center justify-between border-t border-[var(--line)] pt-1 mt-1">
             <span className="font-bold">{t.credited}</span>
             <span className="font-mono text-lg font-semibold">= {finalValue}</span>
           </li>
@@ -129,7 +129,7 @@ export function PostGameBreakdown({
 
         {breakdown.capped && (
           <p
-            className="text-xs px-2 py-1 border border-[var(--ink)]"
+            className="text-xs px-2 py-1 border border-[var(--line)]"
             style={{ background: "var(--danger)", color: "var(--accent-ink)" }}
           >
             {t.capNote}
@@ -143,7 +143,7 @@ export function PostGameBreakdown({
               .map(([k, v]) => (
                 <li
                   key={k}
-                  className="px-2 py-0.5 border border-[var(--ink)] bg-[var(--surface-2)] font-mono"
+                  className="px-2 py-0.5 border border-[var(--line)] bg-[var(--surface-2)] font-mono"
                 >
                   {k} {v > 0 ? "+" : ""}
                   {v}

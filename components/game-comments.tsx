@@ -73,7 +73,7 @@ export function GameComments({ gameId, currentUser, labels }: Props) {
           placeholder={labels.placeholder}
           maxLength={400}
           rows={2}
-          className="flex-1 px-3 py-2 border border-[var(--ink)] rounded bg-[var(--surface-2)] text-sm"
+          className="flex-1 px-3 py-2 border border-[var(--line)] rounded bg-[var(--surface-2)] text-sm"
         />
         <button className="btn btn-primary" onClick={post} disabled={busy || text.trim().length < 2}>
           {labels.post}
@@ -85,7 +85,7 @@ export function GameComments({ gameId, currentUser, labels }: Props) {
       ) : (
         <ul className="flex flex-col gap-2 text-sm">
           {comments.map((c) => (
-            <li key={c.id} className="border border-[var(--ink)]/20 rounded p-2 flex justify-between gap-2">
+            <li key={c.id} className="border border-[var(--line)] rounded p-2 flex justify-between gap-2">
               <div className="flex flex-col">
                 <span className="text-xs text-[var(--ink-muted)]">{c.author}</span>
                 <span>{c.text}</span>

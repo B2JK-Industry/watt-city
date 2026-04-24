@@ -78,7 +78,7 @@ export function ThemeProposalsClient({
             onChange={(e) => setText(e.target.value)}
             placeholder={copy.placeholder}
             maxLength={100}
-            className="flex-1 px-3 py-2 border border-[var(--ink)] rounded bg-[var(--surface-2)]"
+            className="flex-1 px-3 py-2 border border-[var(--line)] rounded bg-[var(--surface-2)]"
           />
           <button
             className="btn btn-primary"
@@ -99,7 +99,7 @@ export function ThemeProposalsClient({
             {proposals.map((p) => (
               <li
                 key={p.id}
-                className="flex items-center justify-between py-2 border-b border-[var(--ink)]/20 last:border-0"
+                className="flex items-center justify-between py-2 border-b border-[var(--line)] last:border-0"
               >
                 <div className="flex flex-col">
                   <span className="text-sm">{p.text}</span>

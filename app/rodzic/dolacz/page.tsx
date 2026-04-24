@@ -54,7 +54,7 @@ export default function ParentJoinPage() {
             placeholder="ABC123"
             value={code}
             onChange={(e) => setCode(e.target.value.toUpperCase())}
-            className="border border-[var(--ink)] bg-[var(--surface)] px-3 py-3 rounded font-mono text-xl text-center"
+            className="border border-[var(--line)] bg-[var(--surface)] px-3 py-3 rounded font-mono text-xl text-center"
           />
         </label>
         {error && <p className="text-[var(--danger)] text-sm">Błąd: {error}</p>}

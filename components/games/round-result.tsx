@@ -102,7 +102,7 @@ export function RoundResult({
 
       {awarded !== null && state.result?.ok && (
         <div
-          className={`relative border border-[var(--ink)] rounded-2xl p-5 flex flex-col gap-3 ${
+          className={`relative border border-[var(--line)] rounded-2xl p-5 flex flex-col gap-3 ${
             isNewBest
               ? "bg-[var(--accent)] text-[var(--foreground)]"
               : "bg-[var(--surface-2)] text-[var(--foreground)]"
@@ -169,7 +169,7 @@ export function RoundResult({
                 className={`text-right border rounded-xl px-3 py-1.5 ${
                   isNewBest
                     ? "bg-[#0a0a0f] text-[var(--accent)] border-[#0a0a0f]"
-                    : "bg-[#0a0a0f] text-[var(--accent)] border-[var(--ink)]"
+                    : "bg-[#0a0a0f] text-[var(--accent)] border-[var(--line)]"
                 }`}
               >
                 <span className="text-[10px] block opacity-70 text-[var(--ink-muted)]">

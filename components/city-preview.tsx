@@ -18,13 +18,13 @@ export function CityPreview() {
             <Link
               key={g.id}
               href={`/games/${g.id}`}
-              className={`relative block rounded-xl border border-[var(--ink)] overflow-hidden hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all stagger-item ${
+              className={`relative block rounded-xl border border-[var(--line)] overflow-hidden transition-all stagger-item ${
                 isTall ? "row-span-2" : ""
               }`}
               style={{ height: isTall ? "100%" : `${h}%` }}
             >
               <div
-                className={`${g.building.roof} border-b-[3px] border-[var(--ink)] h-5`}
+                className={`${g.building.roof} border-b-[3px] border-[var(--line)] h-5`}
                 style={{
                   backgroundImage:
                     "repeating-linear-gradient(135deg, rgba(0,0,0,0.2) 0 5px, transparent 5px 10px)",
@@ -33,12 +33,12 @@ export function CityPreview() {
               <div
                 className={`${g.building.body} h-[calc(100%-1.25rem)] relative flex items-center justify-center`}
               >
-                <div className="absolute inset-2 rounded-md border border-[var(--ink)] bg-[#0a0a0f]/70 flex items-center justify-center">
+                <div className="absolute inset-2 rounded-md border border-[var(--line)] bg-[#0a0a0f]/70 flex items-center justify-center">
                   <span className="text-3xl sm:text-4xl">
                     {g.building.glyph}
                   </span>
                 </div>
-                <span className="absolute bottom-1 left-1 right-1 text-[9px] font-semibold text-[var(--foreground)] bg-white/90 rounded-sm border border-[var(--ink)] px-1 truncate text-center">
+                <span className="absolute bottom-1 left-1 right-1 text-[9px] font-semibold text-[var(--foreground)] bg-white/90 rounded-sm border border-[var(--line)] px-1 truncate text-center">
                   {g.building.name}
                 </span>
               </div>
@@ -48,7 +48,7 @@ export function CityPreview() {
       </div>
       <div
         aria-hidden="true"
-        className="mt-3 h-5 rounded-lg border border-[var(--ink)] bg-[var(--ink-subtle)]"
+        className="mt-3 h-5 rounded-lg border border-[var(--line)] bg-[var(--ink-subtle)]"
         style={{
           backgroundImage:
             "repeating-linear-gradient(45deg, rgba(0,0,0,0.25) 0 6px, transparent 6px 12px)",

@@ -157,7 +157,7 @@ export function LoanComparison({ rows, lang, principal, termMonths }: Props) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr className="text-[10px] opacity-60 border-b border-[var(--ink)]">
+            <tr className="text-[10px] opacity-60 border-b border-[var(--line)]">
               <th className="text-left px-2 py-1">{t.colProduct}</th>
               <th className="text-right px-2 py-1">{t.colMonthly}</th>
               <th className="text-right px-2 py-1">{t.colTotalInterest}</th>
@@ -169,7 +169,7 @@ export function LoanComparison({ rows, lang, principal, termMonths }: Props) {
             {rows.map((row) => (
               <tr
                 key={row.type}
-                className={`border-b border-[var(--ink)]/30 ${
+                className={`border-b border-[var(--line)] ${
                   !row.ok ? "opacity-50" : ""
                 } ${row.warning ? "bg-[color:color-mix(in_srgb,var(--danger),transparent_85%)]" : ""} ${
                   row.cheapest ? "bg-[color:color-mix(in_srgb,var(--success),transparent_85%)]" : ""

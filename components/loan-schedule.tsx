@@ -169,13 +169,13 @@ function LoanRow({
   }
 
   return (
-    <li className="border border-[var(--ink)] p-3 rounded flex flex-col gap-2">
+    <li className="border border-[var(--line)] p-3 rounded flex flex-col gap-2">
       <div className="flex items-baseline justify-between gap-2 flex-wrap">
         <span className="font-bold text-sm">
           {loan.type.replace(/_/g, " ")} · {loan.id.slice(0, 10)}
         </span>
         <span
-          className="text-[10px] px-2 py-0.5 border border-[var(--ink)] font-semibold"
+          className="text-[10px] px-2 py-0.5 border border-[var(--line)] font-semibold"
           style={{ background: statusColor, color: "var(--accent-ink)" }}
         >
           {statusLabel}
@@ -189,7 +189,7 @@ function LoanRow({
           {Math.ceil(loan.monthlyPayment)} W$
         </span>
       </div>
-      <div className="h-1.5 border border-[var(--ink)] bg-[var(--surface-2)] relative overflow-hidden">
+      <div className="h-1.5 border border-[var(--line)] bg-[var(--surface-2)] relative overflow-hidden">
         <div
           className="h-full bg-[var(--accent)]"
           style={{ width: `${progressPct}%` }}
@@ -203,7 +203,7 @@ function LoanRow({
           type="button"
           onClick={toggle}
           disabled={pending}
-          className="px-2 py-0.5 border border-[var(--ink)] font-bold tabular-nums transition-shadow disabled:opacity-50"
+          className="px-2 py-0.5 border border-[var(--line)] font-bold tabular-nums transition-shadow disabled:opacity-50"
           style={{
             background: autoRepay ? "var(--success)" : "var(--surface-2)",
             color: autoRepay ? "#0a0a0f" : "inherit",

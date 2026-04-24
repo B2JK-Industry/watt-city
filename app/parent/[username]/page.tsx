@@ -50,7 +50,7 @@ export default async function ParentChildView({
     <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex items-center gap-3">
         <span
-          className="w-12 h-12 border border-[var(--ink)] rounded flex items-center justify-center text-3xl"
+          className="w-12 h-12 border border-[var(--line)] rounded flex items-center justify-center text-3xl"
           style={{ color: av.hue }}
         >
           {av.emoji}
@@ -113,7 +113,7 @@ export default async function ParentChildView({
         ) : (
           <ul className="flex flex-col gap-1 text-xs font-mono">
             {ledger.slice(0, 12).map((e) => (
-              <li key={e.id} className="flex justify-between border-b border-[var(--ink)]/20 pb-1 last:border-0">
+              <li key={e.id} className="flex justify-between border-b border-[var(--line)] pb-1 last:border-0">
                 <span>{e.kind}: {e.reason}</span>
                 <span>{new Date(e.ts).toLocaleDateString("pl-PL")}</span>
               </li>

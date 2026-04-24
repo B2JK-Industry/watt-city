@@ -566,7 +566,7 @@ function CatalogList({
           <li
             key={entry.id}
             className={
-              "border border-[var(--ink)]/40 rounded p-3 flex flex-col gap-2 text-sm " +
+              "border border-[var(--line)] rounded p-3 flex flex-col gap-2 text-sm " +
               (canBuild ? "" : "opacity-60")
             }
           >
@@ -680,7 +680,7 @@ function MortgageCard({
       <p className="text-sm text-[var(--ink-muted)]">{dict.mortgageBody}</p>
 
       {open && (
-        <div className="flex flex-col gap-3 border-t border-[var(--ink)]/30 pt-3">
+        <div className="flex flex-col gap-3 border-t border-[var(--line)] pt-3">
           <label className="flex flex-col gap-1 text-xs">
             <span>{dict.principal} (W$)</span>
             <input

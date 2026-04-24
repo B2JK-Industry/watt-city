@@ -155,7 +155,7 @@ export function WordScrambleClient({ words, dict }: { words: ScrambleWord[]; dic
             {[...current.scrambled].map((ch, i) => (
               <span
                 key={`${index}-${i}`}
-                className="inline-flex items-center justify-center w-10 h-12 sm:w-12 sm:h-14 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] font-mono text-2xl sm:text-3xl font-bold"
+                className="inline-flex items-center justify-center w-10 h-12 sm:w-12 sm:h-14 rounded-lg border border-[var(--line)] bg-[var(--surface-2)] font-mono text-2xl sm:text-3xl font-bold"
               >
                 {ch}
               </span>

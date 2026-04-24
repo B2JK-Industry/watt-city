@@ -202,7 +202,7 @@ function RosterRow({
 }) {
   return (
     <li
-      className={`flex items-center justify-between gap-3 py-2 border-b border-[var(--ink)]/20 last:border-b-0 ${
+      className={`flex items-center justify-between gap-3 py-2 border-b border-[var(--line)] last:border-b-0 ${
         highlight ? "text-[var(--accent)] font-bold" : ""
       }`}
     >
