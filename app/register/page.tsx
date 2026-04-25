@@ -13,17 +13,28 @@ export default async function RegisterPage() {
   const t = dict.auth;
   return (
     <div className="max-w-md mx-auto card p-8 flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-bold">{t.registerTitle}</h1>
-        <p className="text-sm text-[var(--ink-muted)] mt-1">{t.registerBody}</p>
+      <div className="flex flex-col gap-1.5">
+        <h1 className="t-h2 text-[var(--accent)]">{t.registerTitle}</h1>
+        <p className="t-body text-[var(--foreground)]">{t.registerBody}</p>
       </div>
       <AuthForm mode="register" dict={dict} />
-      <p className="text-sm text-[var(--ink-muted)]">
+      <p className="t-body-sm text-[var(--ink-muted)]">
         {t.switchToLogin}{" "}
-        <Link href="/login" className="text-[var(--accent)] hover:underline">
+        <Link href="/login" className="text-[var(--accent)] font-semibold hover:underline">
           {t.switchToLoginAction}
         </Link>
       </p>
+      <div className="flex flex-wrap gap-2 pt-2 border-t border-[var(--line)]">
+        <span className="chip" title="GDPR-K compliant — automatic parental consent under 16">
+          🔒 GDPR-K
+        </span>
+        <span className="chip" title="KNF / UOKiK aligned">
+          ⚖️ KNF / UOKiK
+        </span>
+        <span className="chip" title="EU-hosted (Frankfurt + Vercel EU)">
+          🇪🇺 EU-hosted
+        </span>
+      </div>
     </div>
   );
 }

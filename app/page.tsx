@@ -105,7 +105,7 @@ export default async function Home() {
             . {t.titleBuild} <span className="text-[var(--foreground)]">{t.titleHouse}</span>{" "}
             {t.titleIn}
           </h1>
-          <p className="t-body-lg text-[var(--ink-muted)] max-w-xl">
+          <p className="t-body-lg text-[var(--foreground)] max-w-xl">
             {bodyParts.map((part, i) => {
               if (part === "§WATTS§")
                 return (
