@@ -3,9 +3,18 @@ import { LogoutButton } from "@/components/logout-button";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ResourceBar } from "@/components/resource-bar";
 import { NotificationBell } from "@/components/notification-bell";
+import { NavLink } from "@/components/nav-link";
+import { MobileNavDrawer } from "@/components/mobile-nav-drawer";
 import { resolveTheme } from "@/lib/theme";
 import type { Lang, Dict } from "@/lib/i18n";
 import type { Resources } from "@/lib/resources";
+
+const DRAWER_LABELS: Record<Lang, { menu: string; open: string; close: string }> = {
+  pl: { menu: "Menu", open: "Otwórz menu", close: "Zamknij menu" },
+  uk: { menu: "Меню", open: "Відкрити меню", close: "Закрити меню" },
+  cs: { menu: "Menu", open: "Otevřít menu", close: "Zavřít menu" },
+  en: { menu: "Menu", open: "Open menu", close: "Close menu" },
+};
 
 type Props = {
   username: string | null;
@@ -85,7 +94,7 @@ export function SiteNav({
   }
   return (
     <header className="w-full border-b border-[var(--line)] sticky top-0 z-20 bg-[var(--surface)]">
-      <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-[56px] sm:h-[72px] flex items-center justify-between gap-4">
         {(() => {
           const theme = resolveTheme();
           return (
@@ -100,15 +109,11 @@ export function SiteNav({
             </Link>
           );
         })()}
-        <div className="hidden sm:flex items-center gap-5 text-sm">
+        <div className="hidden sm:flex items-stretch self-stretch gap-5 text-sm">
           {navLinks.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className="tap-target text-[var(--ink-muted)] hover:text-[var(--accent)] transition-colors"
-            >
+            <NavLink key={l.href} href={l.href}>
               {l.label}
-            </Link>
+            </NavLink>
           ))}
         </div>
         <div className="flex items-center gap-2 sm:gap-3 text-sm">
@@ -151,6 +156,23 @@ export function SiteNav({
               />
               <LanguageSwitcher current={lang} />
               <LogoutButton label={t.logout} />
+              <MobileNavDrawer
+                ariaLabel={DRAWER_LABELS[lang].menu}
+                openLabel={DRAWER_LABELS[lang].open}
+                closeLabel={DRAWER_LABELS[lang].close}
+                footer={
+                  <span className="t-body-sm text-[var(--ink-muted)]">
+                    {username}
+                    {title ? ` · ${title}` : ""}
+                  </span>
+                }
+              >
+                {navLinks.map((l) => (
+                  <NavLink key={l.href} href={l.href} variant="mobile">
+                    <span className="t-h5 block py-2">{l.label}</span>
+                  </NavLink>
+                ))}
+              </MobileNavDrawer>
             </>
           ) : (
             <>
@@ -161,30 +183,19 @@ export function SiteNav({
               <Link href="/register" className="btn btn-sales btn-sm">
                 {t.register}
               </Link>
+              <MobileNavDrawer
+                ariaLabel={DRAWER_LABELS[lang].menu}
+                openLabel={DRAWER_LABELS[lang].open}
+                closeLabel={DRAWER_LABELS[lang].close}
+              >
+                {navLinks.map((l) => (
+                  <NavLink key={l.href} href={l.href} variant="mobile">
+                    <span className="t-h5 block py-2">{l.label}</span>
+                  </NavLink>
+                ))}
+              </MobileNavDrawer>
             </>
           )}
-        </div>
-      </nav>
-      {/* Mobile-only secondary nav. Wrapping in <nav> (not <div>) gives
-          the `nav a` tap-target CSS (globals.css §7.3.1) a selector
-          to hit + a proper landmark for screen readers. */}
-      <nav
-        aria-label={t.city}
-        className="sm:hidden border-t border-[var(--line)] bg-[var(--surface)]"
-      >
-        <div className="max-w-6xl mx-auto px-3 py-1.5 overflow-x-auto">
-          <ul className="flex items-center gap-3 text-xs font-semibold whitespace-nowrap">
-            {navLinks.map((l) => (
-              <li key={l.href}>
-                <Link
-                  href={l.href}
-                  className="tap-target px-2 py-1 rounded hover:text-[var(--accent)]"
-                >
-                  {l.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
         </div>
       </nav>
       {username && resources && (

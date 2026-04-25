@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteNav } from "@/components/site-nav";
+import { SiteFooter } from "@/components/site-footer";
 import { NewGameToast } from "@/components/new-game-toast";
 import { TierUpToast } from "@/components/tier-up-toast";
 import { OnboardingTour } from "@/components/onboarding-tour";
@@ -244,93 +245,7 @@ export default async function RootLayout({
             />
           </>
         )}
-        <footer className="w-full border-t border-[var(--line)] mt-12 bg-[var(--surface)]">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col gap-6">
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-3">
-                  <span
-                    className="inline-flex items-center justify-center w-9 h-9 rounded-md font-semibold text-sm"
-                    style={{ background: theme.colors.accent, color: theme.colors.accentInk }}
-                  >
-                    {theme.brandShort}
-                  </span>
-                  <span className="font-semibold text-[var(--foreground)]">{theme.brand}</span>
-                </div>
-                <p className="t-body-sm text-[var(--ink-muted)] max-w-md">
-                  {dict.footer.body
-                    .replace("{event}", "§EVENT§")
-                    .replace("{track}", "§TRACK§")
-                    .split(/(§EVENT§|§TRACK§)/g)
-                    .map((p, i) => {
-                      if (p === "§EVENT§")
-                        return (
-                          <strong key={i} className="text-[var(--foreground)] font-semibold">
-                            {dict.footer.event}
-                          </strong>
-                        );
-                      if (p === "§TRACK§")
-                        return (
-                          <strong key={i} className="text-[var(--accent)] font-semibold">
-                            {dict.footer.track}
-                          </strong>
-                        );
-                      return <span key={i}>{p}</span>;
-                    })}
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2 items-center">
-                <span className="chip">PKO XP: Gaming</span>
-                <span className="chip">ETHSilesia 2026</span>
-                <span className="chip">Katowice · PL</span>
-              </div>
-            </div>
-            <div className="border-t border-[var(--line)] pt-4">
-              <p className="t-caption text-[var(--ink-muted)]">
-                {theme.disclaimer}
-              </p>
-            </div>
-            {theme.mascot && (
-              <div className="flex items-center gap-3 border-t border-[var(--line)] pt-3">
-                <div
-                  className="w-12 h-16 flex-shrink-0"
-                  aria-label={theme.mascot.label}
-                  dangerouslySetInnerHTML={{ __html: theme.mascot.svg }}
-                />
-                <div className="flex flex-col gap-0.5 t-body-sm text-[var(--ink-muted)]">
-                  <span className="font-semibold text-[var(--foreground)]">
-                    Powered by PKO Bank Polski
-                  </span>
-                </div>
-              </div>
-            )}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 t-body-sm text-[var(--ink-muted)] pt-2">
-              <span>{dict.footer.sponsors}</span>
-              <span className="flex flex-wrap gap-4">
-                <a href="/o-platforme" className="tap-target hover:text-[var(--accent)]">
-                  {dict.nav.about}
-                </a>
-                <a
-                  href="/ochrana-sukromia"
-                  className="tap-target hover:text-[var(--accent)]"
-                >
-                  {dict.nav.privacy}
-                </a>
-                <a href="/sin-slavy" className="tap-target hover:text-[var(--accent)]">
-                  {dict.nav.hall}
-                </a>
-                <a
-                  href="https://github.com/B2JK-Industry/watt-city"
-                  className="tap-target hover:text-[var(--accent)]"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {dict.footer.sourceLink}
-                </a>
-              </span>
-            </div>
-          </div>
-        </footer>
+        <SiteFooter lang={lang} dict={dict} theme={theme} />
       </body>
     </html>
   );
