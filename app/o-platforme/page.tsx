@@ -220,7 +220,7 @@ export default async function AboutPage() {
               key={i}
               className="card p-4 flex flex-col sm:flex-row gap-3 sm:items-start"
             >
-              <span className="flex-shrink-0 w-14 h-14 rounded-xl border border-[var(--line)] bg-[var(--accent)] text-[var(--foreground)] font-semibold text-lg flex flex-col items-center justify-center">
+              <span className="flex-shrink-0 w-14 h-14 rounded-xl border border-[var(--line)] bg-[var(--accent)] text-[var(--accent-ink)] font-semibold text-lg flex flex-col items-center justify-center">
                 <span className="text-[9px] leading-none">Lvl</span>
                 <span className="text-xl leading-none">{i + 1}</span>
               </span>
@@ -378,7 +378,7 @@ export default async function AboutPage() {
 function StepCard({ n, title, body }: { n: number; title: string; body: string }) {
   return (
     <div className="card p-5 flex flex-col gap-2">
-      <span className="inline-flex items-center justify-center w-8 h-8 bg-[var(--accent)] text-[var(--foreground)] border border-[var(--line)] font-semibold">
+      <span className="inline-flex items-center justify-center w-8 h-8 bg-[var(--accent)] text-[var(--accent-ink)] border border-[var(--line)] font-semibold">
         {n}
       </span>
       <h3 className="text-lg font-semibold tracking-tight">{title}</h3>

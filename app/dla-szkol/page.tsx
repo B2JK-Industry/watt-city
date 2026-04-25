@@ -329,7 +329,7 @@ export default async function SchoolsLanding() {
                 className="card p-4 flex flex-col gap-2 relative"
               >
                 <span
-                  className="w-10 h-10 rounded-xl border border-[var(--line)] bg-[var(--accent)] text-[var(--foreground)] font-semibold text-xl flex items-center justify-center"
+                  className="w-10 h-10 rounded-xl border border-[var(--line)] bg-[var(--accent)] text-[var(--accent-ink)] font-semibold text-xl flex items-center justify-center"
                 >
                   {i + 1}
                 </span>

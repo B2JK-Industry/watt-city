@@ -275,7 +275,7 @@ export function EnergyDashClient({ dict }: { dict: Dict }) {
                   className={`absolute inset-0 rounded-xl flex items-center justify-center text-3xl sm:text-4xl transition-transform active:scale-90 ${
                     tile.kind === "oze"
                       ? "bg-[var(--accent)] border border-[var(--success)] text-[var(--success)]"
-                      : "bg-[var(--accent)] from-[var(--surface-2)] to-[var(--surface-2)] border border-[var(--line)]/60 text-[var(--foreground)]"
+                      : "bg-[var(--accent)] from-[var(--surface-2)] to-[var(--surface-2)] border border-[var(--line)]/60 text-[var(--accent-ink)]"
                   }`}
                 >
                   <span>{tile.icon}</span>

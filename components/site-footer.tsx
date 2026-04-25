@@ -116,10 +116,10 @@ export function SiteFooter({ lang, dict, theme }: Props) {
             <FooterLink href="/sin-slavy">{dict.nav.hall}</FooterLink>
           </FooterColumn>
           <FooterColumn heading={sections.help}>
-            <span className="t-body-sm text-[var(--ink-subtle)] cursor-not-allowed">
+            <span className="t-body-sm text-[var(--ink-muted)]" aria-disabled="true">
               {help.faq}
             </span>
-            <span className="t-body-sm text-[var(--ink-subtle)] cursor-not-allowed">
+            <span className="t-body-sm text-[var(--ink-muted)]" aria-disabled="true">
               {help.contact}
             </span>
             <FooterLink

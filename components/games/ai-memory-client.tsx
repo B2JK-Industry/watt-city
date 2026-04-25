@@ -127,7 +127,7 @@ export function AiMemoryClient({
                   ? "bg-[color-mix(in_oklab,var(--success)_12%,white)] border-[var(--success)]"
                   : isShown
                     ? "bg-[var(--surface-2)]"
-                    : "bg-[var(--accent)] text-[var(--foreground)] hover:opacity-80")
+                    : "bg-[var(--accent)] text-[var(--accent-ink)] hover:opacity-80")
               }
             >
               {isShown ? card.text : "?"}

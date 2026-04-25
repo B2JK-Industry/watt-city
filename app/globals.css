@@ -388,11 +388,20 @@ body {
 .btn-lg { padding: 14px 24px; min-height: 52px; font-size: 18px; }
 
 .btn-sales {
-  background: var(--sales);
+  /* WCAG AA deviation from the brand sales token. The canonical --sales
+   * (#db912c) gives 2.59:1 contrast with white — fails the 4.5:1 body-text
+   * rule that axe-core enforces in scanSeriousA11y. The brand manual itself
+   * (§12) already acknowledges #db912c as "iba pre large text / ikony", so
+   * filled buttons (= body text on a coloured surface) need a darker
+   * background. #a85a18 keeps the warm-orange identity while clearing AA
+   * (5.07:1). The brand --sales token is preserved unchanged for chips,
+   * tags, accent strokes, and other "small accent" surfaces where the
+   * 3.1:1 ratio is permitted. */
+  background: #a85a18;
   color: var(--sales-ink);
   border-color: transparent;
 }
-.btn-sales:hover { background: var(--sales-hover); }
+.btn-sales:hover { background: #8a4810; }
 
 .btn-secondary {
   background: transparent;

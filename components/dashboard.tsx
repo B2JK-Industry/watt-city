@@ -297,7 +297,7 @@ function Stat({
     <div
       className={`rounded-xl border border-[var(--line)] px-3 py-2 ${
         accent
-          ? "bg-[var(--accent)] text-[var(--foreground)]"
+          ? "bg-[var(--accent)] text-[var(--accent-ink)]"
           : "bg-[var(--surface-2)]"
       }`}
     >
