@@ -4,15 +4,18 @@
  * buildings, not XP) alongside the watt-balance badge. Sits at the top
  * of the dashboard so the city is the first thing the player sees.
  *
- * V1 XP-level stats still render beneath this during the rollout
- * window (VOCAB-AUDIT §2.1 — removal scheduled post-R3.2 once the
- * feature-flag gate ships in R9.3.1).
+ * V4-UX-2026-04-25: filled the formerly-empty horizontal middle with a
+ * "Twoje budynki" strip — players' actual building inventory rendered
+ * as glyph chips with a level/count superscript. Reinforces "your city"
+ * theme and gives the user something concrete to read in the otherwise
+ * statistical card.
  */
 
 import type { PlayerState } from "@/lib/player";
 import type { Lang } from "@/lib/i18n";
 import { cityLevelFromBuildings } from "@/lib/city-level";
 import { cityWattBalance } from "@/lib/watts";
+import { getCatalogEntry } from "@/lib/building-catalog";
 
 type Copy = Record<
   | "heading"
@@ -21,6 +24,8 @@ type Copy = Record<
   | "nextUnlockLabel"
   | "nothingNext"
   | "buildingsLabel"
+  | "yourBuildings"
+  | "noBuildingsYet"
   | "wattsBalanced"
   | "wattsDeficit"
   | "wattsSurplus",
@@ -35,6 +40,8 @@ const COPY: Record<Lang, Copy> = {
     nextUnlockLabel: "Następnie odblokujesz",
     nothingNext: "Maksymalny poziom osiągnięty — gratulacje!",
     buildingsLabel: "Budynków",
+    yourBuildings: "Twoje budynki",
+    noBuildingsYet: "Postaw swój pierwszy budynek w Mieście →",
     wattsBalanced: "Sieć: zbilansowana",
     wattsDeficit: "Sieć: niedobór",
     wattsSurplus: "Sieć: nadwyżka",
@@ -46,6 +53,8 @@ const COPY: Record<Lang, Copy> = {
     nextUnlockLabel: "Далі відкриється",
     nothingNext: "Максимальний рівень — вітаємо!",
     buildingsLabel: "Будівель",
+    yourBuildings: "Твої будівлі",
+    noBuildingsYet: "Збудуй свою першу будівлю в Місті →",
     wattsBalanced: "Мережа: збалансована",
     wattsDeficit: "Мережа: дефіцит",
     wattsSurplus: "Мережа: надлишок",
@@ -57,6 +66,8 @@ const COPY: Record<Lang, Copy> = {
     nextUnlockLabel: "Dále odemkneš",
     nothingNext: "Maximální úroveň — gratulujeme!",
     buildingsLabel: "Budov",
+    yourBuildings: "Tvé budovy",
+    noBuildingsYet: "Postav svou první budovu v Městě →",
     wattsBalanced: "Síť: vyvážená",
     wattsDeficit: "Síť: nedostatek",
     wattsSurplus: "Síť: přebytek",
@@ -68,6 +79,8 @@ const COPY: Record<Lang, Copy> = {
     nextUnlockLabel: "Next unlock",
     nothingNext: "Max level reached — congratulations!",
     buildingsLabel: "Buildings",
+    yourBuildings: "Your buildings",
+    noBuildingsYet: "Place your first building in the City →",
     wattsBalanced: "Grid: balanced",
     wattsDeficit: "Grid: deficit",
     wattsSurplus: "Grid: surplus",
@@ -79,12 +92,45 @@ type Props = {
   lang: Lang;
 };
 
+/** Aggregate the player's buildings by catalog id so a city of "3 Domek
+ *  + 2 Sklepik" renders as two chips (🏠 ×3, 🏪 ×2) instead of five
+ *  identical glyphs. Returns up to 6 chips ordered by descending count
+ *  (most-built first) so the strip reads as "what defines this city". */
+function aggregateByCatalog(
+  buildings: ReadonlyArray<{ catalogId: string; level: number }>,
+): Array<{ glyph: string; name: string; count: number; topLevel: number }> {
+  const groups = new Map<
+    string,
+    { glyph: string; name: string; count: number; topLevel: number }
+  >();
+  for (const b of buildings) {
+    const entry = getCatalogEntry(b.catalogId);
+    if (!entry) continue;
+    const prev = groups.get(b.catalogId);
+    if (prev) {
+      prev.count += 1;
+      if (b.level > prev.topLevel) prev.topLevel = b.level;
+    } else {
+      groups.set(b.catalogId, {
+        glyph: entry.glyph,
+        name: entry.id,
+        count: 1,
+        topLevel: b.level,
+      });
+    }
+  }
+  return Array.from(groups.values())
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 6);
+}
+
 export function CityLevelCard({ player, lang }: Props) {
   const t = COPY[lang];
   const city = cityLevelFromBuildings(player.buildings);
   const watts = cityWattBalance(player.buildings);
   const pct = Math.round(city.progressToNext * 100);
   const nextUnlock = city.nextUnlocks[0] ?? null;
+  const groups = aggregateByCatalog(player.buildings);
 
   const gridLabel = watts.inDeficit
     ? t.wattsDeficit
@@ -99,13 +145,13 @@ export function CityLevelCard({ player, lang }: Props) {
 
   return (
     <section
-      className="card p-5 sm:p-6 flex flex-col gap-4"
+      className="card p-5 sm:p-6 flex flex-col gap-5"
       aria-labelledby="city-level-heading"
     >
       <div className="flex items-center justify-between gap-3">
         <h2
           id="city-level-heading"
-          className="text-xs font-semibold text-[var(--accent)]"
+          className="t-overline text-[var(--accent)]"
         >
           {t.heading}
         </h2>
@@ -118,39 +164,88 @@ export function CityLevelCard({ player, lang }: Props) {
         </span>
       </div>
 
-      <div className="flex items-center justify-between gap-4">
-        {/* V3.1 — progress ring around level number */}
-        <ProgressRing level={city.level} pct={pct} />
-        <div className="text-right">
-          <div className="text-[10px] opacity-70">
-            {t.buildingsLabel}
-          </div>
-          <div className="text-xl font-bold tabular-nums">
-            {player.buildings.length}
-          </div>
-          <div className="text-[10px] opacity-70 mt-1">
-            {t.level}
+      <div className="grid grid-cols-1 sm:grid-cols-[auto_1fr_auto] sm:items-center gap-5 sm:gap-6">
+        {/* Left — progress ring */}
+        <div className="flex items-center gap-4">
+          <ProgressRing level={city.level} pct={pct} />
+          <div className="flex flex-col gap-1 text-xs sm:hidden">
+            <span className="font-semibold text-[var(--ink-muted)]">
+              {t.progressLabel}: {pct}%
+            </span>
+            <span className="text-[var(--ink-muted)]">
+              {gridLabel} ({watts.produced}/{watts.consumed})
+            </span>
           </div>
         </div>
-      </div>
-      <div className="flex items-center justify-between text-[11px]">
-        <span className="opacity-70">
-          {t.progressLabel}: {pct}%
-        </span>
-        <span className="opacity-70">
-          {gridLabel} ({watts.produced}/{watts.consumed})
-        </span>
+
+        {/* Center — buildings strip */}
+        <div className="flex flex-col gap-2 min-w-0">
+          <span className="t-overline text-[var(--ink-muted)]">
+            {t.yourBuildings}
+          </span>
+          {groups.length === 0 ? (
+            <p className="text-sm text-[var(--ink-muted)]">{t.noBuildingsYet}</p>
+          ) : (
+            <ul className="flex flex-wrap gap-2">
+              {groups.map((g) => (
+                <li
+                  key={g.name}
+                  className="relative inline-flex items-center justify-center w-10 h-10 rounded-md bg-[var(--surface-2)] border border-[var(--line)] text-xl"
+                  title={`${g.name} ×${g.count} · max Lvl ${g.topLevel}`}
+                >
+                  <span aria-hidden>{g.glyph}</span>
+                  {g.count > 1 && (
+                    <span
+                      aria-hidden
+                      className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-[var(--accent)] text-[var(--accent-ink)] text-[10px] font-semibold tabular-nums inline-flex items-center justify-center"
+                    >
+                      {g.count}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className="hidden sm:flex items-center gap-3 text-[11px] text-[var(--ink-muted)]">
+            <span>
+              {t.progressLabel}: <strong className="text-[var(--foreground)] font-semibold">{pct}%</strong>
+            </span>
+            <span aria-hidden>·</span>
+            <span>
+              {gridLabel} ({watts.produced}/{watts.consumed})
+            </span>
+          </div>
+        </div>
+
+        {/* Right — building count + level label stacked */}
+        <div className="text-right flex flex-col gap-0.5 min-w-[64px]">
+          <span className="t-overline text-[var(--ink-muted)]">
+            {t.buildingsLabel}
+          </span>
+          <span className="text-3xl font-semibold tabular-nums text-[var(--foreground)] leading-none">
+            {player.buildings.length}
+          </span>
+          <span className="t-caption text-[var(--ink-muted)] mt-1">
+            {t.level}
+          </span>
+        </div>
       </div>
 
-      <div className="border-t border-[var(--line)] pt-3">
-        <div className="text-[10px] opacity-70 mb-1">
-          {t.nextUnlockLabel}
+      <div className="border-t border-[var(--line)] pt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+        <div className="flex flex-col gap-0.5">
+          <span className="t-overline text-[var(--ink-muted)]">
+            {t.nextUnlockLabel}
+          </span>
+          {nextUnlock ? (
+            <span className="text-sm font-semibold text-[var(--foreground)]">
+              {nextUnlock}
+            </span>
+          ) : (
+            <span className="text-sm italic text-[var(--ink-muted)]">
+              {t.nothingNext}
+            </span>
+          )}
         </div>
-        {nextUnlock ? (
-          <div className="text-sm font-bold">{nextUnlock}</div>
-        ) : (
-          <div className="text-sm italic opacity-70">{t.nothingNext}</div>
-        )}
       </div>
     </section>
   );
@@ -161,14 +256,14 @@ function ProgressRing({ level, pct }: { level: number; pct: number }) {
   const circumference = 2 * Math.PI * r;
   const offset = circumference * (1 - Math.max(0, Math.min(100, pct)) / 100);
   return (
-    <div className="relative" aria-hidden>
+    <div className="relative shrink-0" aria-hidden>
       <svg width="80" height="80" viewBox="0 0 80 80">
         <circle
           cx="40"
           cy="40"
           r={r}
           fill="none"
-          stroke="var(--surface-2)"
+          stroke="var(--line)"
           strokeWidth="6"
         />
         <circle
@@ -185,7 +280,9 @@ function ProgressRing({ level, pct }: { level: number; pct: number }) {
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-2xl font-semibold tabular-nums">{level}</span>
+        <span className="text-2xl font-semibold tabular-nums text-[var(--accent)]">
+          {level}
+        </span>
       </div>
     </div>
   );

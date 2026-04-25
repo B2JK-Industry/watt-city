@@ -88,80 +88,137 @@ export function PostGameBreakdown({
 
   if (!mounted) return null;
 
+  // Resource icon map: maps server-side resource ids to display glyphs.
+  // Falls back to the raw key (which is already i18n-stable).
+  const resourceIcon: Record<string, string> = {
+    watts: "⚡",
+    coins: "🪙",
+    bricks: "🧱",
+  };
+
   return (
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="pgb-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 motion-safe:animate-in motion-safe:fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.5)] px-4 motion-safe:animate-[fade-in_200ms_ease-out]"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-md border border-[var(--line)] bg-[var(--surface)] p-5 flex flex-col gap-4"
+        className="relative w-full max-w-lg rounded-md border border-[var(--line)] bg-[var(--surface)] flex flex-col elev-soft-lg overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2
-          id="pgb-title"
-          className="text-lg font-semibold tracking-tight"
-        >
-          {t.title}
-        </h2>
+        {/* Header — sits on a tinted surface so the modal reads as an
+            artifact of the game flow, not a raw alert dialog. */}
+        <header className="flex items-baseline justify-between gap-3 px-6 py-4 border-b border-[var(--line)] bg-[var(--surface-2)]">
+          <h2 id="pgb-title" className="t-h4 text-[var(--accent)]">
+            {t.title}
+          </h2>
+          <span className="t-caption text-[var(--ink-muted)] tabular-nums">
+            {t.credited} {finalValue} W
+          </span>
+        </header>
 
-        {/* Ladder */}
-        <ol className="flex flex-col gap-1 text-sm">
-          <li className="flex items-center justify-between border-b border-[var(--line)] pb-1">
-            <span>{t.basePoints}</span>
-            <span className="font-mono font-bold">{baseValue}</span>
-          </li>
-          {breakdown.factors.slice(1).map((f) => (
-            <li key={f.source} className="flex items-center justify-between">
-              <span>{resolveFactorLabel(f, lang)}</span>
-              <span className="font-mono text-[var(--accent)] font-bold">
-                ×{f.factor.toFixed(2).replace(/0+$/, "").replace(/\.$/, "")}
+        {/* Ladder body */}
+        <div className="px-6 py-5 flex flex-col gap-4">
+          <ol className="flex flex-col gap-2">
+            <li className="flex items-center justify-between text-sm">
+              <span className="text-[var(--foreground)]">{t.basePoints}</span>
+              <span className="font-mono font-semibold tabular-nums text-[var(--foreground)]">
+                {baseValue}
               </span>
             </li>
-          ))}
-          <li className="flex items-center justify-between border-t border-[var(--line)] pt-1 mt-1">
-            <span className="font-bold">{t.credited}</span>
-            <span className="font-mono text-lg font-semibold">= {finalValue}</span>
-          </li>
-        </ol>
+            {breakdown.factors.slice(1).map((f) => (
+              <li
+                key={f.source}
+                className="flex items-center justify-between text-sm"
+              >
+                <span className="text-[var(--ink-muted)] flex items-center gap-2">
+                  <span aria-hidden className="text-[var(--accent)] font-mono">
+                    ×
+                  </span>
+                  {resolveFactorLabel(f, lang)}
+                </span>
+                <span className="font-mono font-semibold tabular-nums text-[var(--accent)]">
+                  ×
+                  {f.factor
+                    .toFixed(2)
+                    .replace(/0+$/, "")
+                    .replace(/\.$/, "")}
+                </span>
+              </li>
+            ))}
+          </ol>
 
-        {breakdown.capped && (
-          <p
-            className="text-xs px-2 py-1 border border-[var(--line)]"
-            style={{ background: "var(--danger)", color: "var(--accent-ink)" }}
+          {/* Result row — prominent navy band */}
+          <div
+            className="flex items-baseline justify-between gap-3 px-4 py-3 rounded-md"
+            style={{
+              background: "var(--accent)",
+              color: "var(--accent-ink)",
+            }}
           >
-            {t.capNote}
+            <span className="text-sm font-semibold uppercase tracking-wide opacity-90">
+              {t.credited}
+            </span>
+            <span className="font-mono text-2xl font-semibold tabular-nums">
+              {finalValue} W
+            </span>
+          </div>
+
+          {breakdown.capped && (
+            <p
+              className="text-xs px-3 py-2 rounded-sm font-medium"
+              style={{
+                background:
+                  "color-mix(in oklab, var(--danger) 12%, transparent)",
+                color: "var(--danger)",
+              }}
+            >
+              ⚠ {t.capNote}
+            </p>
+          )}
+
+          {resourceDelta && Object.keys(resourceDelta).length > 0 && (
+            <ul className="flex flex-wrap gap-2">
+              {Object.entries(resourceDelta)
+                .filter(([, v]) => v !== 0)
+                .map(([k, v]) => (
+                  <li
+                    key={k}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--surface-2)] border border-[var(--line)] text-xs font-medium font-mono tabular-nums"
+                  >
+                    <span aria-hidden>{resourceIcon[k] ?? "•"}</span>
+                    <span className="text-[var(--ink-muted)]">{k}</span>
+                    <span
+                      className={`font-semibold ${
+                        v > 0 ? "text-[var(--success)]" : "text-[var(--danger)]"
+                      }`}
+                    >
+                      {v > 0 ? "+" : ""}
+                      {v}
+                    </span>
+                  </li>
+                ))}
+            </ul>
+          )}
+
+          <p className="t-caption text-[var(--ink-muted)] leading-snug">
+            {t.explainer}
           </p>
-        )}
+        </div>
 
-        {resourceDelta && Object.keys(resourceDelta).length > 0 && (
-          <ul className="flex flex-wrap gap-2 text-xs">
-            {Object.entries(resourceDelta)
-              .filter(([, v]) => v !== 0)
-              .map(([k, v]) => (
-                <li
-                  key={k}
-                  className="px-2 py-0.5 border border-[var(--line)] bg-[var(--surface-2)] font-mono"
-                >
-                  {k} {v > 0 ? "+" : ""}
-                  {v}
-                </li>
-              ))}
-          </ul>
-        )}
-
-        <p className="text-[11px] text-[var(--ink-muted)] leading-snug">{t.explainer}</p>
-
-        <button
-          type="button"
-          onClick={onClose}
-          className="btn btn-primary self-end"
-          autoFocus
-        >
-          {t.close}
-        </button>
+        {/* Footer — full-width CTA so on mobile the tap target is obvious. */}
+        <footer className="px-6 py-4 border-t border-[var(--line)]">
+          <button
+            type="button"
+            onClick={onClose}
+            className="btn btn-primary w-full"
+            autoFocus
+          >
+            {t.close}
+          </button>
+        </footer>
       </div>
     </div>
   );

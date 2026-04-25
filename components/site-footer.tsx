@@ -32,11 +32,30 @@ const SECTIONS: Record<
   en: { play: "Play", about: "Platform", legal: "Legal", help: "Help" },
 };
 
-const HELP_LABELS: Record<Lang, { faq: string; contact: string }> = {
-  pl: { faq: "FAQ — wkrótce", contact: "Kontakt — wkrótce" },
-  uk: { faq: "FAQ — скоро", contact: "Контакти — скоро" },
-  cs: { faq: "FAQ — brzy", contact: "Kontakt — brzy" },
-  en: { faq: "FAQ — soon", contact: "Contact — soon" },
+const HELP_LABELS: Record<
+  Lang,
+  { compareLoans: string; faq: string; contact: string }
+> = {
+  pl: {
+    compareLoans: "Porównaj kredyty",
+    faq: "FAQ — wkrótce",
+    contact: "Kontakt — wkrótce",
+  },
+  uk: {
+    compareLoans: "Порівняй кредити",
+    faq: "FAQ — скоро",
+    contact: "Контакти — скоро",
+  },
+  cs: {
+    compareLoans: "Porovnat půjčky",
+    faq: "FAQ — brzy",
+    contact: "Kontakt — brzy",
+  },
+  en: {
+    compareLoans: "Compare loans",
+    faq: "FAQ — soon",
+    contact: "Contact — soon",
+  },
 };
 
 type Props = {
@@ -66,8 +85,11 @@ export function SiteFooter({ lang, dict, theme }: Props) {
               >
                 {theme.brandShort}
               </span>
-              <span className="font-semibold text-[var(--foreground)]">
-                {theme.brand}
+              <span className="flex items-baseline gap-1.5">
+                <span className="font-semibold text-[var(--foreground)]">
+                  {theme.brand}
+                </span>
+                <span className="t-overline text-[var(--accent)]">by PKO</span>
               </span>
             </div>
             <p className="t-body-sm text-[var(--ink-muted)]">
@@ -116,6 +138,7 @@ export function SiteFooter({ lang, dict, theme }: Props) {
             <FooterLink href="/sin-slavy">{dict.nav.hall}</FooterLink>
           </FooterColumn>
           <FooterColumn heading={sections.help}>
+            <FooterLink href="/loans/compare">{help.compareLoans}</FooterLink>
             <span className="t-body-sm text-[var(--ink-muted)]" aria-disabled="true">
               {help.faq}
             </span>

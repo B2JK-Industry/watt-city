@@ -269,7 +269,7 @@ export default async function SchoolsLanding() {
           </Link>
           <Link
             href="/nauczyciel/signup"
-            className="btn btn-cyan text-base"
+            className="btn btn-secondary text-base"
           >
             {t.ctaSignup}
           </Link>
@@ -348,21 +348,48 @@ export default async function SchoolsLanding() {
         </ol>
       </section>
 
-      {/* -------- Screenshots (SVG placeholders) -------- */}
+      {/* -------- Screenshots (browser-frame placeholders) --------
+          Real screenshot assets are pending (PKO partner-side delivery).
+          Until then we render a stylised browser-window mock per spec
+          §3 "fotografia reálnych situácií" replacement: light surface,
+          navy toolbar dot row, caption below — looks like a UI preview,
+          not a broken navy fill. */}
       <section className="flex flex-col gap-4">
         <h2 className="section-heading text-2xl">{t.screensTitle}</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[t.screen1, t.screen2, t.screen3].map((caption, i) => (
-            <div
+            <figure
               key={i}
-              className="aspect-video rounded-md border border-[var(--line)] p-6 flex items-center justify-center text-center"
-              style={{
-                background: "var(--accent)",
-                color: "var(--accent-ink)",
-              }}
+              className="card p-0 overflow-hidden flex flex-col"
             >
-              <p className="font-semibold text-sm leading-relaxed">{caption}</p>
-            </div>
+              {/* Browser-frame chrome */}
+              <div className="bg-[var(--surface-2)] border-b border-[var(--line)] px-3 py-2 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[var(--ink-subtle)]" aria-hidden />
+                <span className="w-2 h-2 rounded-full bg-[var(--ink-subtle)]" aria-hidden />
+                <span className="w-2 h-2 rounded-full bg-[var(--ink-subtle)]" aria-hidden />
+              </div>
+              {/* Mock content area — diagonal subtle pattern hints "preview" */}
+              <div
+                className="aspect-[16/10] flex flex-col items-center justify-center gap-3 p-5 text-center"
+                style={{
+                  background:
+                    "repeating-linear-gradient(45deg, var(--surface) 0 12px, var(--surface-2) 12px 13px)",
+                }}
+              >
+                <span
+                  aria-hidden
+                  className="w-12 h-12 rounded-md bg-[var(--accent)] text-[var(--accent-ink)] inline-flex items-center justify-center text-xl font-semibold"
+                >
+                  {i + 1}
+                </span>
+                <span className="t-overline text-[var(--ink-muted)]">
+                  Preview · soon
+                </span>
+              </div>
+              <figcaption className="px-4 py-3 border-t border-[var(--line)] text-sm leading-snug text-[var(--foreground)]">
+                {caption}
+              </figcaption>
+            </figure>
           ))}
         </div>
       </section>
@@ -380,29 +407,41 @@ export default async function SchoolsLanding() {
         </ul>
       </section>
 
-      {/* -------- Podstawa programowa preview -------- */}
+      {/* -------- Podstawa programowa preview --------
+          Curriculum chips are dense data — readability matters more than
+          compact text. Bumped from 10/12 px to 13/14 px and the
+          "+ more codes" footer turned from a tiny gray italic line into
+          a real CTA pointing at the brochure that contains the full list. */}
       <section className="flex flex-col gap-4">
         <h2 className="section-heading text-2xl">{t.ppTitle}</h2>
-        <p className="text-sm text-[var(--ink-muted)] max-w-3xl">{t.ppLead}</p>
-        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+        <p className="t-body text-[var(--foreground)] max-w-3xl">{t.ppLead}</p>
+        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {preview.map((c) => (
             <li
               key={c.code}
-              className="border border-[var(--line)] rounded p-3 flex flex-col gap-1"
+              className="border border-[var(--line)] rounded-md p-4 flex flex-col gap-1.5"
             >
-              <div className="flex items-center gap-2">
-                <code className="font-mono text-[10px] px-1.5 py-0.5 bg-[var(--surface-2)] rounded">
+              <div className="flex flex-wrap items-center gap-2">
+                <code className="font-mono text-xs font-semibold px-2 py-0.5 bg-[var(--surface-2)] rounded text-[var(--accent)]">
                   {c.code}
                 </code>
-                <span className="text-[10px] opacity-70">
+                <span className="t-caption text-[var(--ink-muted)]">
                   {t.ppAreaLabel}: {c.area} · {t.ppGradeLabel}: {c.grade}
                 </span>
               </div>
-              <p className="text-xs leading-snug">{c.description}</p>
+              <p className="text-sm leading-snug text-[var(--foreground)]">
+                {c.description}
+              </p>
             </li>
           ))}
         </ul>
-        <p className="text-xs italic opacity-70">{t.ppMoreLabel}</p>
+        <Link
+          href="/api/dla-szkol/pitch?locale=pl"
+          prefetch={false}
+          className="self-start inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--accent)] hover:underline"
+        >
+          {t.ppMoreLabel} <span aria-hidden>→</span>
+        </Link>
       </section>
 
       {/* -------- Download brochure -------- */}

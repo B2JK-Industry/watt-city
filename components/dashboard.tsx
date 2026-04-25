@@ -152,30 +152,58 @@ export function Dashboard({
           </div>
         </div>
 
-        <div className="card p-6 flex flex-col gap-3">
-          <h2 className="text-sm font-semibold text-[var(--accent)]">
+        <div className="card p-6 flex flex-col gap-4">
+          <h2 className="t-overline text-[var(--accent)]">
             {d.topSilesia}
           </h2>
           {top.length === 0 ? (
             <p className="text-[var(--ink-muted)] text-sm">{d.topEmpty}</p>
           ) : (
-            <ol className="flex flex-col gap-1">
-              {top.map((e) => (
-                <li
-                  key={e.username}
-                  className={`flex items-center justify-between py-2 border-b border-[var(--line)] last:border-b-0 ${
-                    e.username === username ? "text-[var(--accent)]" : ""
-                  }`}
-                >
-                  <span className="flex items-center gap-3">
-                    <span className="w-6 text-center font-bold opacity-70">
-                      #{e.rank}
+            <ol className="flex flex-col">
+              {top.map((e) => {
+                const isMe = e.username === username;
+                const medal =
+                  e.rank === 1 ? "🥇" : e.rank === 2 ? "🥈" : e.rank === 3 ? "🥉" : null;
+                const initials = e.username.slice(0, 2).toUpperCase();
+                return (
+                  <li
+                    key={e.username}
+                    className={`flex items-center justify-between gap-3 py-2.5 border-b border-[var(--line)] last:border-b-0 ${
+                      isMe ? "bg-[color-mix(in_oklab,var(--accent)_4%,transparent)] -mx-3 px-3 rounded-md border-l-[3px] border-l-[var(--accent)]" : ""
+                    }`}
+                  >
+                    <span className="flex items-center gap-2.5 min-w-0">
+                      {medal ? (
+                        <span aria-hidden className="w-7 text-center text-lg">
+                          {medal}
+                        </span>
+                      ) : (
+                        <span className="w-7 text-center text-xs font-semibold text-[var(--ink-muted)] tabular-nums">
+                          #{e.rank}
+                        </span>
+                      )}
+                      <span
+                        aria-hidden
+                        className="w-7 h-7 rounded-full inline-flex items-center justify-center text-[10px] font-semibold text-[var(--accent-ink)] bg-[var(--accent)] shrink-0"
+                      >
+                        {initials}
+                      </span>
+                      <span
+                        className={`text-sm truncate ${
+                          isMe
+                            ? "font-semibold text-[var(--accent)]"
+                            : "text-[var(--foreground)]"
+                        }`}
+                      >
+                        {e.username}
+                      </span>
                     </span>
-                    <span>{e.username}</span>
-                  </span>
-                  <span className="font-mono font-semibold">{e.xp.toLocaleString(locale)} W</span>
-                </li>
-              ))}
+                    <span className="font-mono font-semibold tabular-nums text-sm text-[var(--foreground)] shrink-0">
+                      {e.xp.toLocaleString(locale)} W
+                    </span>
+                  </li>
+                );
+              })}
             </ol>
           )}
         </div>
@@ -291,24 +319,27 @@ function Stat({
 }: {
   label: string;
   value: string;
+  /** When true, visually emphasised as the "primary" stat — left navy stripe
+   *  + navy value text on a light surface. Previous full-navy fill read as a
+   *  pressed/selected state which confused users (UX feedback 2026-04-25). */
   accent?: boolean;
 }) {
   return (
     <div
-      className={`rounded-xl border border-[var(--line)] px-3 py-2 ${
-        accent
-          ? "bg-[var(--accent)] text-[var(--accent-ink)]"
-          : "bg-[var(--surface-2)]"
+      className={`rounded-md border border-[var(--line)] bg-[var(--surface-2)] px-3 py-2 ${
+        accent ? "border-l-[4px] border-l-[var(--accent)]" : ""
       }`}
     >
-      <div
-        className={`text-[10px] font-bold ${
-          accent ? "opacity-70" : "text-[var(--ink-muted)]"
-        }`}
-      >
+      <div className="text-[10px] font-semibold text-[var(--ink-muted)] uppercase tracking-wide">
         {label}
       </div>
-      <div className="text-xl font-semibold font-mono">{value}</div>
+      <div
+        className={`text-xl font-semibold font-mono tabular-nums ${
+          accent ? "text-[var(--accent)]" : "text-[var(--foreground)]"
+        }`}
+      >
+        {value}
+      </div>
     </div>
   );
 }

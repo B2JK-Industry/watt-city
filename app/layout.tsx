@@ -45,9 +45,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Watt City · Edukacja finansowa dla dzieci · Katowice",
+  title: "Watt City by PKO · Edukacja finansowa dla dzieci · Katowice",
   description:
-    "Watt City — gra edukacyjna ucząca dzieci finansów osobistych. Graj w minigry → zarabiaj zasoby → buduj miasto → zaciągaj kredyt → spłacaj. SKO 2.0 prototype. Pitched to PKO BP at ETHSilesia 2026.",
+    "Watt City by PKO — gra edukacyjna ucząca dzieci finansów osobistych. Graj w minigry → zarabiaj zasoby → buduj miasto → zaciągaj kredyt → spłacaj. SKO 2.0 prototype. Pitched to PKO BP at ETHSilesia 2026.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,

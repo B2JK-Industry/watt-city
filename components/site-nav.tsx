@@ -98,14 +98,21 @@ export function SiteNav({
         {(() => {
           const theme = resolveTheme();
           return (
-            <Link href="/" className="flex items-center gap-2.5 font-semibold text-lg">
+            <Link href="/" className="flex items-center gap-2.5">
               <span
                 className="inline-flex items-center justify-center w-9 h-9 rounded-md font-semibold text-base"
                 style={{ background: theme.colors.accent, color: theme.colors.accentInk }}
               >
                 {theme.brandShort}
               </span>
-              <span className="text-[var(--foreground)]">{theme.brand}</span>
+              <span className="flex items-baseline gap-1.5">
+                <span className="font-semibold text-lg text-[var(--foreground)]">
+                  {theme.brand}
+                </span>
+                <span className="hidden min-[420px]:inline t-overline text-[var(--accent)]">
+                  by PKO
+                </span>
+              </span>
             </Link>
           );
         })()}

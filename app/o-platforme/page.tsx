@@ -43,7 +43,7 @@ export default async function AboutPage() {
             Katowice
           </span>
         </div>
-        <p className="text-lg text-[var(--ink-muted)] max-w-3xl">{t.heroBody}</p>
+        <p className="t-body-lg text-[var(--foreground)] max-w-3xl">{t.heroBody}</p>
         {session && (
           <div className="flex">
             <OpenTutorialButton lang={lang} />
@@ -54,7 +54,7 @@ export default async function AboutPage() {
       {/* -------- Myšlienka -------- */}
       <section className="flex flex-col gap-4">
         <h2 className="section-heading text-2xl">{t.ideaTitle}</h2>
-        <div className="card p-6 flex flex-col gap-3 text-[var(--ink-muted)]">
+        <div className="card p-6 flex flex-col gap-3 text-[var(--foreground)]">
           <p>
             {t.ideaBody1}{" "}
             <a
@@ -81,7 +81,7 @@ export default async function AboutPage() {
           No hardcoded locale lives here anymore. */}
       <section className="flex flex-col gap-4">
         <h2 className="section-heading text-2xl">{t.scienceTitle}</h2>
-        <div className="card p-6 flex flex-col gap-4 text-[var(--ink-muted)]">
+        <div className="card p-6 flex flex-col gap-4 text-[var(--foreground)]">
           <p>{t.scienceIntro}</p>
           <ul className="list-disc pl-6 space-y-3">
             {t.scienceBullets.map((bullet) => (
@@ -125,7 +125,7 @@ export default async function AboutPage() {
           leak in this file anymore. */}
       <section className="flex flex-col gap-4">
         <h2 className="section-heading text-2xl">{t.pipelineTitle}</h2>
-        <div className="card p-6 flex flex-col gap-5 text-[var(--ink-muted)]">
+        <div className="card p-6 flex flex-col gap-5 text-[var(--foreground)]">
           <p>{t.pipelineIntro}</p>
 
           <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface-2)] p-5 sm:p-6">
@@ -259,7 +259,7 @@ export default async function AboutPage() {
       {/* -------- Tím -------- */}
       <section className="flex flex-col gap-4">
         <h2 className="section-heading text-2xl">{t.teamTitle}</h2>
-        <div className="card p-6 flex flex-col gap-3 text-[var(--ink-muted)]">
+        <div className="card p-6 flex flex-col gap-3 text-[var(--foreground)]">
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-3xl">🛠️</span>
             <div>
@@ -290,7 +290,7 @@ export default async function AboutPage() {
       {/* -------- Sponzori / thanks -------- */}
       <section className="flex flex-col gap-4">
         <h2 className="section-heading text-2xl">{t.sponsorsTitle}</h2>
-        <div className="card p-6 flex flex-col gap-3 text-sm text-[var(--ink-muted)]">
+        <div className="card p-6 flex flex-col gap-3 text-sm text-[var(--foreground)]">
           <p>{t.sponsorsBody}</p>
           <p>
             {t.sponsorsStack}{" "}

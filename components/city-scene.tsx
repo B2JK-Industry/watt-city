@@ -1406,8 +1406,21 @@ function LiveAiBuilding({
   // lane callers keep the original width they were designed around.
   const bannerW = laneLabel ? 102 : 88;
   const bannerDx = bannerW / 2;
+  // V4-UX-2026-04-25: AI buildings now respect plays/bestScore for the
+  // lit/silhouette toggle, just like evergreen buildings. Without this
+  // every AI slot stayed neon-bright on first visit, contradicting the
+  // "play to light up your city" copy. CSS attribute hook lets pko skin
+  // dim further; under core skin the data-powered attribute is just
+  // metadata (no rule applies).
+  const aiPowered = (aiGame.bestScore ?? 0) > 0;
   return (
-    <g>
+    <g
+      className="ai-building transition-[filter] duration-300"
+      data-powered={String(aiPowered)}
+      style={{
+        filter: aiPowered ? "none" : "saturate(0.25) brightness(0.55)",
+      }}
+    >
       {/* Pillar layout above the roof — stacked vertically with explicit
           gaps so the countdown chip + title banner never touch. Prior
           layout (countdown at top-52, banner at top-34) left only a

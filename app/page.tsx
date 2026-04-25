@@ -141,14 +141,19 @@ export default async function Home() {
           </div>
           <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {GAMES.slice(0, 4).map((g) => (
-              <li key={g.id} className="card card--interactive p-4 flex items-center gap-3">
+              <li
+                key={g.id}
+                className="card card--interactive p-4 flex flex-col items-start gap-3 min-h-[120px]"
+              >
                 <span
                   aria-hidden
-                  className="w-10 h-10 rounded-md flex items-center justify-center bg-[var(--surface-2)] border border-[var(--line)] text-lg"
+                  className="w-11 h-11 rounded-md inline-flex items-center justify-center bg-[var(--surface-2)] border border-[var(--line)] text-xl"
                 >
                   {g.emoji}
                 </span>
-                <span className="t-body-sm font-medium text-[var(--foreground)]">{g.title}</span>
+                <span className="t-body-sm font-medium text-[var(--foreground)] leading-snug text-balance">
+                  {g.title}
+                </span>
               </li>
             ))}
           </ul>
