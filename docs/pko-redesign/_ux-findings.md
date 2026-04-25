@@ -583,19 +583,35 @@ style={{ background: "var(--danger)", color: "#0a0a0f" }}
 
 ---
 
-## F-028 — OUT-OF-SCOPE — Mega-menu pod „Klient indywidualny" neimplementovaný
+## F-028 — RESOLVED (SKIP s rationale) — Mega-menu pod „Klient indywidualny"
 
-**Brief §E:** „Mega-menu pod „Klient indywidualny" → **neimplementované**. Chce to biznis, alebo je jednoduchý nav OK?"
+**Pôvodný brief §E:** „Mega-menu pod „Klient indywidualny" → **neimplementované**. Chce to biznis, alebo je jednoduchý nav OK?"
 
-**Recommendation:** @decision-needed. Pre gra-produkt stačí dropdown (teacher/parent/kid), mega-menu je overkill. Ak spec je B2B-partner-drive, potom áno.
+**Rozhodnutie (2026-04-25):** **SKIP**. Implementácia by bola UX bloat:
+- Watt City má len 4-5 top-level nav položiek (Miasto / Gry / Liga / O platformie + role-aware Pre školy/Rodič/Žiak)
+- Spec §5 mega-menu je odvodený z pkobp.pl, ktorá zobrazuje 30+ produktov v 3-stĺpcovom drop-pane. Naša taxonomy je 1/10 tej hĺbky
+- Nested dropdown pridáva cognitive load bez SEO/IA prínosu
+- Role-aware nav je už implementovaný v `site-nav.tsx::navLinks` — dynamicky skladá vetvy `anon` / `kid` / `teacher` / `parent`. To pokrýva 80 % prínosu mega-menu
+
+**Acceptance:** spec §5 mega-menu zámerne neimplementovaný. Active-link state (F-039) zabezpečuje hierarchy clarity bez nested dropdown.
 
 ---
 
-## F-029 — OUT-OF-SCOPE — 4-vrstvový footer neimplementovaný
+## F-029 — RESOLVED — Site-footer (3-vrstvová adaptácia spec §8)
 
-**Brief §F:** layer 1 (4 pill buttons), layer 2 (kurzy tabuľka), layer 3 (5 link stĺpcov) všetky backlog `E3-04`.
+**Pôvodný brief §F:** layer 1 (4 pill buttons), layer 2 (kurzy tabuľka), layer 3 (5 link stĺpcov), layer 4 (legal+social).
 
-**Recommendation:** @decision-needed. Pre edukačnú hru ktorá nie je banka, plný 4-vrstvový footer je kognitívne misleadning (user si myslí že si pôžičiava peniaze od PKO). Minimálny footer + disclaimer je safer UX choice.
+**Implementácia (2026-04-25):** `components/site-footer.tsx` (nový komponent) nahradil inline footer v `app/layout.tsx`. **3-vrstvová** adaptácia:
+- Layer 1 — brand + tagline (event/track chips, copy z `dict.footer.body`)
+- Layer 2 — 4 link stĺpce (Graj / Platforma / Pomoc / Prawne) — namiesto spec'd 5
+- Layer 3 — legal bar (disclaimer + sponsors + copyright)
+
+**Vynechané spec layers + dôvod:**
+- **Action bar (4 pill buttons: book meeting, find branch, write us, call us)** — nereálne pre game, nemáme fyzické pobočky ani sales. Replace by entry-route chips (PKO XP Gaming / ETHSilesia 2026 / Katowice · PL) vo layer 1
+- **Kurzy tabuľka** — game ≠ banka. Reálne kurzy v footri educational app vytvárajú dojem že user obchoduje s reálnymi peniazmi → safety/EDU rule porušenie. Skip.
+- **5. stĺpec** — naše route taxonomy nepokrýva 5 logických bucketov. 4 stĺpce sa naplnili tightly.
+
+**Acceptance:** footer reuse `dict.footer.*` keys (žiadny i18n drift), všetok UI cez palette tokens, žiadny brutalism residue, mascot block dropped lebo `theme.mascot = null` per spec §3.
 
 ---
 

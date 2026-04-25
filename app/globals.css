@@ -188,19 +188,62 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-/* City-scene SVG: neon night palette is core-skin intent. Under pko
- * we mute saturation + brightness so the scene reads as a calm
- * panorama instead of a neon-arcade. Not a full 8-bucket refactor
- * (that would touch 1600 lines of hand-placed SVG — see backlog E4),
- * but it keeps the scene visually coherent with the light-mode
- * chrome without a "neon-saturated disaster" regression (SKO revert
- * lesson D). */
+/* City-scene SVG: neon night palette is core-skin intent. Under pko we
+ * blend two strategies — a global filter to mute saturation, plus
+ * attribute-selector overrides that retint specific brutalism colors
+ * (black strokes, neon-yellow window highlights, cyan neon) to PKO
+ * tokens without rewriting the 1679-line SVG. CSS rules beat SVG
+ * presentation attributes (specificity 0,2,1 vs 0,0,0), so this works
+ * without `!important`. SKO revert lesson D taught us that 78→6 var
+ * rewrites flatten the scene; this approach is reversible (delete the
+ * block) and surgical (touches identifiably-wrong colors only). */
 :where([data-skin="pko"]) .city-scene-root {
-  filter: saturate(0.55) brightness(0.95);
+  /* 8-bucket palette tokens — referenced by future SVG refactor (E4)
+   * and used by the attribute-selector overrides below. */
+  --sc-sky: #e8f0f9;
+  --sc-building-primary: #d8dde5;
+  --sc-building-secondary: #c4ccd8;
+  --sc-roof: #a7b0bf;
+  --sc-window: #f9d97a;
+  --sc-road: #6b7280;
+  --sc-detail-warm: var(--sales);
+  --sc-detail-cool: var(--accent);
+  --sc-stroke: var(--accent);
+
+  filter: saturate(0.5) brightness(1) contrast(1.04);
 }
 :where([data-skin="pko"]) .city-scene-root svg text {
   /* Restore text contrast — filter tints labels otherwise. */
   filter: none;
+}
+
+/* Brutalism black-stroke override → navy. 77 occurrences of
+ * stroke="#0a0a0f" + scattered #000/#111/#222/#444/#555. CSS attribute
+ * selector specificity (0,2,1) beats SVG presentation attribute (0,0,0),
+ * so this transparently retints without touching JSX. */
+:where([data-skin="pko"]) .city-scene-root [stroke="#0a0a0f"],
+:where([data-skin="pko"]) .city-scene-root [stroke="#000"],
+:where([data-skin="pko"]) .city-scene-root [stroke="#111"],
+:where([data-skin="pko"]) .city-scene-root [stroke="#222"],
+:where([data-skin="pko"]) .city-scene-root [stroke="#444"],
+:where([data-skin="pko"]) .city-scene-root [stroke="#555"],
+:where([data-skin="pko"]) .city-scene-root [stroke="#1c1917"] {
+  stroke: var(--sc-stroke);
+}
+
+/* Neon-yellow window glow → muted warm yellow per spec (window bucket).
+ * Limit to FILL only — strokes already retinted above. */
+:where([data-skin="pko"]) .city-scene-root [fill="#fde047"],
+:where([data-skin="pko"]) .city-scene-root [fill="#facc15"] {
+  fill: var(--sc-window);
+}
+
+/* Neon-cyan accents (city sky uplighting, AI building glow) → cool
+ * detail token (= navy). Saturate filter further mutes. */
+:where([data-skin="pko"]) .city-scene-root [fill="#22d3ee"],
+:where([data-skin="pko"]) .city-scene-root [fill="#06b6d4"],
+:where([data-skin="pko"]) .city-scene-root [fill="#67e8f9"] {
+  fill: var(--sc-detail-cool);
 }
 
 .bottom-tabs {
@@ -776,6 +819,11 @@ body {
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
 }
 
 @keyframes pop-in {

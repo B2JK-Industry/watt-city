@@ -99,27 +99,21 @@ export function Dashboard({
                   cy="60"
                   r="52"
                   fill="none"
-                  stroke="var(--border)"
-                  strokeWidth="8"
+                  stroke="var(--line)"
+                  strokeWidth="6"
                 />
                 <circle
                   cx="60"
                   cy="60"
                   r="52"
                   fill="none"
-                  stroke="url(#ring)"
-                  strokeWidth="8"
+                  stroke="var(--accent)"
+                  strokeWidth="6"
                   strokeLinecap="round"
                   strokeDasharray={circumference}
                   strokeDashoffset={dashOffset}
                   transform="rotate(-90 60 60)"
                 />
-                <defs>
-                  <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="var(--accent)" />
-                    <stop offset="100%" stopColor="var(--accent)" />
-                  </linearGradient>
-                </defs>
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-[10px] text-[var(--ink-muted)]">

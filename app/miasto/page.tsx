@@ -427,7 +427,7 @@ function ComingSoonSection({ lang }: { lang: Lang }) {
         {COMING_SOON_TILES.map((t) => (
           <li
             key={t.key}
-            className="border border-[var(--line)] bg-[var(--surface)]/40 rounded p-3 flex flex-col gap-1 opacity-70"
+            className="border border-[var(--line)] bg-[var(--surface-2)] rounded-md p-3 flex flex-col gap-1 opacity-60"
           >
             <div className="flex items-center gap-2">
               <span className="text-xl" aria-hidden>

@@ -115,7 +115,6 @@ export function ComingSoonGrid({ lang }: { lang: Lang }) {
           <li
             key={tile.kind}
             className="card p-4 flex flex-col gap-2 opacity-70"
-            style={{ borderStyle: "dashed" }}
           >
             <div className="flex items-baseline justify-between">
               <span className="text-3xl">{tile.emoji}</span>
