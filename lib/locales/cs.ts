@@ -85,6 +85,16 @@ const cs: typeof plDict = {
       "Registrací souhlasíš se zpracováním jména, hashe hesla a herních skóre. Žádný e-mail, žádná analytika. Účet můžeš kdykoli smazat jedním klikem.",
     errorGeneric: "Něco se nepovedlo.",
     errorNetwork: "Síťová chyba. Zkus znovu.",
+    errorBirthYearMissing: "Zadej rok narození.",
+    birthYearLabel: "Rok narození (GDPR-K)",
+    parentEmailLabel: "E-mail rodiče (povinný pro < 16 let)",
+    parentEmailPlaceholder: "rodic@example.com",
+    passwordTitle: "Min. 8 znaků, 1 písmeno a 1 číslice",
+    pwRule8chars: "Minimum 8 znaků",
+    pwRuleLetter: "Alespoň 1 písmeno",
+    pwRuleDigit: "Alespoň 1 číslice",
+    gdprKTooltip:
+      "Soulad s GDPR-K — automatický souhlas rodiče pro uživatele do 16 let.",
   },
   dashboard: {
     yourTier: "Tvůj tier",

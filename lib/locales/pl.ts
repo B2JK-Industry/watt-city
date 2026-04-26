@@ -83,6 +83,16 @@ const pl = {
       "Rejestracją zgadzasz się na przetwarzanie nazwy, hashu hasła i wyników gier. Brak e-maila, brak analityki. Konto możesz usunąć jednym kliknięciem.",
     errorGeneric: "Coś poszło nie tak.",
     errorNetwork: "Błąd sieci. Spróbuj jeszcze raz.",
+    errorBirthYearMissing: "Podaj rok urodzenia.",
+    birthYearLabel: "Rok urodzenia (RODO-K)",
+    parentEmailLabel: "E-mail rodzica (wymagane dla < 16 lat)",
+    parentEmailPlaceholder: "rodzic@example.com",
+    passwordTitle: "Min. 8 znaków, w tym 1 litera i 1 cyfra",
+    pwRule8chars: "Minimum 8 znaków",
+    pwRuleLetter: "Co najmniej 1 litera",
+    pwRuleDigit: "Co najmniej 1 cyfra",
+    gdprKTooltip:
+      "Zgodne z RODO-K — automatyczna zgoda rodzica dla użytkowników < 16 lat.",
   },
   dashboard: {
     welcome: "Miasto gracza",

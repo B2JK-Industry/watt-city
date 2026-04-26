@@ -26,13 +26,25 @@ const REGISTER_IP_WINDOW_MS = Number(process.env.REGISTER_IP_WINDOW_MS ?? 60_000
 
 const BodySchema = z.object({
   username: z.string().min(1).max(64),
-  password: z.string().min(1).max(200),
-  // Phase 6.3.1: required. Client collects via a <select> of birth years.
+  // G-01 patch 4 — server-side password rules mirror the form. Min 8
+  // + one letter + one digit. The HTML5 pattern on the form already
+  // blocks bad input, but a hand-crafted POST should not get through.
+  password: z
+    .string()
+    .min(8)
+    .max(200)
+    .regex(/(?=.*[a-zA-Z])(?=.*\d).{8,}/, "Hasło: min. 8 znaków, 1 litera i 1 cyfra."),
+  // G-01 patch 4 — birth year clamped to GDPR-K target range (7-16).
+  // currentYear-6 = oldest birthYear that still qualifies as 7+,
+  // currentYear-16 = youngest birthYear we accept (older players are
+  // outside our child-product cohort and shouldn't be onboarded
+  // through the kid signup flow). Existing accounts with legacy birth
+  // years are unaffected — clamp gates new registrations only.
   birthYear: z
     .number()
     .int()
-    .min(1900)
-    .max(CURRENT_YEAR)
+    .min(CURRENT_YEAR - 16)
+    .max(CURRENT_YEAR - 6)
     .optional(),
   // Phase 6.3.2: if under-16, parent's email for consent dispatch.
   parentEmail: z.string().email().max(120).optional(),
@@ -67,8 +79,16 @@ export async function POST(request: NextRequest) {
     );
   }
   if (!parsed.success) {
+    // G-01 patch 4 — surface the first Zod issue's message so password
+    // rule violations + birth year clamps return useful client copy
+    // instead of a generic "fill the form" string.
+    const firstIssue = parsed.error.issues[0];
     return Response.json(
-      { ok: false, error: "Podaj nazwę, hasło i rok urodzenia." },
+      {
+        ok: false,
+        error:
+          firstIssue?.message ?? "Podaj nazwę, hasło i rok urodzenia.",
+      },
       { status: 400 },
     );
   }

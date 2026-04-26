@@ -85,6 +85,16 @@ const uk: typeof plDict = {
       "Реєстрацією погоджуєшся на обробку імені, хеша пароля та результатів гри. Без e-mail, без аналітики. Акаунт можеш видалити одним кліком.",
     errorGeneric: "Щось пішло не так.",
     errorNetwork: "Мережева помилка. Спробуй ще раз.",
+    errorBirthYearMissing: "Вкажи рік народження.",
+    birthYearLabel: "Рік народження (GDPR-K)",
+    parentEmailLabel: "Email батьків (потрібно для віку < 16)",
+    parentEmailPlaceholder: "батько@example.com",
+    passwordTitle: "Мін. 8 символів, 1 літера і 1 цифра",
+    pwRule8chars: "Мінімум 8 символів",
+    pwRuleLetter: "Принаймні 1 літера",
+    pwRuleDigit: "Принаймні 1 цифра",
+    gdprKTooltip:
+      "Відповідає GDPR-K — автоматична згода батьків для користувачів < 16 років.",
   },
   dashboard: {
     yourTier: "Твій тір",

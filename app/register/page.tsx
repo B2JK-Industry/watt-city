@@ -25,7 +25,10 @@ export default async function RegisterPage() {
         </Link>
       </p>
       <div className="flex flex-wrap gap-2 pt-2 border-t border-[var(--line)]">
-        <span className="chip" title="GDPR-K compliant — automatic parental consent under 16">
+        {/* G-01 patch 5 — chip title was hardcoded EN, leaked to all
+            non-en locales as untranslatable. Now reads from `t.gdprKTooltip`
+            so PL/UK/CS players see localized tooltip text. */}
+        <span className="chip" title={t.gdprKTooltip}>
           🔒 GDPR-K
         </span>
         <span className="chip" title="KNF / UOKiK aligned">

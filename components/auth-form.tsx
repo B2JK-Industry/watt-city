@@ -29,7 +29,7 @@ export function AuthForm({ mode, dict }: Props) {
       const body: Record<string, unknown> = { username, password };
       if (mode === "register") {
         if (birthYear === "") {
-          setError("Podaj rok urodzenia.");
+          setError(t.errorBirthYearMissing);
           return;
         }
         body.birthYear = Number(birthYear);
@@ -79,14 +79,37 @@ export function AuthForm({ mode, dict }: Props) {
           onChange={(e) => setPassword(e.target.value)}
           autoComplete={mode === "login" ? "current-password" : "new-password"}
           required
-          minLength={6}
+          minLength={mode === "register" ? 8 : 6}
           maxLength={200}
+          {...(mode === "register"
+            ? {
+                pattern: "(?=.*[a-zA-Z])(?=.*\\d).{8,}",
+                title: t.passwordTitle,
+              }
+            : {})}
         />
+        {/* G-01 patch 7 — live password strength checklist (register
+            only). Strict GDPR-K + bank-grade discipline asks for an
+            explicit visible rule list so kids see WHY the form is
+            blocking submission, not just an opaque HTML5 alert. */}
+        {mode === "register" && password.length > 0 && (
+          <ul className="t-caption text-[var(--ink-muted)] flex flex-col gap-0.5 mt-1">
+            <li className={password.length >= 8 ? "text-[var(--success)]" : ""}>
+              {password.length >= 8 ? "✓" : "○"} {t.pwRule8chars}
+            </li>
+            <li className={/[a-zA-Z]/.test(password) ? "text-[var(--success)]" : ""}>
+              {/[a-zA-Z]/.test(password) ? "✓" : "○"} {t.pwRuleLetter}
+            </li>
+            <li className={/\d/.test(password) ? "text-[var(--success)]" : ""}>
+              {/\d/.test(password) ? "✓" : "○"} {t.pwRuleDigit}
+            </li>
+          </ul>
+        )}
       </label>
       {mode === "register" && (
         <>
           <label className="flex flex-col gap-1.5">
-            <span className="t-body-sm text-[var(--ink-muted)]">Rok urodzenia (RODO-K)</span>
+            <span className="t-body-sm text-[var(--ink-muted)]">{t.birthYearLabel}</span>
             <select
               className="input"
               value={birthYear}
@@ -96,7 +119,13 @@ export function AuthForm({ mode, dict }: Props) {
               required
             >
               <option value="">—</option>
-              {Array.from({ length: 90 }, (_, i) => currentYear - 5 - i).map((y) => (
+              {/* G-01 patch 1 — clamped to 11 entries (currentYear-6
+                  newest → currentYear-16 oldest), matching the GDPR-K
+                  child-product target audience (9-14) plus a 2-year
+                  buffer. The previous 90-entry range (1932-2021)
+                  served no realistic age band and let pre-teens select
+                  birth years that fall outside parental-consent flow. */}
+              {Array.from({ length: 11 }, (_, i) => currentYear - 6 - i).map((y) => (
                 <option key={y} value={y}>
                   {y}
                 </option>
@@ -106,7 +135,7 @@ export function AuthForm({ mode, dict }: Props) {
           {needsParent && (
             <label className="flex flex-col gap-1.5">
               <span className="t-body-sm text-[var(--ink-muted)]">
-                E-mail rodzica (wymagane dla &lt; 16 lat)
+                {t.parentEmailLabel}
               </span>
               <input
                 type="email"
@@ -114,7 +143,7 @@ export function AuthForm({ mode, dict }: Props) {
                 value={parentEmail}
                 onChange={(e) => setParentEmail(e.target.value)}
                 required={needsParent}
-                placeholder="rodzic@example.com"
+                placeholder={t.parentEmailPlaceholder}
                 maxLength={120}
               />
             </label>

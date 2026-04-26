@@ -85,6 +85,16 @@ const en: typeof plDict = {
       "By signing up you agree to us storing your username, password hash and game scores. No e-mail, no analytics, no advertisers. Delete your account anytime with one click.",
     errorGeneric: "Something went wrong.",
     errorNetwork: "Network error. Try again.",
+    errorBirthYearMissing: "Enter your birth year.",
+    birthYearLabel: "Birth year (GDPR-K)",
+    parentEmailLabel: "Parent's email (required for under 16)",
+    parentEmailPlaceholder: "parent@example.com",
+    passwordTitle: "Min. 8 chars, 1 letter and 1 digit",
+    pwRule8chars: "At least 8 characters",
+    pwRuleLetter: "At least 1 letter",
+    pwRuleDigit: "At least 1 digit",
+    gdprKTooltip:
+      "GDPR-K compliant — automatic parental consent for users under 16.",
   },
   dashboard: {
     yourTier: "Your tier",
