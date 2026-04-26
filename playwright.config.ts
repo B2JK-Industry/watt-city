@@ -34,7 +34,15 @@ export default defineConfig({
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
-      testIgnore: [/.*\.mobile\.spec\.ts/, /.*\.cross\.spec\.ts/],
+      // walkthrough.spec.ts is the long-form product audit (~1.5 min,
+      // generates 56 PNG into tmp/) — exclude it from the default
+      // chromium run so `pnpm test:e2e` stays fast. Run it via the
+      // dedicated `walkthrough` project (or `pnpm test:walk`).
+      testIgnore: [
+        /.*\.mobile\.spec\.ts/,
+        /.*\.cross\.spec\.ts/,
+        /walkthrough\.spec\.ts/,
+      ],
     },
     {
       name: "firefox",
@@ -55,6 +63,15 @@ export default defineConfig({
       name: "mobile-chrome",
       use: { ...devices["Pixel 7"] },
       testMatch: /.*\.mobile\.spec\.ts/,
+    },
+    {
+      // Standalone product-audit project — drives the full anonymous
+      // + kid + teacher walkthrough across desktop and mobile, takes
+      // 56 screenshots and runs an axe-core scan per route. Output
+      // lands in `tmp/walkthrough-shots/<WALKTHROUGH_LABEL>/`.
+      name: "walkthrough",
+      use: { ...devices["Desktop Chrome"] },
+      testMatch: /walkthrough\.spec\.ts/,
     },
   ],
   webServer:

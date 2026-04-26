@@ -7,10 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "test:e2e:install": "playwright install chromium"
+    "test:e2e:install": "playwright install chromium",
+    "test:walk": "playwright test --project=walkthrough",
+    "test:walk:diff": "node scripts/walkthrough-diff.mjs",
+    "review": "pnpm typecheck && pnpm lint && pnpm test && pnpm test:walk",
+    "prepare": "simple-git-hooks || true"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.90.0",
@@ -36,8 +41,16 @@
     "axe-core": "^4.11.3",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
+    "lint-staged": "^15.2.0",
+    "simple-git-hooks": "^2.11.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.4"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm exec lint-staged"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": "eslint --fix"
   }
 }

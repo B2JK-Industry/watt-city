@@ -110,7 +110,9 @@ Aj po troch PR-kách, ktoré vymetli `text-zinc-*`, `text-amber-*`, `text-emeral
 
 ### F-NEW-04 · 🚨 CRITICAL · `/dla-szkol` „Jak wygląda produkt" — 3× PREVIEW · SOON placeholder
 
-> **STATUS: FIXED in PR-F (via Round 2.5 content cards)** — the 3 striped "PREVIEW · SOON" placeholders were replaced with content-rich JSX preview cards (mock class roster top-5, weekly PDF stat summary, student dashboard cashflow strip + city emoji row), all locale-aware via the `screen{1,2,3}` captions. Acceptance criterion (`0 výskytov stringu „PREVIEW · SOON"`) met — covered by `e2e/ux-fixes.spec.ts`. The optional `scripts/take-school-shots.ts` headless pipeline is deferred until a seeded demo class lands behind a stable URL; the inline content cards are visually closer to the actual product than static stills would be.
+> **STATUS: FIXED in PR-F (via Round 2.5 content cards)** — the 3 striped "PREVIEW · SOON" placeholders were replaced with content-rich JSX preview cards (mock class roster top-5, weekly PDF stat summary, student dashboard cashflow strip + city emoji row), all locale-aware via the `screen{1,2,3}` captions. Acceptance criterion (`0 výskytov stringu „PREVIEW · SOON"`) met — covered by `e2e/ux-fixes.spec.ts`.
+>
+> **Headless `scripts/take-school-shots.ts` pipeline: STATUS — OUT-OF-SCOPE (Voľba A defaulted in PR-H · H-05).** Inline content cards stay; no real-screenshot rendering layer is added. Decision recorded in `_ux-pass-4.md` Časť 3 W-05.
 
 
 **Kde:** `app/dla-szkol/page.tsx` (sekcia „Jak wygląda produkt")

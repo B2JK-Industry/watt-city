@@ -1,0 +1,73 @@
+name: CI
+
+# Lint, typecheck, vitest, and the chromium Playwright suite on every
+# push to `main` and every PR. Walkthrough is opt-in via a separate
+# project (`pnpm test:walk`) — heavier, slower, generates 56 PNGs;
+# we don't run it on every CI tick.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    name: lint · typecheck · vitest · build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm lint
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Vitest
+        run: pnpm test
+      - name: Build
+        # Build under empty Upstash creds so the production secrets
+        # never need to be wired into CI just to compile. The dev
+        # in-memory fallback keeps every page renderable.
+        env:
+          UPSTASH_REDIS_REST_URL: ""
+          UPSTASH_REDIS_REST_TOKEN: ""
+          SESSION_SECRET: "ci-build-session-secret-32char"
+        run: pnpm build
+
+  e2e:
+    name: playwright (chromium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Run chromium project
+        env:
+          CI: "1"
+        run: pnpm exec playwright test --project=chromium
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

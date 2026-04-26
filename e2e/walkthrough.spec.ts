@@ -11,7 +11,12 @@ import path from "node:path";
  * findings ledger so a reviewer can diff visual state with one read.
  */
 
-const SHOT_DIR = path.resolve(process.cwd(), "tmp/walkthrough-shots");
+/* Output goes to `tmp/walkthrough-shots/<LABEL>/` so multiple runs
+ * (e.g. pre-/post-PR) can be diffed via `pnpm test:walk:diff`. The
+ * default label is `current` to keep one-shot manual runs simple;
+ * set `WALKTHROUGH_LABEL=<name>` to bucket a baseline run. */
+const LABEL = process.env.WALKTHROUGH_LABEL ?? "current";
+const SHOT_DIR = path.resolve(process.cwd(), "tmp/walkthrough-shots", LABEL);
 const FINDINGS_PATH = path.join(SHOT_DIR, "_findings.json");
 
 if (!fs.existsSync(SHOT_DIR)) fs.mkdirSync(SHOT_DIR, { recursive: true });
@@ -53,6 +58,24 @@ function attachConsoleCapture(page: Page) {
   return { consoleErrors, pageErrors };
 }
 
+/* Pre-mark cookie consent as accepted so its sticky bar never lands
+ * in any review screenshot. The key is the `LOCAL_KEY` from
+ * `components/cookie-consent.tsx` (`wc_cookie_consent_v1`); we set it
+ * before every navigation so a fresh BrowserContext doesn't leak the
+ * banner into the first capture. Best-effort: storage may be unset
+ * pre-navigation in some browser contexts, so we wrap in try/catch. */
+async function dismissCookieBanner(page: Page) {
+  await page
+    .evaluate(() => {
+      try {
+        localStorage.setItem("wc_cookie_consent_v1", String(Date.now()));
+      } catch {
+        /* storage unavailable — ignore */
+      }
+    })
+    .catch(() => null);
+}
+
 async function captureRoute(
   page: Page,
   route: string,
@@ -73,6 +96,7 @@ async function captureRoute(
   } catch (e) {
     cap.pageErrors.push(`navigation: ${(e as Error).message}`);
   }
+  await dismissCookieBanner(page);
   // brief settle for any client-side hydration / animations
   await page.waitForTimeout(400);
 
