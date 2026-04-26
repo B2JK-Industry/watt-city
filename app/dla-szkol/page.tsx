@@ -16,6 +16,12 @@ export const metadata = {
     "Gamifikowana edukacja finansowa dla klas V-VIII zgodna z podstawą programową MEN. Teacher dashboard · weekly PDF · parent digest. Partner-ready dla PKO.",
 };
 
+/* UX Pass 3 F-NEW-03 — `schoolSteps` adds the per-step `body` lines.
+ * Old `howStep1..4` keys are kept for back-compat (other surfaces may
+ * read them via the inline COPY shape) but the dla-szkol page now
+ * renders title + body from `schoolSteps`. */
+type SchoolStep = { title: string; body: string };
+
 type Copy = {
   heroTitle: string;
   heroSubtitle: string;
@@ -34,6 +40,7 @@ type Copy = {
   howStep2: string;
   howStep3: string;
   howStep4: string;
+  schoolSteps: [SchoolStep, SchoolStep, SchoolStep, SchoolStep];
   complianceTitle: string;
   complianceItems: string[];
   ppTitle: string;
@@ -73,6 +80,24 @@ const COPY: Record<Lang, Copy> = {
     howStep2: "Uczniowie dołączają 6-znakowym kodem",
     howStep3: "Grają minigry i uczą się finansów w mieście",
     howStep4: "Tygodniowy raport PDF do dziennika i rodzica",
+    schoolSteps: [
+      {
+        title: "Załóż konto nauczyciela",
+        body: "Wpisz imię, szkołę i ustaw hasło. Zajmuje 30 sekund — bez weryfikacji e-mail, bez ankiet.",
+      },
+      {
+        title: "Stwórz klasę i pobierz kody",
+        body: "Generujemy 30 jednorazowych kodów do rozdania uczniom. PDF z kodami jest gotowy od razu.",
+      },
+      {
+        title: "Uczniowie grają",
+        body: "Logują się kodem, grają minigry, budują swoje miasto Watt City. Bez konta rodzica, bez e-mail.",
+      },
+      {
+        title: "Śledzisz postępy",
+        body: "Tygodniowy raport PDF do dziennika, panel klasy z top 10 i wybór tematu na kolejny tydzień.",
+      },
+    ],
     complianceTitle: "Compliance",
     complianceItems: [
       "GDPR-K compliant · zgoda rodzica automatycznie pod 16 r.ż.",
@@ -116,6 +141,24 @@ const COPY: Record<Lang, Copy> = {
     howStep2: "Учні приєднуються 6-знаковим кодом",
     howStep3: "Грають та вивчають фінанси",
     howStep4: "Тижневий PDF для директора і батьків",
+    schoolSteps: [
+      {
+        title: "Створіть акаунт учителя",
+        body: "Введіть ім'я, школу та пароль. 30 секунд — без верифікації e-mail, без анкет.",
+      },
+      {
+        title: "Створіть клас і скачайте коди",
+        body: "Генеруємо 30 одноразових кодів для роздачі учням. PDF з кодами готовий одразу.",
+      },
+      {
+        title: "Учні грають",
+        body: "Логінуються кодом, грають у міні-ігри, будують своє місто Watt City. Без батьківського акаунта.",
+      },
+      {
+        title: "Спостерігаєте за прогресом",
+        body: "Тижневий PDF звіт, панель класу з топ-10 і вибір теми на наступний тиждень.",
+      },
+    ],
     complianceTitle: "Compliance",
     complianceItems: [
       "GDPR-K · батьківська згода автоматично",
@@ -158,6 +201,24 @@ const COPY: Record<Lang, Copy> = {
     howStep2: "Žáci se připojí 6-znakovým kódem",
     howStep3: "Hrají a učí se finance",
     howStep4: "Týdenní PDF pro ředitele a rodiče",
+    schoolSteps: [
+      {
+        title: "Založte si účet učitele",
+        body: "Zadejte jméno, školu a heslo. 30 sekund — bez ověření e-mailu, bez dotazníků.",
+      },
+      {
+        title: "Vytvořte třídu a stáhněte kódy",
+        body: "Vygenerujeme 30 jednorázových kódů pro žáky. PDF s kódy je hotové ihned.",
+      },
+      {
+        title: "Žáci hrají",
+        body: "Přihlásí se kódem, hrají minihry, staví své město Watt City. Bez rodičovského účtu, bez e-mailu.",
+      },
+      {
+        title: "Sledujete pokrok",
+        body: "Týdenní PDF do třídnice, panel třídy s top 10 a volba tématu na další týden.",
+      },
+    ],
     complianceTitle: "Compliance",
     complianceItems: [
       "GDPR-K · automatický rodičovský souhlas",
@@ -201,6 +262,24 @@ const COPY: Record<Lang, Copy> = {
     howStep2: "Students join with a 6-character code",
     howStep3: "They play minigames and learn finance in their city",
     howStep4: "Weekly PDF report to principal and parents",
+    schoolSteps: [
+      {
+        title: "Create a teacher account",
+        body: "Enter your name, school and password. 30 seconds — no email verification, no surveys.",
+      },
+      {
+        title: "Create a class and download codes",
+        body: "We generate 30 single-use codes to hand out to students. PDF with codes is ready immediately.",
+      },
+      {
+        title: "Students play",
+        body: "They sign in with the code, play minigames, build their Watt City. No parent account, no email.",
+      },
+      {
+        title: "Track progress",
+        body: "Weekly PDF report to the gradebook, class top-10 panel, and pick the topic for next week.",
+      },
+    ],
     complianceTitle: "Compliance",
     complianceItems: [
       "GDPR-K compliant · auto parental consent under 16",
@@ -318,33 +397,38 @@ export default async function SchoolsLanding() {
         </div>
       </section>
 
-      {/* -------- How it works (4-step diagram) -------- */}
+      {/* -------- How it works (4-step diagram) --------
+           UX Pass 3 F-NEW-03 — each card is now title + body. Earlier
+           rendering surfaced just numbers in circles, which read as
+           "unfinished" to a school director arriving cold. */}
       <section className="flex flex-col gap-4">
         <h2 className="section-heading text-2xl">{t.howTitle}</h2>
-        <ol className="grid grid-cols-1 md:grid-cols-4 gap-3">
-          {[t.howStep1, t.howStep2, t.howStep3, t.howStep4].map(
-            (step, i) => (
-              <li
-                key={i}
-                className="card p-4 flex flex-col gap-2 relative"
+        <ol className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {t.schoolSteps.map((step, i) => (
+            <li
+              key={i}
+              className="card p-5 flex flex-col gap-3 relative"
+            >
+              <span
+                aria-hidden
+                className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-[var(--accent)] text-[var(--accent-ink)] font-semibold"
               >
+                {i + 1}
+              </span>
+              <h3 className="t-h5 text-[var(--accent)]">{step.title}</h3>
+              <p className="t-body-sm text-[var(--ink-muted)] leading-relaxed">
+                {step.body}
+              </p>
+              {i < 3 && (
                 <span
-                  className="w-10 h-10 rounded-xl border border-[var(--line)] bg-[var(--accent)] text-[var(--accent-ink)] font-semibold text-xl flex items-center justify-center"
+                  aria-hidden
+                  className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 text-[var(--accent)] text-2xl font-semibold"
                 >
-                  {i + 1}
+                  →
                 </span>
-                <p className="text-sm leading-relaxed">{step}</p>
-                {i < 3 && (
-                  <span
-                    aria-hidden
-                    className="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 text-[var(--accent)] text-2xl font-semibold"
-                  >
-                    →
-                  </span>
-                )}
-              </li>
-            ),
-          )}
+              )}
+            </li>
+          ))}
         </ol>
       </section>
 

@@ -93,6 +93,9 @@ Aj po troch PR-kách, ktoré vymetli `text-zinc-*`, `text-amber-*`, `text-emeral
 
 ### F-NEW-03 · 🚨 CRITICAL · `/dla-szkol` „Jak to działa — 4 kroki" iba čísla bez popisov
 
+> **STATUS: FIXED in PR-F** — added `schoolSteps: [{title, body} × 4]` to inline `Copy` for all 4 locales (PL/UK/CS/EN); rendering swapped to title + body cards (`md:grid-cols-2 lg:grid-cols-4`). `/o-platforme` already used title+body via the `aboutPage.howSteps` dict, so no change there. Old `howStep1..4` keys retained for back-compat per scope-fence rule.
+
+
 **Kde:** `app/dla-szkol/page.tsx` (sekcia „Jak to działa")
 **Čo vidím:** 4 navy číslované krúžky (1, 2, 3, 4) v rade, **bez nadpisu pod nimi, bez popisu, bez ikony**. Mobile: krúžky stacknuté pod sebou, rovnaké prázdno.
 **Impact:** Pre school director, ktorý je tu prvýkrát hľadá „ako produkt funguje", strata informácie. Toto je primárna onboarding sekcia. Obdobne na `/o-platforme` (rovnaký pattern).
@@ -106,6 +109,9 @@ Aj po troch PR-kách, ktoré vymetli `text-zinc-*`, `text-amber-*`, `text-emeral
 ---
 
 ### F-NEW-04 · 🚨 CRITICAL · `/dla-szkol` „Jak wygląda produkt" — 3× PREVIEW · SOON placeholder
+
+> **STATUS: FIXED in PR-F (via Round 2.5 content cards)** — the 3 striped "PREVIEW · SOON" placeholders were replaced with content-rich JSX preview cards (mock class roster top-5, weekly PDF stat summary, student dashboard cashflow strip + city emoji row), all locale-aware via the `screen{1,2,3}` captions. Acceptance criterion (`0 výskytov stringu „PREVIEW · SOON"`) met — covered by `e2e/ux-fixes.spec.ts`. The optional `scripts/take-school-shots.ts` headless pipeline is deferred until a seeded demo class lands behind a stable URL; the inline content cards are visually closer to the actual product than static stills would be.
+
 
 **Kde:** `app/dla-szkol/page.tsx` (sekcia „Jak wygląda produkt")
 **Čo vidím:** 3 browser-frame mockupy s textom „PREVIEW · SOON" + popisok pod nimi (Panel klasy, Tygodniowy raport, Dashboard ucznia). Žiadny obsah v ráme.
