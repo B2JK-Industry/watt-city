@@ -71,7 +71,7 @@ export default async function ParentChildView({
         <h2 className="text-sm font-semibold">{copy.resources}</h2>
         <ul className="flex flex-wrap gap-2 text-sm">
           {RESOURCE_KEYS.map((k) => (
-            <li key={k} className="chip" style={{ borderColor: RESOURCE_DEFS[k].color }}>
+            <li key={k} className="chip" style={{ borderColor: RESOURCE_DEFS[k].lightColor }}>
               {RESOURCE_DEFS[k].icon} {state.resources[k].toLocaleString("pl-PL")}
             </li>
           ))}

@@ -65,10 +65,22 @@ export const ZERO_RESOURCES: Resources = {
 
 // Per-resource UI metadata. Color hex is authoritative here (ECONOMY.md §1).
 // Label map mirrors the four shipped UI languages.
+//
+// `color` is the legacy core/dark-skin neon hue and is retained as the
+// authoritative game-economy key (used in tooltips, doc generation, the
+// dark-skin chips). UI rendering on the **light** pko skin reads
+// `lightColor` instead — these darker variants meet WCAG AA (≥ 4.5:1
+// contrast against `#ffffff`). Without this split, ResourceBar text
+// fails axe-core color-contrast on every logged-in route (see UX
+// Pass 3 finding F-NEW-01).
 export type ResourceDef = {
   key: ResourceKey;
   icon: string;
+  /** Neon hue used by the legacy core/dark skin. */
   color: string;
+  /** Darker variant used by ResourceBar / parent overview on the
+   *  default light `pko` skin. Must meet WCAG AA ≥ 4.5:1 on `#ffffff`. */
+  lightColor: string;
   mvpActive: boolean; // false → "Wkrótce" in Phase 1, unlocks in Phase 2
   /** V2: deprecated means the key stays in storage for migration but no
    *  new game/building ever produces it and the ResourceBar hides it. */
@@ -82,6 +94,7 @@ export const RESOURCE_DEFS: Record<ResourceKey, ResourceDef> = {
     key: "watts",
     icon: "⚡",
     color: "#fde047",
+    lightColor: "#a16207", // amber-700 ≈ 5.6:1 on white
     mvpActive: true,
     labels: {
       pl: "Waty",
@@ -100,6 +113,7 @@ export const RESOURCE_DEFS: Record<ResourceKey, ResourceDef> = {
     key: "coins",
     icon: "🪙",
     color: "#f59e0b",
+    lightColor: "#a85a18", // warm dark orange ≈ 5.0:1 on white
     mvpActive: true,
     labels: {
       pl: "Monety",
@@ -118,6 +132,7 @@ export const RESOURCE_DEFS: Record<ResourceKey, ResourceDef> = {
     key: "bricks",
     icon: "🧱",
     color: "#a16207",
+    lightColor: "#a16207", // already AA-safe (5.6:1 on white)
     mvpActive: true,
     labels: {
       pl: "Cegły",
@@ -136,6 +151,7 @@ export const RESOURCE_DEFS: Record<ResourceKey, ResourceDef> = {
     key: "glass",
     icon: "🪟",
     color: "#22d3ee",
+    lightColor: "#0e6b78", // deep teal ≈ 6.1:1 on white
     mvpActive: false,
     deprecated: true,
     labels: {
@@ -155,6 +171,7 @@ export const RESOURCE_DEFS: Record<ResourceKey, ResourceDef> = {
     key: "steel",
     icon: "🔩",
     color: "#94a3b8",
+    lightColor: "#475569", // slate-600 ≈ 7.0:1 on white
     mvpActive: false,
     deprecated: true,
     labels: {
@@ -174,6 +191,7 @@ export const RESOURCE_DEFS: Record<ResourceKey, ResourceDef> = {
     key: "code",
     icon: "💾",
     color: "#22c55e",
+    lightColor: "#15803d", // green-700 ≈ 4.7:1 on white
     mvpActive: false,
     deprecated: true,
     labels: {
@@ -193,6 +211,7 @@ export const RESOURCE_DEFS: Record<ResourceKey, ResourceDef> = {
     key: "cashZl",
     icon: "💵",
     color: "#16a34a",
+    lightColor: "#15803d", // green-700 ≈ 4.7:1 on white (matches `--success`)
     mvpActive: true,
     labels: {
       pl: "W$",

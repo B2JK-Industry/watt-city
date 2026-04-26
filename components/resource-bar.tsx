@@ -38,12 +38,12 @@ export function ResourceBar({ resources, lang, compact = false }: Props) {
             key={k}
             title={title}
             className="flex items-center gap-1 px-2 py-1 rounded border transition-opacity border-[var(--line)] bg-[var(--surface)]"
-            style={{ borderColor: def.color }}
+            style={{ borderColor: def.lightColor }}
           >
             <span aria-hidden className="text-sm leading-none">
               {def.icon}
             </span>
-            <span className="font-bold" style={{ color: def.color }}>
+            <span className="font-bold" style={{ color: def.lightColor }}>
               {v.toLocaleString("pl-PL")}
             </span>
           </li>
