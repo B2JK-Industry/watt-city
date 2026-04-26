@@ -206,7 +206,7 @@ function FooterLink({
         href={href}
         target="_blank"
         rel="noreferrer"
-        className="t-body-sm text-[var(--ink-muted)] hover:text-[var(--accent)] transition-colors tap-target"
+        className="t-body-sm text-[var(--ink-muted)] hover:text-[var(--accent)] transition-colors tap-target inline-flex items-center"
       >
         {children}
       </a>
@@ -215,7 +215,7 @@ function FooterLink({
   return (
     <Link
       href={href}
-      className="t-body-sm text-[var(--ink-muted)] hover:text-[var(--accent)] transition-colors tap-target"
+      className="t-body-sm text-[var(--ink-muted)] hover:text-[var(--accent)] transition-colors tap-target inline-flex items-center"
     >
       {children}
     </Link>

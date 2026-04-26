@@ -77,7 +77,7 @@ export function MobileNavDrawer({
         aria-expanded={open}
         aria-controls="mobile-nav-drawer"
         onClick={() => setOpen((o) => !o)}
-        className="sm:hidden tap-target inline-flex items-center justify-center w-10 h-10 rounded-md text-[var(--ink)] hover:bg-[var(--surface-2)] transition-colors"
+        className="lg:hidden tap-target inline-flex items-center justify-center w-10 h-10 rounded-md text-[var(--ink)] hover:bg-[var(--surface-2)] transition-colors"
       >
         <svg
           width="22"
@@ -99,7 +99,7 @@ export function MobileNavDrawer({
       <div
         aria-hidden
         onClick={() => setOpen(false)}
-        className={`sm:hidden fixed inset-0 z-40 bg-[rgba(0,0,0,0.5)] transition-opacity duration-200 ${
+        className={`lg:hidden fixed inset-0 z-40 bg-[rgba(0,0,0,0.5)] transition-opacity duration-200 ${
           open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
       />
@@ -114,7 +114,7 @@ export function MobileNavDrawer({
         aria-label={ariaLabel}
         aria-hidden={!open}
         tabIndex={-1}
-        className={`sm:hidden fixed top-0 right-0 bottom-0 z-40 w-[min(85vw,360px)] bg-[var(--surface)] flex flex-col transition-transform duration-300 ease-out shadow-[0_8px_24px_rgba(0,0,0,0.12)] ${
+        className={`lg:hidden fixed top-0 right-0 bottom-0 z-40 w-[min(85vw,360px)] bg-[var(--surface)] flex flex-col transition-transform duration-300 ease-out shadow-[0_8px_24px_rgba(0,0,0,0.12)] ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >

@@ -348,49 +348,137 @@ export default async function SchoolsLanding() {
         </ol>
       </section>
 
-      {/* -------- Screenshots (browser-frame placeholders) --------
-          Real screenshot assets are pending (PKO partner-side delivery).
-          Until then we render a stylised browser-window mock per spec
-          §3 "fotografia reálnych situácií" replacement: light surface,
-          navy toolbar dot row, caption below — looks like a UI preview,
-          not a broken navy fill. */}
+      {/* -------- Screenshots — content-rich previews --------
+          Real screenshot assets are still pending PKO-side delivery.
+          Earlier we showed a striped "Preview · soon" placeholder which
+          made the page read like an unfinished deck. We now render
+          per-screen content sketches (a mini class roster, a PDF
+          summary card, a cashflow strip) using the same primitives
+          the actual screens use, so a director sees a believable
+          preview of what they'll receive instead of a TODO marker. */}
       <section className="flex flex-col gap-4">
         <h2 className="section-heading text-2xl">{t.screensTitle}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[t.screen1, t.screen2, t.screen3].map((caption, i) => (
-            <figure
-              key={i}
-              className="card p-0 overflow-hidden flex flex-col"
-            >
-              {/* Browser-frame chrome */}
-              <div className="bg-[var(--surface-2)] border-b border-[var(--line)] px-3 py-2 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[var(--ink-subtle)]" aria-hidden />
-                <span className="w-2 h-2 rounded-full bg-[var(--ink-subtle)]" aria-hidden />
-                <span className="w-2 h-2 rounded-full bg-[var(--ink-subtle)]" aria-hidden />
-              </div>
-              {/* Mock content area — diagonal subtle pattern hints "preview" */}
-              <div
-                className="aspect-[16/10] flex flex-col items-center justify-center gap-3 p-5 text-center"
-                style={{
-                  background:
-                    "repeating-linear-gradient(45deg, var(--surface) 0 12px, var(--surface-2) 12px 13px)",
-                }}
-              >
-                <span
-                  aria-hidden
-                  className="w-12 h-12 rounded-md bg-[var(--accent)] text-[var(--accent-ink)] inline-flex items-center justify-center text-xl font-semibold"
+          {/* 1. Class panel — top students roster preview */}
+          <figure className="card p-0 overflow-hidden flex flex-col">
+            <div className="bg-[var(--surface-2)] border-b border-[var(--line)] px-3 py-2 flex items-center justify-between">
+              <span className="t-overline text-[var(--ink-muted)]">Klasa 7B</span>
+              <span className="t-caption text-[var(--ink-muted)]">
+                {lang === "pl" ? "tydzień 12" : lang === "uk" ? "тиждень 12" : lang === "cs" ? "týden 12" : "week 12"}
+              </span>
+            </div>
+            <ol className="flex flex-col">
+              {[
+                { rank: 1, name: "Anna K.", xp: 1840, medal: "🥇" },
+                { rank: 2, name: "Jakub P.", xp: 1620, medal: "🥈" },
+                { rank: 3, name: "Zofia W.", xp: 1455, medal: "🥉" },
+                { rank: 4, name: "Mateusz O.", xp: 1320 },
+                { rank: 5, name: "Hanna L.", xp: 1180 },
+              ].map((row) => (
+                <li
+                  key={row.rank}
+                  className="flex items-center justify-between px-4 py-2 border-b border-[var(--line)] last:border-b-0 text-sm"
                 >
-                  {i + 1}
-                </span>
-                <span className="t-overline text-[var(--ink-muted)]">
-                  Preview · soon
-                </span>
+                  <span className="flex items-center gap-2 min-w-0">
+                    <span aria-hidden className="w-5 text-center text-[var(--ink-muted)]">
+                      {row.medal ?? `#${row.rank}`}
+                    </span>
+                    <span className="truncate text-[var(--foreground)]">{row.name}</span>
+                  </span>
+                  <span className="tabular-nums font-semibold text-[var(--accent)]">
+                    {row.xp.toLocaleString("pl-PL")} W
+                  </span>
+                </li>
+              ))}
+            </ol>
+            <figcaption className="px-4 py-3 border-t border-[var(--line)] text-sm leading-snug text-[var(--foreground)]">
+              {t.screen1}
+            </figcaption>
+          </figure>
+
+          {/* 2. Weekly PDF report — summary card preview */}
+          <figure className="card p-0 overflow-hidden flex flex-col">
+            <div className="bg-[var(--surface-2)] border-b border-[var(--line)] px-3 py-2 flex items-center gap-2">
+              <span aria-hidden className="text-base">📄</span>
+              <span className="t-overline text-[var(--ink-muted)]">
+                Raport.pdf · 2 {lang === "pl" ? "strony" : lang === "uk" ? "стор." : lang === "cs" ? "strany" : "pages"}
+              </span>
+            </div>
+            <div className="flex-1 flex flex-col gap-3 p-4">
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { label: lang === "pl" ? "Uczniów" : lang === "uk" ? "Учнів" : lang === "cs" ? "Žáků" : "Students", value: "30" },
+                  { label: lang === "pl" ? "Aktywnych" : lang === "uk" ? "Активних" : lang === "cs" ? "Aktivních" : "Active", value: "27" },
+                  { label: lang === "pl" ? "Kodów MEN" : lang === "uk" ? "Кодів MEN" : lang === "cs" ? "Kódů MEN" : "Codes", value: "14" },
+                ].map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="rounded-md border border-[var(--line)] bg-[var(--surface-2)] px-2 py-1.5"
+                  >
+                    <div className="text-[10px] font-semibold text-[var(--ink-muted)] uppercase tracking-wide">
+                      {stat.label}
+                    </div>
+                    <div className="text-lg font-semibold tabular-nums text-[var(--accent)]">
+                      {stat.value}
+                    </div>
+                  </div>
+                ))}
               </div>
-              <figcaption className="px-4 py-3 border-t border-[var(--line)] text-sm leading-snug text-[var(--foreground)]">
-                {caption}
-              </figcaption>
-            </figure>
-          ))}
+              <ul className="flex flex-col gap-1 text-xs text-[var(--ink-muted)]">
+                <li>✓ {lang === "pl" ? "Roster + XP per uczeń" : lang === "uk" ? "Список + XP" : lang === "cs" ? "Roster + XP na žáka" : "Roster + XP per student"}</li>
+                <li>✓ {lang === "pl" ? "Pokrycie podstawy programowej" : lang === "uk" ? "Покриття програми" : lang === "cs" ? "Pokrytí programu" : "Curriculum coverage"}</li>
+                <li>✓ {lang === "pl" ? "Wykres aktywności tygodniowej" : lang === "uk" ? "Графік активності" : lang === "cs" ? "Týdenní graf" : "Weekly activity chart"}</li>
+              </ul>
+            </div>
+            <figcaption className="px-4 py-3 border-t border-[var(--line)] text-sm leading-snug text-[var(--foreground)]">
+              {t.screen2}
+            </figcaption>
+          </figure>
+
+          {/* 3. Student dashboard — city skyline + cashflow strip */}
+          <figure className="card p-0 overflow-hidden flex flex-col">
+            <div className="bg-[var(--surface-2)] border-b border-[var(--line)] px-3 py-2 flex items-center gap-2">
+              <span aria-hidden className="text-base">🏙️</span>
+              <span className="t-overline text-[var(--ink-muted)]">
+                {lang === "pl" ? "Panel ucznia" : lang === "uk" ? "Панель учня" : lang === "cs" ? "Panel žáka" : "Student panel"}
+              </span>
+            </div>
+            <div className="flex-1 flex flex-col gap-3 p-4">
+              <div
+                className="rounded-md border border-[var(--line)] bg-[var(--surface-2)] flex items-end justify-center gap-1 px-3 py-3"
+                aria-hidden
+              >
+                <span className="text-2xl leading-none">🏠</span>
+                <span className="text-3xl leading-none">🏢</span>
+                <span className="text-2xl leading-none">🏪</span>
+                <span className="text-3xl leading-none">🏨</span>
+                <span className="text-2xl leading-none">🏛️</span>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-xs">
+                {[
+                  { icon: "⚡", label: "Watt", value: "+24/h", tone: "text-[var(--success)]" },
+                  { icon: "💰", label: "W$", value: "1 240", tone: "text-[var(--accent)]" },
+                  { icon: "📅", label: lang === "pl" ? "Rata" : lang === "uk" ? "Платіж" : lang === "cs" ? "Splátka" : "Payment", value: "120", tone: "text-[var(--foreground)]" },
+                ].map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-2 py-1.5 flex flex-col gap-0.5"
+                  >
+                    <span className="text-[10px] text-[var(--ink-muted)]">
+                      <span aria-hidden>{stat.icon} </span>
+                      {stat.label}
+                    </span>
+                    <span className={`tabular-nums font-semibold ${stat.tone}`}>
+                      {stat.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <figcaption className="px-4 py-3 border-t border-[var(--line)] text-sm leading-snug text-[var(--foreground)]">
+              {t.screen3}
+            </figcaption>
+          </figure>
         </div>
       </section>
 
@@ -489,7 +577,7 @@ export default async function SchoolsLanding() {
           <Link href="/dla-szkol/demo" className="btn btn-primary">
             🎬 {t.ctaDemo}
           </Link>
-          <Link href="/nauczyciel/signup" className="btn btn-cyan">
+          <Link href="/nauczyciel/signup" className="btn btn-secondary">
             {t.ctaSignup}
           </Link>
         </div>

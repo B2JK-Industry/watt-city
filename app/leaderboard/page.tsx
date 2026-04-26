@@ -5,6 +5,7 @@ import { LeaderboardEntry } from "@/lib/redis";
 import { getSession } from "@/lib/session";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
+import { takeFiltered } from "@/lib/account-filter";
 
 export const dynamic = "force-dynamic";
 
@@ -29,9 +30,14 @@ export default async function LeaderboardPage({ searchParams }: Props) {
   const t = dict.leaderboard;
   const locale = lang === "pl" ? "pl-PL" : lang === "cs" ? "cs-CZ" : lang === "uk" ? "uk-UA" : "en-US";
 
-  const entries: LeaderboardEntry[] = game
-    ? await gameLeaderboard(game.id, 50)
-    : await globalLeaderboard(50);
+  // Public surface — fetch generously then filter QA/smoke accounts so
+  // the visible leaderboard is a real community, not a QA log dump.
+  const rawEntries: LeaderboardEntry[] = game
+    ? await gameLeaderboard(game.id, 150)
+    : await globalLeaderboard(150);
+  const entries: LeaderboardEntry[] = takeFiltered(rawEntries, 50).map(
+    (e, i) => ({ ...e, rank: i + 1 }),
+  );
 
   const podium = entries.slice(0, 3);
   const rest = entries.slice(3);

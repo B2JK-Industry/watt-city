@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { globalLeaderboard } from "@/lib/leaderboard";
 import { topCities } from "@/lib/city-value";
+import { takeFiltered } from "@/lib/account-filter";
 import { GAMES } from "@/lib/games";
 import { getSession } from "@/lib/session";
 import { getUserStats } from "@/lib/user-stats";
@@ -23,13 +24,16 @@ export default async function Home() {
   const dict = dictFor(lang);
 
   if (session) {
-    const [board, stats, top, aiGames, playerState] = await Promise.all([
+    const [board, stats, topRaw, aiGames, playerState] = await Promise.all([
       leaderboardStats(session.username),
       getUserStats(session.username),
-      globalLeaderboard(5),
+      // Fetch with overhead so we still have ≥5 entries after the
+      // public-account filter strips QA/smoke usernames.
+      globalLeaderboard(20),
       listActiveAiGames(),
       getPlayerState(session.username),
     ]);
+    const top = takeFiltered(topRaw, 5);
     const level = levelFromXP(board.globalXP);
     // Newest AI game first — city renders each as its own clickable building.
     const cityAiGames = [...aiGames].reverse().map((g) => ({
@@ -62,11 +66,16 @@ export default async function Home() {
   // (BLOCKER-3 parallel ZSET). If the V2 leaderboard is empty during the
   // rollout we fall back to the V1 XP ranking so early visitors still see
   // social proof.
-  const [cities, entries, aiGames] = await Promise.all([
-    topCities(3),
-    globalLeaderboard(5),
+  //
+  // Public surface — strip QA / smoke / e2e accounts so the visitor sees
+  // a real community, not the leftover Playwright fixture roster.
+  const [citiesRaw, entriesRaw, aiGames] = await Promise.all([
+    topCities(20),
+    globalLeaderboard(20),
     listActiveAiGames(),
   ]);
+  const cities = takeFiltered(citiesRaw, 3);
+  const entries = takeFiltered(entriesRaw, 5);
   // Drop entries from V1 leaderboard that have a V2 city-value entry so
   // the anonymous landing never double-counts a user. `cities` ordering
   // is authoritative when non-empty.
@@ -90,9 +99,16 @@ export default async function Home() {
     .replace("{single}", "§SINGLE§")
     .replace("{varso}", "§VARSO§")
     .split(/(§WATTS§|§SINGLE§|§VARSO§)/g);
+  // Inline demo CTA copy — keeps the file self-contained and avoids
+  // bloating the locale dictionaries for one button label per lang.
+  const demoLabel = {
+    pl: "Zagraj demo bez rejestracji",
+    uk: "Грати демо без реєстрації",
+    cs: "Hrát demo bez registrace",
+    en: "Play demo, no signup",
+  }[lang];
   return (
     <div className="flex flex-col gap-12 animate-slide-up">
-      <ComingSoonBanner lang={lang} />
       <section className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-10 items-center">
         <div className="flex flex-col gap-6">
           <div className="flex flex-wrap gap-2">
@@ -129,14 +145,14 @@ export default async function Home() {
             })}
           </p>
           <div className="flex flex-wrap gap-3">
-            <Link href="/register" className="btn btn-sales">
+            <Link href="/games/finance-quiz" className="btn btn-sales">
+              {demoLabel}
+            </Link>
+            <Link href="/register" className="btn btn-secondary">
               {t.ctaRegister}
             </Link>
-            <Link href="/o-platforme" className="btn btn-secondary">
+            <Link href="/o-platforme" className="btn btn-ghost">
               {t.ctaAbout}
-            </Link>
-            <Link href="/games" className="btn btn-ghost">
-              {t.ctaGames}
             </Link>
           </div>
           <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -213,6 +229,7 @@ export default async function Home() {
         <p className="t-body-lg text-[var(--ink-muted)] max-w-xl -mt-2">{t.scenesBody}</p>
         <CityScene interactive={false} compact aiGames={cityAiGames} />
       </section>
+      <ComingSoonBanner lang={lang} />
     </div>
   );
 }

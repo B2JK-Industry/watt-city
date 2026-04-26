@@ -1,18 +1,80 @@
 "use client";
 
 import { useMemo, useState, useCallback } from "react";
+import Link from "next/link";
 import type { QuizQuestion } from "@/lib/content/finance-quiz";
 import { XP_PER_CORRECT } from "@/lib/content/finance-quiz";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
 import { RoundResult } from "@/components/games/round-result";
-import type { Dict } from "@/lib/i18n";
+import type { Dict, Lang } from "@/lib/i18n";
 
-type Props = { questions: QuizQuestion[]; dict: Dict };
+type Props = {
+  questions: QuizQuestion[];
+  dict: Dict;
+  /** When true, skip `submitScore` — the user is not signed in. The
+   *  end-of-round screen swaps in a register CTA instead of leaderboard
+   *  numbers. Defaults to false to preserve existing behaviour for the
+   *  authenticated session call sites. */
+  anonymous?: boolean;
+  lang?: Lang;
+};
 type Phase = "playing" | "reveal" | "done";
 
 const GAME_ID = "finance-quiz";
 
-export function FinanceQuizClient({ questions, dict }: Props) {
+const ANON_RESULT: Record<Lang, {
+  title: string;
+  scored: string;
+  pitch: string;
+  registerCta: string;
+  loginCta: string;
+  retry: string;
+  back: string;
+}> = {
+  pl: {
+    title: "Koniec rundy demo",
+    scored: "Trafiłeś {n}/{total} pytań · {xp} W",
+    pitch: "Załóż konto, by zapisać XP, odblokować mini-gry i budować swoje miasto.",
+    registerCta: "Załóż konto",
+    loginCta: "Mam już konto",
+    retry: "Zagraj jeszcze raz",
+    back: "Inne mini-gry",
+  },
+  uk: {
+    title: "Кінець демо-раунду",
+    scored: "Правильних: {n}/{total} · {xp} W",
+    pitch: "Створи акаунт, щоб зберегти XP, відкрити інші ігри та будувати своє місто.",
+    registerCta: "Створити акаунт",
+    loginCta: "У мене вже є акаунт",
+    retry: "Зіграти ще раз",
+    back: "Інші міні-ігри",
+  },
+  cs: {
+    title: "Konec demo kola",
+    scored: "Správně: {n}/{total} · {xp} W",
+    pitch: "Založ si účet, aby ses ukládal XP, odemkl další hry a stavěl své město.",
+    registerCta: "Založit účet",
+    loginCta: "Mám účet",
+    retry: "Hrát znovu",
+    back: "Jiné mini-hry",
+  },
+  en: {
+    title: "Demo round finished",
+    scored: "You answered {n}/{total} correctly · {xp} W",
+    pitch: "Sign up to save your XP, unlock other mini-games, and build your city.",
+    registerCta: "Create account",
+    loginCta: "I have an account",
+    retry: "Play again",
+    back: "Other mini-games",
+  },
+};
+
+export function FinanceQuizClient({
+  questions,
+  dict,
+  anonymous = false,
+  lang = "pl",
+}: Props) {
   const t = dict.finance;
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>("playing");
@@ -30,13 +92,14 @@ export function FinanceQuizClient({ questions, dict }: Props) {
   );
 
   const submit = useCallback(async (xp: number) => {
+    if (anonymous) return;
     setSubmitting(true);
     setSubmitError(null);
     const res = await submitScore(GAME_ID, xp);
     if (res.ok) setResult(res);
     else setSubmitError(res.error ?? dict.auth.errorGeneric);
     setSubmitting(false);
-  }, [dict.auth.errorGeneric]);
+  }, [anonymous, dict.auth.errorGeneric]);
 
   function choose(optionIdx: number) {
     if (phase !== "playing") return;
@@ -59,6 +122,48 @@ export function FinanceQuizClient({ questions, dict }: Props) {
   }
 
   if (phase === "done") {
+    if (anonymous) {
+      const a = ANON_RESULT[lang];
+      const xp = correctCount * XP_PER_CORRECT;
+      const scoredLine = a.scored
+        .replace("{n}", String(correctCount))
+        .replace("{total}", String(total))
+        .replace("{xp}", String(xp));
+      return (
+        <div className="card p-6 sm:p-8 flex flex-col gap-5">
+          <div className="flex flex-col gap-1">
+            <span className="t-overline text-[var(--ink-muted)]">demo</span>
+            <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--accent)]">
+              {a.title}
+            </h2>
+            <p className="t-body text-[var(--foreground)]">{scoredLine}</p>
+          </div>
+          <p className="t-body-lg text-[var(--foreground)] max-w-xl">{a.pitch}</p>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/register" className="btn btn-sales">
+              {a.registerCta}
+            </Link>
+            <Link href="/login" className="btn btn-secondary">
+              {a.loginCta}
+            </Link>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  window.location.href = "/games/finance-quiz";
+                }
+              }}
+            >
+              {a.retry}
+            </button>
+            <Link href="/games" className="btn btn-ghost">
+              {a.back}
+            </Link>
+          </div>
+        </div>
+      );
+    }
     return (
       <RoundResult
         dict={dict}

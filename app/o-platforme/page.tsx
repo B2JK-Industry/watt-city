@@ -20,28 +20,15 @@ export default async function AboutPage() {
         {lang !== "pl" && (
           <p className="text-xs text-[var(--ink-muted)] italic">{t.note}</p>
         )}
+        <h1 className="section-heading text-3xl sm:text-5xl">
+          {t.title}
+        </h1>
+        {/* Hero chips trimmed to one line, all neutral. The previous
+            three-chip row (one in danger-red) read as a jury pitch
+            above the value prop; keeps just the partner badge so the
+            page leads with the product story for parents/teachers. */}
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="section-heading text-3xl sm:text-5xl">
-            {t.title}
-          </h1>
-          <span
-            className="chip"
-            style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
-          >
-            PKO XP · Gaming
-          </span>
-          <span
-            className="chip"
-            style={{ background: "var(--accent)", color: "var(--accent-ink)" }}
-          >
-            ETHSilesia 2026
-          </span>
-          <span
-            className="chip"
-            style={{ background: "var(--danger)", color: "var(--accent-ink)" }}
-          >
-            Katowice
-          </span>
+          <span className="chip">PKO · ETHSilesia 2026 · Katowice</span>
         </div>
         <p className="t-body-lg text-[var(--foreground)] max-w-3xl">{t.heroBody}</p>
         {session && (
@@ -76,9 +63,59 @@ export default async function AboutPage() {
         </div>
       </section>
 
+      {/* Section order — value first, technical lower. Demo-review
+          punch list flagged the prior layout (idea → science → AI
+          pipeline → tiers → tech → team → sponsors → web3) for opening
+          with technical density above the parent/teacher/player value
+          prop. New order: how it works → progression → science →
+          team → sponsors, then AI pipeline → tech stack → web3 once
+          the reader is past the value pitch. */}
+
+      {/* -------- Ako to funguje — dict-driven (t.howSteps). */}
+      <section className="flex flex-col gap-4">
+        <h2 className="section-heading text-2xl">{t.howTitle}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {t.howSteps.map((step, i) => (
+            <StepCard
+              key={step.title}
+              n={i + 1}
+              title={step.title}
+              body={step.body}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* -------- Progression ladder (V3.1 — city-first) -------- */}
+      <section className="flex flex-col gap-4">
+        <h2 className="section-heading text-2xl">{t.tiersTitle}</h2>
+        <ol className="flex flex-col gap-3">
+          {t.ladder.map((row, i) => (
+            <li
+              key={i}
+              className="card p-4 flex flex-col sm:flex-row gap-3 sm:items-start"
+            >
+              <span className="flex-shrink-0 w-14 h-14 rounded-xl border border-[var(--line)] bg-[var(--accent)] text-[var(--accent-ink)] font-semibold text-lg flex flex-col items-center justify-center">
+                <span className="text-[9px] leading-none">Lvl</span>
+                <span className="text-xl leading-none">{i + 1}</span>
+              </span>
+              <div className="flex flex-col gap-1">
+                <p className="font-bold text-base leading-tight">{row.title}</p>
+                <p className="text-sm text-[var(--ink-muted)]">
+                  <span className="opacity-60">{t.tiersUnlockLabel} </span>
+                  <strong>{row.unlock}</strong>
+                </p>
+                <p className="text-[11px] text-[var(--ink-muted)] italic leading-snug">
+                  💡 {row.eduMoment}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
       {/* -------- Veda za dizajnom — dict-driven (see lib/locales/*.ts
-          aboutPage.scienceIntro / scienceBullets / scienceConclusion).
-          No hardcoded locale lives here anymore. */}
+          aboutPage.scienceIntro / scienceBullets / scienceConclusion). */}
       <section className="flex flex-col gap-4">
         <h2 className="section-heading text-2xl">{t.scienceTitle}</h2>
         <div className="card p-6 flex flex-col gap-4 text-[var(--foreground)]">
@@ -105,24 +142,60 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* -------- Ako to funguje — dict-driven (t.howSteps). */}
+      {/* -------- Tím -------- */}
       <section className="flex flex-col gap-4">
-        <h2 className="section-heading text-2xl">{t.howTitle}</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {t.howSteps.map((step, i) => (
-            <StepCard
-              key={step.title}
-              n={i + 1}
-              title={step.title}
-              body={step.body}
-            />
-          ))}
+        <h2 className="section-heading text-2xl">{t.teamTitle}</h2>
+        <div className="card p-6 flex flex-col gap-3 text-[var(--foreground)]">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-3xl">🛠️</span>
+            <div>
+              <p className="font-semibold text-lg tracking-tight">
+                B2JK-Industry
+              </p>
+              <p className="text-xs text-[var(--ink-muted)]">
+                Hackathonový tím · ETHSilesia 2026 · Katowice
+              </p>
+            </div>
+          </div>
+          <p>{t.teamBody}</p>
+          <p className="text-sm text-[var(--ink-muted)]">
+            Kontakt:{" "}
+            <a
+              href="https://github.com/B2JK-Industry"
+              className="underline text-[var(--accent)]"
+              target="_blank"
+              rel="noreferrer"
+            >
+              github.com/B2JK-Industry
+            </a>
+            .
+          </p>
         </div>
       </section>
 
-      {/* -------- AI pipeline — dict-driven (t.pipelineIntro /
-          t.pipelineSteps / t.pipelineSecurity). No Slovak / locale
-          leak in this file anymore. */}
+      {/* -------- Sponzori / thanks -------- */}
+      <section className="flex flex-col gap-4">
+        <h2 className="section-heading text-2xl">{t.sponsorsTitle}</h2>
+        <div className="card p-6 flex flex-col gap-3 text-sm text-[var(--foreground)]">
+          <p>{t.sponsorsBody}</p>
+          <p>
+            {t.sponsorsStack}{" "}
+            <Link
+              href="/ochrana-sukromia"
+              className="underline text-[var(--accent)]"
+            >
+              /ochrana-sukromia
+            </Link>
+          </p>
+          <p className="text-xs text-[var(--ink-muted)]">
+            Vďaka: PKO Bank Polski · Tauron · ETHWarsaw · AKMF ·
+            Katowicki.Hub.
+          </p>
+        </div>
+      </section>
+
+      {/* -------- AI pipeline (technical — moved below the product
+          story per the demo-review punch list). */}
       <section className="flex flex-col gap-4">
         <h2 className="section-heading text-2xl">{t.pipelineTitle}</h2>
         <div className="card p-6 flex flex-col gap-5 text-[var(--foreground)]">
@@ -211,34 +284,6 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* -------- Progression ladder (V3.1 — city-first) -------- */}
-      <section className="flex flex-col gap-4">
-        <h2 className="section-heading text-2xl">{t.tiersTitle}</h2>
-        <ol className="flex flex-col gap-3">
-          {t.ladder.map((row, i) => (
-            <li
-              key={i}
-              className="card p-4 flex flex-col sm:flex-row gap-3 sm:items-start"
-            >
-              <span className="flex-shrink-0 w-14 h-14 rounded-xl border border-[var(--line)] bg-[var(--accent)] text-[var(--accent-ink)] font-semibold text-lg flex flex-col items-center justify-center">
-                <span className="text-[9px] leading-none">Lvl</span>
-                <span className="text-xl leading-none">{i + 1}</span>
-              </span>
-              <div className="flex flex-col gap-1">
-                <p className="font-bold text-base leading-tight">{row.title}</p>
-                <p className="text-sm text-[var(--ink-muted)]">
-                  <span className="opacity-60">{t.tiersUnlockLabel} </span>
-                  <strong>{row.unlock}</strong>
-                </p>
-                <p className="text-[11px] text-[var(--ink-muted)] italic leading-snug">
-                  💡 {row.eduMoment}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </section>
-
       {/* -------- Tech stack -------- */}
       <section className="flex flex-col gap-4">
         <h2 className="section-heading text-2xl">{t.stackTitle}</h2>
@@ -253,58 +298,6 @@ export default async function AboutPage() {
           <TechItem name="Vercel Cron" note="AI pipeline trigger denne o 09:00 UTC." />
           <TechItem name="Anthropic SDK" note="Claude Sonnet 4.6 (PL gen) + Haiku 4.5 (3× preklad), JSON structured output." />
           <TechItem name="SVG, žiadne PNG/JPG" note="Celé mestečko + budova sú vektor, ostrý na 4K." />
-        </div>
-      </section>
-
-      {/* -------- Tím -------- */}
-      <section className="flex flex-col gap-4">
-        <h2 className="section-heading text-2xl">{t.teamTitle}</h2>
-        <div className="card p-6 flex flex-col gap-3 text-[var(--foreground)]">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="text-3xl">🛠️</span>
-            <div>
-              <p className="font-semibold text-lg tracking-tight">
-                B2JK-Industry
-              </p>
-              <p className="text-xs text-[var(--ink-muted)]">
-                Hackathonový tím · ETHSilesia 2026 · Katowice
-              </p>
-            </div>
-          </div>
-          <p>{t.teamBody}</p>
-          <p className="text-sm text-[var(--ink-muted)]">
-            Kontakt:{" "}
-            <a
-              href="https://github.com/B2JK-Industry"
-              className="underline text-[var(--accent)]"
-              target="_blank"
-              rel="noreferrer"
-            >
-              github.com/B2JK-Industry
-            </a>
-            .
-          </p>
-        </div>
-      </section>
-
-      {/* -------- Sponzori / thanks -------- */}
-      <section className="flex flex-col gap-4">
-        <h2 className="section-heading text-2xl">{t.sponsorsTitle}</h2>
-        <div className="card p-6 flex flex-col gap-3 text-sm text-[var(--foreground)]">
-          <p>{t.sponsorsBody}</p>
-          <p>
-            {t.sponsorsStack}{" "}
-            <Link
-              href="/ochrana-sukromia"
-              className="underline text-[var(--accent)]"
-            >
-              /ochrana-sukromia
-            </Link>
-          </p>
-          <p className="text-xs text-[var(--ink-muted)]">
-            Vďaka: PKO Bank Polski · Tauron · ETHWarsaw · AKMF ·
-            Katowicki.Hub.
-          </p>
         </div>
       </section>
 

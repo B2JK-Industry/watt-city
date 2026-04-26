@@ -13,6 +13,58 @@ import { CityLevelCard } from "@/components/city-level-card";
 import type { PlayerState } from "@/lib/player";
 import type { Dict, Lang } from "@/lib/i18n";
 
+const FRESH_WELCOME: Record<Lang, {
+  eyebrow: string;
+  title: string;
+  body: string;
+  cta: string;
+  tour: string;
+  step1: string;
+  step2: string;
+  step3: string;
+}> = {
+  pl: {
+    eyebrow: "Pierwszy krok",
+    title: "Witaj w Watt City",
+    body: "Zacznij od jednej minigry — to potrwa minutę. Później miasto budujesz samo.",
+    cta: "Zagraj pierwszą minigrę",
+    tour: "Zobacz krótki tutorial",
+    step1: "Zarobisz pierwsze W$",
+    step2: "Postawisz pierwszy budynek",
+    step3: "Odblokujesz kolejną grę",
+  },
+  uk: {
+    eyebrow: "Перший крок",
+    title: "Вітаємо у Watt City",
+    body: "Почни з однієї міні-гри — це займе хвилину. Місто далі будуєш у своєму темпі.",
+    cta: "Зіграти першу міні-гру",
+    tour: "Короткий тур",
+    step1: "Заробиш перші W$",
+    step2: "Поставиш першу будівлю",
+    step3: "Відкриєш наступну гру",
+  },
+  cs: {
+    eyebrow: "První krok",
+    title: "Vítej ve Watt City",
+    body: "Začni jednou minihrou — minutu času. Město pak roste s tebou.",
+    cta: "Zahrát první minihru",
+    tour: "Krátký průvodce",
+    step1: "Získáš první W$",
+    step2: "Postavíš první budovu",
+    step3: "Odemkneš další hru",
+  },
+  en: {
+    eyebrow: "First step",
+    title: "Welcome to Watt City",
+    body: "Start with one mini-game — it takes a minute. The city grows from there.",
+    cta: "Play your first mini-game",
+    tour: "Quick tour",
+    step1: "Earn your first W$",
+    step2: "Place your first building",
+    step3: "Unlock your next game",
+  },
+};
+
 type Props = {
   username: string;
   xp: number;
@@ -76,8 +128,56 @@ export function Dashboard({
     bestScore: stats.games[g.id]?.bestScore ?? 0,
   }));
 
+  const isFresh = stats.totalPlays === 0;
+  const fresh = FRESH_WELCOME[lang];
+
   return (
     <div className="flex flex-col gap-10 animate-slide-up">
+      {isFresh && (
+        <section
+          className="card card--elevated p-6 sm:p-8 flex flex-col gap-5"
+          aria-label={fresh.title}
+        >
+          <div className="flex flex-col gap-1.5">
+            <span className="t-overline text-[var(--accent)]">
+              {fresh.eyebrow}
+            </span>
+            <h1 className="t-h2 text-[var(--accent)]">
+              {fresh.title}
+            </h1>
+            <p className="t-body-lg text-[var(--foreground)] max-w-2xl">
+              {fresh.body}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href={`/games/${recommended.id}`}
+              className="btn btn-sales"
+            >
+              {fresh.cta}
+            </Link>
+            <Link href="/o-platforme" className="btn btn-ghost">
+              {fresh.tour}
+            </Link>
+          </div>
+          <ol className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-[var(--line)]">
+            {[fresh.step1, fresh.step2, fresh.step3].map((step, i) => (
+              <li
+                key={i}
+                className="flex items-start gap-3 text-sm text-[var(--foreground)]"
+              >
+                <span
+                  aria-hidden
+                  className="shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-full border border-[var(--line)] bg-[var(--surface-2)] text-[var(--accent)] font-semibold text-xs"
+                >
+                  {i + 1}
+                </span>
+                <span className="leading-snug pt-0.5">{step}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
       {player && <CityLevelCard player={player} lang={lang} />}
       <section className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
         <div className="card p-6 sm:p-8 flex flex-col gap-5">
@@ -223,6 +323,10 @@ export function Dashboard({
         <LoanSchedule loans={player.loans} lang={lang} />
       )}
 
+      {/* Hide the "continue" section entirely for fresh users — the
+          welcome card already owns the first-step CTA, so an empty
+          repeat would just dilute focus and feel systemic. */}
+      {!isFresh && (
       <section className="flex flex-col gap-4">
         <div className="flex items-end justify-between">
           <h2 className="text-2xl font-bold">{d.continueTitle}</h2>
@@ -276,6 +380,7 @@ export function Dashboard({
           </div>
         )}
       </section>
+      )}
 
       <section className="flex flex-col gap-4">
         <div className="flex items-end justify-between">

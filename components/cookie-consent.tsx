@@ -43,25 +43,32 @@ export function CookieConsent({
   if (!visible) return null;
   const copy = {
     pl: {
-      body:
-        "Używamy tylko plików niezbędnych do działania: sesja, CSRF i język. Brak trackerów, brak reklam.",
+      bodyShort: "Tylko niezbędne pliki cookie. Bez trackerów.",
+      body: "Używamy tylko plików niezbędnych do działania: sesja, CSRF i język. Brak trackerów, brak reklam.",
       more: "Więcej",
-      ok: "Rozumiem",
+      ok: "OK",
+      ariaClose: "Zamknij komunikat o plikach cookie",
     },
     uk: {
+      bodyShort: "Лише необхідні cookie. Без трекерів.",
       body: "Використовуємо лише необхідні файли: сесія, CSRF і мова. Без трекерів.",
       more: "Детальніше",
-      ok: "Ок",
+      ok: "OK",
+      ariaClose: "Закрити повідомлення про cookie",
     },
     cs: {
+      bodyShort: "Jen nezbytné cookie. Žádné trackery.",
       body: "Používáme jen nezbytné soubory: relace, CSRF a jazyk. Žádné trackery.",
       more: "Více",
-      ok: "Rozumím",
+      ok: "OK",
+      ariaClose: "Zavřít oznámení o cookie",
     },
     en: {
+      bodyShort: "Strictly-necessary cookies only. No trackers.",
       body: "We set only strictly-necessary cookies: session, CSRF, language. No trackers.",
       more: "More",
-      ok: "Got it",
+      ok: "OK",
+      ariaClose: "Dismiss cookie notice",
     },
   }[lang];
 
@@ -72,32 +79,65 @@ export function CookieConsent({
   const bottomOffset = hasBottomTabs
     ? "calc(3.5rem + env(safe-area-inset-bottom, 0px))"
     : "env(safe-area-inset-bottom, 0px)";
+
+  function ack() {
+    try {
+      localStorage.setItem(LOCAL_KEY, String(Date.now()));
+    } catch {
+      /* best-effort */
+    }
+    setVisible(false);
+  }
+
+  // Compact bottom-rail bar: single row even on mobile, terse copy that
+  // never wraps on phones >= 360 px. Demo-review punch list flagged the
+  // prior 4-line modal-feeling block as eating ~30 % of the hero on
+  // first paint, killing the anonymous landing's first impression.
   return (
     <div
-      role="dialog"
+      role="region"
+      aria-label="Cookies"
       aria-live="polite"
       style={{ ["--cc-bot" as string]: bottomOffset }}
-      className="fixed inset-x-0 z-40 bottom-[var(--cc-bot)] sm:bottom-0 bg-[var(--surface)] border-t border-[var(--line)] elev-soft-lg p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+      className="fixed inset-x-0 z-40 bottom-[var(--cc-bot)] sm:bottom-0 bg-[var(--surface)] border-t border-[var(--line)] elev-soft px-3 py-2 sm:px-5 sm:py-3 flex items-center gap-2 sm:gap-4"
     >
-      <p className="flex-1 t-body-sm text-[var(--ink-muted)]">{copy.body}</p>
-      <div className="flex gap-2 flex-wrap">
-        <a href="/ochrana-sukromia" className="btn btn-ghost btn-sm">
-          {copy.more}
-        </a>
-        <button
-          className="btn btn-sm"
-          onClick={() => {
-            try {
-              localStorage.setItem(LOCAL_KEY, String(Date.now()));
-            } catch {
-              /* best-effort */
-            }
-            setVisible(false);
-          }}
+      <span aria-hidden className="hidden sm:inline text-base">🍪</span>
+      <p className="flex-1 min-w-0 t-caption sm:t-body-sm text-[var(--ink-muted)] leading-snug">
+        <span className="sm:hidden">{copy.bodyShort}</span>
+        <span className="hidden sm:inline">{copy.body}</span>
+      </p>
+      <a
+        href="/ochrana-sukromia"
+        className="hidden sm:inline-flex btn btn-ghost btn-sm shrink-0"
+      >
+        {copy.more}
+      </a>
+      <button
+        type="button"
+        onClick={ack}
+        className="btn btn-sm shrink-0"
+      >
+        {copy.ok}
+      </button>
+      <button
+        type="button"
+        onClick={ack}
+        aria-label={copy.ariaClose}
+        className="sm:hidden tap-target inline-flex items-center justify-center text-[var(--ink-muted)] hover:text-[var(--accent)]"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+          aria-hidden
         >
-          {copy.ok}
-        </button>
-      </div>
+          <path d="M3 3l10 10M13 3l-10 10" />
+        </svg>
+      </button>
     </div>
   );
 }

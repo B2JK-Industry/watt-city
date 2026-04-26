@@ -26,22 +26,29 @@ const COPY: Record<Lang, { hero: string; sub: string }> = {
   },
 };
 
+/* Demo-review punch list: this banner used to lead the anonymous
+ * landing with a 4 px danger-red bar shouting "Content Machine Phase
+ * 2 · Q3 2026" above the value prop. It now reads as a quiet
+ * informational note (subtle navy bar, neutral text colour, smaller
+ * type) and lives under the hero, never above. */
 export function ComingSoonBanner({ lang }: { lang: Lang }) {
   const t = COPY[lang];
   return (
-    <section
-      className="card px-4 py-3 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between"
+    <aside
+      className="card px-4 py-3 flex flex-col sm:flex-row gap-1 sm:gap-3 sm:items-baseline"
       style={{
-        borderColor: "var(--danger)",
-        borderLeftWidth: "4px",
+        borderLeft: "2px solid var(--accent)",
       }}
-      aria-label="Coming soon"
+      aria-label="Roadmap teaser"
     >
-      <p className="font-semibold text-sm sm:text-base tracking-tight">
-        {t.hero}
+      <span className="t-overline text-[var(--ink-muted)] shrink-0">
+        Roadmap
+      </span>
+      <p className="t-body-sm text-[var(--foreground)]">
+        <span className="font-semibold">{t.hero.replace("🚀 ", "")}</span>
+        <span className="text-[var(--ink-muted)]"> · {t.sub}</span>
       </p>
-      <p className="text-xs opacity-80">{t.sub}</p>
-    </section>
+    </aside>
   );
 }
 

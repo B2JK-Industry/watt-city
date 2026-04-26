@@ -7,8 +7,16 @@ import { listActiveAiGamesWithLazyRotation as listActiveAiGames } from "@/lib/ai
 import { specKind } from "@/lib/ai-pipeline/types";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
+import { takeFiltered } from "@/lib/account-filter";
 
 export const dynamic = "force-dynamic";
+
+// Public-surface medal lists — over-fetch then strip QA accounts so the
+// hall of fame doesn't show smoke/e2e usernames as bronze winners.
+async function publicTop(gameId: string, n: number) {
+  const raw = await gameLeaderboard(gameId, n * 5);
+  return takeFiltered(raw, n);
+}
 
 export default async function HallOfFamePage() {
   const session = await getSession();
@@ -19,7 +27,7 @@ export default async function HallOfFamePage() {
     Promise.all(
       GAMES.map(async (g) => ({
         game: g,
-        top: await gameLeaderboard(g.id, 3),
+        top: await publicTop(g.id, 3),
       })),
     ),
     listActiveAiGames(),
@@ -29,7 +37,7 @@ export default async function HallOfFamePage() {
   const liveAiWithTop = await Promise.all(
     liveAi.map(async (g) => ({
       game: g,
-      top: await gameLeaderboard(g.id, 3),
+      top: await publicTop(g.id, 3),
     })),
   );
   const liveIds = new Set(aiGames.map((g) => g.id));
@@ -37,7 +45,7 @@ export default async function HallOfFamePage() {
   const pastAiWithTopRaw = await Promise.all(
     pastAi.map(async (r) => ({
       record: r,
-      top: await gameLeaderboard(r.id, 3),
+      top: await publicTop(r.id, 3),
     })),
   );
   // Filter out empty archive entries (no medals) and dedupe by theme —

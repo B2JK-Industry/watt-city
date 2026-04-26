@@ -9,11 +9,11 @@ import { resolveTheme } from "@/lib/theme";
 import type { Lang, Dict } from "@/lib/i18n";
 import type { Resources } from "@/lib/resources";
 
-const DRAWER_LABELS: Record<Lang, { menu: string; open: string; close: string }> = {
-  pl: { menu: "Menu", open: "Otwórz menu", close: "Zamknij menu" },
-  uk: { menu: "Меню", open: "Відкрити меню", close: "Закрити меню" },
-  cs: { menu: "Menu", open: "Otevřít menu", close: "Zavřít menu" },
-  en: { menu: "Menu", open: "Open menu", close: "Close menu" },
+const DRAWER_LABELS: Record<Lang, { menu: string; open: string; close: string; language: string }> = {
+  pl: { menu: "Menu", open: "Otwórz menu", close: "Zamknij menu", language: "Język" },
+  uk: { menu: "Меню", open: "Відкрити меню", close: "Закрити меню", language: "Мова" },
+  cs: { menu: "Menu", open: "Otevřít menu", close: "Zavřít menu", language: "Jazyk" },
+  en: { menu: "Menu", open: "Open menu", close: "Close menu", language: "Language" },
 };
 
 type Props = {
@@ -116,7 +116,7 @@ export function SiteNav({
             </Link>
           );
         })()}
-        <div className="hidden sm:flex items-stretch self-stretch gap-5 text-sm">
+        <div className="hidden lg:flex items-stretch self-stretch gap-5 text-sm">
           {navLinks.map((l) => (
             <NavLink key={l.href} href={l.href}>
               {l.label}
@@ -126,26 +126,24 @@ export function SiteNav({
         <div className="flex items-center gap-2 sm:gap-3 text-sm">
           {username ? (
             <>
-              {/* Narrow-viewport tiering — 320 px is the smallest phone
-                  we support. With ring + chip + bell + lang + logout the
-                  right cluster spans ~283 px, which combined with the
-                  brand logo (110 px) overflows a 320-px viewport. Hide
-                  the purely-informational chip + ring below ~400 px,
-                  keep the interactive controls reachable. */}
+              {/* Desktop-only status indicators. The hamburger pattern
+                  covers everything below `lg` so chip/ring/username card
+                  used to overlap with the drawer trigger on tablets;
+                  keeping them at `lg+` matches the new nav breakpoint. */}
               <span
-                className="level-ring hidden min-[420px]:inline-flex"
+                className="level-ring hidden lg:inline-flex"
                 style={{ ["--p" as string]: String(pct) }}
                 title={`Tier ${level} · ${pct}%`}
               >
                 <span>{level}</span>
               </span>
-              <span className="chip hidden min-[380px]:inline-flex">
+              <span className="chip hidden lg:inline-flex">
                 <strong>{xp.toLocaleString("pl-PL")} W</strong>
                 {rank !== null && (
-                  <span className="opacity-70 hidden sm:inline">· #{rank}</span>
+                  <span className="opacity-70">· #{rank}</span>
                 )}
               </span>
-              <span className="hidden md:flex flex-col leading-tight">
+              <span className="hidden lg:flex flex-col leading-tight">
                 <span className="font-semibold">{username}</span>
                 {title && (
                   <span className="text-[11px] font-semibold text-[var(--accent)]">
@@ -161,17 +159,40 @@ export function SiteNav({
                   quietActive: { pl: "Cisza nocna — push wstrzymany", uk: "Тиша — push призупинено", cs: "Noční klid — push pozastaven", en: "Quiet hours — push held" }[lang]!,
                 }}
               />
-              <LanguageSwitcher current={lang} />
-              <LogoutButton label={t.logout} />
+              {/* Lang + logout live in header on desktop, in the drawer
+                  on mobile/tablet (see footer prop below). This removes
+                  the cramped 5-control cluster from narrow viewports
+                  per the demo-review punch list. */}
+              <span className="hidden lg:inline-flex">
+                <LanguageSwitcher current={lang} />
+              </span>
+              <span className="hidden lg:inline-flex">
+                <LogoutButton label={t.logout} />
+              </span>
               <MobileNavDrawer
                 ariaLabel={DRAWER_LABELS[lang].menu}
                 openLabel={DRAWER_LABELS[lang].open}
                 closeLabel={DRAWER_LABELS[lang].close}
                 footer={
-                  <span className="t-body-sm text-[var(--ink-muted)]">
-                    {username}
-                    {title ? ` · ${title}` : ""}
-                  </span>
+                  <>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="t-body-sm font-semibold text-[var(--foreground)]">
+                        {username}
+                      </span>
+                      {title && (
+                        <span className="text-[11px] font-semibold text-[var(--accent)]">
+                          {title}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <span className="t-overline text-[var(--ink-muted)]">
+                        {DRAWER_LABELS[lang].language}
+                      </span>
+                      <LanguageSwitcher current={lang} variant="drawer" />
+                    </div>
+                    <LogoutButton label={t.logout} />
+                  </>
                 }
               >
                 {navLinks.map((l) => (
@@ -183,8 +204,16 @@ export function SiteNav({
             </>
           ) : (
             <>
-              <LanguageSwitcher current={lang} />
-              <Link href="/login" className="btn btn-secondary btn-sm">
+              {/* Desktop: lang + login + register; Mobile: register only +
+                  drawer (login + lang inside). Cuts header to logo + 1
+                  primary CTA + menu per demo-review punch list. */}
+              <span className="hidden lg:inline-flex">
+                <LanguageSwitcher current={lang} />
+              </span>
+              <Link
+                href="/login"
+                className="hidden lg:inline-flex btn btn-secondary btn-sm"
+              >
                 {t.login}
               </Link>
               <Link href="/register" className="btn btn-sales btn-sm">
@@ -194,6 +223,22 @@ export function SiteNav({
                 ariaLabel={DRAWER_LABELS[lang].menu}
                 openLabel={DRAWER_LABELS[lang].open}
                 closeLabel={DRAWER_LABELS[lang].close}
+                footer={
+                  <>
+                    <Link
+                      href="/login"
+                      className="btn btn-secondary"
+                    >
+                      {t.login}
+                    </Link>
+                    <div className="flex flex-col gap-2">
+                      <span className="t-overline text-[var(--ink-muted)]">
+                        {DRAWER_LABELS[lang].language}
+                      </span>
+                      <LanguageSwitcher current={lang} variant="drawer" />
+                    </div>
+                  </>
+                }
               >
                 {navLinks.map((l) => (
                   <NavLink key={l.href} href={l.href} variant="mobile">

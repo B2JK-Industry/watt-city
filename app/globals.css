@@ -173,13 +173,16 @@ body {
 
 /* WebKit-in-Playwright bug workaround — doubled selector bumps
  * specificity to 0-2-0 so Tailwind v4's layered anchor resets cannot
- * suppress us. Do NOT flatten back to `.tap-target`. */
+ * suppress sizing. Do NOT flatten back to `.tap-target`.
+ *
+ * Sizing only — `display`/alignment intentionally NOT set here so that
+ * Tailwind responsive utilities (e.g. `sm:hidden`, `lg:hidden`) can win
+ * the `display` cascade. Each consumer is responsible for adding its
+ * own `inline-flex items-center justify-content-center` (or equivalent)
+ * when it wants centered icon content. */
 .tap-target.tap-target {
   min-height: 44px;
   min-width: 44px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .city-scene-viewport {

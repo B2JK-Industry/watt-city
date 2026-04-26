@@ -32,7 +32,7 @@ export function NavLink({ href, children, variant = "desktop" }: Props) {
       <Link
         href={href}
         aria-current={active ? "page" : undefined}
-        className={`tap-target px-2 py-1 rounded transition-colors ${
+        className={`tap-target inline-flex items-center px-2 py-1 rounded transition-colors ${
           active
             ? "text-[var(--accent)] font-semibold"
             : "text-[var(--ink-muted)] hover:text-[var(--accent)]"
