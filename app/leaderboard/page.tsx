@@ -42,6 +42,29 @@ export default async function LeaderboardPage({ searchParams }: Props) {
   const podium = entries.slice(0, 3);
   const rest = entries.slice(3);
 
+  // Credibility patch: a short metric + scope note under the headline.
+  // The leaderboard sometimes still shows seeded outliers, so the chip
+  // row tells visitors what they're looking at (W = Watts, not money;
+  // QA accounts hidden) — without a redesign.
+  const credibility = {
+    pl: {
+      metric: "W = Wat (XP z minigier)",
+      filtered: "Konta testowe ukryte",
+    },
+    uk: {
+      metric: "W = Ват (XP з міні-ігор)",
+      filtered: "Тестові акаунти приховані",
+    },
+    cs: {
+      metric: "W = Watt (XP z miniher)",
+      filtered: "Testovací účty skryté",
+    },
+    en: {
+      metric: "W = Watts (XP from mini-games)",
+      filtered: "Test accounts hidden",
+    },
+  }[lang];
+
   return (
     <div className="flex flex-col gap-6 animate-slide-up">
       <header className="flex flex-col gap-2">
@@ -61,6 +84,10 @@ export default async function LeaderboardPage({ searchParams }: Props) {
             ? t.gameBody.replace("{title}", game.title)
             : t.globalBody}
         </p>
+        <div className="flex flex-wrap gap-2 mt-1">
+          <span className="chip">⚡ {credibility.metric}</span>
+          <span className="chip">🛡 {credibility.filtered}</span>
+        </div>
       </header>
 
       <div className="flex flex-wrap gap-2">

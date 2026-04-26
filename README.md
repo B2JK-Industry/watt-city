@@ -245,10 +245,35 @@ ledger dedupe, building place/upgrade/demolish, tick catch-up with 30-day
 cap, amortization formula, default after 3 misses, cron auth matrix,
 rate-limit keying, mailer fallback, awardXP lock, parent-link redeem).
 
-Playwright E2E (14 specs): `pnpm test:e2e` covers smoke, prod-smoke,
+Playwright E2E (16 specs): `pnpm test:e2e` covers smoke, prod-smoke,
 api-contracts, security, data-integrity, a11y-matrix, golden-paths,
 perf, production-ready, rate-limits, bot-protection (opt-in), pwa,
-smoke.mobile, smoke.cross.
+smoke.mobile, smoke.cross, walkthrough (full anonymous + kid + teacher
+visual capture), ux-fixes (demo-review punch list — drawer focus,
+landing hierarchy, anonymous demo flow, public-surface filter).
+
+### Default workflow
+
+```
+pnpm test:e2e                                      # all specs, chromium-only
+pnpm exec playwright test ux-fixes                 # focused: punch list smoke
+pnpm exec playwright test --project=chromium walkthrough
+                                                   # 56-route capture + axe scan
+```
+
+`playwright.config.ts` defaults `baseURL` to `http://localhost:3000`
+and auto-starts `pnpm dev` for the `webServer`. **No spec hardcodes
+a port** — every test calls `page.goto("/...")` and the config decides
+the host. Override the target for preview/prod runs:
+
+```
+PLAYWRIGHT_BASE_URL=https://watt-city.vercel.app \
+PLAYWRIGHT_WEBSERVER=0 \
+  pnpm exec playwright test --project=chromium ux-fixes
+```
+
+Setting `PLAYWRIGHT_WEBSERVER=0` skips the local `pnpm dev` boot and
+points the suite at the URL you set.
 
 > E2E test accounts never reach the production Upstash — `playwright.config.ts`
 > blanks `UPSTASH_REDIS_REST_URL` + `_TOKEN` for its webServer so

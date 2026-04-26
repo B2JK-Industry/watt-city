@@ -572,7 +572,7 @@ export default async function SchoolsLanding() {
         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
           {t.complianceItems.map((line) => (
             <li key={line} className="flex items-start gap-2">
-              <span className="text-[var(--success)] font-bold">✓</span>
+              <span className="text-[var(--success)] font-semibold">✓</span>
               <span>{line}</span>
             </li>
           ))}
@@ -648,7 +648,7 @@ export default async function SchoolsLanding() {
 
       {/* -------- Bottom CTA (repeat primary actions) -------- */}
       <section className="card p-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-[var(--surface-2)]">
-        <p className="text-sm sm:text-base font-bold">
+        <p className="text-sm sm:text-base font-semibold">
           {lang === "pl"
             ? "Gotowy zobaczyć produkt?"
             : lang === "uk"

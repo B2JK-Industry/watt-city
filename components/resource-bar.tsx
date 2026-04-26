@@ -43,7 +43,7 @@ export function ResourceBar({ resources, lang, compact = false }: Props) {
             <span aria-hidden className="text-sm leading-none">
               {def.icon}
             </span>
-            <span className="font-bold" style={{ color: def.lightColor }}>
+            <span className="font-semibold" style={{ color: def.lightColor }}>
               {v.toLocaleString("pl-PL")}
             </span>
           </li>
@@ -64,7 +64,7 @@ export function ResourceBar({ resources, lang, compact = false }: Props) {
           <span aria-hidden className="text-sm leading-none">
             📦
           </span>
-          <span className="font-bold">{legacyTotal.toLocaleString("pl-PL")}</span>
+          <span className="font-semibold">{legacyTotal.toLocaleString("pl-PL")}</span>
           <span className="text-[10px]">V1</span>
         </li>
       )}

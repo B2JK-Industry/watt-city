@@ -269,7 +269,12 @@ export function Dashboard({
                   <li
                     key={e.username}
                     className={`flex items-center justify-between gap-3 py-2.5 border-b border-[var(--line)] last:border-b-0 ${
-                      isMe ? "bg-[color-mix(in_oklab,var(--accent)_4%,transparent)] -mx-3 px-3 rounded-md border-l-[3px] border-l-[var(--accent)]" : ""
+                      // Me-row tint + 1 px accent left rule. The
+                      // 3 px stripe was a brutalism leftover (max
+                      // 1 px borders per `01-BRAND-MANUAL.md` §7),
+                      // so the highlight comes from the navy 4%
+                      // background + the accent rule + bold font.
+                      isMe ? "bg-[color-mix(in_oklab,var(--accent)_4%,transparent)] -mx-3 px-3 rounded-md border-l border-l-[var(--accent)]" : ""
                     }`}
                   >
                     <span className="flex items-center gap-2.5 min-w-0">
@@ -329,7 +334,7 @@ export function Dashboard({
       {!isFresh && (
       <section className="flex flex-col gap-4">
         <div className="flex items-end justify-between">
-          <h2 className="text-2xl font-bold">{d.continueTitle}</h2>
+          <h2 className="text-2xl font-semibold">{d.continueTitle}</h2>
           <Link
             href="/games"
             className="text-sm text-[var(--accent)] hover:underline"
@@ -424,15 +429,18 @@ function Stat({
 }: {
   label: string;
   value: string;
-  /** When true, visually emphasised as the "primary" stat — left navy stripe
-   *  + navy value text on a light surface. Previous full-navy fill read as a
-   *  pressed/selected state which confused users (UX feedback 2026-04-25). */
+  /** When true, visually emphasised as the "primary" stat — left navy 1 px
+   *  rule + navy value text on a light surface. Previous full-navy fill
+   *  read as a pressed/selected state which confused users (UX feedback
+   *  2026-04-25). The 4 px rule was a brutalism leftover; brand manual
+   *  caps borders at 1 px and the navy value text already carries the
+   *  accent. */
   accent?: boolean;
 }) {
   return (
     <div
       className={`rounded-md border border-[var(--line)] bg-[var(--surface-2)] px-3 py-2 ${
-        accent ? "border-l-[4px] border-l-[var(--accent)]" : ""
+        accent ? "border-l border-l-[var(--accent)]" : ""
       }`}
     >
       <div className="text-[10px] font-semibold text-[var(--ink-muted)] uppercase tracking-wide">

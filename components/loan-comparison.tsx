@@ -175,7 +175,7 @@ export function LoanComparison({ rows, lang, principal, termMonths }: Props) {
                   row.cheapest ? "bg-[color:color-mix(in_srgb,var(--success),transparent_85%)]" : ""
                 }`}
               >
-                <td className="px-2 py-2 font-bold">
+                <td className="px-2 py-2 font-semibold">
                   <span className="block">{row.type.replace(/_/g, " ")}</span>
                   {row.cheapest && (
                     // The row already carries a green-tinted background

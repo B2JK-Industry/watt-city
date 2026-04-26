@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
@@ -17,7 +17,7 @@ type Props = {
 };
 
 /**
- * Mobile-only hamburger trigger + slide-in drawer (per spec §5).
+ * Mobile + tablet hamburger trigger + slide-in drawer (lg-and-below).
  *
  * Implementation note: the drawer is permanently mounted and slides in/out
  * via `translate-x` rather than conditionally rendered with an entrance
@@ -27,11 +27,21 @@ type Props = {
  * Always-mounted + transform transition is bullet-proof and matches the
  * "Material drawer" pattern most mobile users recognise.
  *
+ * Behaviour:
  * - Slide direction: right edge, 300 ms `cubic-bezier(.4,0,.2,1)`.
  * - Closes on backdrop click, Escape key, or route change.
  * - Locks body scroll while open.
  * - `prefers-reduced-motion`: globals.css overrides transition durations
  *   to 0.01 ms, so reduced-motion users get an instant toggle.
+ *
+ * Accessibility:
+ * - When opened: focus moves to the drawer's close button (first
+ *   actionable inside the panel). Tab cycles within the panel
+ *   (focus trap), Shift+Tab walks backwards. Escape closes.
+ * - When closed: focus returns to the trigger button — no orphan
+ *   focus state for keyboard users.
+ * - `inert` is set on the panel while closed so the focus order skips
+ *   it entirely (clears axe-core `aria-hidden-focus`).
  */
 export function MobileNavDrawer({
   ariaLabel,
@@ -42,12 +52,18 @@ export function MobileNavDrawer({
 }: Props) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const panelRef = useRef<HTMLElement | null>(null);
+  const closeBtnRef = useRef<HTMLButtonElement | null>(null);
 
   // Close on Escape — guarded so we don't attach a listener while closed.
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setOpen(false);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -69,15 +85,77 @@ export function MobileNavDrawer({
     };
   }, [open]);
 
+  // Focus management: when the drawer opens, move focus into the panel
+  // (the close button is the natural first stop — adjacent to the
+  // trigger and always present). When the drawer closes, restore focus
+  // to whatever opened it. We skip the restore on the very first
+  // render (`open` was false on mount) to avoid stealing focus from
+  // the page's intended initial focus owner.
+  const wasOpenRef = useRef(false);
+  useEffect(() => {
+    if (open) {
+      // defer one tick so the inert flip + transition-friendly state
+      // settles before we ask the browser for focus.
+      const id = window.setTimeout(() => {
+        closeBtnRef.current?.focus();
+      }, 0);
+      wasOpenRef.current = true;
+      return () => window.clearTimeout(id);
+    }
+    if (wasOpenRef.current) {
+      // Only restore once per close cycle — guard against React strict
+      // mode firing the effect cleanup twice.
+      wasOpenRef.current = false;
+      triggerRef.current?.focus();
+    }
+  }, [open]);
+
+  // Focus trap — Tab / Shift+Tab cycles within the drawer panel.
+  // Re-queries focusable descendants on every event so newly mounted
+  // children (e.g. opened popovers, async-rendered links) are
+  // included without bookkeeping.
+  useEffect(() => {
+    if (!open) return;
+    const panel = panelRef.current;
+    if (!panel) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+      const focusables = panel.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+      if (focusables.length === 0) {
+        e.preventDefault();
+        return;
+      }
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      if (e.shiftKey) {
+        if (active === first || !panel.contains(active)) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (active === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
         aria-label={open ? closeLabel : openLabel}
         aria-expanded={open}
         aria-controls="mobile-nav-drawer"
         onClick={() => setOpen((o) => !o)}
-        className="lg:hidden tap-target inline-flex items-center justify-center w-10 h-10 rounded-md text-[var(--ink)] hover:bg-[var(--surface-2)] transition-colors"
+        className="lg:hidden tap-target inline-flex items-center justify-center w-11 h-11 rounded-md text-[var(--ink)] hover:bg-[var(--surface-2)] transition-colors"
       >
         <svg
           width="22"
@@ -107,10 +185,9 @@ export function MobileNavDrawer({
       {/* Drawer panel — always mounted, slides via transform. tabIndex=-1
           on the dialog allows focus management without making the panel
           a tab stop itself. The `inert` attribute (when closed) removes
-          the panel + every descendant from the focus order — required
-          to clear axe-core `aria-hidden-focus` (the prior `aria-hidden`
-          alone left focusable nav links inside an aria-hidden subtree). */}
+          the panel + every descendant from the focus order. */}
       <aside
+        ref={panelRef}
         id="mobile-nav-drawer"
         role="dialog"
         aria-modal="true"
@@ -118,8 +195,7 @@ export function MobileNavDrawer({
         aria-hidden={!open}
         // React 19 forwards `inert` as the standard HTML attribute on
         // every element. When `open` is false, focus + a11y tree skip
-        // the panel entirely. (Removed when `open` is true so menu
-        // contents are reachable via keyboard.)
+        // the panel entirely.
         inert={!open}
         tabIndex={-1}
         className={`lg:hidden fixed top-0 right-0 bottom-0 z-40 w-[min(85vw,360px)] bg-[var(--surface)] flex flex-col transition-transform duration-300 ease-out shadow-[0_8px_24px_rgba(0,0,0,0.12)] ${
@@ -129,10 +205,11 @@ export function MobileNavDrawer({
         <div className="flex items-center justify-between px-4 h-[56px] border-b border-[var(--line)]">
           <span className="t-h5 text-[var(--accent)]">{ariaLabel}</span>
           <button
+            ref={closeBtnRef}
             type="button"
             aria-label={closeLabel}
             onClick={() => setOpen(false)}
-            className="tap-target w-9 h-9 inline-flex items-center justify-center rounded-md hover:bg-[var(--surface-2)] transition-colors"
+            className="tap-target w-11 h-11 inline-flex items-center justify-center rounded-md hover:bg-[var(--surface-2)] transition-colors"
           >
             <svg
               width="18"

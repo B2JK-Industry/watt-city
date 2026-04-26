@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { LANGS, LANG_FLAG, LANG_LABEL, type Lang } from "@/lib/i18n";
 
 type Variant = "header" | "drawer";
@@ -16,6 +17,7 @@ type Props = {
 };
 
 export function LanguageSwitcher({ current, variant = "header" }: Props) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState<Lang | null>(null);
   const ref = useRef<HTMLDivElement | null>(null);
@@ -40,9 +42,16 @@ export function LanguageSwitcher({ current, variant = "header" }: Props) {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ lang }),
       });
+      // Soft transition — `router.refresh()` re-runs the server tree
+      // (server components, layout, page) with the new `xp_lang`
+      // cookie and patches the rendered DOM in place. The previous
+      // `window.location.reload()` killed scroll position, blanked
+      // the page, and visibly re-mounted client islands; this swap
+      // looks like a language change, not an app crash.
+      router.refresh();
+      setOpen(false);
     } finally {
-      // hard reload so server components re-render with new dict
-      window.location.reload();
+      setPending(null);
     }
   }
 

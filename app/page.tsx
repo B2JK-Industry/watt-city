@@ -155,21 +155,30 @@ export default async function Home() {
               {t.ctaAbout}
             </Link>
           </div>
+          {/* Hero teaser tiles. Each tile is now a real `<Link>` —
+              the previous implementation rendered them as `card
+              card--interactive` `<li>`s with hover affordance but
+              no destination, so visitors clicked into a dead surface.
+              `finance-quiz` is the anonymous demo entry; the rest
+              redirect unauth'd visitors to `/login?next=/games/<id>`
+              after the login wall is hit on the game route. */}
           <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {GAMES.slice(0, 4).map((g) => (
-              <li
-                key={g.id}
-                className="card card--interactive p-4 flex flex-col items-start gap-3 min-h-[120px]"
-              >
-                <span
-                  aria-hidden
-                  className="w-11 h-11 rounded-md inline-flex items-center justify-center bg-[var(--surface-2)] border border-[var(--line)] text-xl"
+              <li key={g.id}>
+                <Link
+                  href={`/games/${g.id}`}
+                  className="card card--interactive p-4 flex flex-col items-start gap-3 min-h-[120px] h-full text-[var(--foreground)] hover:text-[var(--accent)] transition-colors"
                 >
-                  {g.emoji}
-                </span>
-                <span className="t-body-sm font-medium text-[var(--foreground)] leading-snug text-balance">
-                  {g.title}
-                </span>
+                  <span
+                    aria-hidden
+                    className="w-11 h-11 rounded-md inline-flex items-center justify-center bg-[var(--surface-2)] border border-[var(--line)] text-xl"
+                  >
+                    {g.emoji}
+                  </span>
+                  <span className="t-body-sm font-medium leading-snug text-balance">
+                    {g.title}
+                  </span>
+                </Link>
               </li>
             ))}
           </ul>
