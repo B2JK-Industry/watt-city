@@ -32,9 +32,9 @@ const cs: typeof plDict = {
     ctaGames: "Přehled her",
     topTitle: "Top 5 globálně",
     topEmpty: "Zatím nikdo neskóroval. Buď první!",
-    scenesTitle: "Noc nad Katovicemi",
+    scenesTitle: "Tvé město čeká",
     scenesBody:
-      "9 budov = 9 miniher. Dokud nezahraješ, budova stojí ve tmě. Po registraci rozsviť celé město.",
+      "9 budov = 9 miniher. Každá zahraná minihra přidá budovu do tvého Watt City. Po registraci postavíš celé město.",
   },
   auth: {
     loginTitle: "Přihlášení",
@@ -83,7 +83,7 @@ const cs: typeof plDict = {
     timeMinutesAgo: "před {n} min",
     timeHoursAgo: "před {n} h",
     timeDaysAgo: "před {n} d",
-    cityNightTitle: "Noc nad Katovicemi",
+    cityNightTitle: "Tvé město",
     cityNightOpen: "Otevřít městečko",
     dataRightsTitle: "Moje data a práva",
     dataRightsBody:

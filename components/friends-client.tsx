@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { EmptyState } from "@/components/empty-state";
 
 type Data = {
   friends: string[];
@@ -29,6 +30,10 @@ type Copy = {
   privateOpt: string;
   cashflowOpt: string;
   empty: string;
+  /** G-03 — surfaces shown when the friends list is still empty. */
+  emptyTitle: string;
+  emptyBody: string;
+  emptyCta: string;
 };
 
 export function FriendsClient({ copy }: { copy: Copy }) {
@@ -118,17 +123,22 @@ export function FriendsClient({ copy }: { copy: Copy }) {
         </section>
       )}
 
-      <section className="card p-4 flex flex-col gap-2">
+      <section className="flex flex-col gap-2">
         <h2 className="text-sm font-semibold">
           {copy.friendsLabel} · {data.friends.length}
         </h2>
         {data.friends.length === 0 ? (
-          <p className="text-xs text-[var(--ink-muted)]">{copy.empty}</p>
+          <EmptyState
+            icon="👥"
+            title={copy.emptyTitle}
+            body={copy.emptyBody}
+            cta={{ href: "/profile", label: copy.emptyCta, variant: "secondary" }}
+          />
         ) : (
-          <ul className="flex flex-col gap-2">
+          <ul className="card p-4 flex flex-col gap-2">
             {data.friends.map((u) => (
               <li key={u} className="flex items-center justify-between gap-2">
-                <Link href={`/friends/${encodeURIComponent(u)}`} className="font-bold underline">
+                <Link href={`/friends/${encodeURIComponent(u)}`} className="font-semibold underline">
                   {u}
                 </Link>
                 <div className="flex gap-1">

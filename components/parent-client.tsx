@@ -19,6 +19,10 @@ type Copy = {
   generate: string;
   link: string;
   open: string;
+  /** F-NEW-12 — short helper line under the join-code input. */
+  codeHelper: string;
+  /** F-NEW-12 — chip with live "X/6 znaków" countdown. {n} → typed length. */
+  codeProgress: string;
 };
 
 type Props = {
@@ -119,12 +123,35 @@ export function ParentClient({ role: initialRole, kids: initialKids, parents, pr
             value={linkCode}
             onChange={(e) => setLinkCode(e.target.value.toUpperCase())}
             aria-labelledby="link-as-parent-heading"
+            aria-describedby="link-as-parent-helper"
             className="flex-1 px-3 py-2 border border-[var(--line)] rounded bg-[var(--surface-2)] font-mono"
             maxLength={16}
           />
-          <button className="btn btn-primary" onClick={link} disabled={busy || linkCode.length < 4}>
+          {/* F-NEW-12 — visual states. Default outline ("looks
+              clickable" — not the gray-disabled it used to be); fills
+              navy once 6 chars are typed (the server-side validated
+              code length). Even before 6 chars the button is
+              clickable; the API will reject and we surface the error
+              instead of the hard `disabled` UI. */}
+          <button
+            className={`btn ${linkCode.length === 6 ? "btn-primary" : "btn-secondary"}`}
+            onClick={link}
+            disabled={busy}
+            aria-label={copy.link}
+          >
             {copy.link}
           </button>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <p
+            id="link-as-parent-helper"
+            className="t-body-sm text-[var(--ink-muted)] flex-1"
+          >
+            {copy.codeHelper}
+          </p>
+          <span className="chip text-[10px]">
+            {copy.codeProgress.replace("{n}", String(linkCode.length))}
+          </span>
         </div>
       </section>
 

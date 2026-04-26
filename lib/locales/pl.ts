@@ -30,9 +30,9 @@ const pl = {
     ctaGames: "Przegląd gier",
     topTitle: "Top 5 globalnie",
     topEmpty: "Jeszcze nikt nie zdobył punktów. Bądź pierwszy!",
-    scenesTitle: "Noc nad Katowicami",
+    scenesTitle: "Twoje miasto czeka",
     scenesBody:
-      "9 budynków = 9 mini-gier. Dopóki nie zagrasz, budynek stoi w ciemności. Po rejestracji rozświetl całe miasto.",
+      "9 budynków = 9 minigier. Każda zagrana minigra dodaje budynek do twojego Watt City. Po rejestracji rozbudujesz całe miasto.",
   },
   auth: {
     loginTitle: "Logowanie",
@@ -81,7 +81,7 @@ const pl = {
     timeMinutesAgo: "{n} min temu",
     timeHoursAgo: "{n} h temu",
     timeDaysAgo: "{n} dni temu",
-    cityNightTitle: "Noc nad Katowicami",
+    cityNightTitle: "Twoje miasto",
     cityNightOpen: "Otwórz miasteczko",
     dataRightsTitle: "Moje dane i prawa",
     dataRightsBody:

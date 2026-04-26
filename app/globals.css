@@ -282,6 +282,30 @@ body {
   stroke: var(--line);
 }
 
+/* G-01 (F-NEW-19): broaden the night-fill override to raw `<rect>`
+ * silhouettes that the gradient-stop selector misses. The hero +
+ * the main `CityScene` use the same dark navy/slate palette
+ * (#0f172a, #1e293b, #1f2937, #111827) on building bodies, plus a
+ * deeper near-black tier (#0a0a0f, #020617, #000) on shadow / sign
+ * details. Without this block the buildings stay noir even after
+ * the sky lifts, so the surface still reads "noc nad Katowicami".
+ *
+ * Scope is `.city-scene-root` only, so [data-skin="core"] ostáva
+ * v pôvodnom neon look (verified by reading the existing
+ * [stroke="#0a0a0f"] retint above which uses the same scoping). */
+:where([data-skin="pko"]) .city-scene-root [fill="#0f172a"],
+:where([data-skin="pko"]) .city-scene-root [fill="#1e293b"],
+:where([data-skin="pko"]) .city-scene-root [fill="#111827"] {
+  fill: var(--sc-building-primary);
+}
+:where([data-skin="pko"]) .city-scene-root [fill="#0a0a0f"],
+:where([data-skin="pko"]) .city-scene-root [fill="#020617"],
+:where([data-skin="pko"]) .city-scene-root [fill="#000"],
+:where([data-skin="pko"]) .city-scene-root [fill="#000000"],
+:where([data-skin="pko"]) .city-scene-root [fill="#111"] {
+  fill: var(--sc-building-secondary);
+}
+
 /* CitySkylineHero empty-state overlay. The original `bg-black/40`
  * scrim was tuned for the legacy night sky; on the new pko light sky
  * it reads as an unwanted dark wash. Default = light scrim + accent

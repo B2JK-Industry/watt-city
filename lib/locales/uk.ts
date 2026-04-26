@@ -32,9 +32,9 @@ const uk: typeof plDict = {
     ctaGames: "Огляд ігор",
     topTitle: "Топ 5 глобально",
     topEmpty: "Поки ніхто не набрав балів. Будь першим!",
-    scenesTitle: "Ніч над Катовіцами",
+    scenesTitle: "Твоє місто чекає",
     scenesBody:
-      "9 будинків = 9 міні-ігор. Поки не зіграєш, будинок стоїть у темряві. Після реєстрації засвіти все місто.",
+      "9 будинків = 9 міні-ігор. Кожна зіграна міні-гра додає будинок до твого Watt City. Після реєстрації побудуєш ціле місто.",
   },
   auth: {
     loginTitle: "Вхід",
@@ -83,7 +83,7 @@ const uk: typeof plDict = {
     timeMinutesAgo: "{n} хв тому",
     timeHoursAgo: "{n} год тому",
     timeDaysAgo: "{n} д тому",
-    cityNightTitle: "Ніч над Катовіцами",
+    cityNightTitle: "Твоє місто",
     cityNightOpen: "Відкрити містечко",
     dataRightsTitle: "Мої дані та права",
     dataRightsBody:

@@ -26,6 +26,10 @@ export default async function FriendsPage() {
       privateOpt: "Prywatny",
       cashflowOpt: "Pokaż cashflow i zasoby innym",
       empty: "Jeszcze nikogo tu nie ma.",
+      emptyTitle: "Zaproś pierwszego znajomego",
+      emptyBody:
+        "Twoja lista znajomych jest pusta. Udostępnij swój profil — Twoi koledzy zobaczą Twoje miasto i pojedynki.",
+      emptyCta: "Zobacz swój profil",
     },
     uk: {
       friendsLabel: "Друзі",
@@ -43,6 +47,10 @@ export default async function FriendsPage() {
       privateOpt: "Приватний",
       cashflowOpt: "Показувати cashflow та ресурси",
       empty: "Поки що порожньо.",
+      emptyTitle: "Запроси першого друга",
+      emptyBody:
+        "Список друзів порожній. Поділись профілем — друзі побачать твоє місто і дуелі.",
+      emptyCta: "Переглянути профіль",
     },
     cs: {
       friendsLabel: "Přátelé",
@@ -60,6 +68,10 @@ export default async function FriendsPage() {
       privateOpt: "Soukromý",
       cashflowOpt: "Zobrazovat cashflow a zdroje",
       empty: "Ještě nikdo.",
+      emptyTitle: "Pozvi prvního přítele",
+      emptyBody:
+        "Seznam přátel je prázdný. Sdílej svůj profil — přátelé uvidí tvé město a duely.",
+      emptyCta: "Zobrazit profil",
     },
     en: {
       friendsLabel: "Friends",
@@ -77,6 +89,10 @@ export default async function FriendsPage() {
       privateOpt: "Private",
       cashflowOpt: "Show cashflow + resources to others",
       empty: "No one here yet.",
+      emptyTitle: "Invite your first friend",
+      emptyBody:
+        "Your friends list is empty. Share your profile — friends will see your city and duels.",
+      emptyCta: "Open your profile",
     },
   }[lang];
 

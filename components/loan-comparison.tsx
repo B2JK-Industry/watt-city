@@ -6,9 +6,17 @@
  * a green check; kredyt_konsumencki gets the red warning tooltip
  * about hidden fees. "Take this" button per row → /api/loans/take
  * (TODO post-V3: direct route), fallback to existing flow on /miasto.
+ *
+ * G-04 (F-NEW-09) — interactive controls. Principal slider +
+ * segmented term selector live above the table. Every change
+ * pushes the new params into the URL via `router.replace` so the
+ * server re-renders `compareLoans(principal, termMonths)`. We
+ * don't keep a parallel client-side state — single source of
+ * truth stays the URL params, the table redraws on RSC re-fetch.
  */
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import type { Lang } from "@/lib/i18n";
 import type { LoanComparisonRow } from "@/lib/loans";
 
@@ -26,7 +34,9 @@ type Copy = Record<
   | "ineligible"
   | "noRows"
   | "principalLabel"
-  | "termLabel",
+  | "termLabel"
+  | "principalAria"
+  | "termAria",
   string
 >;
 
@@ -47,6 +57,8 @@ const COPY: Record<Lang, Copy> = {
     noRows: "Żaden produkt nie pasuje do tego terminu. Zmień długość spłaty.",
     principalLabel: "Kwota",
     termLabel: "Okres (msc)",
+    principalAria: "Kwota kredytu w W$",
+    termAria: "Okres spłaty w miesiącach",
   },
   uk: {
     heading: "Порівняй кредити",
@@ -64,6 +76,8 @@ const COPY: Record<Lang, Copy> = {
     noRows: "Жоден продукт не підходить для цього терміну.",
     principalLabel: "Сума",
     termLabel: "Період (міс)",
+    principalAria: "Сума кредиту в W$",
+    termAria: "Період погашення (міс)",
   },
   cs: {
     heading: "Porovnej půjčky",
@@ -81,6 +95,8 @@ const COPY: Record<Lang, Copy> = {
     noRows: "Žádný produkt nepasuje na tento termín.",
     principalLabel: "Částka",
     termLabel: "Období (měs)",
+    principalAria: "Částka úvěru v W$",
+    termAria: "Doba splácení v měsících",
   },
   en: {
     heading: "Compare loans",
@@ -98,8 +114,18 @@ const COPY: Record<Lang, Copy> = {
     noRows: "No product matches this term — change the repayment length.",
     principalLabel: "Principal",
     termLabel: "Term (mo)",
+    principalAria: "Loan principal in W$",
+    termAria: "Term in months",
   },
 };
+
+/* G-04 — fixed term presets (per spec). Allowing arbitrary values
+ * would let the URL encode unsupported terms; the segmented control
+ * matches what `compareLoans` validates against. */
+const TERM_OPTIONS = [6, 12, 24, 36] as const;
+const PRINCIPAL_MIN = 1000;
+const PRINCIPAL_MAX = 10000;
+const PRINCIPAL_STEP = 500;
 
 type Props = {
   rows: LoanComparisonRow[];
@@ -110,9 +136,31 @@ type Props = {
 
 export function LoanComparison({ rows, lang, principal, termMonths }: Props) {
   const t = COPY[lang];
+  const router = useRouter();
+  const pathname = usePathname();
   const [taking, setTaking] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [taken, setTaken] = useState<string | null>(null);
+  // Mirror props in local state so the slider feels responsive even
+  // before the RSC re-fetch returns; props win on the next render.
+  const [draftPrincipal, setDraftPrincipal] = useState(principal);
+  useEffect(() => setDraftPrincipal(principal), [principal]);
+
+  // Debounce URL push during slider drag — avoid burning a
+  // server-render per pixel of `<input type=range>` movement.
+  const pushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  function pushParams(p: number, term: number) {
+    if (pushTimer.current) clearTimeout(pushTimer.current);
+    pushTimer.current = setTimeout(() => {
+      const usp = new URLSearchParams();
+      usp.set("principal", String(p));
+      usp.set("term", String(term));
+      router.replace(`${pathname}?${usp.toString()}`, { scroll: false });
+    }, 200);
+  }
+  useEffect(() => () => {
+    if (pushTimer.current) clearTimeout(pushTimer.current);
+  }, []);
 
   async function takeLoan(type: string) {
     setTaking(type);
@@ -147,12 +195,63 @@ export function LoanComparison({ rows, lang, principal, termMonths }: Props) {
 
   return (
     <section className="card p-4 sm:p-6 flex flex-col gap-4">
-      <div className="flex items-baseline justify-between flex-wrap gap-2">
-        <h2 className="section-heading text-xl sm:text-2xl">{t.heading}</h2>
-        <p className="text-xs opacity-70">
-          {t.principalLabel}: <strong>{principal.toLocaleString("pl-PL")} W$</strong> ·{" "}
-          {t.termLabel}: <strong>{termMonths}</strong>
-        </p>
+      <h2 className="section-heading text-xl sm:text-2xl">{t.heading}</h2>
+
+      {/* G-04 — Interactive controls. Principal is a range slider
+          (1k–10k W$, step 500). Term is a 4-option segmented row.
+          Each change pushes to URL (debounced) → server re-renders
+          the comparison. The visible value mirrors the dragged
+          number so the slider feels live; props win on next render. */}
+      <div className="flex flex-col gap-3">
+        <label className="flex flex-col gap-1.5">
+          <span className="flex items-baseline justify-between t-body-sm text-[var(--ink-muted)]">
+            <span>{t.principalLabel}</span>
+            <span className="tabular-nums font-semibold text-[var(--accent)]">
+              {draftPrincipal.toLocaleString("pl-PL")} W$
+            </span>
+          </span>
+          <input
+            type="range"
+            aria-label={t.principalAria}
+            min={PRINCIPAL_MIN}
+            max={PRINCIPAL_MAX}
+            step={PRINCIPAL_STEP}
+            value={draftPrincipal}
+            onChange={(e) => {
+              const v = Number(e.target.value);
+              setDraftPrincipal(v);
+              pushParams(v, termMonths);
+            }}
+            className="w-full accent-[var(--accent)]"
+          />
+        </label>
+        <div
+          role="radiogroup"
+          aria-label={t.termAria}
+          className="flex flex-wrap gap-1.5"
+        >
+          {TERM_OPTIONS.map((m) => {
+            const active = m === termMonths;
+            return (
+              <button
+                key={m}
+                type="button"
+                role="radio"
+                aria-checked={active}
+                onClick={() => pushParams(draftPrincipal, m)}
+                className={`tap-target inline-flex items-center justify-center px-4 rounded-md transition-colors ${
+                  active
+                    ? "bg-[var(--accent)] text-[var(--accent-ink)] font-semibold"
+                    : "bg-[var(--surface-2)] text-[var(--foreground)] border border-[var(--line)] hover:border-[var(--accent)]"
+                }`}
+              >
+                <span className="tabular-nums">
+                  {m} <span className="opacity-60">{t.termLabel.replace(/^.*\(/, "(")}</span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm border-collapse">

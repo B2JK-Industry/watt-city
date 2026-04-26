@@ -38,10 +38,12 @@ export default async function ParentPage() {
       generate: "Wygeneruj",
       link: "Połącz",
       open: "Otwórz",
+      codeHelper: "Wpisz 6-znakowy kod, który dostało Twoje dziecko przy generowaniu.",
+      codeProgress: "{n}/6 znaków",
     },
-    uk: { heading: "Батьки і діти", generateCode: "Згенерувати код (дитина)", linkAsParent: "Приєднатись як батьки", linked: "Підключено", children: "Діти", parents: "Батьки", privacy: "Що бачать батьки", hideLedger: "Приховати історію", hideDuels: "Приховати дуелі", hideBuildings: "Приховати місто", newCode: "Одноразовий код (24 год)", generate: "Згенерувати", link: "Підключити", open: "Відкрити" },
-    cs: { heading: "Rodič a dítě", generateCode: "Vygenerovat kód (dítě)", linkAsParent: "Připojit jako rodič", linked: "Propojeno", children: "Děti", parents: "Rodiče", privacy: "Co rodič vidí", hideLedger: "Skrýt historii", hideDuels: "Skrýt duely", hideBuildings: "Skrýt město", newCode: "Jednorázový kód (24 h)", generate: "Vygenerovat", link: "Propojit", open: "Otevřít" },
-    en: { heading: "Parent & child", generateCode: "Generate link code (kid)", linkAsParent: "Link as parent", linked: "Linked", children: "Your children", parents: "Your parents", privacy: "What parents see", hideLedger: "Hide resource history", hideDuels: "Hide duel history", hideBuildings: "Hide city map", newCode: "Your one-time code (24h)", generate: "Generate", link: "Link", open: "Open" },
+    uk: { heading: "Батьки і діти", generateCode: "Згенерувати код (дитина)", linkAsParent: "Приєднатись як батьки", linked: "Підключено", children: "Діти", parents: "Батьки", privacy: "Що бачать батьки", hideLedger: "Приховати історію", hideDuels: "Приховати дуелі", hideBuildings: "Приховати місто", newCode: "Одноразовий код (24 год)", generate: "Згенерувати", link: "Підключити", open: "Відкрити", codeHelper: "Введи 6-значний код, який згенерувала твоя дитина.", codeProgress: "{n}/6 символів" },
+    cs: { heading: "Rodič a dítě", generateCode: "Vygenerovat kód (dítě)", linkAsParent: "Připojit jako rodič", linked: "Propojeno", children: "Děti", parents: "Rodiče", privacy: "Co rodič vidí", hideLedger: "Skrýt historii", hideDuels: "Skrýt duely", hideBuildings: "Skrýt město", newCode: "Jednorázový kód (24 h)", generate: "Vygenerovat", link: "Propojit", open: "Otevřít", codeHelper: "Zadej 6-znakový kód, který vygeneroval tvůj žák.", codeProgress: "{n}/6 znaků" },
+    en: { heading: "Parent & child", generateCode: "Generate link code (kid)", linkAsParent: "Link as parent", linked: "Linked", children: "Your children", parents: "Your parents", privacy: "What parents see", hideLedger: "Hide resource history", hideDuels: "Hide duel history", hideBuildings: "Hide city map", newCode: "Your one-time code (24h)", generate: "Generate", link: "Link", open: "Open", codeHelper: "Enter the 6-character code your child generated.", codeProgress: "{n}/6 chars" },
   }[lang];
 
   return (

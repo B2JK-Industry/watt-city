@@ -6,6 +6,7 @@ import { getSession } from "@/lib/session";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 import { takeFiltered } from "@/lib/account-filter";
+import { EmptyState } from "@/components/empty-state";
 
 export const dynamic = "force-dynamic";
 
@@ -136,11 +137,37 @@ export default async function LeaderboardPage({ searchParams }: Props) {
       )}
 
       {entries.length === 0 ? (
-        <div className="card p-10 text-center text-[var(--ink-muted)]">
-          {game
-            ? t.emptyGame.replace("{title}", game.title)
-            : t.empty}
-        </div>
+        <EmptyState
+          icon="🏆"
+          title={
+            {
+              pl: "Bądź pierwszy!",
+              uk: "Будь першим!",
+              cs: "Buď první!",
+              en: "Be the first!",
+            }[lang]
+          }
+          body={
+            game
+              ? t.emptyGame.replace("{title}", game.title)
+              : {
+                  pl: "Liga jest pusta. Zagraj minigrę i zdobądź pierwsze Waty.",
+                  uk: "Ліга порожня. Зіграй міні-гру та здобудь перші Вати.",
+                  cs: "Žebříček je prázdný. Zahraj minihru a získej první Watty.",
+                  en: "The league is empty. Play a mini-game to score the first Watts.",
+                }[lang]
+          }
+          cta={{
+            href: "/games",
+            label: {
+              pl: "Zagraj minigrę",
+              uk: "Зіграти міні-гру",
+              cs: "Zahrát minihru",
+              en: "Play a mini-game",
+            }[lang],
+            variant: "sales",
+          }}
+        />
       ) : (
         <div className="card overflow-hidden">
           <table className="w-full">

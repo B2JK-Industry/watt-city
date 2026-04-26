@@ -32,9 +32,9 @@ const en: typeof plDict = {
     ctaGames: "Game overview",
     topTitle: "Top 5 globally",
     topEmpty: "Nobody has scored yet. Be first!",
-    scenesTitle: "Night over Katowice",
+    scenesTitle: "Your city is waiting",
     scenesBody:
-      "9 buildings = 9 mini-games. Until you play, the building stays dark. After signup, light up the whole city.",
+      "9 buildings = 9 mini-games. Every mini-game you play adds a building to your Watt City. Sign up to build the whole city.",
   },
   auth: {
     loginTitle: "Log in",
@@ -83,7 +83,7 @@ const en: typeof plDict = {
     timeMinutesAgo: "{n} min ago",
     timeHoursAgo: "{n} h ago",
     timeDaysAgo: "{n} d ago",
-    cityNightTitle: "Night over Katowice",
+    cityNightTitle: "Your city",
     cityNightOpen: "Open the city",
     dataRightsTitle: "My data & rights",
     dataRightsBody:
