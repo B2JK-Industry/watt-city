@@ -466,11 +466,19 @@ function BuildingDetail({
   busy: boolean;
 }) {
   const isDomek = building.catalogId === "domek";
-  const atMax = building.level >= 10 || upgrade === null;
+  // R-12 — defensive null/undefined check. The /api/buildings GET
+  // response previously dropped the `upgrade` field, so after a
+  // successful upgrade the refreshed slot had `upgrade === undefined`,
+  // and `upgrade !== null` evaluated true → reading
+  // `.nextLevelAffordable` on undefined threw. The route now passes
+  // `upgrade` through, but the client guard collapses both `null` and
+  // `undefined` so a future regression cannot crash the page again.
+  const hasUpgrade = upgrade != null;
+  const atMax = building.level >= 10 || !hasUpgrade;
   const canUpgrade =
-    upgrade !== null && upgrade.nextLevelAffordable && !busy;
+    hasUpgrade && upgrade.nextLevelAffordable && !busy;
   const missingText =
-    upgrade && !upgrade.nextLevelAffordable
+    hasUpgrade && !upgrade.nextLevelAffordable && upgrade.missing
       ? formatResourceMissing(upgrade.missing, lang)
       : "";
   return (

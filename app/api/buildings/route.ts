@@ -22,8 +22,17 @@ export async function GET() {
     lifetimeEarned(state),
   ]);
   const snapshot = await Promise.all(
-    slotSnapshot(state).map(async ({ slot, building, catalog: c }) => ({
+    slotSnapshot(state).map(async ({ slot, building, catalog: c, upgrade }) => ({
       slot,
+      // R-12 — `upgrade` MUST be passed through. The client UI reads
+      // `slot.upgrade.nextLevelAffordable` to compute `canUpgrade`,
+      // so dropping the field meant `undefined.nextLevelAffordable`
+      // threw on every refresh after a successful /api/buildings/upgrade
+      // POST — caught by the new app/miasto/error.tsx boundary,
+      // looking like a page crash to the user. The bootstrap fetched
+      // server-side at `app/miasto/page.tsx` includes upgrade; the
+      // refresh path now matches.
+      upgrade,
       building: building
         ? {
             ...building,
