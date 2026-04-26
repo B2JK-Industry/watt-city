@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { LogoutButton } from "@/components/logout-button";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ResourceBar } from "@/components/resource-bar";
@@ -117,16 +118,27 @@ export function SiteNav({
             // logo block, not a square clipped through the navy tile.
             // Padding gives the orange accent breathing room from the
             // outline.
+            //
+            // Icon swap (PR-M) — replaced the WC initials chip with the
+            // shipped brand mark (`/app/icon.png` is the favicon source;
+            // `wattcity-icon-96.png` is the same artwork at nav-bar dpr).
+            // Wordmark + "by PKO" stay text-based so they remain
+            // theme-aware (token-driven colour) and translatable —
+            // the bitmap holds only the iconography.
             <Link
               href="/"
               className="flex items-center gap-2.5 rounded-md px-1 -mx-1"
+              aria-label={`${theme.brand} by PKO`}
             >
-              <span
-                className="inline-flex items-center justify-center w-9 h-9 rounded-md font-semibold text-base"
-                style={{ background: theme.colors.accent, color: theme.colors.accentInk }}
-              >
-                {theme.brandShort}
-              </span>
+              <Image
+                src="/brand/wattcity-icon-96.png"
+                alt=""
+                aria-hidden
+                width={36}
+                height={36}
+                priority
+                className="rounded-md"
+              />
               <span className="flex items-baseline gap-1.5">
                 <span className="font-semibold text-lg text-[var(--foreground)]">
                   {theme.brand}
