@@ -87,16 +87,14 @@ export function SiteNav({
   // entry point. Anonymous visitor gets the classroom landing CTA;
   // logged-in teacher gets the class dashboard; logged-in parent
   // (linked to a kid) gets the observer dashboard.
-  // R-03 — `/loans/compare` was previously reachable only from the
-  // /miasto mortgage panel deep-link. Adding the 5th nav slot makes
-  // the comparison surface a first-class entry. The label keys land
-  // in `nav.loans` for all 4 locales (Kredyty / Кредити / Půjčky /
-  // Loans). Anonymous users are bounced to /login by the page guard,
-  // which is consistent with /miasto.
+  // F-01 — the 5th `/loans/compare` slot (added in R-03) is removed
+  // again. LoanComparison now lives inline inside the Hypotéka panel
+  // on /miasto, so a separate nav entry is redundant + costs IA
+  // budget. The deprecated route still 308-redirects to /miasto#hypoteka
+  // (see app/loans/compare/page.tsx) so existing bookmarks survive.
   const navLinks: Array<{ href: string; label: string }> = [
     { href: "/miasto", label: t.city },
     { href: "/games", label: t.games },
-    { href: "/loans/compare", label: t.loans },
     { href: "/leaderboard", label: t.league },
     { href: "/o-platforme", label: t.about },
   ];

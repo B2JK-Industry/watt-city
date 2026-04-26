@@ -10,6 +10,7 @@ import { CitySkylineHero } from "@/components/city-skyline-hero";
 import { LoanSchedule } from "@/components/loan-schedule";
 import { DeleteAccountButton } from "@/components/delete-account-button";
 import { CityLevelCard } from "@/components/city-level-card";
+import { MedalRing } from "@/components/medal-ring";
 import type { PlayerState } from "@/lib/player";
 import type { Dict, Lang } from "@/lib/i18n";
 import { avatarFor } from "@/lib/avatars";
@@ -160,7 +161,6 @@ export function Dashboard({
     .sort((a, b) => b.stats.lastPlayedAt - a.stats.lastPlayedAt)
     .slice(0, 3);
   const recommended = unplayed[0] ?? GAMES[0];
-  const progressPct = Math.round(level.progress * 100);
   const circumference = 2 * Math.PI * 52;
   const dashOffset = circumference * (1 - level.progress);
   const cityGames: CityGameState[] = GAMES.map((g) => ({
@@ -268,7 +268,15 @@ export function Dashboard({
                     hero now surfaces XP progression only as a secondary ring. */}
               </div>
             </div>
-            <div className="relative">
+            {/* F-04 — XP-tier ring uses --sales (orange) + MedalRing
+                icon + "Tvůj tier" label so it visually + textually
+                separates from the city-level ring (navy +
+                BuildingStackBadge + "Stupeň města") in CityLevelCard
+                directly above. The two metrics are different:
+                tier = XP earned by playing, city level = buildings
+                you placed. Pre-F-04 both rings shared --accent and
+                neither was labelled — players reported confusion. */}
+            <div className="relative" title={d.yourTierTooltip}>
               <svg width="96" height="96" viewBox="0 0 120 120" aria-hidden>
                 <circle
                   cx="60"
@@ -283,7 +291,7 @@ export function Dashboard({
                   cy="60"
                   r="52"
                   fill="none"
-                  stroke="var(--accent)"
+                  stroke="var(--sales)"
                   strokeWidth="6"
                   strokeLinecap="round"
                   strokeDasharray={circumference}
@@ -291,12 +299,10 @@ export function Dashboard({
                   transform="rotate(-90 60 60)"
                 />
               </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-[10px] text-[var(--ink-muted)]">
-                  XP
-                </span>
-                <span className="text-xl font-semibold leading-none">{level.level}</span>
-                <span className="text-[10px] text-[var(--ink-muted)]">{progressPct}%</span>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--sales)]">
+                <MedalRing size={20} />
+                <span className="text-xl font-semibold leading-none mt-0.5">{level.level}</span>
+                <span className="text-[10px] text-[var(--ink-muted)] mt-0.5">{d.yourTier}</span>
               </div>
             </div>
           </div>

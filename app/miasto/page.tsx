@@ -10,6 +10,7 @@ import {
 } from "@/lib/buildings";
 import { tickPlayer } from "@/lib/tick";
 import { getCatalogEntry } from "@/lib/building-catalog";
+import { compareLoans } from "@/lib/loans";
 import { WattCityClient } from "@/components/watt-city/watt-city-client";
 import { getLang } from "@/lib/i18n-server";
 import type { Lang } from "@/lib/i18n";
@@ -245,7 +246,16 @@ const DICT: Record<Lang, {
   },
 };
 
-export default async function MiastoPage() {
+type SearchParams = {
+  principal?: string;
+  term?: string;
+};
+
+export default async function MiastoPage({
+  searchParams,
+}: {
+  searchParams?: Promise<SearchParams>;
+}) {
   const [session, lang] = await Promise.all([getSession(), getLang()]);
   if (!session) redirect("/login");
 
@@ -256,6 +266,17 @@ export default async function MiastoPage() {
 
   const state = await getPlayerState(session.username);
   const [catalog] = await Promise.all([catalogForPlayer(state)]);
+  // F-01 — inline LoanComparison on the Hypotéka panel needs server-
+  // computed rows. URL ?principal=&term= mirror the standalone
+  // /loans/compare query semantics, so the deprecated route just
+  // redirects here without losing the player's chosen amount/term.
+  const sp = (await searchParams) ?? {};
+  const loanPrincipal = Math.max(
+    100,
+    Math.min(50_000, Number(sp.principal ?? 3000)),
+  );
+  const loanTermMonths = Math.max(1, Math.min(36, Number(sp.term ?? 12)));
+  const loanRows = compareLoans(loanPrincipal, loanTermMonths, state);
   const snapshot = slotSnapshot(state).map(({ slot, building, upgrade }) => {
     if (!building) return { slot, building: null, upgrade: null };
     const c = getCatalogEntry(building.catalogId);
@@ -292,6 +313,11 @@ export default async function MiastoPage() {
           catalog,
           slots: snapshot,
           loans: state.loans,
+          loanComparison: {
+            rows: loanRows,
+            principal: loanPrincipal,
+            termMonths: loanTermMonths,
+          },
           lang,
           dict,
         }}
@@ -301,52 +327,17 @@ export default async function MiastoPage() {
   );
 }
 
-// Phase 1.6 — static coming-soon roadmap surface. Teaches players what's on
-// the horizon without any live logic. Each tile one line; all four langs.
+// F-03 — leasing / obrotowy / konsumencki removed; all three already
+// ship in `LoanComparison` (lib/loans.ts ProductLoanType union). The
+// remaining loan-typed entry is "inwestycyjny" (Tier-7 secondary
+// market — not yet implemented), plus the four non-loan features
+// (parent panel, class mode, P2P trade, PKO Junior mirror).
 const COMING_SOON_TILES: Array<{
   emoji: string;
-  key: "leasing" | "obrotowy" | "konsumencki" | "inwestycyjny" | "parent" | "class" | "trade" | "pko";
+  key: "inwestycyjny" | "parent" | "class" | "trade" | "pko";
   labels: Record<Lang, string>;
   teasers: Record<Lang, string>;
 }> = [
-  {
-    emoji: "🚚",
-    key: "leasing",
-    labels: { pl: "Leasing", uk: "Лізинг", cs: "Leasing", en: "Leasing" },
-    teasers: {
-      pl: "Wynajmij wyższy budynek na 6 miesięcy, potem zostaw lub zwróć.",
-      uk: "Орендуй вищу будівлю на 6 міс., потім залиш або поверни.",
-      cs: "Pronajmi si vyšší budovu na 6 měsíců, pak nech nebo vrať.",
-      en: "Rent a higher-tier building for 6 months, then keep or return.",
-    },
-  },
-  {
-    emoji: "💳",
-    key: "obrotowy",
-    labels: { pl: "Kredyt obrotowy", uk: "Обіговий кредит", cs: "Revolvingový úvěr", en: "Revolving credit" },
-    teasers: {
-      pl: "Krótkoterminowa pożyczka pod przyszłe wyniki — 7 dni na spłatę.",
-      uk: "Короткострокова позика під майбутні результати — 7 днів на виплату.",
-      cs: "Krátkodobá půjčka proti budoucím skóre — 7 dní na splacení.",
-      en: "Short-term loan against pending scores — 7 days to repay.",
-    },
-  },
-  {
-    emoji: "⚠️",
-    key: "konsumencki",
-    labels: {
-      pl: "Kredyt konsumencki",
-      uk: "Споживчий кредит",
-      cs: "Spotřebitelský úvěr",
-      en: "Consumer credit",
-    },
-    teasers: {
-      pl: "Szybka gotówka, RRSO 20% — lekcja ostrzegawcza.",
-      uk: "Швидкі гроші, RRSO 20% — навчання застереженню.",
-      cs: "Rychlá hotovost, RRSO 20% — varovná lekce.",
-      en: "Instant cash, 20% RRSO — cautionary tale.",
-    },
-  },
   {
     emoji: "📈",
     key: "inwestycyjny",
@@ -436,6 +427,15 @@ function ComingSoonSection({ lang }: { lang: Lang }) {
     cs: "Brzy — fáze 2 a dál",
     en: "Coming soon — phase 2 and beyond",
   }[lang];
+  // F-03 — explicit "Phase 2" timing badge replaces the bare 🔒 chip.
+  // Sets player expectation honestly without committing to a calendar
+  // date; PO can swap to a real Q3 2026 / Q4 2026 string later.
+  const phaseBadge = {
+    pl: "Faza 2",
+    uk: "Фаза 2",
+    cs: "Fáze 2",
+    en: "Phase 2",
+  }[lang];
   return (
     <section className="card p-4 flex flex-col gap-3">
       <h2 className="text-lg font-semibold">{heading}</h2>
@@ -452,7 +452,9 @@ function ComingSoonSection({ lang }: { lang: Lang }) {
               <strong className="text-xs">
                 {t.labels[lang]}
               </strong>
-              <span className="ml-auto text-[10px]">🔒</span>
+              <span className="ml-auto chip text-[10px] border-[var(--accent)] text-[var(--accent)]">
+                {phaseBadge}
+              </span>
             </div>
             <p className="text-xs leading-snug text-[var(--ink-muted)]">
               {t.teasers[lang]}

@@ -28,13 +28,13 @@ import type { Lang } from "@/lib/i18n";
 import {
   SLOT_MAP,
   getCatalogEntry,
-  type SlotDef,
 } from "@/lib/building-catalog";
 import {
   HeroBackdrop,
   HeroBackdropDefs,
   computeLampLitMask,
 } from "@/components/hero-backdrop";
+import { BuildingTile, EmptyBuildingTile } from "@/components/building-tile";
 
 // E-01 follow-up — slot baseline in `lib/building-catalog.ts` is
 // `y + h = 400` for every slot, so GROUND_Y MUST equal 400 or the
@@ -113,36 +113,44 @@ export function CitySkylineHero({ buildings, lang, emptyStateCta }: Props) {
       >
         <defs>
           <HeroBackdropDefs />
-          <filter id="hero-shadow" x="-20%" y="-20%" width="140%" height="160%">
-            <feDropShadow
-              dx="0"
-              dy="2"
-              stdDeviation="3"
-              floodColor="#000000"
-              floodOpacity="0.18"
-            />
-          </filter>
         </defs>
 
         {/* Shared sunset backdrop (sky/stars/moon/sun/mountains/Spodek/
             ground/lampposts). Same render path on /miasto. */}
         <HeroBackdrop lampLitMask={lampLitMask} vbH={VB_H} />
 
-        {/* ─── Foreground buildings + empty slots ─── */}
+        {/* ─── Foreground tiles — `BuildingTile` is shared with the
+            /miasto manager so both surfaces render the same pitched
+            roof + level-scaled body + L-badge artwork. */}
         {SLOT_MAP.map((slot) => {
           const inst = occupied.get(slot.id);
-          if (!inst) return <EmptySlot key={slot.id} slot={slot} buildLabel={buildLabel} />;
+          if (!inst) {
+            return (
+              <EmptyBuildingTile
+                key={slot.id}
+                slot={slot}
+                buildLabel={buildLabel}
+              />
+            );
+          }
           const entry = getCatalogEntry(inst.catalogId);
-          if (!entry) return <EmptySlot key={slot.id} slot={slot} buildLabel={buildLabel} />;
+          if (!entry) {
+            return (
+              <EmptyBuildingTile
+                key={slot.id}
+                slot={slot}
+                buildLabel={buildLabel}
+              />
+            );
+          }
           return (
-            <BuildingSilhouette
+            <BuildingTile
               key={slot.id}
               slot={slot}
               level={inst.level}
               glyph={entry.glyph}
               roof={entry.roofColor}
               body={entry.bodyColor}
-              label={entry.labels[lang] ?? entry.labels.pl}
             />
           );
         })}
@@ -163,130 +171,6 @@ export function CitySkylineHero({ buildings, lang, emptyStateCta }: Props) {
   );
 }
 
-function EmptySlot({
-  slot,
-  buildLabel,
-}: {
-  slot: SlotDef;
-  buildLabel: string;
-}) {
-  const cx = slot.x + slot.w / 2;
-  const top = slot.y + slot.h * 0.55;
-  const h = slot.h * 0.45;
-  return (
-    <g aria-hidden>
-      <rect
-        x={slot.x + 4}
-        y={top}
-        width={slot.w - 8}
-        height={h}
-        fill="#ffffff"
-        fillOpacity="0.55"
-        stroke="#e5e5e5"
-        strokeWidth="1"
-        rx="4"
-      />
-      <text
-        x={cx}
-        y={top + h / 2 - 4}
-        textAnchor="middle"
-        fontSize={Math.min(28, slot.w * 0.4)}
-        fill="#003574"
-        opacity="0.55"
-      >
-        +
-      </text>
-      <text
-        x={cx}
-        y={top + h - 6}
-        textAnchor="middle"
-        fontSize="9"
-        fill="#636363"
-      >
-        {buildLabel}
-      </text>
-    </g>
-  );
-}
-
-function BuildingSilhouette({
-  slot,
-  level,
-  glyph,
-  roof,
-  body,
-  label,
-}: {
-  slot: SlotDef;
-  level: number;
-  glyph: string;
-  roof: string;
-  body: string;
-  label: string;
-}) {
-  const levelScale = Math.min(1, 0.7 + level * 0.05);
-  const h = slot.h * levelScale;
-  const y = slot.y + slot.h - h;
-  const roofH = h * 0.2;
-  const bodyH = h - roofH;
-  const winSize = Math.min(8, slot.w * 0.12);
-  const winY = y + roofH + bodyH * 0.25 - winSize / 2;
-  const winLeft = slot.x + slot.w * 0.28 - winSize / 2;
-  const winRight = slot.x + slot.w * 0.72 - winSize / 2;
-  return (
-    <g aria-label={`${label} L${level}`} filter="url(#hero-shadow)">
-      <rect x={slot.x} y={y + roofH} width={slot.w} height={bodyH} fill={body} />
-      <polygon
-        points={`${slot.x},${y + roofH} ${slot.x + slot.w / 2},${y} ${slot.x + slot.w},${y + roofH}`}
-        fill={roof}
-      />
-      {/* Windows are lit only when the building exists — ties into
-          the lit-on-play mechanic so empty slots stay dark. */}
-      <rect x={winLeft} y={winY} width={winSize} height={winSize} fill="#fde2c4" />
-      <rect x={winRight} y={winY} width={winSize} height={winSize} fill="#fde2c4" />
-      <rect
-        x={slot.x + slot.w / 2 - winSize / 2}
-        y={y + roofH + bodyH - winSize * 1.3}
-        width={winSize}
-        height={winSize * 1.3}
-        fill={roof}
-        opacity="0.7"
-      />
-      <text
-        x={slot.x + slot.w / 2}
-        y={y + roofH + bodyH * 0.6}
-        textAnchor="middle"
-        fontSize={Math.min(36, slot.w * 0.45)}
-        fill="white"
-        opacity="0.85"
-      >
-        {glyph}
-      </text>
-      {/* L badge — chip with white pill behind so it stays
-          readable against any building body colour. The /miasto
-          manager renders this canvas at ~1200 px wide, so 1
-          viewBox unit ≈ 0.67 screen px; font 14 + 26-wide pill =
-          ~17 px tall on screen, well above the 9-px tap-text
-          legibility floor. */}
-      <rect
-        x={slot.x + 2}
-        y={y + roofH + bodyH - 22}
-        width={26}
-        height={18}
-        rx={3}
-        fill="#ffffff"
-        opacity="0.92"
-      />
-      <text
-        x={slot.x + 15}
-        y={y + roofH + bodyH - 8}
-        textAnchor="middle"
-        fontSize="14"
-        fontWeight="700"
-        fill="var(--accent)"
-      >
-        L{level}
-      </text>
-    </g>
-  );
-}
+// EmptySlot + BuildingSilhouette were moved to
+// `components/building-tile.tsx` so /miasto can render the same
+// pitched-roof + level-scaled artwork as this hero.

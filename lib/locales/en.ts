@@ -57,6 +57,9 @@ const en: typeof plDict = {
     errorNetwork: "Network error. Try again.",
   },
   dashboard: {
+    yourTier: "Your tier",
+    yourTierTooltip:
+      "Tier grows with Watts (XP earned by playing). Different from city level (grows with buildings you place).",
     welcome: "Mayor of",
     level: "Level",
     totalWatts: "Total Watts",

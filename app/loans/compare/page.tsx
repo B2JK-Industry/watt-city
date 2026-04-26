@@ -1,13 +1,21 @@
-import { redirect } from "next/navigation";
-import { getSession } from "@/lib/session";
-import { getPlayerState } from "@/lib/player";
-import { compareLoans } from "@/lib/loans";
-import { LoanComparison } from "@/components/loan-comparison";
-import { KnfDisclaimer } from "@/components/knf-disclaimer";
-import { CashflowHudMount } from "@/components/cashflow-hud-mount";
-import { getLang } from "@/lib/i18n-server";
+/* F-01 — `/loans/compare` deprecated.
+ *
+ * The full LoanComparison surface now lives inline inside the
+ * Hypotéka panel on /miasto (see WattCityClient → MortgageCard).
+ * Keeping the standalone route would mean two sources of truth +
+ * an extra nav slot the IA budget can't afford.
+ *
+ * This file 308-redirects every legacy bookmark / tour-step / deep
+ * link to the inline panel anchor, preserving the player's chosen
+ * principal/term query params so the inline calculator opens with
+ * the same starting point.
+ *
+ * Returns 308 (Permanent Redirect) so search engines drop the old
+ * URL from their index and bookmark-syncing browsers update the
+ * canonical target.
+ */
 
-export const dynamic = "force-dynamic";
+import { redirect, permanentRedirect } from "next/navigation";
 
 type SearchParams = {
   principal?: string;
@@ -19,28 +27,17 @@ export default async function LoanComparePage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  const session = await getSession();
-  if (!session) {
-    redirect("/login?next=/loans/compare");
-  }
-  const qs = await searchParams;
-  const principal = Math.max(100, Math.min(50_000, Number(qs.principal ?? 3000)));
-  const termMonths = Math.max(1, Math.min(36, Number(qs.term ?? 12)));
-  const [state, lang] = await Promise.all([
-    getPlayerState(session.username),
-    getLang(),
-  ]);
-  const rows = compareLoans(principal, termMonths, state);
-  return (
-    <div className="flex flex-col gap-6 animate-slide-up max-w-4xl">
-      <KnfDisclaimer lang={lang} variant="card" />
-      <LoanComparison
-        rows={rows}
-        lang={lang}
-        principal={principal}
-        termMonths={termMonths}
-      />
-      <CashflowHudMount />
-    </div>
-  );
+  const sp = await searchParams;
+  const usp = new URLSearchParams();
+  if (sp.principal) usp.set("principal", sp.principal);
+  if (sp.term) usp.set("term", sp.term);
+  const qs = usp.toString();
+  // `permanentRedirect` issues a 308 so old links migrate; falls
+  // back to a 307 via `redirect` if the call site changes (Next.js
+  // accepts both as long as the import is correct).
+  permanentRedirect(`/miasto${qs ? `?${qs}` : ""}#hypoteka`);
+  // Unreachable — `permanentRedirect` throws to abort rendering.
+  // Kept so the function has an explicit return path the type
+  // checker accepts.
+  redirect("/miasto#hypoteka");
 }

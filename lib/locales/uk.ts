@@ -57,6 +57,9 @@ const uk: typeof plDict = {
     errorNetwork: "Мережева помилка. Спробуй ще раз.",
   },
   dashboard: {
+    yourTier: "Твій тір",
+    yourTierTooltip:
+      "Тір зростає з Ватами (XP, заробленим за гру). Це не рівень міста (росте з кожною побудованою спорудою).",
     welcome: "Місто гравця",
     level: "Рівень",
     totalWatts: "Загалом Ват",

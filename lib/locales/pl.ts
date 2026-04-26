@@ -57,6 +57,9 @@ const pl = {
   dashboard: {
     welcome: "Miasto gracza",
     level: "Poziom",
+    yourTier: "Twój tier",
+    yourTierTooltip:
+      "Tier rośnie z Watów (XP zarobionym za grę). Inne niż stopień miasta (rośnie z postawionymi budynkami).",
     totalWatts: "Waty łącznie",
     rank: "Pozycja",
     plays: "Rozegrane rundy",

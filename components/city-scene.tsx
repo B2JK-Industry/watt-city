@@ -285,7 +285,13 @@ export function CityScene({
               index={i}
             />
           );
-          if (!interactive) return <g key={b.gameId}>{slot}</g>;
+          // F-02 — `data-building-body="true"` opts the slot out of the
+          // global `.city-scene-root` filter + broad `[fill="X"]`
+          // retints (see globals.css). Without it, every building body
+          // collapsed to the same muted grey on /games and the scene
+          // read as outline-only wireframes — user reported it as a
+          // critical regression.
+          if (!interactive) return <g key={b.gameId} data-building-body="true">{slot}</g>;
           const label = `${b.title} — ${b.buildingName}${
             loggedIn && g ? ` · rekord ${g.bestScore}/${b.cap} W` : ""
           }`;
@@ -295,7 +301,11 @@ export function CityScene({
               href={`/games/${b.gameId}`}
               aria-label={label}
             >
-              <g className="building-link" data-powered={powered}>
+              <g
+                className="building-link"
+                data-building-body="true"
+                data-powered={powered}
+              >
                 <title>{label}</title>
                 {/* invisible hit rect so the whole footprint is clickable */}
                 <rect

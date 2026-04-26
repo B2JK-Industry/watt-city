@@ -423,6 +423,69 @@ body {
   fill: var(--sc-detail-warm);
 }
 
+/* F-02 — restore solid coloured buildings on /games.
+ *
+ * The mass `[fill="X"]` rules above retinted EVERY building body to
+ * one of 5 sky/ground tokens, then the parent `.city-scene-root`
+ * `saturate(0.35) brightness(1.55)` filter washed them further.
+ * Result: 9 distinct buildings collapsed to identical muted-grey
+ * silhouettes — outline-only wireframes that hid the carefully-drawn
+ * powered/unpowered states (window neons, sign details).
+ *
+ * Building draws now opt out via `<g data-building-body="true">` in
+ * city-scene.tsx. The override below:
+ *   1. cancels the parent filter via inverse functions, and
+ *   2. re-asserts every retinted hex back to itself so `[fill="X"]`
+ *      rules above become no-ops inside the building scope.
+ *
+ * The atmospheric layers (sky gradient, mountains, ground pattern)
+ * stay tinted — they need the muted treatment to read as a daylight
+ * scene. Only the foreground building draws are exempted. */
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] {
+  filter: contrast(1.087) brightness(0.645) saturate(2.857);
+}
+/* Per-hex passthrough — re-sets each retinted fill to itself so the
+ * mass `[fill="X"]` overrides above are neutralised inside the
+ * building scope. Specificity 0,2,1 (one descendant + one attr)
+ * beats the mass rules' 0,1,1. */
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#0f172a"] { fill: #0f172a; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#1e293b"] { fill: #1e293b; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#111827"] { fill: #111827; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#0a0a0f"] { fill: #0a0a0f; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#020617"] { fill: #020617; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#000"] { fill: #000; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#000000"] { fill: #000000; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#111"] { fill: #111; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#0b0b20"] { fill: #0b0b20; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#0f0f1f"] { fill: #0f0f1f; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#1c1917"] { fill: #1c1917; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#3f3f5a"] { fill: #3f3f5a; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#44403c"] { fill: #44403c; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#475569"] { fill: #475569; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#94a3b8"] { fill: #94a3b8; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#06b6d4"] { fill: #06b6d4; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#0ea5e9"] { fill: #0ea5e9; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#155e75"] { fill: #155e75; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#67e8f9"] { fill: #67e8f9; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#22d3ee"] { fill: #22d3ee; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#4338ca"] { fill: #4338ca; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#6366f1"] { fill: #6366f1; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#818cf8"] { fill: #818cf8; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#064e3b"] { fill: #064e3b; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#10b981"] { fill: #10b981; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#365314"] { fill: #365314; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#65a30d"] { fill: #65a30d; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#a3e635"] { fill: #a3e635; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#78350f"] { fill: #78350f; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#854d0e"] { fill: #854d0e; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#92400e"] { fill: #92400e; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#b45309"] { fill: #b45309; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#d97706"] { fill: #d97706; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#f59e0b"] { fill: #f59e0b; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#fbbf24"] { fill: #fbbf24; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#a21caf"] { fill: #a21caf; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#c026d3"] { fill: #c026d3; }
+
 /* R-06 — visible custom slider thumb for the mortgage panel. The
  * default WebKit/Firefox thumb is barely 12 px and disappears against
  * the navy track at 1% position. 16×16 navy with a 1 px white ring

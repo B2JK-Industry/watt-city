@@ -57,6 +57,9 @@ const cs: typeof plDict = {
     errorNetwork: "Síťová chyba. Zkus znovu.",
   },
   dashboard: {
+    yourTier: "Tvůj tier",
+    yourTierTooltip:
+      "Tier roste s Watty (XP zaslouženými za hru). Není to stupeň města (roste s postavenými budovami).",
     welcome: "Elektrický starosta/starostka",
     level: "Tier",
     totalWatts: "Celkové Watty",

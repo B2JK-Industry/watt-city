@@ -13,12 +13,15 @@ import {
   type SlotDef,
 } from "@/lib/building-catalog";
 import type { Loan } from "@/lib/player";
+import type { LoanComparisonRow } from "@/lib/loans";
 import { KnfDisclaimer } from "@/components/knf-disclaimer";
+import { LoanComparison } from "@/components/loan-comparison";
 import {
   HeroBackdrop,
   HeroBackdropDefs,
   computeLampLitMask,
 } from "@/components/hero-backdrop";
+import { BuildingTile, EmptyBuildingTile } from "@/components/building-tile";
 import {
   formatResourceBundle,
   formatResourceCost,
@@ -68,6 +71,14 @@ export type WattCityBootstrap = {
     } | null;
   }>;
   loans: Loan[];
+  /** F-01 — server-computed loan comparison rows feed the inline
+   *  LoanComparison embedded in the Hypotéka panel (replaces the
+   *  deprecated /loans/compare standalone route). */
+  loanComparison: {
+    rows: LoanComparisonRow[];
+    principal: number;
+    termMonths: number;
+  };
   lang: Lang;
   dict: {
     pickSlot: string;
@@ -360,72 +371,44 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
             vbH={VB_H}
           />
 
+          {/* F-05 — slot rendering delegated to shared BuildingTile /
+              EmptyBuildingTile so /miasto matches the homepage hero
+              (same pitched roofs + level-scaled heights + L-pill).
+              Click handler + selected ring stay /miasto-only via
+              optional props. */}
           {state.slots.map(({ slot, building }) => {
             const isSelected = selected?.slotId === slot.id;
-            const occupied = Boolean(building);
-            const fill = occupied
-              ? (building?.bodyColor ?? "#475569")
-              : "rgba(100,116,139,0.1)";
-            const stroke = isSelected ? "#fde047" : "#334155";
-            return (
-              <g
-                key={slot.id}
-                style={{ cursor: "pointer" }}
-                onClick={() =>
-                  setSelected(
-                    occupied
-                      ? { kind: "building", slotId: slot.id }
-                      : { kind: "slot", slotId: slot.id },
-                  )
-                }
-                role="button"
-                aria-label={`Slot ${slot.id} — ${slot.category}`}
-              >
-                {/* slot frame */}
-                <rect
-                  x={slot.x}
-                  y={slot.y}
-                  width={slot.w}
-                  height={slot.h}
-                  fill={fill}
-                  stroke={stroke}
-                  strokeWidth={isSelected ? 4 : 2}
-                  strokeDasharray={occupied ? undefined : "6,4"}
-                  rx={3}
+            const handleClick = () =>
+              setSelected(
+                building
+                  ? { kind: "building", slotId: slot.id }
+                  : { kind: "slot", slotId: slot.id },
+              );
+            const ariaLabel = `Slot ${slot.id} — ${slot.category}`;
+            if (!building) {
+              return (
+                <EmptyBuildingTile
+                  key={slot.id}
+                  slot={slot}
+                  buildLabel={dict.buildHere}
+                  onClick={handleClick}
+                  isSelected={isSelected}
+                  ariaLabel={ariaLabel}
                 />
-                {/* roof band for occupied */}
-                {occupied && building?.roofColor && (
-                  <rect
-                    x={slot.x}
-                    y={slot.y}
-                    width={slot.w}
-                    height={14}
-                    fill={building.roofColor}
-                    stroke="var(--ink)"
-                    strokeWidth={2}
-                  />
-                )}
-                {/* glyph / id label */}
-                <text
-                  x={slot.x + slot.w / 2}
-                  y={slot.y + slot.h / 2 + 8}
-                  textAnchor="middle"
-                  fontSize={slot.w < 80 ? 18 : 28}
-                  fill={occupied ? "var(--ink)" : "#94a3b8"}
-                  style={{ filter: "drop-shadow(0 1px 0 rgba(0,0,0,0.4))" }}
-                >
-                  {occupied ? (building?.glyph ?? "🏗") : "+"}
-                </text>
-                {/* level badge */}
-                {occupied && (
-                  <g transform={`translate(${slot.x + slot.w - 22}, ${slot.y + 2})`}>
-                    <rect width={20} height={14} fill="var(--ink)" stroke="#fde047" strokeWidth={1.5} rx={2} />
-                    <text x={10} y={11} textAnchor="middle" fontSize={8} fontWeight={900} fill="#fde047">
-                      L{building?.level}
-                    </text>
-                  </g>
-                )}
-              </g>
+              );
+            }
+            return (
+              <BuildingTile
+                key={slot.id}
+                slot={slot}
+                level={building.level}
+                glyph={building.glyph ?? "🏗"}
+                body={building.bodyColor ?? "#475569"}
+                roof={building.roofColor ?? "#1e293b"}
+                onClick={handleClick}
+                isSelected={isSelected}
+                ariaLabel={ariaLabel}
+              />
             );
           })}
         </svg>
@@ -489,7 +472,9 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
         </section>
       )}
 
-      {/* Loans card */}
+      {/* F-01 — Hypotéka panel hosts the inline LoanComparison.
+          The `id="hypoteka"` anchor is the redirect target from the
+          deprecated /loans/compare route. */}
       <MortgageCard
         resources={state.resources}
         loans={state.loans}
@@ -497,6 +482,7 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
         onChange={refresh}
         dict={dict}
         lang={lang}
+        loanComparison={bootstrap.loanComparison}
       />
     </div>
   );
@@ -682,67 +668,9 @@ function CatalogList({
   );
 }
 
-/* R-06 (PR-J pass-7) — MortgageCard reliability hardening. */
-
-// Unified config matches LoanComparison (lib/loan-comparison.tsx).
-// Defaults moved out of the component so the slider boundaries and
-// the comparison page never drift.
-const MORTGAGE_PRINCIPAL_MIN = 500;
-const MORTGAGE_PRINCIPAL_MAX = 10_000;
-const MORTGAGE_PRINCIPAL_STEP = 500;
-
-const MORTGAGE_ERROR_COPY: Record<
-  Lang,
-  Record<string, string>
-> = {
-  pl: {
-    "principal-too-low": "Minimum to 100 W$.",
-    "principal-exceeds-cap": "Kwota przekracza limit dla twojego cashflow.",
-    "rate-limited": "Zbyt szybko. Poczekaj chwilę.",
-    unauthorized: "Najpierw się zaloguj.",
-    "ineligible": "Brakuje warunków: {missing}.",
-    generic: "Coś poszło nie tak. Spróbuj ponownie.",
-  },
-  uk: {
-    "principal-too-low": "Мінімум 100 W$.",
-    "principal-exceeds-cap": "Сума перевищує ліміт.",
-    "rate-limited": "Занадто швидко. Зачекай.",
-    unauthorized: "Спочатку увійди.",
-    "ineligible": "Не вистачає умов: {missing}.",
-    generic: "Щось пішло не так. Спробуй знову.",
-  },
-  cs: {
-    "principal-too-low": "Minimum je 100 W$.",
-    "principal-exceeds-cap": "Částka překračuje limit.",
-    "rate-limited": "Příliš rychle. Počkej.",
-    unauthorized: "Nejdřív se přihlas.",
-    "ineligible": "Chybí podmínky: {missing}.",
-    generic: "Něco se pokazilo. Zkus znovu.",
-  },
-  en: {
-    "principal-too-low": "Minimum is 100 W$.",
-    "principal-exceeds-cap": "Amount exceeds your cashflow cap.",
-    "rate-limited": "Too fast. Wait a moment.",
-    unauthorized: "Please log in first.",
-    "ineligible": "Missing conditions: {missing}.",
-    generic: "Something went wrong. Try again.",
-  },
-};
-
-function translateError(
-  lang: Lang,
-  raw: string | null | undefined,
-  missing?: string[],
-): string {
-  if (!raw) return MORTGAGE_ERROR_COPY[lang].generic;
-  const map = MORTGAGE_ERROR_COPY[lang];
-  const t = map[raw];
-  if (!t) return raw; // server returned an unknown code — surface the raw text
-  if (raw === "ineligible" && missing && missing.length > 0) {
-    return t.replace("{missing}", missing.join(", "));
-  }
-  return t;
-}
+// F-01 — MORTGAGE_PRINCIPAL_* constants + translateError helper +
+// MORTGAGE_ERROR_COPY removed alongside the inline mortgage-only flow.
+// LoanComparison owns slider bounds + error rendering now.
 
 function MortgageCard({
   resources: _resources,
@@ -751,6 +679,7 @@ function MortgageCard({
   onChange,
   dict,
   lang,
+  loanComparison,
 }: {
   resources: Resources;
   loans: Loan[];
@@ -758,254 +687,45 @@ function MortgageCard({
   onChange: () => Promise<void>;
   dict: WattCityBootstrap["dict"];
   lang: Lang;
+  loanComparison: WattCityBootstrap["loanComparison"];
 }) {
   const [open, setOpen] = useState(false);
-  const [principal, setPrincipal] = useState<number>(MORTGAGE_PRINCIPAL_MIN);
-  const [termMonths, setTermMonths] = useState<number>(24);
-  const [quote, setQuote] = useState<null | {
-    apr: number;
-    monthlyPayment: number;
-    totalInterest: number;
-    rrso: number;
-    maxPrincipal: number;
-    preferred: boolean;
-    eligibility: { ok: boolean; missing: string[] };
-  }>(null);
-  const [busy, setBusy] = useState(false);
-  const [quoteLoading, setQuoteLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // R-06 — debounce + AbortController so a fast slider drag fires one
-  // request, not one per pixel. Identical pattern to LoanComparison.
-  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const inflightAbort = useRef<AbortController | null>(null);
-
-  const refreshQuote = useCallback(
-    (p: number, t: number) => {
-      if (debounceTimer.current) clearTimeout(debounceTimer.current);
-      debounceTimer.current = setTimeout(async () => {
-        if (inflightAbort.current) inflightAbort.current.abort();
-        const ac = new AbortController();
-        inflightAbort.current = ac;
-        setQuoteLoading(true);
-        try {
-          const r = await fetch(
-            `/api/loans/quote?principal=${p}&termMonths=${t}`,
-            { signal: ac.signal },
-          );
-          const j = await r.json();
-          if (j.ok) setQuote(j.quote);
-        } catch (e) {
-          // AbortError = newer call superseded us — ignore.
-          if ((e as Error).name !== "AbortError") {
-            // soft-fail: keep last quote, surface generic error
-            setError(translateError(lang, "generic"));
-          }
-        } finally {
-          setQuoteLoading(false);
-        }
-      }, 200);
-    },
-    [lang],
-  );
-
-  useEffect(
-    () => () => {
-      if (debounceTimer.current) clearTimeout(debounceTimer.current);
-      if (inflightAbort.current) inflightAbort.current.abort();
-    },
-    [],
-  );
-
   const activeLoans = loans.filter((l) => l.status === "active");
-  const maxPrincipal = quote?.maxPrincipal ?? MORTGAGE_PRINCIPAL_MAX;
-  // R-06 — when the player has no cashflow yet (`maxPrincipal < 100`),
-  // the slider is meaningless. Show a focused EmptyState pointing at
-  // building an income source instead of a broken zero-min slider.
-  const noCapacity = quote !== null && quote.maxPrincipal < 100;
 
   return (
-    <section className="card p-4 flex flex-col gap-3">
+    <section
+      id="hypoteka"
+      className="card p-4 flex flex-col gap-3 scroll-mt-24"
+    >
       <header className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">{dict.mortgageTitle}</h2>
         <button
           className="btn btn-ghost text-xs"
-          onClick={() => {
-            setOpen((v) => !v);
-            if (!open && principal === MORTGAGE_PRINCIPAL_MIN) {
-              refreshQuote(MORTGAGE_PRINCIPAL_MIN, 24);
-            }
-          }}
+          onClick={() => setOpen((v) => !v)}
         >
           {dict.mortgageOpen}
         </button>
       </header>
       <p className="text-sm text-[var(--ink-muted)]">{dict.mortgageBody}</p>
 
-      {open && noCapacity && (
-        <div className="flex flex-col gap-2 border-t border-[var(--line)] pt-3 text-sm">
-          <p className="text-[var(--accent)] font-semibold">
-            {{
-              pl: "Najpierw zbuduj budynek z cashflow",
-              uk: "Спершу постав будівлю з cashflow",
-              cs: "Nejprve postav budovu s cashflow",
-              en: "First build a building with cashflow",
-            }[lang]}
-          </p>
-          <p className="text-[var(--ink-muted)] text-xs">
-            {{
-              pl: "Bank potrzebuje regularnego dochodu, by udzielić kredytu. Postaw Sklepik lub Małą elektrownię.",
-              uk: "Банк потребує регулярного доходу. Постав магазинчик або електростанцію.",
-              cs: "Banka potřebuje pravidelný příjem. Postav Obchůdek nebo malou elektrárnu.",
-              en: "The bank needs regular income to offer credit. Build a shop or small power plant first.",
-            }[lang]}
-          </p>
-        </div>
-      )}
-
-      {open && !noCapacity && (
+      {/* F-01 — open state mounts the full LoanComparison inline.
+          Mortgage is just one row in the 4-product table now; the
+          standalone /loans/compare page redirects here so the
+          Hypotéka panel is the single source of truth for credit. */}
+      {open && (
         <div className="flex flex-col gap-3 border-t border-[var(--line)] pt-3">
-          <label className="flex flex-col gap-1 text-xs">
-            <span>{dict.principal} (W$)</span>
-            <input
-              type="range"
-              min={MORTGAGE_PRINCIPAL_MIN}
-              max={Math.max(MORTGAGE_PRINCIPAL_MIN, maxPrincipal)}
-              step={MORTGAGE_PRINCIPAL_STEP}
-              value={Math.min(
-                Math.max(principal, MORTGAGE_PRINCIPAL_MIN),
-                maxPrincipal,
-              )}
-              onChange={(e) => {
-                const p = Number(e.target.value);
-                setPrincipal(p);
-                refreshQuote(p, termMonths);
-              }}
-              aria-label={`${dict.principal} (W$)`}
-              aria-valuetext={`${principal.toLocaleString("pl-PL")} W$`}
-              className="w-full mortgage-range accent-[var(--accent)]"
-            />
-            <span className="font-mono tabular-nums">
-              {principal.toLocaleString("pl-PL")} / max{" "}
-              {maxPrincipal.toLocaleString("pl-PL")}
-              {quoteLoading && (
-                <span className="ml-2 text-[var(--ink-muted)]">
-                  {{
-                    pl: "Liczę…",
-                    uk: "Рахую…",
-                    cs: "Počítám…",
-                    en: "Calculating…",
-                  }[lang]}
-                </span>
-              )}
-            </span>
-          </label>
-          <div className="flex gap-2" role="radiogroup" aria-label={dict.termMonths}>
-            {[12, 24, 36].map((t) => (
-              <button
-                key={t}
-                onClick={() => {
-                  setTermMonths(t);
-                  refreshQuote(principal, t);
-                }}
-                role="radio"
-                aria-checked={termMonths === t}
-                className={
-                  "btn text-xs " +
-                  (termMonths === t ? "btn-primary" : "btn-secondary")
-                }
-              >
-                {t} {dict.termMonths}
-              </button>
-            ))}
-          </div>
-          {quote && (
-            <ul className="text-xs font-mono flex flex-col gap-0.5 bg-[var(--surface-2)] border border-[var(--line)] p-3 rounded-md">
-              <li>
-                {dict.mortgageMonthly}:&nbsp;
-                <strong>{quote.monthlyPayment.toFixed(2)} W$</strong>
-              </li>
-              <li>
-                {dict.rrsoLabel}: <strong>{(quote.rrso * 100).toFixed(2)} %</strong>
-                {quote.preferred ? " ⭐" : ""}
-              </li>
-              <li>
-                {dict.mortgageTotalInterest}:&nbsp;
-                <strong>{quote.totalInterest.toFixed(2)} W$</strong>
-              </li>
-              <li>
-                {dict.mortgageMax}:&nbsp;
-                <strong>{quote.maxPrincipal.toLocaleString("pl-PL")} W$</strong>
-              </li>
-              {!quote.eligibility.ok && (
-                <li className="text-[var(--danger)]">
-                  🔒 {translateError(lang, "ineligible", quote.eligibility.missing)}
-                </li>
-              )}
-            </ul>
-          )}
-          {/* R7.2 KNF disclaimer — required on every loan-taking surface */}
           <KnfDisclaimer lang={lang} variant="inline" />
-
-          {/* R-03 — discoverability bridge to the dedicated comparison
-              page. Carries the user's current quote params so the
-              landing /loans/compare opens with matching sliders set,
-              not the default 3000/12 fallback. */}
-          <a
-            href={`/loans/compare?principal=${principal}&term=${termMonths}`}
-            className="btn btn-secondary text-xs self-start"
-          >
-            {{
-              pl: "Porównaj wszystkie kredyty →",
-              uk: "Порівняти всі кредити →",
-              cs: "Porovnat všechny úvěry →",
-              en: "Compare all loans →",
-            }[lang]}
-          </a>
-
-          <button
-            className="btn btn-primary text-sm"
-            disabled={busy || !quote?.eligibility.ok || quoteLoading}
-            onClick={async () => {
-              setBusy(true);
-              setError(null);
-              try {
-                const res = await fetch("/api/loans/take", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ principal, termMonths }),
-                });
-                const j = await res.json();
-                if (!j.ok) {
-                  setError(translateError(lang, j.error, j.missing));
-                } else {
-                  setOpen(false);
-                  await onChange();
-                }
-              } catch {
-                setError(translateError(lang, "generic"));
-              } finally {
-                setBusy(false);
-              }
+          <LoanComparison
+            rows={loanComparison.rows}
+            lang={lang}
+            principal={loanComparison.principal}
+            termMonths={loanComparison.termMonths}
+            variant="inline"
+            onLoanTaken={async () => {
+              setOpen(false);
+              await onChange();
             }}
-          >
-            {busy
-              ? {
-                  pl: "Zaciągam…",
-                  uk: "Беру…",
-                  cs: "Beru…",
-                  en: "Taking…",
-                }[lang]
-              : dict.mortgageTake}
-          </button>
-          {error && (
-            <p
-              role="alert"
-              className="text-xs text-[var(--danger)] bg-[color-mix(in_oklab,var(--danger)_8%,var(--surface))] border border-[var(--danger)] rounded-md px-3 py-2"
-            >
-              {error}
-            </p>
-          )}
+          />
         </div>
       )}
 

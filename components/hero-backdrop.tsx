@@ -72,6 +72,18 @@ export function HeroBackdropDefs() {
         <stop offset="0%" stopColor="#fde2c4" stopOpacity="0.85" />
         <stop offset="100%" stopColor="#fde2c4" stopOpacity="0" />
       </radialGradient>
+      {/* Drop shadow used by `<BuildingTile>` on both surfaces. Lives
+       *  here rather than in city-skyline-hero so the /miasto manager
+       *  (which doesn't import the hero) gets the same shadow id. */}
+      <filter id="hero-shadow" x="-20%" y="-20%" width="140%" height="160%">
+        <feDropShadow
+          dx="0"
+          dy="2"
+          stdDeviation="3"
+          floodColor="#000000"
+          floodOpacity="0.18"
+        />
+      </filter>
     </>
   );
 }

@@ -16,10 +16,12 @@ import type { Lang } from "@/lib/i18n";
 import { cityLevelFromBuildings } from "@/lib/city-level";
 import { cityWattBalance } from "@/lib/watts";
 import { getCatalogEntry } from "@/lib/building-catalog";
+import { BuildingStackBadge } from "@/components/building-stack-badge";
 
 type Copy = Record<
   | "heading"
   | "level"
+  | "levelTooltip"
   | "progressLabel"
   | "nextUnlockLabel"
   | "nothingNext"
@@ -35,7 +37,9 @@ type Copy = Record<
 const COPY: Record<Lang, Copy> = {
   pl: {
     heading: "Twoje miasto",
-    level: "Poziom",
+    level: "Stopień miasta",
+    levelTooltip:
+      "Stopień miasta rośnie z każdym budynkiem. Inne niż XP tier (zarobiony za grę).",
     progressLabel: "Postęp",
     nextUnlockLabel: "Następnie odblokujesz",
     nothingNext: "Maksymalny poziom osiągnięty — gratulacje!",
@@ -48,7 +52,9 @@ const COPY: Record<Lang, Copy> = {
   },
   uk: {
     heading: "Твоє місто",
-    level: "Рівень",
+    level: "Рівень міста",
+    levelTooltip:
+      "Рівень міста зростає з кожною будівлею. Це не XP-тір (заробляється у грі).",
     progressLabel: "Прогрес",
     nextUnlockLabel: "Далі відкриється",
     nothingNext: "Максимальний рівень — вітаємо!",
@@ -61,7 +67,9 @@ const COPY: Record<Lang, Copy> = {
   },
   cs: {
     heading: "Tvé město",
-    level: "Úroveň",
+    level: "Stupeň města",
+    levelTooltip:
+      "Stupeň města roste s každou budovou. Není to XP tier (zaslouženo za hru).",
     progressLabel: "Postup",
     nextUnlockLabel: "Dále odemkneš",
     nothingNext: "Maximální úroveň — gratulujeme!",
@@ -74,7 +82,9 @@ const COPY: Record<Lang, Copy> = {
   },
   en: {
     heading: "Your city",
-    level: "Level",
+    level: "City level",
+    levelTooltip:
+      "City level grows with each building you place. Different from XP tier (earned by playing).",
     progressLabel: "Progress",
     nextUnlockLabel: "Next unlock",
     nothingNext: "Max level reached — congratulations!",
@@ -165,9 +175,11 @@ export function CityLevelCard({ player, lang }: Props) {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-[auto_1fr_auto] sm:items-center gap-5 sm:gap-6">
-        {/* Left — progress ring */}
+        {/* Left — city-level ring (navy + BuildingStackBadge inside)
+            disambiguates from the XP-tier ring (orange + MedalRing)
+            on the dashboard hero. F-04. */}
         <div className="flex items-center gap-4">
-          <ProgressRing level={city.level} pct={pct} />
+          <ProgressRing level={city.level} pct={pct} title={t.levelTooltip} />
           <div className="flex flex-col gap-1 text-xs sm:hidden">
             <span className="font-semibold text-[var(--ink-muted)]">
               {t.progressLabel}: {pct}%
@@ -251,13 +263,21 @@ export function CityLevelCard({ player, lang }: Props) {
   );
 }
 
-function ProgressRing({ level, pct }: { level: number; pct: number }) {
+function ProgressRing({
+  level,
+  pct,
+  title,
+}: {
+  level: number;
+  pct: number;
+  title: string;
+}) {
   const r = 34;
   const circumference = 2 * Math.PI * r;
   const offset = circumference * (1 - Math.max(0, Math.min(100, pct)) / 100);
   return (
-    <div className="relative shrink-0" aria-hidden>
-      <svg width="80" height="80" viewBox="0 0 80 80">
+    <div className="relative shrink-0" title={title}>
+      <svg width="80" height="80" viewBox="0 0 80 80" aria-hidden>
         <circle
           cx="40"
           cy="40"
@@ -279,8 +299,9 @@ function ProgressRing({ level, pct }: { level: number; pct: number }) {
           transform="rotate(-90 40 40)"
         />
       </svg>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-2xl font-semibold tabular-nums text-[var(--accent)]">
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--accent)]">
+        <BuildingStackBadge size={18} />
+        <span className="text-xl font-semibold tabular-nums leading-none mt-0.5">
           {level}
         </span>
       </div>

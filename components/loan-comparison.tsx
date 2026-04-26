@@ -137,6 +137,11 @@ type Props = {
    *  MortgageCard collapse on /miasto). The default keeps the
    *  full-page layout `/loans/compare` ships today. */
   variant?: "page" | "inline";
+  /** F-01 — fired after the user successfully takes a loan via
+   *  `/api/loans/take-generic`. Inline hosts (MortgageCard) need this
+   *  to refresh their parent state so the active-loans list and
+   *  resource bar update without a full page reload. */
+  onLoanTaken?: () => void | Promise<void>;
 };
 
 export function LoanComparison({
@@ -145,6 +150,7 @@ export function LoanComparison({
   principal,
   termMonths,
   variant = "page",
+  onLoanTaken,
 }: Props) {
   const t = COPY[lang];
   const router = useRouter();
@@ -190,6 +196,7 @@ export function LoanComparison({
         setError(j.error ?? "unknown");
       } else {
         setTaken(type);
+        if (onLoanTaken) await onLoanTaken();
       }
     } finally {
       setTaking(null);
