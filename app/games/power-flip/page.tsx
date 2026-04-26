@@ -1,11 +1,13 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { PowerFlipClient } from "@/components/games/power-flip-client";
 import { powerRoundsFor, type PowerRound } from "@/lib/content/power-flip";
 import { shuffle } from "@/lib/shuffle";
 import { dictFor, type Lang } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
+import { getGame } from "@/lib/games";
+import { GameHero } from "@/components/game-hero";
 
 export const dynamic = "force-dynamic";
 
@@ -28,16 +30,16 @@ export default async function PowerFlipPage() {
   if (!session) redirect("/login?next=/games/power-flip");
   const lang = await getLang();
   const dict = dictFor(lang);
-  const t = dict.power;
+  const gameMeta = getGame("power-flip");
+  if (!gameMeta) notFound();
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
         <Link href="/games" className="text-sm text-[var(--ink-muted)] hover:underline">
           {dict.games.back}
         </Link>
-        <h1 className="text-3xl font-bold">{t.headerTitle}</h1>
-        <p className="text-[var(--ink-muted)]">{t.headerBody}</p>
       </header>
+      <GameHero game={gameMeta} lang={lang} dict={dict} />
       <PowerFlipClient rounds={pickRound(lang)} dict={dict} />
     </div>
   );

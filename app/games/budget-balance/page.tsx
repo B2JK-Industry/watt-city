@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { BudgetBalanceClient } from "@/components/games/budget-balance-client";
 import { budgetScenariosFor } from "@/lib/content/budget-balance";
 import { dictFor } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
+import { getGame } from "@/lib/games";
+import { GameHero } from "@/components/game-hero";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +15,8 @@ export default async function BudgetBalancePage() {
   if (!session) redirect("/login?next=/games/budget-balance");
   const lang = await getLang();
   const dict = dictFor(lang);
-  const t = dict.budget;
+  const gameMeta = getGame("budget-balance");
+  if (!gameMeta) notFound();
   const pool = budgetScenariosFor(lang);
   // Server component evaluated per-request (force-dynamic): random scenario selection
   // is intentional — each page load gets a fresh scenario from the pool.
@@ -25,9 +28,8 @@ export default async function BudgetBalancePage() {
         <Link href="/games" className="text-sm text-[var(--ink-muted)] hover:underline">
           {dict.games.back}
         </Link>
-        <h1 className="text-3xl font-bold">{t.headerTitle}</h1>
-        <p className="text-[var(--ink-muted)]">{t.headerBody}</p>
       </header>
+      <GameHero game={gameMeta} lang={lang} dict={dict} />
       <BudgetBalanceClient scenario={pick} dict={dict} />
     </div>
   );

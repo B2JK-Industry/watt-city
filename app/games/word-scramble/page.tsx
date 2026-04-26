@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { WordScrambleClient } from "@/components/games/word-scramble-client";
 import {
@@ -9,6 +9,8 @@ import {
 import { sample } from "@/lib/shuffle";
 import { dictFor, type Lang } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
+import { getGame } from "@/lib/games";
+import { GameHero } from "@/components/game-hero";
 
 export const dynamic = "force-dynamic";
 
@@ -21,16 +23,16 @@ export default async function WordScramblePage() {
   if (!session) redirect("/login?next=/games/word-scramble");
   const lang = await getLang();
   const dict = dictFor(lang);
-  const t = dict.word;
+  const gameMeta = getGame("word-scramble");
+  if (!gameMeta) notFound();
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
         <Link href="/games" className="text-sm text-[var(--ink-muted)] hover:underline">
           {dict.games.back}
         </Link>
-        <h1 className="text-3xl font-bold">{t.headerTitle}</h1>
-        <p className="text-[var(--ink-muted)]">{t.headerBody}</p>
       </header>
+      <GameHero game={gameMeta} lang={lang} dict={dict} />
       <WordScrambleClient words={pickRound(lang)} dict={dict} />
     </div>
   );

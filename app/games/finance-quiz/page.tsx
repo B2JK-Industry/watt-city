@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { FinanceQuizClient } from "@/components/games/finance-quiz-client";
 import {
@@ -9,6 +10,8 @@ import {
 import { shuffle } from "@/lib/shuffle";
 import { dictFor, type Lang } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
+import { getGame } from "@/lib/games";
+import { GameHero } from "@/components/game-hero";
 
 function pickRound(lang: Lang): QuizQuestion[] {
   return shuffle(financeQuestionsFor(lang))
@@ -56,6 +59,8 @@ export default async function FinanceQuizPage() {
   const lang = await getLang();
   const dict = dictFor(lang);
   const t = dict.finance;
+  const gameMeta = getGame("finance-quiz");
+  if (!gameMeta) notFound();
   const round = pickRound(lang);
   const anonymous = !session;
   const demo = DEMO_BANNER[lang];
@@ -65,11 +70,8 @@ export default async function FinanceQuizPage() {
         <Link href="/games" className="text-sm text-[var(--ink-muted)] hover:underline">
           {dict.games.back}
         </Link>
-        <h1 className="text-3xl font-bold">{t.headerTitle}</h1>
-        <p className="text-[var(--ink-muted)]">
-          {t.headerBody.replace("{n}", String(QUESTIONS_PER_ROUND))}
-        </p>
       </header>
+      {gameMeta && <GameHero game={gameMeta} lang={lang} dict={dict} />}
       {anonymous && (
         <aside
           className="card flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4"

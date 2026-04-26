@@ -1,4 +1,11 @@
 const pl = {
+  aiHub: {
+    title: "Dzisiejsze AI minigry",
+    body: "Codziennie 0-3 świeżych minigier wygenerowanych przez Claude. Każda znika po wyznaczonym czasie — top 3 zostają w profilu.",
+    emptyTitle: "Pipeline rotuje",
+    emptyBody: "Pierwsza dzisiejsza gra pojawi się o 09:00 UTC.",
+    rotationHint: "Rotacja co 1 / 6 / 24 h (fast / medium / slow).",
+  },
   consent: {
     title: "Cookies w Watt City",
     intro:

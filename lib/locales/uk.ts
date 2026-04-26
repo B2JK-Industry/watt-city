@@ -1,6 +1,13 @@
 import type plDict from "./pl";
 
 const uk: typeof plDict = {
+  aiHub: {
+    title: "Сьогоднішні AI міні-ігри",
+    body: "Щодня 0-3 свіжих ігор, згенерованих Claude. Кожна зникає у визначений час — топ-3 залишається у профілі.",
+    emptyTitle: "Пайплайн ротує",
+    emptyBody: "Перша сьогоднішня гра з'явиться о 09:00 UTC.",
+    rotationHint: "Ротація: 1 / 6 / 24 год (fast / medium / slow).",
+  },
   consent: {
     title: "Cookies у Watt City",
     intro:

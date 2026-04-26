@@ -1,6 +1,13 @@
 import type plDict from "./pl";
 
 const cs: typeof plDict = {
+  aiHub: {
+    title: "Dnešní AI minihry",
+    body: "Každý den 0-3 čerstvých her vygenerovaných Claudem. Každá zmizí v určený čas — top 3 zůstává v profilu.",
+    emptyTitle: "Pipeline rotuje",
+    emptyBody: "První dnešní hra dorazí v 09:00 UTC.",
+    rotationHint: "Rotace: 1 / 6 / 24 h (fast / medium / slow).",
+  },
   consent: {
     title: "Cookies ve Watt City",
     intro:
