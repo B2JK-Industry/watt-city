@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { QuizQuestion } from "@/lib/content/finance-quiz";
 import { XP_PER_CORRECT } from "@/lib/content/finance-quiz";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
@@ -76,6 +77,7 @@ export function FinanceQuizClient({
   lang = "pl",
 }: Props) {
   const t = dict.finance;
+  const router = useRouter();
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>("playing");
   const [chosen, setChosen] = useState<number | null>(null);
@@ -83,6 +85,23 @@ export function FinanceQuizClient({
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [result, setResult] = useState<ScoreResponse | null>(null);
+
+  /* Soft retry for the anonymous demo. The previous implementation
+   * fired `window.location.href = "/games/finance-quiz"` which is a
+   * full-page reload — visible blank flash, scroll reset, every
+   * client island re-mounts. Now: reset local round state + ask
+   * Next.js to re-render the server tree (`router.refresh()`), which
+   * runs `pickRound(lang)` again on the server and hands back a
+   * fresh question set without dropping the React tree. */
+  function softRetry() {
+    setIndex(0);
+    setPhase("playing");
+    setChosen(null);
+    setCorrectCount(0);
+    setSubmitError(null);
+    setResult(null);
+    router.refresh();
+  }
 
   const total = questions.length;
   const current = questions[index];
@@ -149,11 +168,7 @@ export function FinanceQuizClient({
             <button
               type="button"
               className="btn btn-ghost"
-              onClick={() => {
-                if (typeof window !== "undefined") {
-                  window.location.href = "/games/finance-quiz";
-                }
-              }}
+              onClick={softRetry}
             >
               {a.retry}
             </button>

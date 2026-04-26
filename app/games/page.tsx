@@ -81,9 +81,14 @@ export default async function GamesHubPage() {
               );
             if (p === "§DUEL§")
               return (
+                // V3.6 ADR 001 removed the /duel route. The dict key
+                // stayed (back-compat) but its label is now "Sprawdź
+                // rankingi graczy" / "Check the leaderboards", so we
+                // point at /leaderboard — semantically correct and
+                // kills the dead-link 404.
                 <Link
                   key={i}
-                  href="/duel"
+                  href="/leaderboard"
                   className="underline hover:text-[var(--accent)]"
                 >
                   {t.gamesHubDuelLink}

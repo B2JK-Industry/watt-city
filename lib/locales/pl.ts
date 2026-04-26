@@ -508,7 +508,7 @@ const pl = {
     howSteps: [
       { title: "Graj", body: "9 evergreen minigier (finanse + energetyka) + dzisiejsze wyzwanie AI. Każda 30–90 s. Combo ×3. Natychmiastowy feedback." },
       { title: "Generuj Waty", body: "Best-score model: powtórka nie zwiększa wyniku, musisz pobić rekord. Twój budynek rośnie tier po tierze." },
-      { title: "Rywalizuj", body: "Pojedynek na kod z kolegą (PvP bonus ×2 Waty), Śląska Liga Watów, Sala Sławy z medalami." },
+      { title: "Rywalizuj", body: "Śląska Liga Watów (XP ranking), Sala Sławy z medalami za codzienne wyzwania AI, miejska giełda budynków po Tier 7." },
     ],
     scienceIntro:
       "Dzisiejszy użytkownik wraca z całego dnia zmęczony i szuka nowego bodźca dopaminergicznego, a nie powtórki wczorajszego. Badania w psychologii behawioralnej i HCI to potwierdzają:",

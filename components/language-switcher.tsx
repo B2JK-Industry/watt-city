@@ -16,6 +16,19 @@ type Props = {
   variant?: Variant;
 };
 
+/* Localised a11y labels — the dropdown previously announced itself in
+ * English regardless of the active locale. Screen-reader users on the
+ * PL/UK/CS sites now hear the label in their language. */
+const A11Y_LABELS: Record<
+  Lang,
+  { trigger: string; listbox: string; group: string }
+> = {
+  pl: { trigger: "Język:", listbox: "Wybór języka", group: "Wybór języka" },
+  uk: { trigger: "Мова:", listbox: "Вибір мови", group: "Вибір мови" },
+  cs: { trigger: "Jazyk:", listbox: "Volba jazyka", group: "Volba jazyka" },
+  en: { trigger: "Language:", listbox: "Language", group: "Language" },
+};
+
 export function LanguageSwitcher({ current, variant = "header" }: Props) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -61,7 +74,11 @@ export function LanguageSwitcher({ current, variant = "header" }: Props) {
     // would be a regression in touch UX. Each tap is 44×44 by virtue of
     // `tap-target`.
     return (
-      <div className="flex flex-wrap gap-1.5" role="group" aria-label="Language">
+      <div
+        className="flex flex-wrap gap-1.5"
+        role="group"
+        aria-label={A11Y_LABELS[current].group}
+      >
         {LANGS.map((lang) => {
           const isActive = lang === current;
           return (
@@ -93,7 +110,7 @@ export function LanguageSwitcher({ current, variant = "header" }: Props) {
         type="button"
         onClick={() => setOpen((v) => !v)}
         className="tap-target inline-flex items-center justify-center gap-1.5 rounded-md border border-[var(--line)] bg-[var(--surface)] px-3 text-sm font-medium text-[var(--foreground)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
-        aria-label={`Language: ${LANG_LABEL[current]}`}
+        aria-label={`${A11Y_LABELS[current].trigger} ${LANG_LABEL[current]}`}
         aria-haspopup="listbox"
         aria-expanded={open}
       >
@@ -104,7 +121,7 @@ export function LanguageSwitcher({ current, variant = "header" }: Props) {
       {open && (
         <div
           role="listbox"
-          aria-label="Language"
+          aria-label={A11Y_LABELS[current].listbox}
           className="absolute right-0 top-[calc(100%+6px)] min-w-[170px] z-30 rounded-md border border-[var(--line)] bg-[var(--surface)] p-1.5 flex flex-col gap-1 elev-soft"
         >
           {LANGS.map((lang) => (

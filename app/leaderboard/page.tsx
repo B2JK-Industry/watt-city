@@ -244,19 +244,21 @@ function PodiumCard({
   return (
     <div className="flex flex-col items-center gap-2">
       <div
+        // Me-row indicator demoted from 4 px stripe to 1 px navy rule
+        // (brand manual §7 cap = 1 px). `data-testid` exposes the
+        // entry name so the ux-fixes spec can reliably scrape podium
+        // contents (issue #2 of the pass-6 fix list).
         className={`w-full ${height} ${bg} podium-tile flex items-end justify-center p-3 text-3xl sm:text-4xl ${
           crown ? "animate-[glow-ring_2.4s_ease-in-out_infinite]" : ""
-        }`}
-        style={
-          isMe
-            ? { borderLeft: "4px solid var(--accent)" }
-            : undefined
-        }
+        } ${isMe ? "border-l border-l-[var(--accent)]" : ""}`}
       >
         <span>{badge}</span>
       </div>
       <div className="text-center">
-        <div className="text-sm font-semibold truncate max-w-[120px] sm:max-w-[160px] tracking-tight">
+        <div
+          data-testid="podium-name"
+          className="text-sm font-semibold truncate max-w-[120px] sm:max-w-[160px] tracking-tight"
+        >
           {entry.username}
           {isMe && (
             <span className="text-[var(--danger)] ml-1 text-xs">(ty)</span>

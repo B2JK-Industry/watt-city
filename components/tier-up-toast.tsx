@@ -59,8 +59,10 @@ export function TierUpToast({
   return (
     <div
       role="status"
-      className="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 w-[min(92vw,26rem)] card elev-soft p-4 flex flex-col gap-2 bg-[var(--surface)] text-[var(--foreground)] motion-safe:animate-[tier-up-enter_420ms_cubic-bezier(0.2,0.9,0.2,1.2)]"
-      style={{ borderLeft: "4px solid var(--accent)" }}
+      // 4 px brutalism stripe → 1 px navy rule per `01-BRAND-MANUAL.md` §7.
+      // The toast already carries `elev-soft` shadow + accent confetti
+      // for emphasis; the rule is now an accent indicator, not a wall.
+      className="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 w-[min(92vw,26rem)] card elev-soft p-4 flex flex-col gap-2 bg-[var(--surface)] text-[var(--foreground)] border-l border-l-[var(--accent)] motion-safe:animate-[tier-up-enter_420ms_cubic-bezier(0.2,0.9,0.2,1.2)]"
     >
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <Confetti count={20} />

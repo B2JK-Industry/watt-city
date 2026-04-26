@@ -99,6 +99,7 @@ export function CookieConsent({
       noAds: "Brak reklam",
       more: "Więcej",
       ok: "OK",
+      ariaRegion: "Pliki cookie",
       ariaClose: "Zamknij komunikat o plikach cookie",
     },
     uk: {
@@ -109,6 +110,7 @@ export function CookieConsent({
       noAds: "Без реклами",
       more: "Детальніше",
       ok: "OK",
+      ariaRegion: "Файли cookie",
       ariaClose: "Закрити повідомлення про cookie",
     },
     cs: {
@@ -119,6 +121,7 @@ export function CookieConsent({
       noAds: "Žádné reklamy",
       more: "Více",
       ok: "OK",
+      ariaRegion: "Soubory cookie",
       ariaClose: "Zavřít oznámení o cookie",
     },
     en: {
@@ -129,6 +132,7 @@ export function CookieConsent({
       noAds: "No ads",
       more: "More",
       ok: "OK",
+      ariaRegion: "Cookies",
       ariaClose: "Dismiss cookie notice",
     },
   }[lang];
@@ -157,7 +161,7 @@ export function CookieConsent({
   return (
     <div
       role="region"
-      aria-label="Cookies"
+      aria-label={copy.ariaRegion}
       aria-live="polite"
       style={{ ["--cc-bot" as string]: bottomOffset }}
       className="fixed inset-x-0 z-40 bottom-[var(--cc-bot)] sm:bottom-0 bg-[var(--surface)] border-t border-[var(--line)] elev-soft px-3 py-2 sm:px-5 sm:py-3 flex items-center gap-2 sm:gap-4"
@@ -165,7 +169,19 @@ export function CookieConsent({
       <span aria-hidden className="hidden sm:inline text-base">🍪</span>
       <div className="flex-1 min-w-0 flex flex-col gap-0.5">
         <p className="t-caption sm:t-body-sm text-[var(--ink-muted)] leading-snug">
-          <span className="sm:hidden">{copy.bodyShort}</span>
+          {/* Mobile copy folds the privacy link inline so the
+              "more info" affordance is not buried inside the
+              ✕-icon dismiss. Desktop keeps a dedicated `.btn-ghost`
+              "Więcej" — see below. */}
+          <span className="sm:hidden">
+            {copy.bodyShort}{" "}
+            <a
+              href="/ochrana-sukromia"
+              className="underline text-[var(--accent)] font-medium"
+            >
+              {copy.more}
+            </a>
+          </span>
           <span className="hidden sm:inline">{copy.body}</span>
         </p>
         {/* F-NEW-08 — three-checkmark subhead clarifies "there is

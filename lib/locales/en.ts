@@ -511,7 +511,7 @@ const en: typeof plDict = {
     howSteps: [
       { title: "Play", body: "9 evergreen mini-games (finance + energy) + today's AI challenge. Each 30–90 s. Combo ×3. Instant feedback." },
       { title: "Generate Watts", body: "Best-score model: replays don't add XP, you must beat your record. Your building grows tier by tier." },
-      { title: "Compete", body: "Code-based duel with a friend (PvP bonus ×2 Watts), Silesia Watt League, Hall of Fame medals." },
+      { title: "Compete", body: "Silesia Watt League (XP ranking), Hall of Fame medals from daily AI challenges, city marketplace from Tier 7." },
     ],
     scienceIntro:
       "Today's user arrives tired after a long day and looks for a new dopaminergic stimulus, not a replay of yesterday's. Behavioural-psychology and HCI research backs this up:",

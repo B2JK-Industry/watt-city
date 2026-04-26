@@ -510,7 +510,7 @@ const cs: typeof plDict = {
     howSteps: [
       { title: "Hraj", body: "9 evergreen miniher (finance + energetika) + dnešní AI výzva. Každá 30–90 s. Combo ×3. Okamžitý feedback." },
       { title: "Generuj Watty", body: "Best-score model: opakování nezvýší skóre, musíš překonat rekord. Tvá budova roste tier po tieru." },
-      { title: "Soutěž", body: "Duel kódem s kamarádem (PvP bonus ×2 Watty), Slezská Watt liga, Síň slávy s medailemi." },
+      { title: "Soutěž", body: "Slezská Watt liga (XP žebříček), Síň slávy s medailemi za denní AI výzvy, městská burza budov od Tier 7." },
     ],
     scienceIntro:
       "Dnešní uživatel přichází po celém dni unavený a hledá nový dopaminergní podnět, ne replikaci včerejšího. Výzkum v behaviorální psychologii a HCI to potvrzuje:",
