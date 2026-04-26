@@ -253,30 +253,38 @@ test.describe("UX fixes — demo-review punch list", () => {
   test("public leaderboard hides seeded banned usernames from rows AND podium", async ({
     page,
     request,
-  }) => {
+  }, testInfo) => {
     // Seed the in-memory leaderboard with a mix of banned + clean
     // accounts at high scores (so they would land on the podium /
     // top of the table without filtering). After seeding we navigate
     // to /leaderboard and assert NONE of the banned names appear in
     // either `<td>` rows or the `[data-testid="podium-name"]` tiles.
     //
-    // Seed via /api/auth/register (no admin-bearer required) +
-    // /api/score (CSRF-protected). Each seed step uses an isolated
-    // request cookie jar via `request.newContext()` so the mainline
-    // page context stays anonymous for the assertion phase.
+    // SAFETY: only seed against a local dev server. The seed path
+    // calls /api/auth/register, which on a production base URL
+    // would write real accounts into production Upstash. The
+    // playwright config blanks UPSTASH_* for the auto-started
+    // webServer (in-memory store), so localhost runs never leak.
+    // For prod-target runs (PLAYWRIGHT_BASE_URL=https://...) we
+    // skip seeding and fall back to the read-only assertion that
+    // the live filter excludes any pre-existing banned accounts.
+    const baseURL = testInfo.project.use.baseURL ?? "";
+    const isLocal = /^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0)(:|\/|$)/.test(baseURL);
     const SEED = [
       { name: "gp_seedalpha", xp: 9999 },
       { name: "pr_seedbeta", xp: 9998 },
       { name: "smoke_seedgamma", xp: 9997 },
       { name: "playwright_seeddelta", xp: 9996 },
     ];
-    for (const { name, xp } of SEED) {
-      await seedLeaderboard(request, name, xp).catch(() => {
-        /* If register fails (rate limit, dup), skip — the assertion
-           below only uses what actually got seeded. The integration
-           test in lib/account-filter-integration.test.ts is the
-           authoritative proof. */
-      });
+    if (isLocal) {
+      for (const { name, xp } of SEED) {
+        await seedLeaderboard(request, name, xp).catch(() => {
+          /* If register fails (rate limit, dup), skip — the assertion
+             below only uses what actually got seeded. The integration
+             test in lib/account-filter-integration.test.ts is the
+             authoritative proof. */
+        });
+      }
     }
 
     await page.goto("/leaderboard");
@@ -286,11 +294,13 @@ test.describe("UX fixes — demo-review punch list", () => {
     )
       .join(" ")
       .toLowerCase();
-    for (const seed of SEED) {
-      expect(
-        cellTexts.includes(seed.name),
-        `seeded banned name '${seed.name}' leaked into the public leaderboard cells: ${cellTexts.slice(0, 300)}`,
-      ).toBe(false);
+    if (isLocal) {
+      for (const seed of SEED) {
+        expect(
+          cellTexts.includes(seed.name),
+          `seeded banned name '${seed.name}' leaked into the public leaderboard cells: ${cellTexts.slice(0, 300)}`,
+        ).toBe(false);
+      }
     }
     // Also catch any other banned-prefix accounts the in-memory store
     // already had (defensive — should be 0 on a clean run).
