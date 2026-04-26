@@ -57,12 +57,26 @@ export function LanguageSwitcher({ current, variant = "header" }: Props) {
       });
       // Soft transition — `router.refresh()` re-runs the server tree
       // (server components, layout, page) with the new `xp_lang`
-      // cookie and patches the rendered DOM in place. The previous
-      // `window.location.reload()` killed scroll position, blanked
-      // the page, and visibly re-mounted client islands; this swap
-      // looks like a language change, not an app crash.
+      // cookie and patches the rendered DOM in place.
       router.refresh();
       setOpen(false);
+      // R-10 — Next.js 16 RSC cache occasionally returns a stale
+      // payload after the cookie flip (the layout RSC was closed
+      // over the prior dictionary at request time). The /api/lang
+      // route now `revalidatePath("/", "layout")` for the common
+      // case; this 250 ms guard verifies the rendered `<html
+      // lang>` actually flipped — if it did not, fall back to a
+      // hard reload so the user never sees a half-translated page.
+      window.setTimeout(() => {
+        try {
+          const htmlLang = document.documentElement.lang;
+          if (htmlLang && htmlLang.toLowerCase() !== lang.toLowerCase()) {
+            window.location.reload();
+          }
+        } catch {
+          /* ignore */
+        }
+      }, 250);
     } finally {
       setPending(null);
     }

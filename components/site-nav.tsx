@@ -107,7 +107,7 @@ export function SiteNav({
     navLinks.push({ href: "/rodzic", label: PARENT_KID_LABEL[lang] });
   }
   return (
-    <header className="w-full border-b border-[var(--line)] sticky top-0 z-20 bg-[var(--surface)]">
+    <header className="w-full border-b border-[var(--line)] sticky top-0 z-40 bg-[var(--surface)]">
       <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-[56px] sm:h-[72px] flex items-center justify-between gap-4">
         {(() => {
           const theme = resolveTheme();

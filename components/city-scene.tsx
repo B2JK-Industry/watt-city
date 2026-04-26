@@ -1656,10 +1656,23 @@ function WattMeter({
 }) {
   if (cap <= 0) return null;
   const pct = Math.min(1, value / cap);
+  // R-09 — `class="watt-meter"` opts the inner fill out of the
+  // global `[fill="#fde047"]` retint (see globals.css). The
+  // attribute selector matches all neon-yellow fills inside the
+  // city scene EXCEPT elements bearing this class — keeps the
+  // best-score progress meter visibly yellow on the pko skin
+  // (it is a UI signal, not a decorative window).
   return (
     <g>
       <rect x={x} y={y} width={w} height={8} fill="#0a0a0f" stroke="#0a0a0f" strokeWidth={2} rx={2} />
-      <rect x={x + 1} y={y + 1} width={(w - 2) * pct} height={6} fill="#fde047" />
+      <rect
+        className="watt-meter"
+        x={x + 1}
+        y={y + 1}
+        width={(w - 2) * pct}
+        height={6}
+        fill="#fde047"
+      />
     </g>
   );
 }

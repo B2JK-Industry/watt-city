@@ -147,15 +147,13 @@ export function WattDeficitPanel({ deficit, lang }: Props) {
     <aside
       role="alert"
       aria-labelledby="wdp-title"
-      /* sticky offset: desktop = 64 px (h-16 main nav row only).
-         Mobile = 144 px because SiteNav stacks main row 64 + secondary
-         nav ~40 + resource-bar ~40 (all rendered inside the sticky
-         <header>). Before this fix the panel pinned at 64 px and let
-         the secondary nav + resource-bar scroll past over it, hiding
-         the critical-state banner under the nav stack.
-         The panel is only rendered for authenticated users who are
-         in deficit, so resource-bar is always present → 144 is safe. */
-      className="sticky top-[144px] sm:top-16 z-[30] border-b border-[var(--danger)] bg-[var(--surface-2)]"
+      /* R-08 — sticky offset matches the actual SiteNav heights:
+         mobile main row 56 + resource-bar 40 = 96 px; sm+ main row
+         72 + resource-bar 40 = 112 px. Header z-40 ensures the
+         banner never paints on top of the nav (the prior z-[30] vs
+         header z-20 had the inversion that made the banner cross
+         the header on scroll). Bg `--surface-2` is opaque. */
+      className="sticky top-[96px] sm:top-[112px] z-30 border-b border-[var(--danger)] bg-[var(--surface-2)]"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-2 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm">
         <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">

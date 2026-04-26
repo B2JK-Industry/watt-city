@@ -249,9 +249,13 @@ body {
 }
 
 /* Neon-yellow window glow → muted warm yellow per spec (window bucket).
- * Limit to FILL only — strokes already retinted above. */
-:where([data-skin="pko"]) .city-scene-root [fill="#fde047"],
-:where([data-skin="pko"]) .city-scene-root [fill="#facc15"] {
+ * Limit to FILL only — strokes already retinted above.
+ * R-09 — `:not(.watt-meter)` keeps the best-score progress bar fill
+ * visibly yellow. The previous mass override retinted it to the
+ * muted window token, which on top of the `saturate(.35)` filter
+ * collapsed the bar into invisibility against the dark slot bg. */
+:where([data-skin="pko"]) .city-scene-root [fill="#fde047"]:not(.watt-meter),
+:where([data-skin="pko"]) .city-scene-root [fill="#facc15"]:not(.watt-meter) {
   fill: var(--sc-window);
 }
 
@@ -418,6 +422,30 @@ body {
   border-radius: 999px;
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* R-11 — CitySkylineHero scoped surface. The hero owns its own
+ * daylight palette (pko + refreshed catalog colours), so it does
+ * NOT inherit the `.city-scene-root` `saturate(.35) brightness(1.55)`
+ * filter that washes cream/ivory building bodies into invisibility.
+ * Background is white directly; building bodies get a faint navy
+ * outline so they read against the sky. */
+.city-skyline-hero-root {
+  background: #ffffff;
+}
+.city-skyline-hero-root rect[fill] {
+  /* 1 px navy outline (3% opacity) so very-light catalog bodies
+   * (cream, ivory, light-navy) keep a visible silhouette against
+   * the daylight sky. Doesn't touch coloured rects strongly enough
+   * to alter brand colours. */
+  stroke: rgba(0, 53, 116, 0.18);
+  stroke-width: 0.5;
+}
+:where([data-skin="core"]) .city-skyline-hero-root {
+  background: #07071a;
+}
+:where([data-skin="core"]) .city-skyline-hero-root rect[fill] {
+  stroke: none;
 }
 
 /* CitySkylineHero empty-state overlay. The original `bg-black/40`

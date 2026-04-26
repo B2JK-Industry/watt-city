@@ -85,10 +85,17 @@ export function CitySkylineHero({ buildings, lang, emptyStateCta }: Props) {
 
   return (
     <section
-      // `city-scene-root` opts the hero into the pko skin's
-      // attribute-selector overrides in globals.css (sky stops, ground
-      // pattern, stroke colors) and provides the skin-aware background.
-      className="city-scene-root card relative overflow-hidden"
+      // R-11 — class swapped from `city-scene-root` to dedicated
+      // `city-skyline-hero-root`. The hero canvas owns its palette
+      // (the new R-05 daylight surface + the refreshed catalog
+      // colours), so the city-scene attribute-selector retints +
+      // saturate(.35) brightness(1.55) filter no longer apply. The
+      // prior shared class washed cream/ivory building bodies into
+      // invisibility because brightness(1.55) on near-white pushed
+      // them past pure white. The hero gets its own scoped CSS in
+      // globals.css (sky bg + 1 px navy outline on bodies for
+      // readability against the light sky).
+      className="city-skyline-hero-root card relative overflow-hidden"
       aria-labelledby="skyline-heading"
     >
       <h2 id="skyline-heading" className="sr-only">
