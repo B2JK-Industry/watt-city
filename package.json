@@ -52,5 +52,14 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": "eslint --fix"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "bufferutil",
+      "esbuild",
+      "keccak",
+      "simple-git-hooks",
+      "utf-8-validate"
+    ]
   }
 }
