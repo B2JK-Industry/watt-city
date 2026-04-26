@@ -99,8 +99,16 @@ export type WattCityBootstrap = {
     errorUnknown: string;
     errorRateLimited: string;
     errorScoreInProgress: string;
+    successUpgrade: string;
+    successPlace: string;
+    successDemolish: string;
   };
 };
+
+/* Auto-clear delay for the success-toast banner. Long enough that a
+ * scanning user notices it, short enough to not stack with the next
+ * upgrade attempt. */
+const SUCCESS_AUTO_CLEAR_MS = 2500;
 
 function categoryLabel(cat: SlotCategory, lang: Lang): string {
   const map: Record<SlotCategory, Record<Lang, string>> = {
@@ -148,6 +156,27 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
     | { code: string; missing?: Partial<Resources>; detail?: string }
     | null
   >(null);
+  // R-13 — success toast for place / upgrade / demolish. The page used
+  // to silently update on success — user clicked "Ulepsz", state
+  // refreshed, and nothing told them the action landed. The auto-
+  // clear timeout keeps the toast off the next render so the
+  // surface doesn't feel sticky.
+  const [success, setSuccess] = useState<string | null>(null);
+  const successTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const flashSuccess = useCallback((message: string) => {
+    setSuccess(message);
+    if (successTimer.current) clearTimeout(successTimer.current);
+    successTimer.current = setTimeout(
+      () => setSuccess(null),
+      SUCCESS_AUTO_CLEAR_MS,
+    );
+  }, []);
+  useEffect(
+    () => () => {
+      if (successTimer.current) clearTimeout(successTimer.current);
+    },
+    [],
+  );
   const { dict, lang } = state;
 
   /** Translate a server error code + optional missing breakdown into a
@@ -223,13 +252,14 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
           setError({ code: j.error, missing: j.missing, detail: j.detail });
         } else {
           setSelected({ kind: "building", slotId });
+          flashSuccess(dict.successPlace);
           await refresh();
         }
       } finally {
         setBusy(false);
       }
     },
-    [refresh, postWithRetry],
+    [refresh, postWithRetry, flashSuccess, dict.successPlace],
   );
 
   const doUpgrade = useCallback(
@@ -242,12 +272,13 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
         });
         const j = await res.json();
         if (!j.ok) setError({ code: j.error, missing: j.missing });
+        else flashSuccess(dict.successUpgrade);
         await refresh();
       } finally {
         setBusy(false);
       }
     },
-    [refresh, postWithRetry],
+    [refresh, postWithRetry, flashSuccess, dict.successUpgrade],
   );
 
   const doDemolish = useCallback(
@@ -263,6 +294,7 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
         });
         const j = await res.json();
         if (!j.ok) setError({ code: j.error, missing: j.missing });
+        else flashSuccess(dict.successDemolish);
         await refresh();
       } finally {
         setBusy(false);
@@ -392,6 +424,21 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
       {error && (
         <div className="card p-3 border-red-500 text-sm text-red-400">
           {renderError(error)}
+        </div>
+      )}
+
+      {/* R-13 — success toast (place / upgrade / demolish). Auto-clears
+          via `flashSuccess` after SUCCESS_AUTO_CLEAR_MS. role=status
+          gets it announced to screen readers without being interruptive
+          like role=alert. The card uses surface-2 + green left rule
+          (1 px navy-success accent — keeps brand max-1px border rule). */}
+      {success && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="card p-3 text-sm text-[var(--foreground)] border-l border-l-[var(--success)] motion-safe:animate-slide-up"
+        >
+          {success}
         </div>
       )}
 

@@ -68,6 +68,10 @@ const DICT: Record<Lang, {
   errorRateLimited: string;
   /** Error banner when a concurrent score submission holds the building lock. */
   errorScoreInProgress: string;
+  /** Success toast after a building mutation. Auto-clears after ~2.5 s. */
+  successUpgrade: string;
+  successPlace: string;
+  successDemolish: string;
 }> = {
   pl: {
     pickSlot: "Wybierz slot",
@@ -108,6 +112,9 @@ const DICT: Record<Lang, {
     errorUnknown: "Coś nam uciekło (kod: {code}). Spróbuj jeszcze raz.",
     errorRateLimited: "Za szybko — daj chwilę i spróbuj ponownie.",
     errorScoreInProgress: "Trwa zapisywanie wyniku. Spróbuj ponownie za sekundę.",
+    successUpgrade: "✅ Ulepszono budynek",
+    successPlace: "✅ Postawiono budynek",
+    successDemolish: "🧹 Zburzono budynek",
   },
   uk: {
     pickSlot: "Вибери слот",
@@ -147,6 +154,9 @@ const DICT: Record<Lang, {
     errorUnknown: "Щось пішло не так (код: {code}). Спробуй ще раз.",
     errorRateLimited: "Занадто швидко — зачекай і спробуй знову.",
     errorScoreInProgress: "Зберігаємо результат гри. Спробуй ще раз за секунду.",
+    successUpgrade: "✅ Будівлю покращено",
+    successPlace: "✅ Будівлю поставлено",
+    successDemolish: "🧹 Будівлю знесено",
   },
   cs: {
     pickSlot: "Vyber slot",
@@ -186,6 +196,9 @@ const DICT: Record<Lang, {
     errorUnknown: "Něco se pokazilo (kód: {code}). Zkus to znovu.",
     errorRateLimited: "Příliš rychle — počkej chvíli a zkus to znovu.",
     errorScoreInProgress: "Ukládáme výsledek hry. Zkus to znovu za sekundu.",
+    successUpgrade: "✅ Budova vylepšena",
+    successPlace: "✅ Budova postavena",
+    successDemolish: "🧹 Budova zbourána",
   },
   en: {
     pickSlot: "Pick a slot",
@@ -226,6 +239,9 @@ const DICT: Record<Lang, {
     errorUnknown: "Something slipped (code: {code}). Please try again.",
     errorRateLimited: "Too fast — pause for a moment and retry.",
     errorScoreInProgress: "Saving your game result. Try again in a second.",
+    successUpgrade: "✅ Building upgraded",
+    successPlace: "✅ Building placed",
+    successDemolish: "🧹 Building demolished",
   },
 };
 
