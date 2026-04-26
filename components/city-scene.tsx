@@ -121,7 +121,12 @@ export function CityScene({
     // globals.css — core keeps the neon-night fill, pko gets the
     // daylight sky token.
     <div
+      // E-04 — `data-mood="sunset"` opts the compact preview (dashboard
+      // + landing) into a peach-tinted sky so it visually matches the
+      // "🌅 Zachód / Sunset" chip on the games hub. The full-size hero
+      // stays on the default daylight palette per AGENTS.md skin rules.
       className="city-scene-root relative w-full rounded-lg border border-[var(--line)] overflow-hidden"
+      data-mood={compact ? "sunset" : undefined}
       style={{
         aspectRatio: `${VB_W} / ${VB_H}`,
         maxHeight: compact ? 360 : 560,

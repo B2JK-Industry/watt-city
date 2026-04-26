@@ -307,7 +307,10 @@ export default async function HallOfFamePage() {
                     <p className="font-semibold tracking-tight">
                       {localizedTitle(game, dict)}
                     </p>
-                    <p className="text-[11px] text-[var(--ink-muted)] font-semibold">
+                    <p
+                      lang="pl"
+                      className="text-[11px] text-[var(--ink-muted)] font-semibold"
+                    >
                       {game.building.name}
                     </p>
                   </div>

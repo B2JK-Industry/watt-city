@@ -93,9 +93,22 @@ export default async function AiGamePage({
             </span>
           )}
         </div>
-        <h1 className="text-3xl font-bold">{game.title}</h1>
-        <p className="text-[var(--ink-muted)]">{game.tagline}</p>
-        <p className="text-sm text-[var(--ink-muted)]">{game.description}</p>
+        {/* E-03 — AI games are generated PL-side then translated by
+            Haiku into uk/cs/en. The header copy renders the locale
+            already mapped on the server (see lib/ai-pipeline). When
+            the active locale falls back to the PL master (translation
+            still pending), the `lang="pl"` attribute hints screen
+            readers + Chrome auto-translate that the chunk is Polish
+            — no more mid-page lang mix without a marker. */}
+        <h1 className="text-3xl font-semibold" lang="pl">
+          {game.title}
+        </h1>
+        <p className="text-[var(--ink-muted)]" lang="pl">
+          {game.tagline}
+        </p>
+        <p className="text-sm text-[var(--ink-muted)]" lang="pl">
+          {game.description}
+        </p>
       </header>
 
       {spec.kind === "quiz" && (

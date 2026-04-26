@@ -114,7 +114,7 @@ export default async function GamesHubPage() {
                       g.plays > 0 ? "bg-[var(--sales)]" : "bg-[var(--ink-subtle)]"
                     }`}
                   />
-                  <span className="font-semibold truncate">
+                  <span lang="pl" className="font-semibold truncate">
                     {g.meta.building.name}
                   </span>
                   <span className="text-[var(--ink-muted)] truncate">

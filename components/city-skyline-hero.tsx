@@ -1,30 +1,26 @@
-/* V3.1 — City Skyline Hero (server component).
+/* V3.1 → E-01 (PR-L) — City Skyline Hero, sunset twilight rewrite.
  *
- * Replaces the V1/V2 `PlayerBuilding` (one growing avatar building) with
- * a live SVG of the player's actual 20-slot city. Occupied slots render
- * a tiny silhouette in the building's catalog colors; empty slots show
- * a placeholder "build here" card.
+ * Pass-7 R-05 shipped a full daylight scene; the dashboard chip on
+ * /games still says "🌅 Zachód / Sunset / Захід / Soumrak" though,
+ * so the hero canvas now matches the chip — early evening, sun
+ * behind the horizon, moon already up, lampposts beginning to light.
  *
- * R-05 (PR-J pass-7) — full daylight redesign:
- *   - 3-stop sky gradient (sunrise navy haze → warm haze → cream)
- *   - Soft sun + clouds + Beskydy mountain silhouette (atmosphere)
- *   - Katowice skyline backdrop (Spodek + 2 panels + chimney) — the
- *     "PKO partnership signal" — recognisable city profile at 12%
- *     navy opacity, sits behind the foreground buildings
- *   - 3-zone ground (grass / road / sidewalk) replaces the old
- *     tiled-pattern ground
- *   - Decorative lampposts + trees in slot gaps
- *   - Building scale bumped (0.7 + 0.05 × L) so L1 is actually
- *     visible — the prior 0.55 + 0.045 base made fresh houses
- *     disappear into the surface
- *   - Soft drop shadow under each building (defs <filter>)
- *   - Empty slots redesigned from dotted ghost to a + card with
- *     a localised "build here" label — clear affordance instead of
- *     a near-invisible dashed outline
+ * Spec (per user E-01 brief):
+ *   - viewBox 1800×390 (tighter — old 460 left dead air below)
+ *   - sun half-set behind the horizon (right-bias, warm)
+ *   - moon top-left (small faded crescent — first hour after sunset)
+ *   - Spodek silhouette + skyline backdrop kept (PKO partnership cue)
+ *   - 6 lampposts evenly spaced (was 3), each with the
+ *     "lit-on-play" mechanic: a lamppost glows warm-orange when ≥1
+ *     building exists in its 1/6 slice of the canvas — visual proof
+ *     of player progress at a glance, no extra UI required
+ *   - Buildings keep level-scaled silhouettes; windows light up
+ *     yellow only when the building exists (level ≥ 1) — empty
+ *     slots show only the "+" placeholder, never lit windows
  *
- * Rendering model still matches the existing city scene (1800×460
- * viewBox, ground at y≈400). Container background lives in CSS via
- * `.city-scene-root` so the dark night sky is core-skin only.
+ * Container background is overridden via `.city-skyline-hero-root`
+ * scoped CSS (globals.css §R-11) so the city-scene mass retints +
+ * saturate filter cannot reach the hero's twilight palette.
  */
 
 import type { PlayerState } from "@/lib/player";
@@ -36,8 +32,8 @@ import {
 } from "@/lib/building-catalog";
 
 const VB_W = 1800;
-const VB_H = 460;
-const GROUND_Y = 400;
+const VB_H = 390;
+const GROUND_Y = 330;
 
 type Props = {
   buildings: PlayerState["buildings"];
@@ -72,29 +68,35 @@ const BUILD_LABEL: Record<Lang, string> = {
   en: "Build",
 };
 
+// 6 lampposts — evenly spaced across the canvas. Index → x in
+// viewBox units. Used together with the lit-on-play mechanic below.
+const LAMP_X = [150, 450, 750, 1050, 1350, 1650] as const;
+
 export function CitySkylineHero({ buildings, lang, emptyStateCta }: Props) {
   const occupied = new Map(buildings.map((b) => [b.slotId, b]));
   const copy = EMPTY_COPY[lang];
   const buildLabel = BUILD_LABEL[lang];
 
-  // Pre-compute decorator positions (lamps + trees) once so the SVG
-  // stays declarative. Anchored to ground line at GROUND_Y. We pick
-  // x-coords in the gaps between major slot clusters.
-  const lampX = [220, 760, 1320];
-  const treeX = [120, 560, 1080, 1640];
+  // Lit-on-play: split the canvas into 6 vertical slices, each tied
+  // to one lamppost. A lamp lights up when AT LEAST one slot inside
+  // its slice is occupied. Computed once per render — cheap (linear
+  // scan over <20 slots) and deterministic for the SSR snapshot.
+  const sliceWidth = VB_W / 6;
+  const sliceHasBuilding = LAMP_X.map((_, i) => {
+    const lo = i * sliceWidth;
+    const hi = (i + 1) * sliceWidth;
+    return SLOT_MAP.some((slot) => {
+      const cx = slot.x + slot.w / 2;
+      return cx >= lo && cx < hi && occupied.has(slot.id);
+    });
+  });
 
   return (
     <section
-      // R-11 — class swapped from `city-scene-root` to dedicated
-      // `city-skyline-hero-root`. The hero canvas owns its palette
-      // (the new R-05 daylight surface + the refreshed catalog
-      // colours), so the city-scene attribute-selector retints +
-      // saturate(.35) brightness(1.55) filter no longer apply. The
-      // prior shared class washed cream/ivory building bodies into
-      // invisibility because brightness(1.55) on near-white pushed
-      // them past pure white. The hero gets its own scoped CSS in
-      // globals.css (sky bg + 1 px navy outline on bodies for
-      // readability against the light sky).
+      // R-11 — dedicated `city-skyline-hero-root` opts out of the
+      // city-scene retint chain (see globals.css). The hero owns its
+      // sunset palette and must not be touched by the
+      // `.city-scene-root` saturate(.35) brightness(1.55) filter.
       className="city-skyline-hero-root card relative overflow-hidden"
       aria-labelledby="skyline-heading"
     >
@@ -112,97 +114,132 @@ export function CitySkylineHero({ buildings, lang, emptyStateCta }: Props) {
         }
       >
         <defs>
-          {/* R-05 — daylight 3-stop sky. Haze top → warm mid → cream
-              near horizon (matches PKO orange family). */}
+          {/* Sunset 4-stop sky: deep navy at the top, twilight purple,
+              warm peach band, hot orange at the horizon — this is the
+              palette the chip copy promises. */}
           <linearGradient id="hero-sky" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="#e8f1fb" />
-            <stop offset="55%" stopColor="#f5f8fc" />
-            <stop offset="100%" stopColor="#fef3e2" />
+            <stop offset="0%" stopColor="#0d2747" />
+            <stop offset="40%" stopColor="#5b3a76" />
+            <stop offset="78%" stopColor="#f4a259" />
+            <stop offset="100%" stopColor="#fde2c4" />
           </linearGradient>
-          {/* Soft drop shadow under each foreground building. Tight
-              radius so it stays an accent, not a halo. */}
+          {/* Half-set sun gradient — warm core fading into transparent
+              so the upper half blends into the sky band cleanly. */}
+          <radialGradient id="hero-sun" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#fde2c4" />
+            <stop offset="60%" stopColor="#db912c" />
+            <stop offset="100%" stopColor="#db912c" stopOpacity="0" />
+          </radialGradient>
+          {/* Lamp halo — used by the lit-on-play state. */}
+          <radialGradient id="hero-lamp-halo" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#fde2c4" stopOpacity="0.85" />
+            <stop offset="100%" stopColor="#fde2c4" stopOpacity="0" />
+          </radialGradient>
           <filter id="hero-shadow" x="-20%" y="-20%" width="140%" height="160%">
             <feDropShadow
               dx="0"
               dy="2"
               stdDeviation="3"
               floodColor="#000000"
-              floodOpacity="0.12"
+              floodOpacity="0.18"
             />
           </filter>
         </defs>
 
-        {/* ─── Layer 1: Sky + atmosphere ─── */}
+        {/* ─── Layer 1: Sky ─── */}
         <rect width={VB_W} height={GROUND_Y} fill="url(#hero-sky)" />
 
-        {/* Sun — top-right, soft warm orange disc, no rays */}
-        <circle cx={VB_W - 220} cy={120} r={60} fill="#db912c" opacity="0.18" />
+        {/* Faint stars — only in the upper third where the sky is dark
+            enough for them to register. Hand-picked positions so the
+            SSR snapshot is stable. */}
+        <g fill="#ffffff" opacity="0.7">
+          <circle cx={120} cy={40} r={1.4} />
+          <circle cx={310} cy={70} r={1} />
+          <circle cx={680} cy={28} r={1.6} />
+          <circle cx={920} cy={52} r={1.2} />
+          <circle cx={1240} cy={36} r={1.3} />
+          <circle cx={1480} cy={64} r={1} />
+          <circle cx={1720} cy={42} r={1.4} />
+        </g>
 
-        {/* Clouds — three soft ellipses at varied positions */}
-        <ellipse cx={420} cy={90} rx={90} ry={18} fill="#ffffff" opacity="0.7" />
-        <ellipse cx={460} cy={102} rx={70} ry={14} fill="#ffffff" opacity="0.55" />
-        <ellipse cx={1080} cy={140} rx={110} ry={20} fill="#ffffff" opacity="0.6" />
-        <ellipse cx={1500} cy={70} rx={80} ry={16} fill="#ffffff" opacity="0.5" />
+        {/* Moon — top-left crescent. Two overlapping discs, the inner
+            one tinted to the dark sky stop, fakes the crescent without
+            a path. Soft halo via an outer 0.15 ring. */}
+        <g aria-hidden>
+          <circle cx={180} cy={90} r={42} fill="#ffffff" opacity="0.08" />
+          <circle cx={180} cy={90} r={26} fill="#f8fafc" />
+          <circle cx={194} cy={84} r={22} fill="#0d2747" />
+        </g>
 
-        {/* Beskydy mountain silhouette — single rolling polygon at 8%
-            navy opacity, anchors the depth between sky and skyline. */}
+        {/* Sun — half disc behind horizon (right side). Center sits
+            ON the horizon line so only the upper semicircle is
+            visible against the orange band. */}
+        <circle cx={VB_W - 280} cy={GROUND_Y} r={75} fill="url(#hero-sun)" />
+
+        {/* Beskydy mountain silhouette — single rolling polygon,
+            slightly more navy than the daylight version so it reads
+            against the warm horizon. */}
         <polygon
-          points={`0,${GROUND_Y - 70} 200,${GROUND_Y - 130} 460,${GROUND_Y - 90} 720,${GROUND_Y - 160} 980,${GROUND_Y - 110} 1240,${GROUND_Y - 175} 1520,${GROUND_Y - 100} 1800,${GROUND_Y - 145} 1800,${GROUND_Y} 0,${GROUND_Y}`}
-          fill="#003574"
-          opacity="0.08"
+          points={`0,${GROUND_Y - 50} 200,${GROUND_Y - 110} 460,${GROUND_Y - 70} 720,${GROUND_Y - 140} 980,${GROUND_Y - 90} 1240,${GROUND_Y - 155} 1520,${GROUND_Y - 80} 1800,${GROUND_Y - 125} 1800,${GROUND_Y} 0,${GROUND_Y}`}
+          fill="#0d2747"
+          opacity="0.55"
         />
 
         {/* ─── Layer 2: Katowice skyline backdrop ───
-            Spodek (UFO arena) + two panel blocks + chimney, all 12%
-            navy. The recognisable Katowice profile is the PKO
-            partnership signal. */}
-        <g opacity="0.12" fill="#003574">
-          {/* Spodek arena — flat disc base + dome (centered at 600, ground = 400) */}
-          <ellipse cx={600} cy={GROUND_Y - 60} rx={140} ry={18} />
-          <ellipse cx={600} cy={GROUND_Y - 90} rx={110} ry={50} />
-          <rect x={580} y={GROUND_Y - 60} width={40} height={60} />
-
-          {/* Two panel blocks (Drapacze chmur) */}
-          <rect x={1000} y={GROUND_Y - 220} width={70} height={220} />
-          <rect x={1080} y={GROUND_Y - 180} width={60} height={180} />
-
-          {/* Chimney — power plant marker far right */}
-          <rect x={1700} y={GROUND_Y - 260} width={20} height={260} />
-          <rect x={1690} y={GROUND_Y - 268} width={40} height={10} />
+            Spodek (UFO arena) + two panel blocks + chimney, deeper
+            navy now (silhouette against sunset). */}
+        <g opacity="0.78" fill="#0d2747">
+          <ellipse cx={600} cy={GROUND_Y - 50} rx={140} ry={16} />
+          <ellipse cx={600} cy={GROUND_Y - 78} rx={110} ry={42} />
+          <rect x={580} y={GROUND_Y - 50} width={40} height={50} />
+          <rect x={1000} y={GROUND_Y - 200} width={70} height={200} />
+          <rect x={1080} y={GROUND_Y - 165} width={60} height={165} />
+          <rect x={1700} y={GROUND_Y - 235} width={20} height={235} />
+          <rect x={1690} y={GROUND_Y - 243} width={40} height={10} />
         </g>
 
-        {/* ─── Layer 4 (drawn early so foreground covers): Ground zones ───
-            Grass strip → road → sidewalk. Replaces the prior tiled
-            pattern that read as wallpaper. */}
-        <rect y={GROUND_Y} width={VB_W} height={4} fill="#2e7d49" opacity="0.15" />
-        <rect y={GROUND_Y + 4} width={VB_W} height={14} fill="#636363" opacity="0.1" />
-        <rect y={GROUND_Y + 18} width={VB_W} height={VB_H - GROUND_Y - 18} fill="#f9f9f9" />
+        {/* ─── Layer 3: Ground zones ─── */}
+        <rect y={GROUND_Y} width={VB_W} height={4} fill="#2e7d49" opacity="0.25" />
+        <rect y={GROUND_Y + 4} width={VB_W} height={12} fill="#3a3a3a" opacity="0.45" />
+        <rect y={GROUND_Y + 16} width={VB_W} height={VB_H - GROUND_Y - 16} fill="#fef3e2" />
 
-        {/* Trees — small dark-green ovals on a thin stick, in gaps */}
-        {treeX.map((x) => (
-          <g key={`tree-${x}`} aria-hidden>
-            <rect x={x - 1.5} y={GROUND_Y - 18} width={3} height={20} fill="#854d0e" />
-            <ellipse cx={x} cy={GROUND_Y - 24} rx={14} ry={18} fill="#2e7d49" opacity="0.6" />
-          </g>
-        ))}
+        {/* Lampposts — 6 across; lit when the matching canvas slice
+            owns at least one occupied slot. Lit lamps render a soft
+            halo + warm bulb; unlit lamps render a faded grey bulb. */}
+        {LAMP_X.map((x, i) => {
+          const lit = sliceHasBuilding[i];
+          return (
+            <g key={`lamp-${x}`} aria-hidden>
+              <line
+                x1={x}
+                y1={GROUND_Y - 40}
+                x2={x}
+                y2={GROUND_Y}
+                stroke="#0d2747"
+                strokeOpacity={lit ? 0.85 : 0.55}
+                strokeWidth="1.5"
+              />
+              {lit && (
+                <circle
+                  cx={x}
+                  cy={GROUND_Y - 42}
+                  r={22}
+                  fill="url(#hero-lamp-halo)"
+                />
+              )}
+              <circle
+                cx={x}
+                cy={GROUND_Y - 42}
+                r={lit ? 4 : 3}
+                fill={lit ? "#fde2c4" : "#9ca3af"}
+                stroke={lit ? "#db912c" : "#6b7280"}
+                strokeWidth="1"
+              />
+            </g>
+          );
+        })}
 
-        {/* Lampposts — single vertical line + small circle bulb on top */}
-        {lampX.map((x) => (
-          <g key={`lamp-${x}`} aria-hidden>
-            <line
-              x1={x}
-              y1={GROUND_Y - 36}
-              x2={x}
-              y2={GROUND_Y}
-              stroke="#003574"
-              strokeOpacity="0.6"
-              strokeWidth="1.5"
-            />
-            <circle cx={x} cy={GROUND_Y - 38} r={3} fill="#db912c" />
-          </g>
-        ))}
-
-        {/* ─── Layer 3: Foreground buildings + empty slots ─── */}
+        {/* ─── Layer 4: Foreground buildings + empty slots ─── */}
         {SLOT_MAP.map((slot) => {
           const inst = occupied.get(slot.id);
           if (!inst) return <EmptySlot key={slot.id} slot={slot} buildLabel={buildLabel} />;
@@ -244,9 +281,6 @@ function EmptySlot({
   slot: SlotDef;
   buildLabel: string;
 }) {
-  // R-05 — placeholder card replaces the dashed ghost. Solid 1 px
-  // line border + faint surface fill + centered + glyph + label.
-  // Reads as "tu sa dá postaviť", not "broken outline".
   const cx = slot.x + slot.w / 2;
   const top = slot.y + slot.h * 0.55;
   const h = slot.h * 0.45;
@@ -301,32 +335,26 @@ function BuildingSilhouette({
   body: string;
   label: string;
 }) {
-  // R-05 — bumped scale base + per-level step so L1 is visible.
-  // 0.55 + 0.045 → 0.7 + 0.05; clamps at 1.0 (max level still fills).
   const levelScale = Math.min(1, 0.7 + level * 0.05);
   const h = slot.h * levelScale;
   const y = slot.y + slot.h - h;
   const roofH = h * 0.2;
   const bodyH = h - roofH;
-  // Two small lit windows on the body (R-05). Position them in the
-  // upper third of the body, equally spaced.
   const winSize = Math.min(8, slot.w * 0.12);
   const winY = y + roofH + bodyH * 0.25 - winSize / 2;
   const winLeft = slot.x + slot.w * 0.28 - winSize / 2;
   const winRight = slot.x + slot.w * 0.72 - winSize / 2;
   return (
     <g aria-label={`${label} L${level}`} filter="url(#hero-shadow)">
-      {/* Body */}
       <rect x={slot.x} y={y + roofH} width={slot.w} height={bodyH} fill={body} />
-      {/* Roof */}
       <polygon
         points={`${slot.x},${y + roofH} ${slot.x + slot.w / 2},${y} ${slot.x + slot.w},${y + roofH}`}
         fill={roof}
       />
-      {/* Lit windows */}
-      <rect x={winLeft} y={winY} width={winSize} height={winSize} fill="#f9d97a" />
-      <rect x={winRight} y={winY} width={winSize} height={winSize} fill="#f9d97a" />
-      {/* Door — small dark rectangle bottom-center */}
+      {/* Windows are lit only when the building exists — ties into
+          the lit-on-play mechanic so empty slots stay dark. */}
+      <rect x={winLeft} y={winY} width={winSize} height={winSize} fill="#fde2c4" />
+      <rect x={winRight} y={winY} width={winSize} height={winSize} fill="#fde2c4" />
       <rect
         x={slot.x + slot.w / 2 - winSize / 2}
         y={y + roofH + bodyH - winSize * 1.3}
@@ -335,7 +363,6 @@ function BuildingSilhouette({
         fill={roof}
         opacity="0.7"
       />
-      {/* Glyph centered horizontally, 60% down the body */}
       <text
         x={slot.x + slot.w / 2}
         y={y + roofH + bodyH * 0.6}
@@ -346,7 +373,6 @@ function BuildingSilhouette({
       >
         {glyph}
       </text>
-      {/* L badge bottom-left */}
       <text
         x={slot.x + 4}
         y={y + roofH + bodyH - 4}

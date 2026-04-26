@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { gameLeaderboard, globalLeaderboard } from "@/lib/leaderboard";
-import { GAMES, getGame } from "@/lib/games";
+import { GAMES, getGame, localizedTitle } from "@/lib/games";
 import { LeaderboardEntry } from "@/lib/redis";
 import { getSession } from "@/lib/session";
 import { dictFor } from "@/lib/i18n";
@@ -82,7 +82,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
         </div>
         <p className="text-[var(--ink-muted)]">
           {game
-            ? t.gameBody.replace("{title}", game.title)
+            ? t.gameBody.replace("{title}", localizedTitle(game, dict))
             : t.globalBody}
         </p>
         <div className="flex flex-wrap gap-2 mt-1">
@@ -159,7 +159,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
           }
           body={
             game
-              ? t.emptyGame.replace("{title}", game.title)
+              ? t.emptyGame.replace("{title}", localizedTitle(game, dict))
               : {
                   pl: "Liga jest pusta. Zagraj minigrę i zdobądź pierwsze Waty.",
                   uk: "Ліга порожня. Зіграй міні-гру та здобудь перші Вати.",

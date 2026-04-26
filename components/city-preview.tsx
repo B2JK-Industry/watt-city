@@ -34,7 +34,10 @@ export function CityPreview() {
                     {g.building.glyph}
                   </span>
                 </div>
-                <span className="absolute bottom-1 left-1 right-1 text-[9px] font-semibold text-[var(--foreground)] bg-white/90 rounded-sm border border-[var(--line)] px-1 truncate text-center">
+                <span
+                  lang="pl"
+                  className="absolute bottom-1 left-1 right-1 text-[9px] font-semibold text-[var(--foreground)] bg-white/90 rounded-sm border border-[var(--line)] px-1 truncate text-center"
+                >
                   {g.building.name}
                 </span>
               </div>

@@ -229,6 +229,17 @@ body {
    * silhouettes the filter alone would leave. */
   filter: saturate(0.35) brightness(1.55) contrast(0.92);
 }
+
+/* E-04 — sunset mood opt-in for compact previews (dashboard + landing).
+ * The chip on /games already says "🌅 Zachód / Sunset / Soumrak / Захід"
+ * — without this rule the compact previews still rendered with the cool
+ * pale-blue sky from the daylight palette, making the chip read as a
+ * lie. Peach-warm sky token + warmer warm-detail keeps the saturate
+ * filter happy: no new hex outside the warm sales family. */
+:where([data-skin="pko"]) .city-scene-root[data-mood="sunset"] {
+  --sc-sky: #fde2c4;
+  --sc-detail-warm: #f4a259;
+}
 :where([data-skin="pko"]) .city-scene-root svg text {
   /* Restore text contrast — filter tints labels otherwise. */
   filter: none;
@@ -250,13 +261,26 @@ body {
 
 /* Neon-yellow window glow → muted warm yellow per spec (window bucket).
  * Limit to FILL only — strokes already retinted above.
- * R-09 — `:not(.watt-meter)` keeps the best-score progress bar fill
- * visibly yellow. The previous mass override retinted it to the
- * muted window token, which on top of the `saturate(.35)` filter
- * collapsed the bar into invisibility against the dark slot bg. */
+ * R-09 / E-02 — `:not(.watt-meter)` opts the progress bar fill out of
+ * the broad retint, BUT relies on cascade order. A future palette
+ * override or skin layer landing AFTER this rule could still recolor
+ * the meter. The follow-up `.watt-meter { fill … !important }` rule
+ * below pins the meter explicitly so any future broad retint cannot
+ * regress it — the meter is a UI signal (best-score progress), not a
+ * decorative window. */
 :where([data-skin="pko"]) .city-scene-root [fill="#fde047"]:not(.watt-meter),
 :where([data-skin="pko"]) .city-scene-root [fill="#facc15"]:not(.watt-meter) {
   fill: var(--sc-window);
+}
+
+/* E-02 — class-based pin for the WattMeter inner fill. !important
+ * is justified here: the meter is a semantic UI element (progress
+ * indicator) inside an SVG that we deliberately mass-retint, so the
+ * normal "skin tokens win" rule must be inverted for this one node.
+ * Scoped to `.city-scene-root` so it cannot leak into unrelated
+ * SVGs that happen to reuse the class name. */
+:where([data-skin="pko"]) .city-scene-root .watt-meter {
+  fill: #fde047 !important;
 }
 
 /* Neon-cyan accents (city sky uplighting, AI building glow) → cool

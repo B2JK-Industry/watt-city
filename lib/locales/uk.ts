@@ -102,7 +102,7 @@ const uk: typeof plDict = {
   },
   games: {
     gamesHubTitle: "Твої Катовіце",
-    gamesHubTime: "🌙 Ніч · 22:14",
+    gamesHubTime: "🌅 Захід · 19:42",
     gamesHubBody:
       "9 будинків = 9 міні-ігор. Поки не зіграєш, будинок у темряві. Після результату {light} і неон.",
     gamesHubBodyLight: "засвітяться вікна",

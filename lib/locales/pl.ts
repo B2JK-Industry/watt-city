@@ -100,7 +100,7 @@ const pl = {
   },
   games: {
     gamesHubTitle: "Twoje Katowice",
-    gamesHubTime: "🌙 Noc · 22:14",
+    gamesHubTime: "🌅 Zachód · 19:42",
     gamesHubBody:
       "9 budynków = 9 mini-gier. Jeśli jeszcze żadnej nie zagrałeś, budynek stoi w ciemności. Po wyniku {light} i neon.",
     gamesHubBodyLight: "zapali mu się okna",

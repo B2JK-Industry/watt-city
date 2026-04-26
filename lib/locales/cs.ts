@@ -102,7 +102,7 @@ const cs: typeof plDict = {
   },
   games: {
     gamesHubTitle: "Tvé Katovice",
-    gamesHubTime: "🌙 Noc · 22:14",
+    gamesHubTime: "🌅 Soumrak · 19:42",
     gamesHubBody:
       "9 budov = 9 miniher. Dokud nějakou nezahraješ, budova stojí ve tmě. Po skóre se {light} a neonová tabule.",
     gamesHubBodyLight: "rozsvítí okna",

@@ -102,7 +102,7 @@ const en: typeof plDict = {
   },
   games: {
     gamesHubTitle: "Your Katowice",
-    gamesHubTime: "🌙 Night · 22:14",
+    gamesHubTime: "🌅 Sunset · 19:42",
     gamesHubBody:
       "9 buildings = 9 mini-games. Until you play one, it stays in the dark. After a score the {light} and the neon sign.",
     gamesHubBodyLight: "windows light up",
