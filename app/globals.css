@@ -457,19 +457,16 @@ body {
 .city-skyline-hero-root {
   background: #ffffff;
 }
-.city-skyline-hero-root rect[fill] {
-  /* 1 px navy outline (3% opacity) so very-light catalog bodies
-   * (cream, ivory, light-navy) keep a visible silhouette against
-   * the daylight sky. Doesn't touch coloured rects strongly enough
-   * to alter brand colours. */
-  stroke: rgba(0, 53, 116, 0.18);
-  stroke-width: 0.5;
-}
+/* PR-N — the prior `rect[fill]` blanket stroke (R-11 era) outlined
+ * EVERY rect in the SVG: building bodies, ground zones, AND the
+ * level-badge background pill. Result was a "framed" look where the
+ * navy hairline competed with the L1/L2/… text and the user
+ * reported "nevidno leveli" (can't see the levels). The shared
+ * sunset backdrop has enough native contrast — buildings sit on
+ * a dark mountain silhouette + lit-on-play lamps, no extra outline
+ * needed. Rule removed entirely; core-skin fallback also dropped. */
 :where([data-skin="core"]) .city-skyline-hero-root {
   background: #07071a;
-}
-:where([data-skin="core"]) .city-skyline-hero-root rect[fill] {
-  stroke: none;
 }
 
 /* CitySkylineHero empty-state overlay. The original `bg-black/40`

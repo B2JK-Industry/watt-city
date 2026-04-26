@@ -15,6 +15,11 @@ import {
 import type { Loan } from "@/lib/player";
 import { KnfDisclaimer } from "@/components/knf-disclaimer";
 import {
+  HeroBackdrop,
+  HeroBackdropDefs,
+  computeLampLitMask,
+} from "@/components/hero-backdrop";
+import {
   formatResourceBundle,
   formatResourceCost,
   formatResourceDelta,
@@ -340,15 +345,20 @@ export function WattCityClient({ bootstrap }: { bootstrap: WattCityBootstrap }) 
           role="img"
           aria-label="Watt City slot map"
         >
-          {/* sky gradient */}
+          {/* PR-N — sunset backdrop shared with the homepage hero so
+              players don't see two different "city scenes" for the
+              same data. The interactive slot layer sits on top. */}
           <defs>
-            <linearGradient id="wc-sky" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0" stopColor="#0ea5e9" stopOpacity="0.15" />
-              <stop offset="1" stopColor="#020617" stopOpacity="0.5" />
-            </linearGradient>
+            <HeroBackdropDefs />
           </defs>
-          <rect x={0} y={0} width={VB_W} height={VB_H} fill="url(#wc-sky)" />
-          <line x1={0} y1={400} x2={VB_W} y2={400} stroke="#1e293b" strokeWidth={4} />
+          <HeroBackdrop
+            lampLitMask={computeLampLitMask(
+              state.slots
+                .filter((s) => Boolean(s.building))
+                .map((s) => ({ slotId: s.slot.id })),
+            )}
+            vbH={VB_H}
+          />
 
           {state.slots.map(({ slot, building }) => {
             const isSelected = selected?.slotId === slot.id;
