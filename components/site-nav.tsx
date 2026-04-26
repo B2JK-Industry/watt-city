@@ -5,6 +5,7 @@ import { ResourceBar } from "@/components/resource-bar";
 import { NotificationBell } from "@/components/notification-bell";
 import { NavLink } from "@/components/nav-link";
 import { MobileNavDrawer } from "@/components/mobile-nav-drawer";
+import { OpenTutorialButton } from "@/components/onboarding-tour";
 import { resolveTheme } from "@/lib/theme";
 import type { Lang, Dict } from "@/lib/i18n";
 import type { Resources } from "@/lib/resources";
@@ -15,6 +16,12 @@ const DRAWER_LABELS: Record<Lang, { menu: string; open: string; close: string; l
   cs: { menu: "Menu", open: "Otevřít menu", close: "Zavřít menu", language: "Jazyk" },
   en: { menu: "Menu", open: "Open menu", close: "Close menu", language: "Language" },
 };
+
+/* I-06 (F-NEW-17, scoped) — nav-level "Replay tutorial" affordance.
+ * Implemented via the existing `OpenTutorialButton` client component
+ * (mounted in the desktop right cluster + mobile drawer footer). No
+ * FAQ, no Kontakt entries — those need product copy decisions; the
+ * replay button is the safe shipping subset. */
 
 type Props = {
   username: string | null;
@@ -164,6 +171,12 @@ export function SiteNav({
                   the cramped 5-control cluster from narrow viewports
                   per the demo-review punch list. */}
               <span className="hidden lg:inline-flex">
+                <OpenTutorialButton
+                  lang={lang}
+                  className="btn btn-ghost btn-sm"
+                />
+              </span>
+              <span className="hidden lg:inline-flex">
                 <LanguageSwitcher current={lang} />
               </span>
               <span className="hidden lg:inline-flex">
@@ -191,6 +204,18 @@ export function SiteNav({
                       </span>
                       <LanguageSwitcher current={lang} variant="drawer" />
                     </div>
+                    {/* I-06 — replay tutorial action lives in the
+                        drawer footer for mobile + tablet. The
+                        `OpenTutorialButton` (client component)
+                        dispatches `wc:open-tour`, opening the
+                        OnboardingTour modal on top of the current
+                        page. site-nav.tsx is a server component, so
+                        the onClick has to live inside the existing
+                        client primitive. */}
+                    <OpenTutorialButton
+                      lang={lang}
+                      className="btn btn-secondary self-start"
+                    />
                     <LogoutButton label={t.logout} />
                   </>
                 }

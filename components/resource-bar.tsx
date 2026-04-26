@@ -26,7 +26,11 @@ export function ResourceBar({ resources, lang, compact = false }: Props) {
   );
   return (
     <ul
-      className="flex items-center gap-1.5 flex-wrap text-xs font-mono tabular-nums sm:gap-3"
+      // I-02 (F-NEW-13): drop `font-mono`. Banking UI reads as Inter
+      // sans across the surface; mono rendered the resource chips as
+      // a developer monitoring widget. `tabular-nums` stays so digits
+      // still align in the chip row.
+      className="flex items-center gap-1.5 flex-wrap text-xs tabular-nums sm:gap-3"
       aria-label="Resources"
     >
       {ACTIVE_RESOURCE_KEYS.map((k) => {

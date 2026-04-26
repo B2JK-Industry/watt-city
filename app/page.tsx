@@ -48,6 +48,7 @@ export default async function Home() {
     return (
       <Dashboard
         username={session.username}
+        avatar={playerState.profile?.avatar}
         xp={board.globalXP}
         rank={board.globalRank}
         level={level}

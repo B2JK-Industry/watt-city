@@ -68,6 +68,27 @@ export function CookieConsent({
     });
   }, [pathname, visible]);
 
+  // I-03 (F-NEW-14) — sync `--cc-h` so `body { padding-bottom }`
+  // reserves space for the sticky bar. ~64 px covers the desktop
+  // single-row + the mobile two-row variant + safe-area inset. We
+  // intentionally do NOT pre-measure the rendered banner — using a
+  // constant lets the layout reserve space synchronously on mount,
+  // before the banner paints, so no CTA jumps under the bar.
+  useEffect(() => {
+    const root = document.documentElement;
+    if (visible) {
+      root.style.setProperty(
+        "--cc-h",
+        "calc(64px + env(safe-area-inset-bottom, 0px))",
+      );
+    } else {
+      root.style.removeProperty("--cc-h");
+    }
+    return () => {
+      root.style.removeProperty("--cc-h");
+    };
+  }, [visible]);
+
   if (!visible) return null;
   const copy = {
     pl: {
@@ -151,8 +172,10 @@ export function CookieConsent({
             nothing to opt out of" so the OK button reads as
             informational, not a dark-pattern accept-only wall. Hidden
             on the smallest viewports where the row is already tight;
-            chips become visible from sm. */}
-        <p className="hidden sm:flex flex-wrap gap-x-3 gap-y-0 t-caption text-[var(--ink-muted)] opacity-80">
+            chips become visible from sm. `opacity-80` removed in
+            PR-I — it pushed `text-ink-muted` (#636363) under WCAG
+            AA on the white surface (axe-core color-contrast). */}
+        <p className="hidden sm:flex flex-wrap gap-x-3 gap-y-0 t-caption text-[var(--ink-muted)]">
           <span>✓ {copy.noTrackers}</span>
           <span>✓ {copy.noAnalytics}</span>
           <span>✓ {copy.noAds}</span>

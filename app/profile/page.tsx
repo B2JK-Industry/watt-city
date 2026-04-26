@@ -10,6 +10,7 @@ import { ParentInviteCard } from "@/components/parent-invite-card";
 import { avatarFor } from "@/lib/avatars";
 import { web3Enabled } from "@/lib/web3/client";
 import { Web3MedalGallerySection } from "@/components/web3/medal-gallery-section";
+import { EmptyState } from "@/components/empty-state";
 
 export const dynamic = "force-dynamic";
 
@@ -91,30 +92,67 @@ export default async function ProfilePage() {
           the V4.6 backend routes exist but /profile had no "Generate code"
           affordance, so the full kid→code→parent flow was unreachable. */}
       <ParentInviteCard lang={lang} />
-      <section className="card p-4 flex flex-col gap-3">
-        <h2 className="text-lg font-semibold">{achLabel}</h2>
-        <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {status.map(({ id, owned, def }) => (
-            <li
-              key={id}
-              className={
-                "border border-[var(--line)] rounded p-3 flex flex-col items-center gap-1 text-center " +
-                (owned ? "" : "opacity-50")
-              }
-            >
-              <span className="text-3xl" aria-hidden>
-                {owned ? def.icon : "🔒"}
-              </span>
-              <strong className="text-xs">
-                {def.labels[lang]}
-              </strong>
-              <p className="text-[11px] text-[var(--ink-muted)] leading-snug">
-                {owned ? def.descriptions[lang] : lockedLabel}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {/* I-05 (F-NEW-16) — for fresh users with 0 owned achievements,
+          replace the 8-locked grid with a focused EmptyState. The
+          "8 zámkov" pattern read as "you have nothing"; the empty
+          state reframes it as "your first medal is one game away".
+          Once any achievement is owned the grid renders normally. */}
+      {status.every((a) => !a.owned) ? (
+        <EmptyState
+          icon="🎖"
+          title={
+            {
+              pl: "Twoje pierwsze odznaczenie czeka",
+              uk: "Перша нагорода чекає на тебе",
+              cs: "První medaile na tebe čeká",
+              en: "Your first medal is waiting",
+            }[lang]
+          }
+          body={
+            {
+              pl: "Zagraj minigrę i zacznij zbierać odznaki. Każda gra otwiera kolejne osiągnięcie.",
+              uk: "Зіграй у міні-гру та збирай нагороди. Кожна гра відкриває нове досягнення.",
+              cs: "Zahraj minihru a začni sbírat medaile. Každá hra odemyká další úspěch.",
+              en: "Play a mini-game and start collecting badges. Each game unlocks a new achievement.",
+            }[lang]
+          }
+          cta={{
+            href: "/games",
+            label: {
+              pl: "Zagraj minigrę",
+              uk: "Зіграти міні-гру",
+              cs: "Zahrát minihru",
+              en: "Play a mini-game",
+            }[lang],
+            variant: "sales",
+          }}
+        />
+      ) : (
+        <section className="card p-4 flex flex-col gap-3">
+          <h2 className="text-lg font-semibold">{achLabel}</h2>
+          <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {status.map(({ id, owned, def }) => (
+              <li
+                key={id}
+                className={
+                  "border border-[var(--line)] rounded p-3 flex flex-col items-center gap-1 text-center " +
+                  (owned ? "" : "opacity-50")
+                }
+              >
+                <span className="text-3xl" aria-hidden>
+                  {owned ? def.icon : "🔒"}
+                </span>
+                <strong className="text-xs">
+                  {def.labels[lang]}
+                </strong>
+                <p className="text-[11px] text-[var(--ink-muted)] leading-snug">
+                  {owned ? def.descriptions[lang] : lockedLabel}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {web3Enabled() && (
         <Web3MedalGallerySection username={session.username} lang={lang} />

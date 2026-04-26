@@ -128,6 +128,9 @@ Aj po troch PR-kách, ktoré vymetli `text-zinc-*`, `text-amber-*`, `text-emeral
 
 ### F-NEW-05 · MAJOR · `/o-platforme` chýba sticky TOC na ~3000px stránke
 
+> **STATUS: FIXED in PR-I** — `lg:grid-cols-[200px_1fr]` wrap with a sticky `<aside>` carrying 10 anchor links (one per section). Each `<section>` has an `id` + `scroll-mt-24` so a click jumps to the heading without it sliding under the sticky nav. Mobile read top-to-bottom (aside is `lg:` only). Active-state highlight via `IntersectionObserver` deferred (would require client component) — the visible nav is already a meaningful win.
+
+
 **Kde:** `app/o-platforme/page.tsx`
 **Čo vidím:** 7+ sekcií (Idea, Nauka o nawykiem, Jak to działa, Pipeline AI, Sieň najlepších budynků, Stack, Sponsorzy, Web3, Roadmap, Zespol). Jeden veľký scroll. Hľadanie konkrétnej témy = roll-up/down.
 **Spec:** `_ux-pass-2.md` návrh F.
@@ -259,6 +262,9 @@ Aplikovať vo všetkých 6 miestach. Príklady:
 
 ### F-NEW-13 · MINOR · `font-mono` v ResourceBar leak
 
+> **STATUS: FIXED in PR-I** — `font-mono` removed from `components/resource-bar.tsx`. `tabular-nums` retained so digits still align in the chip row.
+
+
 **Kde:** `components/resource-bar.tsx:29` `text-xs font-mono tabular-nums`
 **Čo vidím:** Hodnoty v resource chips sú mono-spaced (Geist Mono). Vizuálne pôsobí „technické monitoring widget", nie banking UI.
 **Spec:** `02-DESIGN-TOKENS.md` typografia — Inter sans všade, mono iba pre code blocks.
@@ -268,6 +274,9 @@ Aplikovať vo všetkých 6 miestach. Príklady:
 ---
 
 ### F-NEW-14 · MINOR · Cookie banner overlap — `/dla-szkol` final CTA prekrytá
+
+> **STATUS: FIXED in PR-I** — `body { padding-bottom: var(--cc-h, 0px) }` reserves the sticky bar's footprint. `<CookieConsent>` writes `--cc-h: calc(64px + safe-area-inset-bottom)` on `documentElement` while visible, clears it on dismiss. /dla-szkol final CTA now sits above the bar at first paint.
+
 
 **Kde:** `components/cookie-consent.tsx` + `app/dla-szkol/page.tsx`
 **Čo vidím:** Sticky cookie bar zaberá ~50px na dole. Na `/dla-szkol` je dôležitá final CTA „Wypróbuj demo / Zapisz się jako nauczyciel" — pri prvom pristúpení je čiastočne prekrytá cookie bannerom.
@@ -280,6 +289,9 @@ Aplikovať vo všetkých 6 miestach. Príklady:
 
 ### F-NEW-15 · MINOR · Default username ostáva `wt_xxxxxxxxxx` v navigácii
 
+> **STATUS: FIXED in PR-I** — `<Dashboard>` renders an `<aside>` nudge above CityLevelCard whenever `username.match(/^wt_/i)`. Card has ✨ + `t-h5` "Daj sobie imię" + `t-body-sm` reasoning + secondary CTA → /profile, in PL/UK/CS/EN.
+
+
 **Kde:** Site-nav, dashboard hero
 **Čo vidím:** Po registrácii sa ukáže `wt_tupttseyrj` ako display name v navigácii a hero. User si môže zmeniť `displayName` v `/profile` ale to nie je nikde explicitne pripomenuté.
 **Návrh fixu:**
@@ -290,6 +302,9 @@ Aplikovať vo všetkých 6 miestach. Príklady:
 ---
 
 ### F-NEW-16 · MINOR · Achievement grid pre nového usera = 8 zámkov
+
+> **STATUS: FIXED in PR-I** — `/profile` swaps the 8-locked-tile grid for an `EmptyState` (icon 🎖, title + body + sales CTA → /games) when `status.every(a => !a.owned)`. Once any badge is owned, the grid renders normally.
+
 
 **Kde:** `app/profile/page.tsx`
 **Čo vidím:** Hneď na začiatku (po regstrácii) `/profile` ukazuje grid 8 prázdnych „Zablokowane" achievement kariet. Vyzerá ako „nemáš nič".
@@ -303,6 +318,9 @@ Aplikovať vo všetkých 6 miestach. Príklady:
 
 ### F-NEW-17 · POLISH · Help / FAQ link nie je v navigácii
 
+> **STATUS: PARTIALLY FIXED in PR-I (truncated scope per pass-5 H-XX)** — `OpenTutorialButton` (existing client component) is now mounted in the desktop right cluster + the mobile drawer footer. FAQ link + Kontakt link **deferred** — they need product copy decision (FAQ has no content, Kontakt is "wkrótce"). The replay tutorial lever is the safe shipping subset; FAQ can ship later without churning the nav layout.
+
+
 **Kde:** `components/site-nav.tsx`
 **Čo vidím:** Nav má 4 linky (Miasteczko, Gry, Liga, O platformie) + role-aware piaty (Dla szkól / Moje klasy / Dziecko). Help/FAQ nikde.
 **Spec:** `_ux-pass-2.md` návrh N. Footer má „Help" stĺpec (Compare loans, FAQ — wkrótce, Kontakt — wkrótce) ale ako primary discovery vehicle to nestačí.
@@ -314,6 +332,9 @@ Aplikovať vo všetkých 6 miestach. Príklady:
 ---
 
 ### F-NEW-18 · POLISH · Avatar persóna nie je konzistentne použitá v UI
+
+> **STATUS: PARTIALLY FIXED in PR-I** — Dashboard hero now renders the user's picked avatar (48 × 48 tile, `avatarFor(playerState.profile?.avatar)`). Leaderboard rows + friends list still use initials — the `LeaderboardEntry` API doesn't carry avatar; per spec fallback this is flagged `F-NEW-18-leaderboard` for a follow-up that requires either an API extension or a per-row avatar look-up.
+
 
 **Kde:** Dashboard hero, leaderboard, friends list
 **Čo vidím:** `/profile` má pekný avatar emoji selector (8 mož). Ale dashboard hero pre logged-in usera nemá avatar — iba username text. Leaderboard rows nemajú avatar. Friends list (keď bude obsadený) bude ukazovať iba username.

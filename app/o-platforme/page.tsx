@@ -10,12 +10,108 @@ export const metadata = {
     "Wizja, architektura i AI pipeline Watt City — gra edukacyjna ucząca dzieci finansów osobistych, zbudowana na ETHSilesia 2026.",
 };
 
+/* I-01 (F-NEW-05) — sticky TOC for the long-form about page.
+ * Inline copy per-locale to avoid a 4-file dict edit for what is
+ * essentially nav scaffolding. The list mirrors the section ids
+ * below, so adding/removing a section means touching both arrays
+ * in this file (no cross-file drift). */
+const TOC: Record<
+  "pl" | "uk" | "cs" | "en",
+  { label: string; items: { id: string; label: string }[] }
+> = {
+  pl: {
+    label: "Spis treści",
+    items: [
+      { id: "idea", label: "Myśl" },
+      { id: "how", label: "Jak to działa" },
+      { id: "progression", label: "Poziomy" },
+      { id: "science", label: "Nauka" },
+      { id: "team", label: "Zespół" },
+      { id: "sponsors", label: "Sponsorzy" },
+      { id: "pipeline", label: "AI pipeline" },
+      { id: "stack", label: "Stack" },
+      { id: "web3", label: "Web3" },
+      { id: "roadmap", label: "Roadmap" },
+    ],
+  },
+  uk: {
+    label: "Зміст",
+    items: [
+      { id: "idea", label: "Ідея" },
+      { id: "how", label: "Як це працює" },
+      { id: "progression", label: "Рівні" },
+      { id: "science", label: "Наука" },
+      { id: "team", label: "Команда" },
+      { id: "sponsors", label: "Спонсори" },
+      { id: "pipeline", label: "AI pipeline" },
+      { id: "stack", label: "Стек" },
+      { id: "web3", label: "Web3" },
+      { id: "roadmap", label: "Roadmap" },
+    ],
+  },
+  cs: {
+    label: "Obsah",
+    items: [
+      { id: "idea", label: "Myšlenka" },
+      { id: "how", label: "Jak to funguje" },
+      { id: "progression", label: "Úrovně" },
+      { id: "science", label: "Věda" },
+      { id: "team", label: "Tým" },
+      { id: "sponsors", label: "Sponzoři" },
+      { id: "pipeline", label: "AI pipeline" },
+      { id: "stack", label: "Stack" },
+      { id: "web3", label: "Web3" },
+      { id: "roadmap", label: "Roadmap" },
+    ],
+  },
+  en: {
+    label: "Contents",
+    items: [
+      { id: "idea", label: "Idea" },
+      { id: "how", label: "How it works" },
+      { id: "progression", label: "Tiers" },
+      { id: "science", label: "Science" },
+      { id: "team", label: "Team" },
+      { id: "sponsors", label: "Sponsors" },
+      { id: "pipeline", label: "AI pipeline" },
+      { id: "stack", label: "Stack" },
+      { id: "web3", label: "Web3" },
+      { id: "roadmap", label: "Roadmap" },
+    ],
+  },
+};
+
 export default async function AboutPage() {
   const [lang, session] = await Promise.all([getLang(), getSession()]);
   const dict = dictFor(lang);
   const t = dict.aboutPage;
+  const toc = TOC[lang];
   return (
-    <div className="flex flex-col gap-10 animate-slide-up max-w-4xl">
+    <div className="lg:grid lg:grid-cols-[200px_1fr] lg:gap-10 max-w-6xl">
+      {/* I-01 — sticky TOC. Hidden under lg (mobile + tablet read
+          top-to-bottom). The aside is sticky so the chapter index
+          stays in view while the user scrolls through the article.
+          No active-state highlight — that needs `IntersectionObserver`
+          + a client component; deferred so this PR stays focused
+          and the navigation is already a meaningful win without it. */}
+      <aside
+        className="hidden lg:block"
+        aria-label={toc.label}
+      >
+        <nav className="sticky top-24 flex flex-col gap-1 t-body-sm">
+          <p className="t-overline text-[var(--ink-muted)] mb-1">{toc.label}</p>
+          {toc.items.map((item) => (
+            <a
+              key={item.id}
+              href={`#${item.id}`}
+              className="px-2 py-1 rounded text-[var(--ink-muted)] hover:text-[var(--accent)] hover:bg-[var(--surface-2)] transition-colors"
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+      </aside>
+      <div className="flex flex-col gap-10 animate-slide-up min-w-0">
       <header className="flex flex-col gap-3">
         {lang !== "pl" && (
           <p className="text-xs text-[var(--ink-muted)] italic">{t.note}</p>
@@ -39,7 +135,7 @@ export default async function AboutPage() {
       </header>
 
       {/* -------- Myšlienka -------- */}
-      <section className="flex flex-col gap-4">
+      <section id="idea" className="flex flex-col gap-4 scroll-mt-24">
         <h2 className="section-heading text-2xl">{t.ideaTitle}</h2>
         <div className="card p-6 flex flex-col gap-3 text-[var(--foreground)]">
           <p>
@@ -72,7 +168,7 @@ export default async function AboutPage() {
           the reader is past the value pitch. */}
 
       {/* -------- Ako to funguje — dict-driven (t.howSteps). */}
-      <section className="flex flex-col gap-4">
+      <section id="how" className="flex flex-col gap-4 scroll-mt-24">
         <h2 className="section-heading text-2xl">{t.howTitle}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {t.howSteps.map((step, i) => (
@@ -87,7 +183,7 @@ export default async function AboutPage() {
       </section>
 
       {/* -------- Progression ladder (V3.1 — city-first) -------- */}
-      <section className="flex flex-col gap-4">
+      <section id="progression" className="flex flex-col gap-4 scroll-mt-24">
         <h2 className="section-heading text-2xl">{t.tiersTitle}</h2>
         <ol className="flex flex-col gap-3">
           {t.ladder.map((row, i) => (
@@ -116,7 +212,7 @@ export default async function AboutPage() {
 
       {/* -------- Veda za dizajnom — dict-driven (see lib/locales/*.ts
           aboutPage.scienceIntro / scienceBullets / scienceConclusion). */}
-      <section className="flex flex-col gap-4">
+      <section id="science" className="flex flex-col gap-4 scroll-mt-24">
         <h2 className="section-heading text-2xl">{t.scienceTitle}</h2>
         <div className="card p-6 flex flex-col gap-4 text-[var(--foreground)]">
           <p>{t.scienceIntro}</p>
@@ -143,7 +239,7 @@ export default async function AboutPage() {
       </section>
 
       {/* -------- Tím -------- */}
-      <section className="flex flex-col gap-4">
+      <section id="team" className="flex flex-col gap-4 scroll-mt-24">
         <h2 className="section-heading text-2xl">{t.teamTitle}</h2>
         <div className="card p-6 flex flex-col gap-3 text-[var(--foreground)]">
           <div className="flex flex-wrap items-center gap-3">
@@ -174,7 +270,7 @@ export default async function AboutPage() {
       </section>
 
       {/* -------- Sponzori / thanks -------- */}
-      <section className="flex flex-col gap-4">
+      <section id="sponsors" className="flex flex-col gap-4 scroll-mt-24">
         <h2 className="section-heading text-2xl">{t.sponsorsTitle}</h2>
         <div className="card p-6 flex flex-col gap-3 text-sm text-[var(--foreground)]">
           <p>{t.sponsorsBody}</p>
@@ -196,7 +292,7 @@ export default async function AboutPage() {
 
       {/* -------- AI pipeline (technical — moved below the product
           story per the demo-review punch list). */}
-      <section className="flex flex-col gap-4">
+      <section id="pipeline" className="flex flex-col gap-4 scroll-mt-24">
         <h2 className="section-heading text-2xl">{t.pipelineTitle}</h2>
         <div className="card p-6 flex flex-col gap-5 text-[var(--foreground)]">
           <p>{t.pipelineIntro}</p>
@@ -285,7 +381,7 @@ export default async function AboutPage() {
       </section>
 
       {/* -------- Tech stack -------- */}
-      <section className="flex flex-col gap-4">
+      <section id="stack" className="flex flex-col gap-4 scroll-mt-24">
         <h2 className="section-heading text-2xl">{t.stackTitle}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <TechItem name="Next.js 16" note="App Router, RSC, Turbopack." />
@@ -302,7 +398,7 @@ export default async function AboutPage() {
       </section>
 
       {/* -------- Web3 (opt-in, ETHSilesia 2026) -------- */}
-      <section className="flex flex-col gap-3 card p-5 border-[var(--accent)]">
+      <section id="web3" className="flex flex-col gap-3 card p-5 border-[var(--accent)] scroll-mt-24">
         <div className="flex flex-wrap items-baseline gap-2">
           <h2 className="section-heading text-2xl">{t.web3Title}</h2>
           <span className="text-[10px] opacity-70">
@@ -343,7 +439,7 @@ export default async function AboutPage() {
       </section>
 
       {/* -------- Roadmap -------- */}
-      <section className="flex flex-col gap-4">
+      <section id="roadmap" className="flex flex-col gap-4 scroll-mt-24">
         <h2 className="section-heading text-2xl">{t.roadmapTitle}</h2>
         <ul className="list-disc pl-6 space-y-2 text-sm text-[var(--ink-muted)]">
           {t.roadmap.map((line, i) => (
@@ -364,6 +460,7 @@ export default async function AboutPage() {
           GitHub
         </a>
       </footer>
+      </div>
     </div>
   );
 }

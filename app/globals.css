@@ -150,6 +150,15 @@ body {
   color: var(--foreground);
   font-family: var(--font-inter), var(--font-geist-sans), system-ui, sans-serif;
   min-height: 100vh;
+  /* I-03 (F-NEW-14) — push the document tail above the sticky cookie
+   * bar while it is visible. The bar height comes in at ~48 px on
+   * desktop and ~44 px on mobile; we pad to 64 px to cover both
+   * with safe-area-inset breathing room. The variable is set by
+   * `<CookieConsent>` on mount via `documentElement.style.setProperty`
+   * and cleared on dismiss, so dismissed sessions get 0 padding.
+   * Combined with `bottom-tabs` lift logic, ensures the /dla-szkol
+   * final CTA is never overlapped at first paint. */
+  padding-bottom: var(--cc-h, 0px);
 }
 
 :where([data-skin="core"]) body {

@@ -12,6 +12,7 @@ import { DeleteAccountButton } from "@/components/delete-account-button";
 import { CityLevelCard } from "@/components/city-level-card";
 import type { PlayerState } from "@/lib/player";
 import type { Dict, Lang } from "@/lib/i18n";
+import { avatarFor } from "@/lib/avatars";
 
 const FRESH_WELCOME: Record<Lang, {
   eyebrow: string;
@@ -65,8 +66,46 @@ const FRESH_WELCOME: Record<Lang, {
   },
 };
 
+/* I-04 (F-NEW-15) — copy for the displayName nudge. Shown when the
+ * user is still using the auto-generated `wt_xxxxxxxxxx` username
+ * and hasn't set a displayName yet — a single discreet banner above
+ * the dashboard surfaces nudging them to /profile. */
+const NAME_NUDGE: Record<Lang, { title: string; body: string; cta: string; ariaLabel: string }> = {
+  pl: {
+    title: "Daj sobie imię",
+    body: "Twoja domyślna nazwa to wt_xxx. Wybierz imię, które zobaczą klasa i znajomi.",
+    cta: "Zmień w profilu",
+    ariaLabel: "Personalizuj nazwę",
+  },
+  uk: {
+    title: "Обери собі ім'я",
+    body: "Твоя стандартна назва — wt_xxx. Вибери ім'я, яке побачать клас та друзі.",
+    cta: "Змінити у профілі",
+    ariaLabel: "Персоналізувати ім'я",
+  },
+  cs: {
+    title: "Dej si jméno",
+    body: "Tvé výchozí jméno je wt_xxx. Vyber jméno, které uvidí třída a přátelé.",
+    cta: "Změnit v profilu",
+    ariaLabel: "Personalizovat jméno",
+  },
+  en: {
+    title: "Pick a name",
+    body: "Your default handle is wt_xxx. Choose a name your class and friends will recognise.",
+    cta: "Edit in profile",
+    ariaLabel: "Personalise your name",
+  },
+};
+
 type Props = {
   username: string;
+  /** I-07 (F-NEW-18) — caller-supplied avatar id (`av-0..av-9`). When
+   *  omitted (or `undefined`), `avatarFor()` returns the av-0 fallback.
+   *  Used by the dashboard hero next to the username. Leaderboard +
+   *  friends rows still render initials — the API does not yet
+   *  attach avatar to those entries; flagged as
+   *  F-NEW-18-leaderboard follow-up. */
+  avatar?: string;
   xp: number;
   rank: number | null;
   level: LevelInfo;
@@ -96,6 +135,7 @@ function timeAgo(ts: number, d: Dict["dashboard"]): string {
 
 export function Dashboard({
   username,
+  avatar,
   xp,
   rank,
   level,
@@ -106,6 +146,7 @@ export function Dashboard({
   aiGames,
   player,
 }: Props) {
+  const av = avatarFor(avatar);
   const d = dict.dashboard;
   const locale = lang === "pl" ? "pl-PL" : lang === "cs" ? "cs-CZ" : lang === "uk" ? "uk-UA" : "en-US";
   const playedIds = Object.keys(stats.games);
@@ -130,9 +171,31 @@ export function Dashboard({
 
   const isFresh = stats.totalPlays === 0;
   const fresh = FRESH_WELCOME[lang];
+  // I-04 — only show the nudge when the visible username still
+  // matches the auto-generated `wt_xxxxxxxxxx` pattern. We can't
+  // read profile.displayName here without threading another prop
+  // through every Dashboard caller; the username pattern is a
+  // reliable proxy for "user hasn't customised identity yet".
+  const isDefaultName = /^wt_[a-z0-9]{6,}$/i.test(username);
+  const nudge = NAME_NUDGE[lang];
 
   return (
     <div className="flex flex-col gap-10 animate-slide-up">
+      {isDefaultName && (
+        <aside
+          className="card flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4"
+          aria-label={nudge.ariaLabel}
+        >
+          <span aria-hidden className="text-2xl shrink-0">✨</span>
+          <div className="flex-1 flex flex-col gap-0.5">
+            <p className="t-h5 text-[var(--accent)]">{nudge.title}</p>
+            <p className="t-body-sm text-[var(--ink-muted)]">{nudge.body}</p>
+          </div>
+          <Link href="/profile" className="btn btn-secondary btn-sm shrink-0">
+            {nudge.cta}
+          </Link>
+        </aside>
+      )}
       {isFresh && (
         <section
           className="card card--elevated p-6 sm:p-8 flex flex-col gap-5"
@@ -182,15 +245,28 @@ export function Dashboard({
       <section className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
         <div className="card p-6 sm:p-8 flex flex-col gap-5">
           <div className="flex items-center justify-between gap-4">
-            <div>
-              <p className="text-sm text-[var(--ink-muted)]">
-                {d.welcome}
-              </p>
-              <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight">
-                {username}
-              </h1>
-              {/* V3.1: city identity lives in CityLevelCard above the hero;
-                  hero now surfaces XP progression only as a secondary ring. */}
+            <div className="flex items-center gap-3 min-w-0">
+              {/* I-07 — 48×48 avatar tile. `avatarFor()` returns the
+                  picked emoji (or av-0 fallback) so the hero matches
+                  the avatar shown on /profile. Decorative, screen
+                  readers fall back to the headline username. */}
+              <span
+                aria-hidden
+                className="shrink-0 inline-flex items-center justify-center w-12 h-12 rounded-full border border-[var(--line)] bg-[var(--surface-2)] text-2xl"
+                style={{ color: av.hue }}
+              >
+                {av.emoji}
+              </span>
+              <div className="min-w-0">
+                <p className="text-sm text-[var(--ink-muted)]">
+                  {d.welcome}
+                </p>
+                <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight truncate">
+                  {username}
+                </h1>
+                {/* V3.1: city identity lives in CityLevelCard above the hero;
+                    hero now surfaces XP progression only as a secondary ring. */}
+              </div>
             </div>
             <div className="relative">
               <svg width="96" height="96" viewBox="0 0 120 120" aria-hidden>
