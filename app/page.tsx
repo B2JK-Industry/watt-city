@@ -237,7 +237,12 @@ export default async function Home() {
       <section className="flex flex-col gap-4">
         <h2 className="section-heading">{t.scenesTitle}</h2>
         <p className="t-body-lg text-[var(--ink-muted)] max-w-xl -mt-2">{t.scenesBody}</p>
-        <CityScene interactive={false} compact aiGames={cityAiGames} />
+        <CityScene
+          interactive={false}
+          compact
+          backdrop="sunset"
+          aiGames={cityAiGames}
+        />
       </section>
       <ComingSoonBanner lang={lang} />
     </div>

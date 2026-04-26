@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { type GameMeta } from "@/lib/games";
 import { LiveCountdown } from "@/components/live-countdown";
+import { HeroBackdrop, HeroBackdropDefs } from "@/components/hero-backdrop";
 import {
   ALL_SLOTS,
   SLOT_INTERVAL_HOURS,
@@ -94,6 +95,14 @@ type Props = {
   compact?: boolean;     // smaller height
   aiGame?: CityAiGame;   // deprecated: single-AI-game path — pass aiGames instead
   aiGames?: CityAiGame[]; // one entry per active AI game (newest first); up to 3 slots
+  /** G-27 — opt the canvas backdrop into the shared sunset twilight
+   *  scene used by `<CitySkylineHero>` + `<WattCityClient>`. The
+   *  landing-page CityScene preview was the last surface still
+   *  rendering the legacy night-sky + moon + cobbles palette,
+   *  reading as a different product than the rest of the app. With
+   *  `backdrop="sunset"` we delegate to `<HeroBackdrop>` and skip
+   *  the inline sky / stars / back silhouettes / ground / lamps. */
+  backdrop?: "default" | "sunset";
 };
 
 export function CityScene({
@@ -103,6 +112,7 @@ export function CityScene({
   compact = false,
   aiGame,
   aiGames,
+  backdrop = "default",
 }: Props) {
   const activeAi: CityAiGame[] = aiGames ?? (aiGame ? [aiGame] : []);
   // Shared cutoff so all 3 slots agree on what's expired within a single
@@ -150,102 +160,137 @@ export function CityScene({
           Nočná panoráma Katowíc: 9 budov predstavujúcich minihry XP Arény
         </title>
         <defs>
-          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#02021a" />
-            <stop offset="55%" stopColor="#120f3a" />
-            <stop offset="100%" stopColor="#2a1458" />
-          </linearGradient>
-          <radialGradient id="moonGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#fef3c7" stopOpacity="0.8" />
-            <stop offset="60%" stopColor="#fde68a" stopOpacity="0.15" />
-            <stop offset="100%" stopColor="#fde68a" stopOpacity="0" />
-          </radialGradient>
-          <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#1a1a2e" />
-            <stop offset="100%" stopColor="#0a0a0f" />
-          </linearGradient>
-          <pattern id="cobbles" width="22" height="14" patternUnits="userSpaceOnUse">
-            <rect width="22" height="14" fill="#0f0f1f" />
-            <path d="M0 7 L22 7" stroke="#222" strokeWidth="1" />
-            <path d="M11 0 L11 7 M0 7 M22 14" stroke="#222" strokeWidth="1" />
-          </pattern>
+          {backdrop === "sunset" ? (
+            <HeroBackdropDefs />
+          ) : (
+            <>
+              <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#02021a" />
+                <stop offset="55%" stopColor="#120f3a" />
+                <stop offset="100%" stopColor="#2a1458" />
+              </linearGradient>
+              <radialGradient id="moonGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#fef3c7" stopOpacity="0.8" />
+                <stop offset="60%" stopColor="#fde68a" stopOpacity="0.15" />
+                <stop offset="100%" stopColor="#fde68a" stopOpacity="0" />
+              </radialGradient>
+              <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#1a1a2e" />
+                <stop offset="100%" stopColor="#0a0a0f" />
+              </linearGradient>
+              <pattern id="cobbles" width="22" height="14" patternUnits="userSpaceOnUse">
+                <rect width="22" height="14" fill="#0f0f1f" />
+                <path d="M0 7 L22 7" stroke="#222" strokeWidth="1" />
+                <path d="M11 0 L11 7 M0 7 M22 14" stroke="#222" strokeWidth="1" />
+              </pattern>
+            </>
+          )}
         </defs>
 
-        {/* Sky */}
-        <rect x="0" y="0" width={VB_W} height={GROUND} fill="url(#sky)" />
-
-        {/* Moon + glow — repositioned 2026-04-22 to the upper-left sky
-            band. Previously cx=VB_W-160 (upper-right), which collided
-            with the AI-zone building banners + countdown chips (same
-            x-band; SVG z-order put buildings on top so the moon bled
-            through the chip corners). The upper-left sky has only
-            low-profile evergreen buildings below it so a larger moon
-            can live there without touching building art. */}
-        <circle cx={220} cy={90} r={95} fill="url(#moonGlow)" />
-        <circle
-          cx={220}
-          cy={90}
-          r={44}
-          fill="#f8fafc"
-          stroke="#0a0a0f"
-          strokeWidth={3}
-        />
-        <circle cx={200} cy={75} r={7} fill="#e2e8f0" />
-        <circle cx={240} cy={108} r={5} fill="#cbd5e1" />
-        <circle cx={248} cy={72} r={3} fill="#cbd5e1" />
-
-        {/* Stars (deterministic pattern so no hydration mismatch) */}
-        {STARS.map((s, i) => (
-          <g key={i}>
-            <circle cx={s.x} cy={s.y} r={s.r} fill="#fffbe6" opacity={s.o} />
-            {s.big && (
-              <g stroke="#fffbe6" strokeWidth={0.8} opacity={s.o}>
-                <line x1={s.x - 4} y1={s.y} x2={s.x + 4} y2={s.y} />
-                <line x1={s.x} y1={s.y - 4} x2={s.x} y2={s.y + 4} />
-              </g>
-            )}
-          </g>
-        ))}
-
-        {/* Distant back buildings (shadows behind hero row) */}
-        <g opacity={0.55}>
-          {BACK_SILHOUETTES.map((b, i) => (
-            <rect
-              key={i}
-              x={b.x}
-              y={GROUND - b.h}
-              width={b.w}
-              height={b.h}
-              fill="#0b0b20"
-              stroke="#0a0a0f"
-              strokeWidth={2}
-            />
-          ))}
-          {/* chimney smoke trails very faint */}
-          <path
-            d={`M 160 ${GROUND - 260} q -10 -20 0 -40 q 10 -20 0 -40`}
-            stroke="#1e1e3e"
-            strokeWidth={3}
-            fill="none"
+        {backdrop === "sunset" ? (
+          /* G-27 — shared sunset twilight scene (sky / stars / moon /
+             sun / mountains / Spodek silhouette / ground zones /
+             lampposts). Same render path as `<CitySkylineHero>` and
+             /miasto manager. Lit-on-play mask keyed off BUILDING_PLAN
+             powered states: each lamp slice covers ~300 viewBox px
+             (1800 / 6); the building x-anchors fall into roughly one
+             slice each. Lamp lights up if the slice's evergreen game
+             has any plays. */
+          <HeroBackdrop
+            vbH={VB_H}
+            lampLitMask={(() => {
+              const sliceW = VB_W / 6;
+              return Array.from({ length: 6 }, (_, i) => {
+                const lo = i * sliceW;
+                const hi = (i + 1) * sliceW;
+                return BUILDING_PLAN.some((b) => {
+                  const cx = b.x + b.w / 2;
+                  if (cx < lo || cx >= hi) return false;
+                  const g = get(b.gameId);
+                  return (g?.plays ?? 0) > 0;
+                });
+              });
+            })()}
           />
-        </g>
+        ) : (
+          <>
+            {/* Sky */}
+            <rect x="0" y="0" width={VB_W} height={GROUND} fill="url(#sky)" />
 
-        {/* Ground block */}
-        <rect x="0" y={GROUND} width={VB_W} height={VB_H - GROUND} fill="url(#ground)" />
-        <rect x="0" y={GROUND + 28} width={VB_W} height={12} fill="url(#cobbles)" />
-        {/* road center dashed line */}
-        <g stroke="#fde047" strokeDasharray="22 16" strokeWidth={4} opacity="0.55">
-          <line x1="0" y1={GROUND + 36} x2={VB_W} y2={GROUND + 36} />
-        </g>
+            {/* Moon + glow — repositioned 2026-04-22 to the upper-left sky
+                band. Previously cx=VB_W-160 (upper-right), which collided
+                with the AI-zone building banners + countdown chips (same
+                x-band; SVG z-order put buildings on top so the moon bled
+                through the chip corners). The upper-left sky has only
+                low-profile evergreen buildings below it so a larger moon
+                can live there without touching building art. */}
+            <circle cx={220} cy={90} r={95} fill="url(#moonGlow)" />
+            <circle
+              cx={220}
+              cy={90}
+              r={44}
+              fill="#f8fafc"
+              stroke="#0a0a0f"
+              strokeWidth={3}
+            />
+            <circle cx={200} cy={75} r={7} fill="#e2e8f0" />
+            <circle cx={240} cy={108} r={5} fill="#cbd5e1" />
+            <circle cx={248} cy={72} r={3} fill="#cbd5e1" />
 
-        {/* Streetlight posts */}
-        {[120, 430, 730, 1040, 1320].map((x, i) => (
-          <g key={i}>
-            <rect x={x - 2} y={GROUND - 52} width={4} height={54} fill="#3f3f5a" />
-            <circle cx={x} cy={GROUND - 58} r={6} fill="#fde047" opacity="0.95" />
-            <circle cx={x} cy={GROUND - 58} r={14} fill="#fde047" opacity="0.15" />
-          </g>
-        ))}
+            {/* Stars (deterministic pattern so no hydration mismatch) */}
+            {STARS.map((s, i) => (
+              <g key={i}>
+                <circle cx={s.x} cy={s.y} r={s.r} fill="#fffbe6" opacity={s.o} />
+                {s.big && (
+                  <g stroke="#fffbe6" strokeWidth={0.8} opacity={s.o}>
+                    <line x1={s.x - 4} y1={s.y} x2={s.x + 4} y2={s.y} />
+                    <line x1={s.x} y1={s.y - 4} x2={s.x} y2={s.y + 4} />
+                  </g>
+                )}
+              </g>
+            ))}
+
+            {/* Distant back buildings (shadows behind hero row) */}
+            <g opacity={0.55}>
+              {BACK_SILHOUETTES.map((b, i) => (
+                <rect
+                  key={i}
+                  x={b.x}
+                  y={GROUND - b.h}
+                  width={b.w}
+                  height={b.h}
+                  fill="#0b0b20"
+                  stroke="#0a0a0f"
+                  strokeWidth={2}
+                />
+              ))}
+              {/* chimney smoke trails very faint */}
+              <path
+                d={`M 160 ${GROUND - 260} q -10 -20 0 -40 q 10 -20 0 -40`}
+                stroke="#1e1e3e"
+                strokeWidth={3}
+                fill="none"
+              />
+            </g>
+
+            {/* Ground block */}
+            <rect x="0" y={GROUND} width={VB_W} height={VB_H - GROUND} fill="url(#ground)" />
+            <rect x="0" y={GROUND + 28} width={VB_W} height={12} fill="url(#cobbles)" />
+            {/* road center dashed line */}
+            <g stroke="#fde047" strokeDasharray="22 16" strokeWidth={4} opacity="0.55">
+              <line x1="0" y1={GROUND + 36} x2={VB_W} y2={GROUND + 36} />
+            </g>
+
+            {/* Streetlight posts */}
+            {[120, 430, 730, 1040, 1320].map((x, i) => (
+              <g key={i}>
+                <rect x={x - 2} y={GROUND - 52} width={4} height={54} fill="#3f3f5a" />
+                <circle cx={x} cy={GROUND - 58} r={6} fill="#fde047" opacity="0.95" />
+                <circle cx={x} cy={GROUND - 58} r={14} fill="#fde047" opacity="0.15" />
+              </g>
+            ))}
+          </>
+        )}
 
         {/* AI zone — always renders 3 fixed slots (fast / medium / slow).
             A slot without a live game shows a construction-site placeholder

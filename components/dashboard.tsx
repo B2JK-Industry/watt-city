@@ -479,7 +479,13 @@ export function Dashboard({
             {d.cityNightOpen} →
           </Link>
         </div>
-        <CityScene games={cityGames} loggedIn compact aiGames={aiGames} />
+        <CityScene
+          games={cityGames}
+          loggedIn
+          compact
+          backdrop="sunset"
+          aiGames={aiGames}
+        />
       </section>
 
       <section className="flex flex-col gap-3 card p-5">

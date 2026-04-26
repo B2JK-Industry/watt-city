@@ -1,6 +1,20 @@
 import type plDict from "./pl";
 
 const uk: typeof plDict = {
+  errors: {
+    title: "Щось пішло не так",
+    body: "Не вдалося завантажити сторінку. Спробуй ще раз — твої дані в безпеці.",
+    retry: "Спробувати ще раз",
+    back: "На головну",
+    notFoundTitle: "Цієї сторінки не існує",
+    notFoundBody: "Можливо, її перенесли або посилання застаріло.",
+    notFoundCta: "На головну",
+    notFoundGames: "Усі ігри",
+    notFoundGameTitle: "Такої гри вже немає",
+    notFoundGameBody:
+      "Обери серед {n} наявних міні-ігор — або зіграй одну з 3 щоденних AI-ігор.",
+    notFoundGameAll: "Усі міні-ігри",
+  },
   nav: {
     city: "Містечко",
     games: "Ігри",

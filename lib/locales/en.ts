@@ -1,6 +1,20 @@
 import type plDict from "./pl";
 
 const en: typeof plDict = {
+  errors: {
+    title: "Something went wrong",
+    body: "We couldn't load this page. Try again — your data is safe.",
+    retry: "Try again",
+    back: "Back to home",
+    notFoundTitle: "This page doesn't exist",
+    notFoundBody: "It may have moved or the link is out of date.",
+    notFoundCta: "Back to home",
+    notFoundGames: "All games",
+    notFoundGameTitle: "This game is no longer available",
+    notFoundGameBody:
+      "Pick from {n} available mini-games — or play one of the 3 daily AI games.",
+    notFoundGameAll: "All mini-games",
+  },
   nav: {
     city: "City",
     games: "Games",

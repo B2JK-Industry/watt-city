@@ -1,6 +1,20 @@
 import type plDict from "./pl";
 
 const cs: typeof plDict = {
+  errors: {
+    title: "Něco se pokazilo",
+    body: "Nepodařilo se načíst stránku. Zkus to znovu — tvá data jsou v bezpečí.",
+    retry: "Zkusit znovu",
+    back: "Zpět na úvod",
+    notFoundTitle: "Tato stránka neexistuje",
+    notFoundBody: "Možná byla přesunuta nebo je odkaz neplatný.",
+    notFoundCta: "Zpět na úvod",
+    notFoundGames: "Všechny hry",
+    notFoundGameTitle: "Tato hra už není dostupná",
+    notFoundGameBody:
+      "Vyber si z {n} dostupných miniher — nebo zahraj jednu ze 3 denních AI her.",
+    notFoundGameAll: "Všechny minihry",
+  },
   nav: {
     city: "Městečko",
     games: "Hry",

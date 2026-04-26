@@ -1,4 +1,18 @@
 const pl = {
+  errors: {
+    title: "Coś poszło nie tak",
+    body: "Nie udało się wczytać strony. Spróbuj ponownie — Twoje dane są bezpieczne.",
+    retry: "Spróbuj ponownie",
+    back: "Wróć na stronę główną",
+    notFoundTitle: "Ta strona nie istnieje",
+    notFoundBody: "Może została przeniesiona lub link jest nieaktualny.",
+    notFoundCta: "Wróć na stronę główną",
+    notFoundGames: "Wszystkie gry",
+    notFoundGameTitle: "Tej gry już nie ma",
+    notFoundGameBody:
+      "Wybierz spośród {n} dostępnych minigier — albo zagraj jedną z 3 dziennych AI-gier.",
+    notFoundGameAll: "Wszystkie minigry",
+  },
   nav: {
     city: "Miasteczko",
     games: "Gry",
