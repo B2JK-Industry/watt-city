@@ -106,13 +106,21 @@ export function MobileNavDrawer({
 
       {/* Drawer panel — always mounted, slides via transform. tabIndex=-1
           on the dialog allows focus management without making the panel
-          a tab stop itself. */}
+          a tab stop itself. The `inert` attribute (when closed) removes
+          the panel + every descendant from the focus order — required
+          to clear axe-core `aria-hidden-focus` (the prior `aria-hidden`
+          alone left focusable nav links inside an aria-hidden subtree). */}
       <aside
         id="mobile-nav-drawer"
         role="dialog"
         aria-modal="true"
         aria-label={ariaLabel}
         aria-hidden={!open}
+        // React 19 forwards `inert` as the standard HTML attribute on
+        // every element. When `open` is false, focus + a11y tree skip
+        // the panel entirely. (Removed when `open` is true so menu
+        // contents are reachable via keyboard.)
+        inert={!open}
         tabIndex={-1}
         className={`lg:hidden fixed top-0 right-0 bottom-0 z-40 w-[min(85vw,360px)] bg-[var(--surface)] flex flex-col transition-transform duration-300 ease-out shadow-[0_8px_24px_rgba(0,0,0,0.12)] ${
           open ? "translate-x-0" : "translate-x-full"

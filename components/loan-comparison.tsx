@@ -178,14 +178,24 @@ export function LoanComparison({ rows, lang, principal, termMonths }: Props) {
                 <td className="px-2 py-2 font-bold">
                   <span className="block">{row.type.replace(/_/g, " ")}</span>
                   {row.cheapest && (
-                    <span className="text-[10px] font-semibold text-[var(--success)] block">
+                    // The row already carries a green-tinted background
+                    // for the "cheapest" semantic. Inline text uses the
+                    // accent (navy 10:1 on white) so it stays legible
+                    // both on the surface and on the green tint —
+                    // `var(--success)` falls just under WCAG AA on the
+                    // tinted surface (axe-core color-contrast finding).
+                    <span className="text-[10px] font-semibold text-[var(--accent)] block">
                       {t.cheapestBadge}
                     </span>
                   )}
                   {row.warning && (
+                    // Same rationale as the cheapest badge: the row
+                    // already carries a danger-tinted bg; navy text
+                    // keeps WCAG AA on the pink-ish surface where the
+                    // raw `--danger` red falls under 4.5:1.
                     <span
                       title={t.warningTooltip}
-                      className="text-[10px] font-semibold text-[var(--danger)] block cursor-help"
+                      className="text-[10px] font-semibold text-[var(--accent)] block cursor-help"
                     >
                       {t.warningBadge}
                     </span>

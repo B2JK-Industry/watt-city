@@ -195,6 +195,8 @@ export function BudgetBalanceClient({
                     value={pct}
                     disabled={locked}
                     onChange={(e) => change(tgt.id, Number(e.target.value))}
+                    aria-label={`${tgt.label} ${pct}%`}
+                    aria-valuetext={`${pct} percent`}
                     className="w-full accent-[var(--accent)]"
                   />
                   <div

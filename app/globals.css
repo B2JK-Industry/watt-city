@@ -213,7 +213,12 @@ body {
   --sc-detail-cool: var(--accent);
   --sc-stroke: var(--accent);
 
-  filter: saturate(0.5) brightness(1) contrast(1.04);
+  /* UX Pass 3 F-NEW-02: stronger filter so the legacy "noc nad
+   * Katowicami" SVG reads as a daytime light scene on the pko surface.
+   * Saturate ↓ kills the cool-blue dominance, brightness ↑ pulls the
+   * value into the upper half, contrast ↓ avoids the harsh black
+   * silhouettes the filter alone would leave. */
+  filter: saturate(0.35) brightness(1.55) contrast(0.92);
 }
 :where([data-skin="pko"]) .city-scene-root svg text {
   /* Restore text contrast — filter tints labels otherwise. */
@@ -247,6 +252,47 @@ body {
 :where([data-skin="pko"]) .city-scene-root [fill="#06b6d4"],
 :where([data-skin="pko"]) .city-scene-root [fill="#67e8f9"] {
   fill: var(--sc-detail-cool);
+}
+
+/* UX Pass 3 F-NEW-02 — Sky gradient stops + ground pattern.
+ *
+ * Overriding raw `fill=` on building rects would corrupt the
+ * silhouettes (CityScene reuses `#0f172a` / `#0a0a0f` for both sky
+ * AND brutalist building walls). Stop-color overrides are safe —
+ * they only match SVG `<stop>` elements inside `<linearGradient>`,
+ * which are unambiguously atmosphere. The pattern-ground rect uses a
+ * lookup-only fill (`#1f2937`) so we can swap it directly without
+ * collateral. Specificity 0,2,1 beats inline attributes — no
+ * `!important`. Limited to .city-scene-root → core skin unaffected.
+ */
+:where([data-skin="pko"]) .city-scene-root [stop-color="#0f172a"],
+:where([data-skin="pko"]) .city-scene-root [stop-color="#1e1b4b"],
+:where([data-skin="pko"]) .city-scene-root [stop-color="#1a1a2e"],
+:where([data-skin="pko"]) .city-scene-root [stop-color="#0a0a0f"],
+:where([data-skin="pko"]) .city-scene-root [stop-color="#02021a"],
+:where([data-skin="pko"]) .city-scene-root [stop-color="#120f3a"],
+:where([data-skin="pko"]) .city-scene-root [stop-color="#2a1458"] {
+  stop-color: var(--sc-sky);
+}
+:where([data-skin="pko"]) .city-scene-root [fill="#1f2937"] {
+  fill: var(--surface-2);
+}
+:where([data-skin="pko"]) .city-scene-root [stroke="#1f2937"] {
+  /* Empty-slot dotted ghost — needs to read against light surface. */
+  stroke: var(--line);
+}
+
+/* CitySkylineHero empty-state overlay. The original `bg-black/40`
+ * scrim was tuned for the legacy night sky; on the new pko light sky
+ * it reads as an unwanted dark wash. Default = light scrim + accent
+ * text. Core skin keeps the original dark scrim with white text. */
+.city-skyline-empty-overlay {
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--accent);
+}
+:where([data-skin="core"]) .city-skyline-empty-overlay {
+  background: rgba(0, 0, 0, 0.4);
+  color: #ffffff;
 }
 
 .bottom-tabs {

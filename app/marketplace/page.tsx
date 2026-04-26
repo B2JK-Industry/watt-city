@@ -152,6 +152,7 @@ export default async function MarketplacePage() {
             <div
               className="h-2 rounded-full bg-[var(--surface-2)] overflow-hidden"
               role="progressbar"
+              aria-label={copy.progressLabel}
               aria-valuenow={progressPct}
               aria-valuemin={0}
               aria-valuemax={100}

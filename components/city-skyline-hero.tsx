@@ -55,7 +55,13 @@ export function CitySkylineHero({ buildings, lang, emptyStateCta }: Props) {
 
   return (
     <section
-      className="card relative overflow-hidden"
+      // `city-scene-root` opts the hero into the pko skin's
+      // attribute-selector overrides in globals.css (sky stops, ground
+      // pattern, stroke colors) so the night SVG reads as daytime under
+      // [data-skin="pko"]. Core skin selectors are scoped, so the
+      // legacy night look is unaffected. Tracked under F-NEW-02 in
+      // docs/pko-redesign/_ux-pass-3.md.
+      className="city-scene-root card relative overflow-hidden"
       aria-labelledby="skyline-heading"
     >
       <h2 id="skyline-heading" className="sr-only">
@@ -117,7 +123,7 @@ export function CitySkylineHero({ buildings, lang, emptyStateCta }: Props) {
         })}
       </svg>
       {buildings.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-center px-4">
+        <div className="city-skyline-empty-overlay absolute inset-0 flex items-center justify-center text-center px-4">
           <div className="max-w-md flex flex-col gap-2">
             <p className="text-base sm:text-lg font-semibold tracking-tight">
               {copy.empty}

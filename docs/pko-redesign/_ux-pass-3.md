@@ -70,6 +70,9 @@ Aj po troch PR-kách, ktoré vymetli `text-zinc-*`, `text-amber-*`, `text-emeral
 
 ### F-NEW-02 · 🚨 CRITICAL · „Noc nad Katowicami" tmavý SVG hero leak (3 stránky)
 
+> **STATUS: FIXED in PR-E** — pko `.city-scene-root` filter strengthened to `saturate(.35) brightness(1.55) contrast(.92)`, sky gradient stops + ground pattern overridden via attribute selectors, `CitySkylineHero` opted into `.city-scene-root`, dark `bg-black/40` empty-state overlay swapped for skin-aware `.city-skyline-empty-overlay`. Drive-by a11y fixes (drawer `inert` when closed, marketplace progressbar aria-label, /loans/compare badge text → accent, /games/budget-balance + /parent input aria labels) take walkthrough a11ySerious findings from 31 → 0.
+
+
 **Kde:**
 - `/` (anonymous landing) — pod hero CTA (`components/city-skyline-hero.tsx`)
 - `/` (logged-in dashboard, sekcia „Twój dom") — `components/city-skyline-hero.tsx`

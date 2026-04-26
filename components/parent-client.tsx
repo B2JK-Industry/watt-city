@@ -113,11 +113,12 @@ export function ParentClient({ role: initialRole, kids: initialKids, parents, pr
       </section>
 
       <section className="card p-4 flex flex-col gap-3">
-        <h2 className="text-sm font-semibold">{copy.linkAsParent}</h2>
+        <h2 id="link-as-parent-heading" className="text-sm font-semibold">{copy.linkAsParent}</h2>
         <div className="flex gap-2">
           <input
             value={linkCode}
             onChange={(e) => setLinkCode(e.target.value.toUpperCase())}
+            aria-labelledby="link-as-parent-heading"
             className="flex-1 px-3 py-2 border border-[var(--line)] rounded bg-[var(--surface-2)] font-mono"
             maxLength={16}
           />
