@@ -104,8 +104,13 @@ type Props = {
 
 /** Aggregate the player's buildings by catalog id so a city of "3 Domek
  *  + 2 Sklepik" renders as two chips (🏠 ×3, 🏪 ×2) instead of five
- *  identical glyphs. Returns up to 6 chips ordered by descending count
- *  (most-built first) so the strip reads as "what defines this city". */
+ *  identical glyphs. Returns ALL distinct building groups ordered by
+ *  descending count (most-built first) so the strip reads as
+ *  "everything you've built so far" — flex-wrap on the parent
+ *  handles overflow into multiple rows.
+ *  G-28 — previously clamped at 6; user reported missing buildings
+ *  on cities with >6 distinct types. The catalog ceiling (~30
+ *  entries) is the natural upper bound now. */
 function aggregateByCatalog(
   buildings: ReadonlyArray<{ catalogId: string; level: number }>,
 ): Array<{ glyph: string; name: string; count: number; topLevel: number }> {
@@ -129,9 +134,7 @@ function aggregateByCatalog(
       });
     }
   }
-  return Array.from(groups.values())
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 6);
+  return Array.from(groups.values()).sort((a, b) => b.count - a.count);
 }
 
 export function CityLevelCard({ player, lang }: Props) {

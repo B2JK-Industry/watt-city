@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { Lang } from "@/lib/i18n";
 
@@ -197,12 +198,17 @@ export function CookieConsent({
           <span>✓ {copy.noAds}</span>
         </p>
       </div>
-      <a
-        href="/ochrana-sukromia"
+      {/* G-04 — desktop "more" CTA points at the focused informational
+          /consent page (cookie list + 1-line privacy policy link). The
+          long policy lives at /ochrana-sukromia and is reachable from
+          /consent; mobile inline link still goes there directly to
+          keep the banner tight. */}
+      <Link
+        href="/consent"
         className="hidden sm:inline-flex btn btn-ghost btn-sm shrink-0"
       >
         {copy.more}
-      </a>
+      </Link>
       <button
         type="button"
         onClick={ack}

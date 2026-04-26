@@ -1,6 +1,22 @@
 import type plDict from "./pl";
 
 const en: typeof plDict = {
+  consent: {
+    title: "Cookies in Watt City",
+    intro:
+      "We use exactly 3 cookies — all strictly necessary for the app to work. No analytics, no advertising, no tracking — so the banner has a single \"Accept\" button.",
+    colName: "Name",
+    colPurpose: "Purpose",
+    colDuration: "Lifetime",
+    cookieSessionPurpose: "Authenticated user session (HTTP-only, signed).",
+    cookieCsrfPurpose: "CSRF token protecting forms.",
+    cookieLangPurpose: "Chosen interface language.",
+    cookieDurationSession: "Session",
+    cookieDuration1y: "1 year",
+    optOutBody:
+      "These 3 cookies can't be turned off — without them the app won't work (login, form protection, language). Full privacy policy below.",
+    privacyPolicy: "Privacy policy",
+  },
   errors: {
     title: "Something went wrong",
     body: "We couldn't load this page. Try again — your data is safe.",
@@ -430,6 +446,11 @@ const en: typeof plDict = {
   },
   aboutPage: {
     title: "About",
+    techNoteZod: "Input + AI-output validation.",
+    techNoteAuth: "Passwords + HTTP-only signed session cookie.",
+    techNoteSdk: "Claude Sonnet 4.6 (PL gen) + Haiku 4.5 (3× translation), JSON structured output.",
+    techSvgName: "SVG, no PNG/JPG",
+    techSvgNote: "Entire city + buildings are vector — sharp on 4K.",
     ideaTitle: "Project idea",
     scienceTitle: "The science behind the habit — why ephemeral games",
     howTitle: "How it works",

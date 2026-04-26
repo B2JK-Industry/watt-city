@@ -1,4 +1,20 @@
 const pl = {
+  consent: {
+    title: "Cookies w Watt City",
+    intro:
+      "Używamy wyłącznie 3 plików cookie, wszystkie ściśle niezbędne do działania aplikacji. Nie zbieramy żadnych danych analitycznych ani reklamowych — dlatego banner ma tylko jeden przycisk Akceptuj.",
+    colName: "Nazwa",
+    colPurpose: "Cel",
+    colDuration: "Czas życia",
+    cookieSessionPurpose: "Sesja zalogowanego użytkownika (HTTP-only, signed).",
+    cookieCsrfPurpose: "Token CSRF chroniący formularze.",
+    cookieLangPurpose: "Wybrany język interfejsu.",
+    cookieDurationSession: "Sesja",
+    cookieDuration1y: "1 rok",
+    optOutBody:
+      "Te 3 cookie nie da się wyłączyć — bez nich aplikacja nie zadziała (logowanie, ochrona formularzy, język). Pełna polityka prywatności poniżej.",
+    privacyPolicy: "Polityka prywatności",
+  },
   errors: {
     title: "Coś poszło nie tak",
     body: "Nie udało się wczytać strony. Spróbuj ponownie — Twoje dane są bezpieczne.",
@@ -428,6 +444,11 @@ const pl = {
   },
   aboutPage: {
     title: "O platformie",
+    techNoteZod: "Walidacja wejść + outputu AI.",
+    techNoteAuth: "Hasła + HTTP-only signed session cookie.",
+    techNoteSdk: "Claude Sonnet 4.6 (gen PL) + Haiku 4.5 (3× tłumaczenie), JSON structured output.",
+    techSvgName: "SVG, żadnych PNG/JPG",
+    techSvgNote: "Całe miasteczko + budynki są wektorem, ostre na 4K.",
     ideaTitle: "Idea projektu",
     scienceTitle: "Nauka za nawykiem — dlaczego efemeryczne gry",
     howTitle: "Jak to działa",

@@ -283,10 +283,7 @@ export default async function AboutPage() {
               /ochrana-sukromia
             </Link>
           </p>
-          <p className="text-xs text-[var(--ink-muted)]">
-            Vďaka: PKO Bank Polski · Tauron · ETHWarsaw · AKMF ·
-            Katowicki.Hub.
-          </p>
+          <p className="text-xs text-[var(--ink-muted)]">{t.sponsorsThanks}</p>
         </div>
       </section>
 
@@ -389,11 +386,11 @@ export default async function AboutPage() {
           <TechItem name="TypeScript strict" note="Úplné typové pokrytie." />
           <TechItem name="Tailwind CSS 4" note="Neo-brutalist tokens + primitives v globals.css." />
           <TechItem name="Upstash Redis" note="Sorted sets pre leaderboardy, JSON pre účty a duely, EU región." />
-          <TechItem name="zod" note="Vstupná + AI-output validácia." />
-          <TechItem name="scrypt + HMAC" note="Heslá + HTTP-only signed session cookie." />
+          <TechItem name="zod" note={t.techNoteZod} />
+          <TechItem name="scrypt + HMAC" note={t.techNoteAuth} />
           <TechItem name="Vercel Cron" note="AI pipeline trigger denne o 09:00 UTC." />
-          <TechItem name="Anthropic SDK" note="Claude Sonnet 4.6 (PL gen) + Haiku 4.5 (3× preklad), JSON structured output." />
-          <TechItem name="SVG, žiadne PNG/JPG" note="Celé mestečko + budova sú vektor, ostrý na 4K." />
+          <TechItem name="Anthropic SDK" note={t.techNoteSdk} />
+          <TechItem name={t.techSvgName} note={t.techSvgNote} />
         </div>
       </section>
 
@@ -449,8 +446,8 @@ export default async function AboutPage() {
       </section>
 
       <footer className="text-xs text-[var(--ink-muted)] border-t border-[var(--line)] pt-4 flex flex-wrap gap-4">
-        <Link href="/" className="underline">Späť na domov</Link>
-        <Link href="/ochrana-sukromia" className="underline">Ochrana súkromia</Link>
+        <Link href="/" className="underline">{t.footerHome}</Link>
+        <Link href="/ochrana-sukromia" className="underline">{t.footerPrivacy}</Link>
         <a
           href="https://github.com/B2JK-Industry/watt-city"
           className="underline"

@@ -1,6 +1,22 @@
 import type plDict from "./pl";
 
 const uk: typeof plDict = {
+  consent: {
+    title: "Cookies у Watt City",
+    intro:
+      "Використовуємо лише 3 cookies — усі необхідні для роботи застосунку. Не збираємо аналітики чи реклами, тому банер має лише кнопку Прийняти.",
+    colName: "Назва",
+    colPurpose: "Призначення",
+    colDuration: "Тривалість",
+    cookieSessionPurpose: "Сесія авторизованого користувача (HTTP-only, signed).",
+    cookieCsrfPurpose: "CSRF-токен для захисту форм.",
+    cookieLangPurpose: "Обрана мова інтерфейсу.",
+    cookieDurationSession: "Сесія",
+    cookieDuration1y: "1 рік",
+    optOutBody:
+      "Ці 3 cookies не можна вимкнути — без них застосунок не працюватиме (логін, захист форм, мова). Повна політика приватності нижче.",
+    privacyPolicy: "Політика приватності",
+  },
   errors: {
     title: "Щось пішло не так",
     body: "Не вдалося завантажити сторінку. Спробуй ще раз — твої дані в безпеці.",
@@ -430,6 +446,11 @@ const uk: typeof plDict = {
   },
   aboutPage: {
     title: "Про платформу",
+    techNoteZod: "Валідація вхідних даних + AI-output.",
+    techNoteAuth: "Паролі + HTTP-only signed session cookie.",
+    techNoteSdk: "Claude Sonnet 4.6 (gen PL) + Haiku 4.5 (3× переклад), JSON structured output.",
+    techSvgName: "SVG, ніяких PNG/JPG",
+    techSvgNote: "Усе містечко + будівлі — вектор, чіткі на 4K.",
     ideaTitle: "Ідея проєкту",
     scienceTitle: "Наука за звичкою — чому ефемерні ігри",
     howTitle: "Як це працює",

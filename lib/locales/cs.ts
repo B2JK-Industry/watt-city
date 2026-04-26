@@ -1,6 +1,22 @@
 import type plDict from "./pl";
 
 const cs: typeof plDict = {
+  consent: {
+    title: "Cookies ve Watt City",
+    intro:
+      "Používáme pouze 3 cookies — všechny nezbytné pro chod aplikace. Nesbíráme žádná analytická ani reklamová data, proto má banner jen jedno tlačítko Přijmout.",
+    colName: "Název",
+    colPurpose: "Účel",
+    colDuration: "Životnost",
+    cookieSessionPurpose: "Relace přihlášeného uživatele (HTTP-only, signed).",
+    cookieCsrfPurpose: "CSRF token chránící formuláře.",
+    cookieLangPurpose: "Zvolený jazyk rozhraní.",
+    cookieDurationSession: "Relace",
+    cookieDuration1y: "1 rok",
+    optOutBody:
+      "Tyto 3 cookies nelze vypnout — bez nich aplikace nepoběží (přihlášení, ochrana formulářů, jazyk). Úplné zásady ochrany soukromí níže.",
+    privacyPolicy: "Zásady ochrany soukromí",
+  },
   errors: {
     title: "Něco se pokazilo",
     body: "Nepodařilo se načíst stránku. Zkus to znovu — tvá data jsou v bezpečí.",
@@ -430,6 +446,11 @@ const cs: typeof plDict = {
   },
   aboutPage: {
     title: "O platformě",
+    techNoteZod: "Validace vstupů + AI outputu.",
+    techNoteAuth: "Hesla + HTTP-only signed session cookie.",
+    techNoteSdk: "Claude Sonnet 4.6 (gen PL) + Haiku 4.5 (3× překlad), JSON structured output.",
+    techSvgName: "SVG, žádné PNG/JPG",
+    techSvgNote: "Celé městečko + budovy jsou vektor, ostré na 4K.",
     ideaTitle: "Myšlenka projektu",
     scienceTitle: "Věda za návykem — proč efemerní hry",
     howTitle: "Jak to funguje",
