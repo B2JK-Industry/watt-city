@@ -110,19 +110,25 @@ export default async function LeaderboardPage({ searchParams }: Props) {
       </div>
 
       {podium.length === 3 && (
-        <div className="grid grid-cols-3 gap-3 sm:gap-4 items-end">
+        // R-04 — stepped podium with shared ground line. Heights are
+        // 1.0/0.73/0.55 (h-44/h-32/h-24) so the gold tile reads as the
+        // dominant block — the prior 0.78/1.0/0.67 looked muddled.
+        // `items-end` aligns all three to the same baseline.
+        <div className="grid grid-cols-3 gap-3 sm:gap-4 items-end relative">
           <PodiumCard
             entry={podium[1]}
-            height="h-28"
+            height="h-32"
             badge="🥈"
             bg="bg-[var(--ink-subtle)]"
+            rank={2}
             isMe={podium[1].username === session?.username}
           />
           <PodiumCard
             entry={podium[0]}
-            height="h-36"
+            height="h-44"
             badge="🥇"
             bg="bg-[var(--sales)]"
+            rank={1}
             isMe={podium[0].username === session?.username}
             crown
           />
@@ -131,8 +137,12 @@ export default async function LeaderboardPage({ searchParams }: Props) {
             height="h-24"
             badge="🥉"
             bg="bg-[var(--surface-2)]"
+            rank={3}
             isMe={podium[2].username === session?.username}
           />
+          {/* R-04 — shared ground line under all three tiles to anchor
+              the stepped look. 1 px navy rule per brand manual §7. */}
+          <div className="col-span-3 -mt-px border-t border-[var(--accent)]" />
         </div>
       )}
 
@@ -231,6 +241,7 @@ function PodiumCard({
   height,
   badge,
   bg,
+  rank,
   isMe,
   crown,
 }: {
@@ -238,36 +249,76 @@ function PodiumCard({
   height: string;
   badge: string;
   bg: string;
+  rank: 1 | 2 | 3;
   isMe: boolean;
   crown?: boolean;
 }) {
+  // R-04 — initials placeholder avatar (the LeaderboardEntry API
+  // doesn't carry an avatar id; flagged F-NEW-18-leaderboard for a
+  // follow-up). Two letters max, uppercase.
+  const initials = entry.username.slice(0, 2).toUpperCase();
+  // R-04 — gold tile keeps white text on orange (--sales = #db912c).
+  // Contrast on white is 3.1:1, but text on the orange fill itself is
+  // ~3.6:1 white. Bump to navy on gold for AA-safe rendering. The new
+  // `lib/podium-color-contrast.test.ts` token guard pins this so a
+  // future palette swap can't regress it.
+  const insideTextClass =
+    rank === 1
+      ? "text-[var(--accent)]"
+      : "text-[var(--ink)]";
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-stretch gap-2">
+      {/* Avatar circle above the box — uses the existing accent
+          token + initials, same look as the dashboard top-leaderboard
+          widget. */}
+      <div className="flex justify-center">
+        <span
+          aria-hidden
+          className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-[var(--accent)] text-[var(--accent-ink)] text-[11px] font-semibold"
+        >
+          {initials}
+        </span>
+      </div>
       <div
-        // Me-row indicator demoted from 4 px stripe to 1 px navy rule
-        // (brand manual §7 cap = 1 px). `data-testid` exposes the
-        // entry name so the ux-fixes spec can reliably scrape podium
-        // contents (issue #2 of the pass-6 fix list).
-        className={`w-full ${height} ${bg} podium-tile flex items-end justify-center p-3 text-3xl sm:text-4xl ${
+        // Tile carries: rank chip (top-left), medal (top-right),
+        // username + W$ (bottom inside). Me-row keeps the 1 px navy
+        // rule per brand manual §7. `data-testid="podium-name"` is
+        // the seeded-filter spec hook (PR pass-6 issue #2).
+        className={`relative w-full ${height} ${bg} podium-tile flex flex-col justify-end p-2 ${
           crown ? "animate-[glow-ring_2.4s_ease-in-out_infinite]" : ""
         } ${isMe ? "border-l border-l-[var(--accent)]" : ""}`}
       >
-        <span>{badge}</span>
-      </div>
-      <div className="text-center">
+        <span className="absolute top-1.5 left-1.5 text-[10px] font-semibold text-[var(--ink-muted)] bg-[var(--surface)] rounded px-1.5 py-0.5">
+          #{rank}
+        </span>
+        <span
+          aria-hidden
+          className="absolute top-1 right-1 text-2xl sm:text-3xl"
+        >
+          {badge}
+        </span>
         <div
           data-testid="podium-name"
-          className="text-sm font-semibold truncate max-w-[120px] sm:max-w-[160px] tracking-tight"
+          className={`${insideTextClass} text-xs sm:text-sm font-semibold truncate tracking-tight`}
         >
           {entry.username}
           {isMe && (
-            <span className="text-[var(--danger)] ml-1 text-xs">(ty)</span>
+            <span className="text-[var(--danger)] ml-1 text-[10px]">(ty)</span>
           )}
         </div>
-        <div className="text-xs font-mono font-semibold text-[var(--ink)]">
+        <div
+          className={`${insideTextClass} text-[10px] sm:text-xs font-mono font-semibold tabular-nums`}
+        >
           {entry.xp.toLocaleString("pl-PL")} W
         </div>
       </div>
+      {/* Decorative podium-base step under each tile. `surface-2`
+          + 1 px line keeps the stepped illusion without a brutalism
+          wedge. Width follows the tile (parent grid). */}
+      <div
+        aria-hidden
+        className="h-2 bg-[var(--surface-2)] border-t border-[var(--line)]"
+      />
     </div>
   );
 }

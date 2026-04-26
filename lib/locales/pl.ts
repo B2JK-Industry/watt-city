@@ -6,6 +6,7 @@ const pl = {
     league: "Liga",
     hall: "Sala sławy",
     about: "O platformie",
+    loans: "Kredyty",
     login: "Zaloguj",
     register: "Rejestracja",
     logout: "Wyloguj",

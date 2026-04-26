@@ -132,9 +132,20 @@ type Props = {
   lang: Lang;
   principal: number;
   termMonths: number;
+  /** R-03 — `inline` strips the outer `card` + `<h2>` so the
+   *  comparison can be embedded inside another card (e.g. the
+   *  MortgageCard collapse on /miasto). The default keeps the
+   *  full-page layout `/loans/compare` ships today. */
+  variant?: "page" | "inline";
 };
 
-export function LoanComparison({ rows, lang, principal, termMonths }: Props) {
+export function LoanComparison({
+  rows,
+  lang,
+  principal,
+  termMonths,
+  variant = "page",
+}: Props) {
   const t = COPY[lang];
   const router = useRouter();
   const pathname = usePathname();
@@ -193,9 +204,22 @@ export function LoanComparison({ rows, lang, principal, termMonths }: Props) {
     );
   }
 
+  // R-03 — `variant="inline"` skips the `.card` wrapper + `<h2>`. The
+  // host already owns its surface (e.g. MortgageCard's `.card`), so a
+  // double-card would visibly stack two outlines. The controls + table
+  // still render with their normal spacing.
+  const Wrapper = variant === "inline" ? "div" : "section";
   return (
-    <section className="card p-4 sm:p-6 flex flex-col gap-4">
-      <h2 className="section-heading text-xl sm:text-2xl">{t.heading}</h2>
+    <Wrapper
+      className={
+        variant === "inline"
+          ? "flex flex-col gap-3"
+          : "card p-4 sm:p-6 flex flex-col gap-4"
+      }
+    >
+      {variant !== "inline" && (
+        <h2 className="section-heading text-xl sm:text-2xl">{t.heading}</h2>
+      )}
 
       {/* G-04 — Interactive controls. Principal is a range slider
           (1k–10k W$, step 500). Term is a 4-option segmented row.
@@ -333,6 +357,6 @@ export function LoanComparison({ rows, lang, principal, termMonths }: Props) {
         </table>
       </div>
       {error && <p className="text-xs text-[var(--danger)]">Error: {error}</p>}
-    </section>
+    </Wrapper>
   );
 }

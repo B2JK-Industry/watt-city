@@ -113,10 +113,16 @@ export function CityScene({
   const get = (id: string) => map.get(id);
 
   return (
+    // R-02 — the inline `background: "#07071a"` was the dominant
+    // dark-navy block on the surface. Inline styles win over CSS
+    // (specificity 1,0,0,0 vs 0,0,2,1), so the pko skin stayed dark
+    // even with `saturate(.35) brightness(1.55)` applied on top.
+    // Background is now skin-driven via `.city-scene-root` rules in
+    // globals.css — core keeps the neon-night fill, pko gets the
+    // daylight sky token.
     <div
       className="city-scene-root relative w-full rounded-lg border border-[var(--line)] overflow-hidden"
       style={{
-        background: "#07071a",
         aspectRatio: `${VB_W} / ${VB_H}`,
         maxHeight: compact ? 360 : 560,
       }}

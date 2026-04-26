@@ -315,6 +315,111 @@ body {
   fill: var(--sc-building-secondary);
 }
 
+/* R-02 (PR-J) — skin-driven container background. The inline
+ * `style={{ background: "#07071a" }}` in city-scene.tsx was removed
+ * because inline styles win over CSS specificity and forced the dark
+ * sky on every skin. Pko gets the daylight token; core re-asserts
+ * the original deep-navy fill so the noc-nad-Katowicami look stays
+ * intact for that skin. */
+.city-scene-root {
+  background: var(--sc-sky, #ffffff);
+}
+:where([data-skin="core"]) .city-scene-root {
+  background: #07071a;
+}
+
+/* R-02 — broaden the BUILDING_PLAN palette overrides. The G-01
+ * block above only mapped 8 of the ~38 raw hex fills the SVG carries
+ * (audited via `grep -oE 'fill="#[0-9a-f]{3,6}"' city-scene.tsx |
+ * sort -u`). After the saturate/brightness filter the remaining
+ * neon greens, indigos, ambers and slate tones still rendered as a
+ * dark stripe through the middle of the daylight surface. Each
+ * bucket below maps to an existing pko token — no new hexes added.
+ *
+ * Bucket strategy:
+ *   slate / dark-grey / building-grey  → --sc-building-primary
+ *   stone / dark-warm                   → --sc-building-secondary
+ *   neon cyan / blue / indigo / violet  → --sc-detail-cool (= accent navy)
+ *   neon green / lime                   → --sc-detail-cool (mute)
+ *   neon yellow / amber / orange / brown → --sc-window (warm muted yellow)
+ *   neon magenta / fuchsia              → --sc-detail-warm (= sales orange)
+ *
+ * Light tones (#cbd5e1, #e2e8f0, #f1f5f9, #f8fafc, #fffbe6) are
+ * already pko-friendly and intentionally left alone.
+ */
+:where([data-skin="pko"]) .city-scene-root [fill="#0b0b20"],
+:where([data-skin="pko"]) .city-scene-root [fill="#0f0f1f"],
+:where([data-skin="pko"]) .city-scene-root [fill="#1c1917"],
+:where([data-skin="pko"]) .city-scene-root [fill="#3f3f5a"],
+:where([data-skin="pko"]) .city-scene-root [fill="#44403c"],
+:where([data-skin="pko"]) .city-scene-root [fill="#475569"] {
+  fill: var(--sc-building-primary);
+}
+:where([data-skin="pko"]) .city-scene-root [fill="#94a3b8"] {
+  /* Lighter slate already works as a roof/secondary tone — keep but
+   * mute via the building-secondary token. */
+  fill: var(--sc-building-secondary);
+}
+:where([data-skin="pko"]) .city-scene-root [fill="#06b6d4"],
+:where([data-skin="pko"]) .city-scene-root [fill="#0ea5e9"],
+:where([data-skin="pko"]) .city-scene-root [fill="#155e75"],
+:where([data-skin="pko"]) .city-scene-root [fill="#67e8f9"],
+:where([data-skin="pko"]) .city-scene-root [fill="#4338ca"],
+:where([data-skin="pko"]) .city-scene-root [fill="#6366f1"],
+:where([data-skin="pko"]) .city-scene-root [fill="#818cf8"] {
+  fill: var(--sc-detail-cool);
+}
+:where([data-skin="pko"]) .city-scene-root [fill="#064e3b"],
+:where([data-skin="pko"]) .city-scene-root [fill="#10b981"],
+:where([data-skin="pko"]) .city-scene-root [fill="#365314"],
+:where([data-skin="pko"]) .city-scene-root [fill="#65a30d"],
+:where([data-skin="pko"]) .city-scene-root [fill="#a3e635"] {
+  /* Neon greens collapse to the cool detail token — pko has no
+   * green slot in the city-scene 8-bucket palette. */
+  fill: var(--sc-detail-cool);
+}
+:where([data-skin="pko"]) .city-scene-root [fill="#78350f"],
+:where([data-skin="pko"]) .city-scene-root [fill="#854d0e"],
+:where([data-skin="pko"]) .city-scene-root [fill="#92400e"],
+:where([data-skin="pko"]) .city-scene-root [fill="#b45309"],
+:where([data-skin="pko"]) .city-scene-root [fill="#d97706"],
+:where([data-skin="pko"]) .city-scene-root [fill="#f59e0b"],
+:where([data-skin="pko"]) .city-scene-root [fill="#fbbf24"] {
+  /* Amber/orange/brown family → muted warm yellow window token. */
+  fill: var(--sc-window);
+}
+:where([data-skin="pko"]) .city-scene-root [fill="#a21caf"],
+:where([data-skin="pko"]) .city-scene-root [fill="#c026d3"] {
+  /* Magenta/fuchsia neon → sales-orange accent (rare, used as
+   * decorative roof spires). */
+  fill: var(--sc-detail-warm);
+}
+
+/* R-06 — visible custom slider thumb for the mortgage panel. The
+ * default WebKit/Firefox thumb is barely 12 px and disappears against
+ * the navy track at 1% position. 16×16 navy with a 1 px white ring
+ * is reliably visible on every browser + every position. */
+.mortgage-range::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--accent);
+  border: 1px solid #ffffff;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+.mortgage-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: var(--accent);
+  border: 1px solid #ffffff;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
 /* CitySkylineHero empty-state overlay. The original `bg-black/40`
  * scrim was tuned for the legacy night sky; on the new pko light sky
  * it reads as an unwanted dark wash. Default = light scrim + accent
@@ -457,6 +562,11 @@ body {
   transition: background-color 120ms ease, border-color 120ms ease,
     color 120ms ease, box-shadow 120ms ease, transform 80ms ease;
   text-decoration: none;
+  /* R-01 — labels in the navbar were wrapping ("Spustit tutoriál
+   * znovu") and shoving the right cluster off-row. Buttons inside a
+   * horizontal nav must stay on a single line; long copy belongs in
+   * page surfaces, not in `.btn`. */
+  white-space: nowrap;
 }
 .btn:hover { background: var(--accent-hover); }
 .btn:active { transform: translateY(1px); }

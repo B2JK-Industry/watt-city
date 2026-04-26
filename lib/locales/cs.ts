@@ -8,6 +8,7 @@ const cs: typeof plDict = {
     league: "Liga",
     hall: "Síň slávy",
     about: "O platformě",
+    loans: "Půjčky",
     login: "Přihlásit",
     register: "Registrace",
     logout: "Odhlásit",

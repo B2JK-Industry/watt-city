@@ -35,7 +35,7 @@ function stepsFor(lang: Lang): Step[] {
       },
       {
         title: "Kredyt bez ryzyka",
-        body: "Wirtualny kredyt hipoteczny w PKO. Sprawdź RRSO, harmonogram spłat i symulator — wszystko na wirtualnych Watach. Żadnych prawdziwych pieniędzy.",
+        body: "Wirtualny kredyt hipoteczny w PKO. Sprawdź RRSO, harmonogram spłat i symulator — wszystko na wirtualnych Watach. Żadnych prawdziwych pieniędzy. Kredyty znajdziesz też w nawigacji u góry.",
         emoji: "🏦",
         cta: "Otwórz porównywarkę",
         href: "/loans/compare",
@@ -45,19 +45,19 @@ function stepsFor(lang: Lang): Step[] {
       { title: "Вітаємо у Watt City", body: "Грай → заробляй → будуй → вчися кредиту без ризику.", emoji: "👋" },
       { title: "Гаманець", body: "Ват ⚡, монети 🪙, цегла 🧱. Решта — розблокуєш далі.", emoji: "🪙" },
       { title: "Твоє місто", body: "Починаєш із Будиночка. Кожен слот має категорію.", emoji: "🏠", cta: "До міста", href: "/miasto" },
-      { title: "Безризиковий кредит", body: "Віртуальна іпотека PKO. Перевір RRSO, графік платежів і симулятор — усе на віртуальних Ватах.", emoji: "🏦", cta: "Порівняння кредитів", href: "/loans/compare" },
+      { title: "Безризиковий кредит", body: "Віртуальна іпотека PKO. Перевір RRSO, графік платежів і симулятор — усе на віртуальних Ватах. Кредити знайдеш також у навігації вгорі.", emoji: "🏦", cta: "Порівняння кредитів", href: "/loans/compare" },
     ],
     cs: [
       { title: "Vítej ve Watt City", body: "Hraj → vyděláš → stavíš → učíš se úvěrům bez rizika.", emoji: "👋" },
       { title: "Peněženka", body: "Watty ⚡, mince 🪙, cihly 🧱. Zbytek odemkneš postupně.", emoji: "🪙" },
       { title: "Tvé město", body: "Začínáš s Domkem. Každý slot má kategorii.", emoji: "🏠", cta: "Do města", href: "/miasto" },
-      { title: "Úvěr bez rizika", body: "Virtuální hypotéka PKO. Zkontroluj RRSO, splátkový plán a simulátor — vše na virtuálních Wattech.", emoji: "🏦", cta: "Porovnat úvěry", href: "/loans/compare" },
+      { title: "Úvěr bez rizika", body: "Virtuální hypotéka PKO. Zkontroluj RRSO, splátkový plán a simulátor — vše na virtuálních Wattech. Půjčky najdeš také v navigaci nahoře.", emoji: "🏦", cta: "Porovnat úvěry", href: "/loans/compare" },
     ],
     en: [
       { title: "Welcome to Watt City", body: "Play → earn → build → learn about loans with no real risk.", emoji: "👋" },
       { title: "Your wallet", body: "Watts ⚡, coins 🪙, bricks 🧱. More unlock as you play.", emoji: "🪙" },
       { title: "Your city", body: "You start with a Domek. Each slot has a category.", emoji: "🏠", cta: "Open city", href: "/miasto" },
-      { title: "No-risk credit", body: "A virtual PKO mortgage. Inspect APR, the repayment schedule and simulator — all on virtual Watts. No real money.", emoji: "🏦", cta: "Compare loans", href: "/loans/compare" },
+      { title: "No-risk credit", body: "A virtual PKO mortgage. Inspect APR, the repayment schedule and simulator — all on virtual Watts. No real money. You'll also find Loans in the top navigation.", emoji: "🏦", cta: "Compare loans", href: "/loans/compare" },
     ],
   };
   return set[lang];
@@ -232,10 +232,14 @@ export function OpenTutorialButton({
   className?: string;
 }) {
   const label = {
-    pl: "▶︎ Pokaż samouczek ponownie",
-    uk: "▶︎ Показати навчання знову",
-    cs: "▶︎ Spustit tutoriál znovu",
-    en: "▶︎ Replay tutorial",
+    // R-01 — labels shortened so the desktop nav button never wraps
+    // to a second row. The button still carries an `aria-label`-style
+    // intent through the ▶︎ glyph; the long-form copy stays in the
+    // /o-platforme replay button (more horizontal space there).
+    pl: "▶︎ Tutorial",
+    uk: "▶︎ Тутор",
+    cs: "▶︎ Tutoriál",
+    en: "▶︎ Tutorial",
   }[lang];
   return (
     <button

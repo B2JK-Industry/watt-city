@@ -8,6 +8,7 @@ const uk: typeof plDict = {
     league: "Ліга",
     hall: "Зал слави",
     about: "Про платформу",
+    loans: "Кредити",
     login: "Увійти",
     register: "Реєстрація",
     logout: "Вийти",

@@ -66,6 +66,19 @@ export type BuildingCatalogEntry = {
 
 export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
   {
+    /* R-05 (PR-J pass-7) — catalog palette refresh.
+     * Buildings now share 6 colour families instead of the prior
+     * 13-pastel scatter. Each entry's `roofColor` / `bodyColor` is
+     * picked from one of:
+     *   cream / terracotta     residential
+     *   peach / amber          commercial
+     *   ivory / bronze         civic & educational
+     *   light-navy / PKO navy  financial & landmark
+     *   sage / lime            eco & green
+     *   slate-light / slate-dark  industrial
+     * Colours are data-model values (same exception as
+     * `lib/resources.ts` lightColor) — they sit outside the strict
+     * theme-token allowlist on purpose. */
     id: "domek",
     category: "residential",
     tier: 1,
@@ -80,8 +93,9 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     wattUpkeepPerHour: 0, // Domek is off-grid — no brownout exposure
     unlock: { kind: "always" },
     glyph: "🏠",
-    roofColor: "#f59e0b",
-    bodyColor: "#fde047",
+    // residential — cream + terracotta
+    roofColor: "#d4783a",
+    bodyColor: "#fef3e2",
     labels: {
       pl: "Domek",
       uk: "Будиночок",
@@ -109,8 +123,9 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     wattUpkeepPerHour: 3, // retail lights + POS
     unlock: { kind: "lifetime-resource", resource: "coins", amount: 50 },
     glyph: "🏪",
-    roofColor: "#f472b6",
-    bodyColor: "#be185d",
+    // commercial — peach + amber
+    roofColor: "#b45309",
+    bodyColor: "#fcd7a8",
     labels: {
       pl: "Sklepik osiedlowy",
       uk: "Магазинчик",
@@ -140,8 +155,9 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
       ],
     },
     glyph: "⚡",
-    roofColor: "#facc15",
-    bodyColor: "#a16207",
+    // eco — sage + lime
+    roofColor: "#65a30d",
+    bodyColor: "#e7f1d8",
     labels: {
       pl: "Mała elektrownia",
       uk: "Маленька електростанція",
@@ -168,8 +184,9 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     wattUpkeepPerHour: 2, // modest office load
     unlock: { kind: "tier", minTier: 3 },
     glyph: "🏦",
-    roofColor: "#0ea5e9",
-    bodyColor: "#1e40af",
+    // financial flagship — light-navy + PKO navy
+    roofColor: "#003574",
+    bodyColor: "#dde9f5",
     labels: {
       pl: "Bank lokalny",
       uk: "Місцевий банк",
@@ -193,8 +210,9 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     wattUpkeepPerHour: 12, // furnace draws hard
     unlock: { kind: "tier", minTier: 3 },
     glyph: "🪟",
-    roofColor: "#22d3ee",
-    bodyColor: "#0e7490",
+    // industrial — slate-light + slate-dark
+    roofColor: "#475569",
+    bodyColor: "#cbd5e1",
     labels: {
       pl: "Huta szkła",
       uk: "Скляний завод",
@@ -219,8 +237,9 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     multiplier: { target: "quiz-true-false", percent: 20 },
     unlock: { kind: "tier", minTier: 3 },
     glyph: "📚",
-    roofColor: "#f59e0b",
-    bodyColor: "#92400e",
+    // civic & educational — ivory + bronze
+    roofColor: "#9a6b1a",
+    bodyColor: "#fff7e6",
     labels: {
       pl: "Biblioteka",
       uk: "Бібліотека",
@@ -244,8 +263,9 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     wattUpkeepPerHour: 15, // heaviest industry draw in MVP catalog
     unlock: { kind: "tier", minTier: 4 },
     glyph: "🔩",
-    roofColor: "#94a3b8",
-    bodyColor: "#334155",
+    // industrial — slate-light + slate-dark (mill)
+    roofColor: "#475569",
+    bodyColor: "#cbd5e1",
     labels: {
       pl: "Walcownia stali",
       uk: "Сталеливарний завод",
@@ -270,8 +290,9 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     multiplier: { target: "reflex", percent: 20 },
     unlock: { kind: "tier", minTier: 4 },
     glyph: "🏟️",
-    roofColor: "#ef4444",
-    bodyColor: "#991b1b",
+    // sport landmark — light-navy + PKO navy
+    roofColor: "#003574",
+    bodyColor: "#dde9f5",
     labels: {
       pl: "Gimnazjum sportowe",
       uk: "Спортивна гімназія",
@@ -296,8 +317,9 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     multiplier: { target: "order-match", percent: 20 },
     unlock: { kind: "tier", minTier: 4 },
     glyph: "🔬",
-    roofColor: "#14b8a6",
-    bodyColor: "#115e59",
+    // science — light-navy + PKO navy
+    roofColor: "#003574",
+    bodyColor: "#dde9f5",
     labels: {
       pl: "Centrum nauki",
       uk: "Центр науки",
@@ -321,8 +343,9 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     wattUpkeepPerHour: -12, // rooftop solar net-supplier
     unlock: { kind: "tier", minTier: 5 },
     glyph: "☀️",
-    roofColor: "#eab308",
-    bodyColor: "#a16207",
+    // eco / energy — sage + lime
+    roofColor: "#65a30d",
+    bodyColor: "#e7f1d8",
     labels: {
       pl: "Fotowoltaika z magazynem",
       uk: "Фотовольтаїка зі сховищем",
@@ -346,8 +369,9 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     wattUpkeepPerHour: 10, // server racks + open-plan office
     unlock: { kind: "tier", minTier: 6 },
     glyph: "💻",
-    roofColor: "#22c55e",
-    bodyColor: "#14532d",
+    // tech — sage + lime (software house)
+    roofColor: "#65a30d",
+    bodyColor: "#e7f1d8",
     labels: {
       pl: "Software house",
       uk: "Софтверний хаб",
@@ -372,8 +396,9 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     wattUpkeepPerHour: 1,
     unlock: { kind: "always" },
     glyph: "⛪",
-    roofColor: "#eab308",
-    bodyColor: "#f3f4f6",
+    // civic — ivory + bronze (church)
+    roofColor: "#9a6b1a",
+    bodyColor: "#fff7e6",
     labels: {
       pl: "Kościół",
       uk: "Церква",
@@ -397,8 +422,9 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     wattUpkeepPerHour: 0,
     unlock: { kind: "always" },
     glyph: "🌳",
-    roofColor: "#22c55e",
-    bodyColor: "#166534",
+    // green decorative — sage + lime (park)
+    roofColor: "#65a30d",
+    bodyColor: "#e7f1d8",
     labels: {
       pl: "Park",
       uk: "Парк",
@@ -422,8 +448,9 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     wattUpkeepPerHour: 1,
     unlock: { kind: "always" },
     glyph: "⛲",
-    roofColor: "#0ea5e9",
-    bodyColor: "#0284c7",
+    // water decorative — light-navy + PKO navy (fountain)
+    roofColor: "#003574",
+    bodyColor: "#dde9f5",
     labels: {
       pl: "Fontanna",
       uk: "Фонтан",
@@ -448,8 +475,9 @@ export const BUILDING_CATALOG: BuildingCatalogEntry[] = [
     multiplier: { target: "citywide-all", percent: 5 },
     unlock: { kind: "tier", minTier: 8 },
     glyph: "🛸",
-    roofColor: "#c084fc",
-    bodyColor: "#581c87",
+    // landmark — light-navy + PKO navy (Spodek)
+    roofColor: "#003574",
+    bodyColor: "#dde9f5",
     labels: {
       pl: "Spodek",
       uk: "Сподек",

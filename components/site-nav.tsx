@@ -86,9 +86,16 @@ export function SiteNav({
   // entry point. Anonymous visitor gets the classroom landing CTA;
   // logged-in teacher gets the class dashboard; logged-in parent
   // (linked to a kid) gets the observer dashboard.
+  // R-03 — `/loans/compare` was previously reachable only from the
+  // /miasto mortgage panel deep-link. Adding the 5th nav slot makes
+  // the comparison surface a first-class entry. The label keys land
+  // in `nav.loans` for all 4 locales (Kredyty / Кредити / Půjčky /
+  // Loans). Anonymous users are bounced to /login by the page guard,
+  // which is consistent with /miasto.
   const navLinks: Array<{ href: string; label: string }> = [
     { href: "/miasto", label: t.city },
     { href: "/games", label: t.games },
+    { href: "/loans/compare", label: t.loans },
     { href: "/leaderboard", label: t.league },
     { href: "/o-platforme", label: t.about },
   ];
@@ -105,7 +112,15 @@ export function SiteNav({
         {(() => {
           const theme = resolveTheme();
           return (
-            <Link href="/" className="flex items-center gap-2.5">
+            // R-01 — anchor wrap got a `rounded-md` so the global
+            // `:focus-visible { outline-offset: 2px }` ring traces the
+            // logo block, not a square clipped through the navy tile.
+            // Padding gives the orange accent breathing room from the
+            // outline.
+            <Link
+              href="/"
+              className="flex items-center gap-2.5 rounded-md px-1 -mx-1"
+            >
               <span
                 className="inline-flex items-center justify-center w-9 h-9 rounded-md font-semibold text-base"
                 style={{ background: theme.colors.accent, color: theme.colors.accentInk }}
@@ -123,7 +138,9 @@ export function SiteNav({
             </Link>
           );
         })()}
-        <div className="hidden lg:flex items-stretch self-stretch gap-5 text-sm">
+        {/* R-01 — gap 5 → 4 reclaims a few pixels so 5 nav links + the
+            right cluster fit at lg without "O platformě" wrapping. */}
+        <div className="hidden lg:flex items-stretch self-stretch gap-4 text-sm">
           {navLinks.map((l) => (
             <NavLink key={l.href} href={l.href}>
               {l.label}
@@ -133,24 +150,27 @@ export function SiteNav({
         <div className="flex items-center gap-2 sm:gap-3 text-sm">
           {username ? (
             <>
-              {/* Desktop-only status indicators. The hamburger pattern
-                  covers everything below `lg` so chip/ring/username card
-                  used to overlap with the drawer trigger on tablets;
-                  keeping them at `lg+` matches the new nav breakpoint. */}
+              {/* R-01 — status indicators (level ring, XP chip,
+                  username card with title) jumped to `xl+` (≥1280).
+                  At lg (1024–1279) the row had: 5 nav links + ring +
+                  chip + username card + bell + tutorial + lang +
+                  logout — that overflowed and pushed the username
+                  card under the bell. xl+ keeps the full info, lg–xl
+                  keeps just the interactive controls. */}
               <span
-                className="level-ring hidden lg:inline-flex"
+                className="level-ring hidden xl:inline-flex"
                 style={{ ["--p" as string]: String(pct) }}
                 title={`Tier ${level} · ${pct}%`}
               >
                 <span>{level}</span>
               </span>
-              <span className="chip hidden lg:inline-flex">
+              <span className="chip hidden xl:inline-flex">
                 <strong>{xp.toLocaleString("pl-PL")} W</strong>
                 {rank !== null && (
                   <span className="opacity-70">· #{rank}</span>
                 )}
               </span>
-              <span className="hidden lg:flex flex-col leading-tight">
+              <span className="hidden xl:flex flex-col leading-tight">
                 <span className="font-semibold">{username}</span>
                 {title && (
                   <span className="text-[11px] font-semibold text-[var(--accent)]">

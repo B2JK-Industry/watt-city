@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { Lang } from "@/lib/i18n";
 import {
@@ -617,6 +617,68 @@ function CatalogList({
   );
 }
 
+/* R-06 (PR-J pass-7) — MortgageCard reliability hardening. */
+
+// Unified config matches LoanComparison (lib/loan-comparison.tsx).
+// Defaults moved out of the component so the slider boundaries and
+// the comparison page never drift.
+const MORTGAGE_PRINCIPAL_MIN = 500;
+const MORTGAGE_PRINCIPAL_MAX = 10_000;
+const MORTGAGE_PRINCIPAL_STEP = 500;
+
+const MORTGAGE_ERROR_COPY: Record<
+  Lang,
+  Record<string, string>
+> = {
+  pl: {
+    "principal-too-low": "Minimum to 100 W$.",
+    "principal-exceeds-cap": "Kwota przekracza limit dla twojego cashflow.",
+    "rate-limited": "Zbyt szybko. Poczekaj chwilę.",
+    unauthorized: "Najpierw się zaloguj.",
+    "ineligible": "Brakuje warunków: {missing}.",
+    generic: "Coś poszło nie tak. Spróbuj ponownie.",
+  },
+  uk: {
+    "principal-too-low": "Мінімум 100 W$.",
+    "principal-exceeds-cap": "Сума перевищує ліміт.",
+    "rate-limited": "Занадто швидко. Зачекай.",
+    unauthorized: "Спочатку увійди.",
+    "ineligible": "Не вистачає умов: {missing}.",
+    generic: "Щось пішло не так. Спробуй знову.",
+  },
+  cs: {
+    "principal-too-low": "Minimum je 100 W$.",
+    "principal-exceeds-cap": "Částka překračuje limit.",
+    "rate-limited": "Příliš rychle. Počkej.",
+    unauthorized: "Nejdřív se přihlas.",
+    "ineligible": "Chybí podmínky: {missing}.",
+    generic: "Něco se pokazilo. Zkus znovu.",
+  },
+  en: {
+    "principal-too-low": "Minimum is 100 W$.",
+    "principal-exceeds-cap": "Amount exceeds your cashflow cap.",
+    "rate-limited": "Too fast. Wait a moment.",
+    unauthorized: "Please log in first.",
+    "ineligible": "Missing conditions: {missing}.",
+    generic: "Something went wrong. Try again.",
+  },
+};
+
+function translateError(
+  lang: Lang,
+  raw: string | null | undefined,
+  missing?: string[],
+): string {
+  if (!raw) return MORTGAGE_ERROR_COPY[lang].generic;
+  const map = MORTGAGE_ERROR_COPY[lang];
+  const t = map[raw];
+  if (!t) return raw; // server returned an unknown code — surface the raw text
+  if (raw === "ineligible" && missing && missing.length > 0) {
+    return t.replace("{missing}", missing.join(", "));
+  }
+  return t;
+}
+
 function MortgageCard({
   resources: _resources,
   loans,
@@ -633,7 +695,7 @@ function MortgageCard({
   lang: Lang;
 }) {
   const [open, setOpen] = useState(false);
-  const [principal, setPrincipal] = useState<number>(0);
+  const [principal, setPrincipal] = useState<number>(MORTGAGE_PRINCIPAL_MIN);
   const [termMonths, setTermMonths] = useState<number>(24);
   const [quote, setQuote] = useState<null | {
     apr: number;
@@ -645,20 +707,57 @@ function MortgageCard({
     eligibility: { ok: boolean; missing: string[] };
   }>(null);
   const [busy, setBusy] = useState(false);
+  const [quoteLoading, setQuoteLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // R-06 — debounce + AbortController so a fast slider drag fires one
+  // request, not one per pixel. Identical pattern to LoanComparison.
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inflightAbort = useRef<AbortController | null>(null);
+
   const refreshQuote = useCallback(
-    async (p: number, t: number) => {
-      const r = await fetch(
-        `/api/loans/quote?principal=${p}&termMonths=${t}`,
-      );
-      const j = await r.json();
-      if (j.ok) setQuote(j.quote);
+    (p: number, t: number) => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+      debounceTimer.current = setTimeout(async () => {
+        if (inflightAbort.current) inflightAbort.current.abort();
+        const ac = new AbortController();
+        inflightAbort.current = ac;
+        setQuoteLoading(true);
+        try {
+          const r = await fetch(
+            `/api/loans/quote?principal=${p}&termMonths=${t}`,
+            { signal: ac.signal },
+          );
+          const j = await r.json();
+          if (j.ok) setQuote(j.quote);
+        } catch (e) {
+          // AbortError = newer call superseded us — ignore.
+          if ((e as Error).name !== "AbortError") {
+            // soft-fail: keep last quote, surface generic error
+            setError(translateError(lang, "generic"));
+          }
+        } finally {
+          setQuoteLoading(false);
+        }
+      }, 200);
+    },
+    [lang],
+  );
+
+  useEffect(
+    () => () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+      if (inflightAbort.current) inflightAbort.current.abort();
     },
     [],
   );
 
   const activeLoans = loans.filter((l) => l.status === "active");
+  const maxPrincipal = quote?.maxPrincipal ?? MORTGAGE_PRINCIPAL_MAX;
+  // R-06 — when the player has no cashflow yet (`maxPrincipal < 100`),
+  // the slider is meaningless. Show a focused EmptyState pointing at
+  // building an income source instead of a broken zero-min slider.
+  const noCapacity = quote !== null && quote.maxPrincipal < 100;
 
   return (
     <section className="card p-4 flex flex-col gap-3">
@@ -668,9 +767,8 @@ function MortgageCard({
           className="btn btn-ghost text-xs"
           onClick={() => {
             setOpen((v) => !v);
-            if (!open && principal === 0) {
-              refreshQuote(500, 24);
-              setPrincipal(500);
+            if (!open && principal === MORTGAGE_PRINCIPAL_MIN) {
+              refreshQuote(MORTGAGE_PRINCIPAL_MIN, 24);
             }
           }}
         >
@@ -679,28 +777,65 @@ function MortgageCard({
       </header>
       <p className="text-sm text-[var(--ink-muted)]">{dict.mortgageBody}</p>
 
-      {open && (
+      {open && noCapacity && (
+        <div className="flex flex-col gap-2 border-t border-[var(--line)] pt-3 text-sm">
+          <p className="text-[var(--accent)] font-semibold">
+            {{
+              pl: "Najpierw zbuduj budynek z cashflow",
+              uk: "Спершу постав будівлю з cashflow",
+              cs: "Nejprve postav budovu s cashflow",
+              en: "First build a building with cashflow",
+            }[lang]}
+          </p>
+          <p className="text-[var(--ink-muted)] text-xs">
+            {{
+              pl: "Bank potrzebuje regularnego dochodu, by udzielić kredytu. Postaw Sklepik lub Małą elektrownię.",
+              uk: "Банк потребує регулярного доходу. Постав магазинчик або електростанцію.",
+              cs: "Banka potřebuje pravidelný příjem. Postav Obchůdek nebo malou elektrárnu.",
+              en: "The bank needs regular income to offer credit. Build a shop or small power plant first.",
+            }[lang]}
+          </p>
+        </div>
+      )}
+
+      {open && !noCapacity && (
         <div className="flex flex-col gap-3 border-t border-[var(--line)] pt-3">
           <label className="flex flex-col gap-1 text-xs">
             <span>{dict.principal} (W$)</span>
             <input
               type="range"
-              min={0}
-              max={quote?.maxPrincipal ?? 5000}
-              step={100}
-              value={principal}
+              min={MORTGAGE_PRINCIPAL_MIN}
+              max={Math.max(MORTGAGE_PRINCIPAL_MIN, maxPrincipal)}
+              step={MORTGAGE_PRINCIPAL_STEP}
+              value={Math.min(
+                Math.max(principal, MORTGAGE_PRINCIPAL_MIN),
+                maxPrincipal,
+              )}
               onChange={(e) => {
                 const p = Number(e.target.value);
                 setPrincipal(p);
                 refreshQuote(p, termMonths);
               }}
+              aria-label={`${dict.principal} (W$)`}
+              aria-valuetext={`${principal.toLocaleString("pl-PL")} W$`}
+              className="w-full mortgage-range accent-[var(--accent)]"
             />
-            <span className="font-mono">
+            <span className="font-mono tabular-nums">
               {principal.toLocaleString("pl-PL")} / max{" "}
-              {(quote?.maxPrincipal ?? 0).toLocaleString("pl-PL")}
+              {maxPrincipal.toLocaleString("pl-PL")}
+              {quoteLoading && (
+                <span className="ml-2 text-[var(--ink-muted)]">
+                  {{
+                    pl: "Liczę…",
+                    uk: "Рахую…",
+                    cs: "Počítám…",
+                    en: "Calculating…",
+                  }[lang]}
+                </span>
+              )}
             </span>
           </label>
-          <div className="flex gap-2">
+          <div className="flex gap-2" role="radiogroup" aria-label={dict.termMonths}>
             {[12, 24, 36].map((t) => (
               <button
                 key={t}
@@ -708,9 +843,11 @@ function MortgageCard({
                   setTermMonths(t);
                   refreshQuote(principal, t);
                 }}
+                role="radio"
+                aria-checked={termMonths === t}
                 className={
                   "btn text-xs " +
-                  (termMonths === t ? "btn-primary" : "btn-ghost")
+                  (termMonths === t ? "btn-primary" : "btn-secondary")
                 }
               >
                 {t} {dict.termMonths}
@@ -718,7 +855,7 @@ function MortgageCard({
             ))}
           </div>
           {quote && (
-            <ul className="text-xs font-mono flex flex-col gap-0.5 bg-black/20 p-2 rounded">
+            <ul className="text-xs font-mono flex flex-col gap-0.5 bg-[var(--surface-2)] border border-[var(--line)] p-3 rounded-md">
               <li>
                 {dict.mortgageMonthly}:&nbsp;
                 <strong>{quote.monthlyPayment.toFixed(2)} W$</strong>
@@ -736,8 +873,8 @@ function MortgageCard({
                 <strong>{quote.maxPrincipal.toLocaleString("pl-PL")} W$</strong>
               </li>
               {!quote.eligibility.ok && (
-                <li className="text-red-400">
-                  🔒 {quote.eligibility.missing.join(", ")}
+                <li className="text-[var(--danger)]">
+                  🔒 {translateError(lang, "ineligible", quote.eligibility.missing)}
                 </li>
               )}
             </ul>
@@ -745,9 +882,25 @@ function MortgageCard({
           {/* R7.2 KNF disclaimer — required on every loan-taking surface */}
           <KnfDisclaimer lang={lang} variant="inline" />
 
+          {/* R-03 — discoverability bridge to the dedicated comparison
+              page. Carries the user's current quote params so the
+              landing /loans/compare opens with matching sliders set,
+              not the default 3000/12 fallback. */}
+          <a
+            href={`/loans/compare?principal=${principal}&term=${termMonths}`}
+            className="btn btn-secondary text-xs self-start"
+          >
+            {{
+              pl: "Porównaj wszystkie kredyty →",
+              uk: "Порівняти всі кредити →",
+              cs: "Porovnat všechny úvěry →",
+              en: "Compare all loans →",
+            }[lang]}
+          </a>
+
           <button
             className="btn btn-primary text-sm"
-            disabled={busy || !quote?.eligibility.ok}
+            disabled={busy || !quote?.eligibility.ok || quoteLoading}
             onClick={async () => {
               setBusy(true);
               setError(null);
@@ -759,19 +912,35 @@ function MortgageCard({
                 });
                 const j = await res.json();
                 if (!j.ok) {
-                  setError(j.error);
+                  setError(translateError(lang, j.error, j.missing));
                 } else {
                   setOpen(false);
                   await onChange();
                 }
+              } catch {
+                setError(translateError(lang, "generic"));
               } finally {
                 setBusy(false);
               }
             }}
           >
-            {dict.mortgageTake}
+            {busy
+              ? {
+                  pl: "Zaciągam…",
+                  uk: "Беру…",
+                  cs: "Beru…",
+                  en: "Taking…",
+                }[lang]
+              : dict.mortgageTake}
           </button>
-          {error && <p className="text-xs text-red-400">{error}</p>}
+          {error && (
+            <p
+              role="alert"
+              className="text-xs text-[var(--danger)] bg-[color-mix(in_oklab,var(--danger)_8%,var(--surface))] border border-[var(--danger)] rounded-md px-3 py-2"
+            >
+              {error}
+            </p>
+          )}
         </div>
       )}
 

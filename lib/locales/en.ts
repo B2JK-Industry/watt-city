@@ -8,6 +8,7 @@ const en: typeof plDict = {
     league: "League",
     hall: "Hall of Fame",
     about: "About",
+    loans: "Loans",
     login: "Log in",
     register: "Sign up",
     logout: "Log out",
