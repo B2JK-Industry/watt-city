@@ -122,16 +122,98 @@ export function HeroBackdrop({
         opacity="0.55"
       />
 
-      {/* Katowice skyline backdrop — Spodek arena + 2 panel blocks
-          + chimney. Brand cue. */}
-      <g opacity="0.78" fill="#0d2747">
-        <ellipse cx={600} cy={G - 50} rx={140} ry={16} />
-        <ellipse cx={600} cy={G - 78} rx={110} ry={42} />
-        <rect x={580} y={G - 50} width={40} height={50} />
-        <rect x={1000} y={G - 200} width={70} height={200} />
-        <rect x={1080} y={G - 165} width={60} height={165} />
-        <rect x={1700} y={G - 235} width={20} height={235} />
-        <rect x={1690} y={G - 243} width={40} height={10} />
+      {/* Katowice skyline silhouette — recognisable landmarks at
+          continuous horizon, capped to ~100 px so the foreground
+          buildings (60–180 px tall) sit clearly in front. Anchored
+          to the warm horizon band; opacity 0.7 navy reads as
+          backlit city against the sunset.
+          Left → right roughly maps to:
+            • industrial / coal-mine (far left)
+            • residential rooftops (low)
+            • church tower
+            • Spodek arena (iconic)
+            • cathedral dome
+            • Altus / Pałac Goldsteinów / KTW skyscrapers
+            • winding tower (kopalnia)
+            • cooling tower + power-plant chimney (far right) */}
+      <g opacity="0.7" fill="#0d2747">
+        {/* Industrial complex + smokestack (far left) */}
+        <rect x={20} y={G - 55} width={60} height={55} />
+        <rect x={48} y={G - 95} width={8} height={40} />
+        <rect x={85} y={G - 40} width={35} height={40} />
+        {/* Low residential rooftops */}
+        <rect x={130} y={G - 48} width={28} height={48} />
+        <polygon points={`130,${G - 48} 144,${G - 60} 158,${G - 48}`} />
+        <rect x={165} y={G - 42} width={26} height={42} />
+        <rect x={196} y={G - 50} width={32} height={50} />
+        <polygon points={`196,${G - 50} 212,${G - 64} 228,${G - 50}`} />
+        {/* Church tower */}
+        <rect x={245} y={G - 90} width={18} height={90} />
+        <polygon points={`245,${G - 90} 254,${G - 105} 263,${G - 90}`} />
+        <rect x={270} y={G - 50} width={42} height={50} />
+        {/* Mid neighborhood blocks */}
+        <rect x={320} y={G - 55} width={36} height={55} />
+        <rect x={362} y={G - 45} width={32} height={45} />
+        <rect x={400} y={G - 60} width={40} height={60} />
+        <rect x={446} y={G - 48} width={30} height={48} />
+        {/* Spodek arena — iconic UFO disc */}
+        <ellipse cx={555} cy={G - 38} rx={68} ry={10} />
+        <ellipse cx={555} cy={G - 56} rx={55} ry={26} />
+        <rect x={543} y={G - 38} width={24} height={38} />
+        {/* Cathedral — Katedra Chrystusa Króla, large dome */}
+        <rect x={640} y={G - 70} width={60} height={70} />
+        <ellipse cx={670} cy={G - 70} rx={32} ry={20} />
+        <rect x={665} y={G - 100} width={10} height={30} />
+        <polygon points={`665,${G - 100} 670,${G - 108} 675,${G - 100}`} />
+        {/* Skyscraper cluster — Altus / Pałac Goldsteinów / KTW */}
+        <rect x={730} y={G - 88} width={26} height={88} />
+        <rect x={760} y={G - 102} width={32} height={102} />
+        <polygon points={`760,${G - 102} 776,${G - 112} 792,${G - 102}`} />
+        <rect x={798} y={G - 95} width={22} height={95} />
+        <rect x={825} y={G - 80} width={28} height={80} />
+        {/* Smaller mid-band blocks */}
+        <rect x={860} y={G - 50} width={36} height={50} />
+        <rect x={900} y={G - 58} width={30} height={58} />
+        <rect x={935} y={G - 45} width={28} height={45} />
+        <rect x={968} y={G - 65} width={34} height={65} />
+        {/* Winding tower (kopalnia) — distinctive A-frame */}
+        <rect x={1010} y={G - 92} width={6} height={92} />
+        <rect x={1040} y={G - 92} width={6} height={92} />
+        <line x1={1010} y1={G - 92} x2={1046} y2={G - 65} stroke="#0d2747" strokeWidth={3} />
+        <line x1={1046} y1={G - 92} x2={1010} y2={G - 65} stroke="#0d2747" strokeWidth={3} />
+        <circle cx={1028} cy={G - 78} r={6} fill="#0d2747" />
+        <rect x={1050} y={G - 50} width={30} height={50} />
+        {/* More residential / mid */}
+        <rect x={1085} y={G - 56} width={32} height={56} />
+        <rect x={1120} y={G - 42} width={28} height={42} />
+        <rect x={1152} y={G - 60} width={30} height={60} />
+        <polygon points={`1152,${G - 60} 1167,${G - 70} 1182,${G - 60}`} />
+        <rect x={1188} y={G - 48} width={26} height={48} />
+        <rect x={1218} y={G - 55} width={32} height={55} />
+        {/* Office mid-rise */}
+        <rect x={1255} y={G - 75} width={36} height={75} />
+        <rect x={1295} y={G - 60} width={28} height={60} />
+        <rect x={1326} y={G - 50} width={30} height={50} />
+        {/* Industrial east — boiler + lower factory */}
+        <rect x={1360} y={G - 45} width={45} height={45} />
+        <rect x={1410} y={G - 70} width={28} height={70} />
+        <rect x={1442} y={G - 50} width={32} height={50} />
+        <rect x={1478} y={G - 58} width={26} height={58} />
+        {/* Cooling tower (Elektrownia) — distinctive hyperboloid hint */}
+        <polygon
+          points={`1515,${G} 1505,${G - 70} 1510,${G - 95} 1545,${G - 95} 1550,${G - 70} 1540,${G}`}
+        />
+        {/* Power plant — chimney pair + boiler hall */}
+        <rect x={1570} y={G - 50} width={40} height={50} />
+        <rect x={1620} y={G - 110} width={14} height={110} />
+        <rect x={1612} y={G - 116} width={30} height={8} />
+        <rect x={1655} y={G - 130} width={14} height={130} />
+        <rect x={1647} y={G - 138} width={30} height={8} />
+        {/* Far-right buffer rooftops */}
+        <rect x={1690} y={G - 40} width={30} height={40} />
+        <rect x={1725} y={G - 48} width={28} height={48} />
+        <polygon points={`1725,${G - 48} 1739,${G - 58} 1753,${G - 48}`} />
+        <rect x={1760} y={G - 35} width={26} height={35} />
       </g>
 
       {/* Ground zones (grass / road / sidewalk) — caller can render
