@@ -113,40 +113,30 @@ export function SiteNav({
         {(() => {
           const theme = resolveTheme();
           return (
-            // R-01 — anchor wrap got a `rounded-md` so the global
-            // `:focus-visible { outline-offset: 2px }` ring traces the
-            // logo block, not a square clipped through the navy tile.
-            // Padding gives the orange accent breathing room from the
-            // outline.
+            // R-01 — anchor wrap keeps `rounded-md` so the global
+            // `:focus-visible` outline traces the lockup nicely.
             //
-            // Icon swap (PR-M) — replaced the WC initials chip with the
-            // shipped brand mark (`/app/icon.png` is the favicon source;
-            // `wattcity-icon-96.png` is the same artwork at nav-bar dpr).
-            // Wordmark + "by PKO" stay text-based so they remain
-            // theme-aware (token-driven colour) and translatable —
-            // the bitmap holds only the iconography.
+            // PR-M revision — first attempt used icon + text, but the
+            // wordmark wrapped on narrow viewports and "by PKO" lost
+            // its custom underline rules. The shipped lockup is one
+            // designed unit (icon + soft-rounded "Watt City" + small
+            // caps "by PKO" with horizontal rules), so we render it
+            // as a single image. Aspect is fixed 2:1 (1120×560 source);
+            // height clamps via `h-9 sm:h-11` and width auto-derives.
             <Link
               href="/"
-              className="flex items-center gap-2.5 rounded-md px-1 -mx-1"
+              className="flex items-center rounded-md px-1 -mx-1"
               aria-label={`${theme.brand} by PKO`}
             >
               <Image
-                src="/brand/wattcity-icon-96.png"
-                alt=""
-                aria-hidden
-                width={36}
-                height={36}
+                src="/brand/wattcity-lockup-tight.png"
+                alt={`${theme.brand} by PKO`}
+                width={1120}
+                height={560}
                 priority
-                className="rounded-md"
+                className="h-12 sm:h-16 w-auto"
+                sizes="(min-width: 640px) 128px, 96px"
               />
-              <span className="flex items-baseline gap-1.5">
-                <span className="font-semibold text-lg text-[var(--foreground)]">
-                  {theme.brand}
-                </span>
-                <span className="hidden min-[420px]:inline t-overline text-[var(--accent)]">
-                  by PKO
-                </span>
-              </span>
             </Link>
           );
         })()}
