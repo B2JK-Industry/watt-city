@@ -224,6 +224,9 @@ test.describe("golden paths", () => {
       username: teacherUser,
       password: "correct horse battery 1",
       displayName: "Teacher Test",
+      // G-14 made email required (verify-link flow). Tests need to
+      // supply something deliverable-shaped or signup 400s.
+      email: `${teacherUser}@example.com`,
       schoolName: "Playwright School",
     });
     expect(tSignup.status, `teacher signup: ${JSON.stringify(tSignup)}`).toBeLessThan(400);

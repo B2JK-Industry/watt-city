@@ -31,10 +31,12 @@ test.describe("smoke — landing + auth + city", () => {
     await page.goto("/register");
     await page.getByLabel(/Użytkownik|Username|Ім'я|Jméno/i).fill(u);
     await page.getByLabel(/Hasło|Password|Пароль|Heslo/i).fill("correct horse battery 1");
-    // 16-plus birth year to skip parent-email
+    // G-01 — birth year dropdown only contains currentYear-6 → -16
+    // (so the GDPR-K target band is the only valid range). 2010 is
+    // the OLDEST option (= age 16, no parent-email gate).
     await page
       .getByLabel(/Rok urodzenia|RODO-K/i)
-      .selectOption({ value: "2000" });
+      .selectOption({ value: "2010" });
     // Button text is t.submitRegister — see lib/locales/*.ts.
     await page
       .getByRole("button", { name: /Stwórz konto|Create account|Створити акаунт|Vytvořit účet/i })
