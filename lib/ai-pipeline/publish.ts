@@ -11,7 +11,7 @@ import {
   type RotationSlot,
 } from "./types";
 import { pickResearchSeed, type ResearchSeed } from "./research";
-import { generateGameSpec } from "./generate";
+import { generateGameSpec, translateEnvelopeFields } from "./generate";
 import { moderateSpec, contentHash } from "./moderation";
 
 // Single union index of live AI game ids across all slots (unchanged key so
@@ -230,11 +230,59 @@ export async function runPipeline(
 
   // 5) Shape envelope + validate envelope too
   const id = `ai-${Math.floor(now / 1000).toString(36)}${slot === "fast" ? "" : slot[0]}`;
+  const plTitle = seed.theme.split(" — ")[0];
+  const plTagline = seed.notes.slice(0, 120);
+  const plDescription = `${seed.theme}. AI-generowane wyzwanie co godzinę. Top 3 graczy dostanie permanentny medal.`;
+
+  // G-35 — translate envelope strings (title/tagline/description) into
+  // the 3 non-pl locales alongside the spec translation. One Haiku
+  // call per lang (parallel); failure falls back to PL canonical so a
+  // translation outage never blocks publish. Skipped entirely when
+  // ANTHROPIC_API_KEY is missing (mock-fallback pipeline path).
+  let titleLocalized: AiGame["titleLocalized"] | undefined;
+  let taglineLocalized: AiGame["taglineLocalized"] | undefined;
+  let descriptionLocalized: AiGame["descriptionLocalized"] | undefined;
+  if (process.env.ANTHROPIC_API_KEY) {
+    try {
+      const plPayload = {
+        title: plTitle,
+        tagline: plTagline,
+        description: plDescription,
+      };
+      const [uk, cs, en] = await Promise.all([
+        translateEnvelopeFields(plPayload, "uk").catch(() => plPayload),
+        translateEnvelopeFields(plPayload, "cs").catch(() => plPayload),
+        translateEnvelopeFields(plPayload, "en").catch(() => plPayload),
+      ]);
+      titleLocalized = { pl: plTitle, uk: uk.title, cs: cs.title, en: en.title };
+      taglineLocalized = {
+        pl: plTagline,
+        uk: uk.tagline,
+        cs: cs.tagline,
+        en: en.tagline,
+      };
+      descriptionLocalized = {
+        pl: plDescription,
+        uk: uk.description,
+        cs: cs.description,
+        en: en.description,
+      };
+    } catch (e) {
+      console.warn(
+        "[publish] envelope translation failed, falling back to PL",
+        (e as Error).message,
+      );
+    }
+  }
+
   const game: AiGame = {
     id,
-    title: seed.theme.split(" — ")[0],
-    tagline: seed.notes.slice(0, 120),
-    description: `${seed.theme}. AI-generowane wyzwanie co godzinę. Top 3 graczy dostanie permanentny medal.`,
+    title: plTitle,
+    tagline: plTagline,
+    description: plDescription,
+    titleLocalized,
+    taglineLocalized,
+    descriptionLocalized,
     theme: seed.theme,
     source: seed.source,
     buildingName: seed.buildingName,

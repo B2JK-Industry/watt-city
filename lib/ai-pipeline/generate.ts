@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
+import { z } from "zod";
 import {
   QuizSpecSchema,
   ScrambleSpecSchema,
@@ -330,6 +331,59 @@ async function translateSpec(
     );
   }
   return mergeStructure(plSpec, response.parsed_output as GameSpec);
+}
+
+/* G-35 — translate envelope strings (title/tagline/description).
+ *
+ * Separate from translateSpec because the envelope fields are short,
+ * derived from the static seed catalog (not from the AI generator),
+ * and don't need the structural-invariant baby-sitting that spec
+ * translation requires. One Haiku call per non-pl lang; fallback to
+ * the PL canonical strings if the call fails so the page never
+ * blocks publish on a translation error. */
+const EnvelopeTranslationSchema = z.object({
+  title: z.string().min(1).max(60),
+  tagline: z.string().max(140),
+  description: z.string().max(600),
+});
+
+export async function translateEnvelopeFields(
+  pl: { title: string; tagline: string; description: string },
+  targetLang: Exclude<Lang, "pl">,
+): Promise<{ title: string; tagline: string; description: string }> {
+  const response = await client().messages.parse({
+    model: TRANSLATION_MODEL,
+    max_tokens: 600,
+    system: [
+      {
+        type: "text",
+        text: [
+          `Translate the JSON below from Polish to ${TARGET_LANG_LABEL[targetLang]}.`,
+          "Keep these proper nouns untranslated: BLIK, PKO, NBP, Tauron, IKE, IKZE, RRSO, WIBOR, WIRON, Katowice, Warszawa, Śląsk, Nikiszowiec, Varso Tower, ETF, S&P 500, WIG20.",
+          "Currency `zł` stays as `zł`.",
+          "Tone: neutral, educational, Gen Z friendly. Same length envelope (title ≤ 60, tagline ≤ 140, description ≤ 600).",
+          "Return EXACTLY the same JSON keys (title, tagline, description) with translated values.",
+        ].join("\n"),
+        cache_control: { type: "ephemeral" },
+      },
+    ],
+    messages: [
+      {
+        role: "user",
+        content: [
+          "SOURCE (Polish):",
+          "```json",
+          JSON.stringify(pl, null, 2),
+          "```",
+          "",
+          `Translate to ${TARGET_LANG_LABEL[targetLang]}.`,
+        ].join("\n"),
+      },
+    ],
+    output_config: { format: zodOutputFormat(EnvelopeTranslationSchema) },
+  });
+  if (!response.parsed_output) return pl;
+  return response.parsed_output;
 }
 
 function mergeStructure(pl: GameSpec, translated: GameSpec): GameSpec {
