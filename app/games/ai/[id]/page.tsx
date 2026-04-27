@@ -93,22 +93,45 @@ export default async function AiGamePage({
             </span>
           )}
         </div>
-        {/* E-03 — AI games are generated PL-side then translated by
-            Haiku into uk/cs/en. The header copy renders the locale
-            already mapped on the server (see lib/ai-pipeline). When
-            the active locale falls back to the PL master (translation
-            still pending), the `lang="pl"` attribute hints screen
-            readers + Chrome auto-translate that the chunk is Polish
-            — no more mid-page lang mix without a marker. */}
-        <h1 className="text-3xl font-semibold" lang="pl">
-          {game.title}
-        </h1>
-        <p className="text-[var(--ink-muted)]" lang="pl">
-          {game.tagline}
-        </p>
-        <p className="text-sm text-[var(--ink-muted)]" lang="pl">
-          {game.description}
-        </p>
+        {/* E-03 + G-35 — AI envelopes are generated PL-side. Newer
+            envelopes carry per-locale title/tagline/description in
+            `*Localized` maps; older envelopes have only the PL
+            canonical fields. Prefer the localized variant for the
+            active lang; fall back to PL with `lang="pl"` so screen
+            readers + Chrome auto-translate know the chunk is Polish.
+            G-35 generator wires the localized fields next sprint;
+            until then non-pl players see the PL fallback. */}
+        {(() => {
+          const titleText = game.titleLocalized?.[lang] ?? game.title;
+          const taglineText = game.taglineLocalized?.[lang] ?? game.tagline;
+          const descriptionText =
+            game.descriptionLocalized?.[lang] ?? game.description;
+          const titleIsPl = !game.titleLocalized?.[lang];
+          const taglineIsPl = !game.taglineLocalized?.[lang];
+          const descIsPl = !game.descriptionLocalized?.[lang];
+          return (
+            <>
+              <h1
+                className="text-3xl font-semibold"
+                {...(titleIsPl ? { lang: "pl" } : {})}
+              >
+                {titleText}
+              </h1>
+              <p
+                className="text-[var(--ink-muted)]"
+                {...(taglineIsPl ? { lang: "pl" } : {})}
+              >
+                {taglineText}
+              </p>
+              <p
+                className="text-sm text-[var(--ink-muted)]"
+                {...(descIsPl ? { lang: "pl" } : {})}
+              >
+                {descriptionText}
+              </p>
+            </>
+          );
+        })()}
       </header>
 
       {spec.kind === "quiz" && (

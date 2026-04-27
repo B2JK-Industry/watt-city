@@ -336,6 +336,14 @@ export const AiGameSchema = z.object({
   title: z.string().min(3).max(60),
   tagline: z.string().max(140),
   description: z.string().max(600),
+  // G-35 — per-locale envelope strings. Optional so pre-G-35
+  // envelopes keep validating; the consumer falls back to the
+  // top-level PL fields when missing. Generator wires these in
+  // alongside the per-locale spec translation; old envelopes
+  // continue to render in PL with `lang="pl"` until they expire.
+  titleLocalized: z.record(z.enum(LANGS), z.string().min(1).max(60)).optional(),
+  taglineLocalized: z.record(z.enum(LANGS), z.string().max(140)).optional(),
+  descriptionLocalized: z.record(z.enum(LANGS), z.string().max(600)).optional(),
   theme: z.string().max(80),
   source: z.string().max(200).optional(),
   buildingName: z.string().max(60),
