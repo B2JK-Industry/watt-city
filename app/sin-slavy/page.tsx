@@ -203,15 +203,41 @@ export default async function HallOfFamePage() {
         </section>
       )}
 
-      {/* Archive of expired AI games — permanent top-3 medals */}
-      {pastAiWithTop.length > 0 && (
-        <section className="flex flex-col gap-4">
+      {/* G-29 — Archive of expired AI games. Always rendered (with
+          empty state when no archive yet) so players can see WHERE
+          past challenges land instead of guessing the feature is
+          missing. The header chip surfaces the count. */}
+      <section className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-baseline gap-3">
           <h2 className="section-heading text-xl sm:text-2xl">
             {t.aiArchiveTitle}
           </h2>
-          <p className="text-sm text-[var(--ink-muted)] max-w-2xl">
-            {t.aiArchiveBody}
-          </p>
+          <span
+            className="chip text-[11px] border-[var(--accent)] text-[var(--accent)]"
+            aria-label={`${pastAiWithTop.length} archived`}
+          >
+            {pastAiWithTop.length}
+          </span>
+        </div>
+        <p className="text-sm text-[var(--ink-muted)] max-w-2xl">
+          {t.aiArchiveBody}
+        </p>
+        {pastAiWithTop.length === 0 ? (
+          <div className="card p-6 flex flex-col items-center gap-2 text-center">
+            <span aria-hidden className="text-3xl">
+              📜
+            </span>
+            <p className="font-semibold">{t.aiArchiveEmptyTitle}</p>
+            <p className="text-sm text-[var(--ink-muted)] max-w-md">
+              {t.aiArchiveEmptyBody}
+            </p>
+          </div>
+        ) : null}
+      </section>
+      {pastAiWithTop.length > 0 && (
+        <section className="flex flex-col gap-4">
+          {/* Inline duplicate header guard kept so existing block below
+              renders unchanged when archive has entries. */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {pastAiWithTop.map(({ record, top }) => {
               const date = new Date(record.generatedAt);

@@ -195,9 +195,25 @@ body {
 }
 
 .city-scene-viewport {
-  touch-action: pinch-zoom;
-  overflow: auto;
+  /* G-34 — same pattern as .city-skyline-hero-root: horizontal
+   * scroll under 640 px so the 20-slot row doesn't compress to
+   * unreadable widths on phones. */
+  touch-action: pan-x pinch-zoom;
+  overflow-x: auto;
+  overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
+}
+.city-scene-viewport > svg {
+  min-width: 720px;
+}
+@media (min-width: 640px) {
+  .city-scene-viewport {
+    overflow-x: visible;
+    overflow-y: visible;
+  }
+  .city-scene-viewport > svg {
+    min-width: 0;
+  }
 }
 
 /* City-scene SVG: neon night palette is core-skin intent. Under pko we
@@ -536,6 +552,31 @@ body {
  * outline so they read against the sky. */
 .city-skyline-hero-root {
   background: #ffffff;
+  /* G-34 — horizontal scroll on narrow viewports.
+   * SVG aspect is 1800:430 ≈ 4.2:1; below ~480 px viewport the slot
+   * width drops under 26 px and L-pills + glyphs stop reading. The
+   * SVG inside opts into `min-width` so the scene keeps a legible
+   * minimum, and the parent allows horizontal overflow with
+   * touch-pinch + iOS momentum. Desktop (640+ px) is wide enough to
+   * fit edge-to-edge so the rule is mobile-only. */
+  overflow-x: auto;
+  touch-action: pan-x pinch-zoom;
+  -webkit-overflow-scrolling: touch;
+}
+.city-skyline-hero-root > svg {
+  /* Force a readable horizontal floor (≈ 720 px → 18-px slot avg);
+   * desktop SVG still scales to 100 % via Tailwind's w-full. */
+  min-width: 720px;
+}
+@media (min-width: 640px) {
+  .city-skyline-hero-root {
+    /* Above 640 px the canvas fits without scroll — drop the
+     * overflow so the focus ring + drop shadow aren't clipped. */
+    overflow-x: visible;
+  }
+  .city-skyline-hero-root > svg {
+    min-width: 0;
+  }
 }
 /* PR-N — the prior `rect[fill]` blanket stroke (R-11 era) outlined
  * EVERY rect in the SVG: building bodies, ground zones, AND the

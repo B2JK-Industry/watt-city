@@ -323,6 +323,9 @@ const pl = {
     aiArchiveTitle: "Archiwum wyzwań AI",
     aiArchiveBody:
       "Medale za każde minione AI wyzwanie — zostają tu na stałe, nawet po wygaśnięciu samej gry.",
+    aiArchiveEmptyTitle: "Archiwum wkrótce się zapełni",
+    aiArchiveEmptyBody:
+      "Pierwsze AI wyzwania właśnie kończą swój cykl — gdy wygasną, top-3 medale zostaną tu na stałe. Zagraj dziś, żeby być pierwszym w archiwum.",
     liveMedalNote:
       "Top 3 w chwili gdy gra wygaśnie dostaje medal na stałe. Poniżej bieżące pozycje — zmieniają się na żywo.",
     leaderLink: "Cała liga →",

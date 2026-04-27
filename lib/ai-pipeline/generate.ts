@@ -13,6 +13,9 @@ import {
   BudgetSpecSchema,
   WhatIfSpecSchema,
   ChartReadSpecSchema,
+  RankListSpecSchema,
+  EstimateRangeSpecSchema,
+  OddOneOutSpecSchema,
   LocalizedSpecSchema,
   type GameSpec,
   type LocalizedSpec,
@@ -37,6 +40,9 @@ function schemaForKind(kind: SeedKind) {
     case "budget-allocate": return BudgetSpecSchema;
     case "what-if": return WhatIfSpecSchema;
     case "chart-read": return ChartReadSpecSchema;
+    case "rank-list": return RankListSpecSchema;
+    case "estimate-range": return EstimateRangeSpecSchema;
+    case "odd-one-out": return OddOneOutSpecSchema;
   }
 }
 
@@ -170,6 +176,24 @@ function buildPlSystemPrompt(kind: SeedKind): string {
       "- question: asks about the chart (trend, max, min, growth rate, comparison).",
       "- Chart should represent real Polish macro/finance data when possible (NBP rates, WIG20, Tauron tariffs over years, inflation CPI).",
       "- correctIndex is the answer derivable from the chart data.",
+    ],
+    // G-30 — Sprint H research-seed kinds. The generator's prompt
+    // surfaces are stubs because no research seed currently emits
+    // these; client renderers ship in Sprint H. Listed here so the
+    // Record<SeedKind, …> constraint stays exhaustive without runtime
+    // unreachable-branch warnings.
+    "rank-list": [
+      "You are producing a RANK-LIST spec — drag 4 items into magnitude order.",
+      "Schema: {kind:'rank-list', prompt, items:[4 strings], correctOrder:[4 ints 0-3], direction:'high-to-low'|'low-to-high', unitLabel, explanation, xpPerCorrect:10-40}.",
+    ],
+    "estimate-range": [
+      "You are producing an ESTIMATE-RANGE spec — slider with a correct band.",
+      "Schema: {kind:'estimate-range', question, unit, domainMin, domainMax, step, correctMin, correctMax, explanation, xpReward:10-60}.",
+      "- correctMin–correctMax band should be 10–30 % of the domain.",
+    ],
+    "odd-one-out": [
+      "You are producing an ODD-ONE-OUT spec — pick the item that doesn't fit.",
+      "Schema: {kind:'odd-one-out', prompt, items:[4 strings], oddIndex:0-3, category, explanation, xpPerCorrect:10-40}.",
     ],
   };
 

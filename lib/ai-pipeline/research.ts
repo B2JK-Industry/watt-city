@@ -24,7 +24,13 @@ export type SeedKind =
   | "calc-sprint"
   | "budget-allocate"
   | "what-if"
-  | "chart-read";
+  | "chart-read"
+  // G-30 Sprint H — schemas already in types.ts; research seeds +
+  // client renderers ship next sprint. Listed here so schemaForKind
+  // can narrow + the generator's kindRules table stays exhaustive.
+  | "rank-list"
+  | "estimate-range"
+  | "odd-one-out";
 export type SeedDifficulty = "easy" | "medium" | "hard";
 
 // Phase 2.2.3 metadata — every theme carries an age target + subject tag to

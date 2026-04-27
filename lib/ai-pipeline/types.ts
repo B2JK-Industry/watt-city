@@ -197,6 +197,65 @@ export const ChartReadSpecSchema = z.object({
   xpPerCorrect: z.number().int().min(10).max(40),
 });
 
+/* ---------- G-30 — Sprint H proposed kinds ----------
+ *
+ * Three new kinds added as schema only; client components ship in
+ * Sprint H. The discriminated union below lists them so generator
+ * prompts + content-hash + spec validators recognise the kind once
+ * the client renderers land.
+ *
+ * Why these three (UX rationale per docs/ux-audit/sprint-H.md):
+ *   - rank-list: drag-to-reorder by magnitude, distinct from `order`
+ *     which is sequence/timeline. Teaches "which is bigger" intuition
+ *     for budget categories (rent > food > internet > coffee, etc.).
+ *   - estimate-range: continuous-slider numeric estimation with a
+ *     correct band, finer-grained than `price-guess`'s discrete
+ *     options. Teaches "feel for the right order of magnitude" on
+ *     bills, salaries, savings goals.
+ *   - odd-one-out: 4 cards, pick the one that doesn't fit the group.
+ *     Reinforces categorisation (PKO products vs competitor, savings
+ *     vs spending, energy source taxonomy). Cheapest to author.
+ */
+
+export const RankListSpecSchema = z.object({
+  kind: z.literal("rank-list"),
+  prompt: z.string().min(8).max(200),
+  /** Rendered shuffled to the player; `correctOrder` is the canonical
+   *  high-to-low (or low-to-high — see `direction`) sequence. */
+  items: z.array(z.string().min(1).max(80)).length(4),
+  correctOrder: z.array(z.number().int().min(0).max(3)).length(4),
+  direction: z.enum(["high-to-low", "low-to-high"]),
+  unitLabel: z.string().max(40),
+  explanation: z.string().min(10).max(300),
+  xpPerCorrect: z.number().int().min(10).max(40),
+});
+
+export const EstimateRangeSpecSchema = z.object({
+  kind: z.literal("estimate-range"),
+  question: z.string().min(8).max(200),
+  unit: z.string().min(1).max(20),
+  /** Slider domain. Player picks a single value; `correctMin`-
+   *  `correctMax` defines the accepted band. Width should be 10-30 %
+   *  of the domain to keep the game winnable but not trivial. */
+  domainMin: z.number(),
+  domainMax: z.number(),
+  step: z.number().min(0.0001),
+  correctMin: z.number(),
+  correctMax: z.number(),
+  explanation: z.string().min(10).max(300),
+  xpReward: z.number().int().min(10).max(60),
+});
+
+export const OddOneOutSpecSchema = z.object({
+  kind: z.literal("odd-one-out"),
+  prompt: z.string().min(8).max(200),
+  items: z.array(z.string().min(1).max(80)).length(4),
+  oddIndex: z.number().int().min(0).max(3),
+  category: z.string().max(60),
+  explanation: z.string().min(10).max(300),
+  xpPerCorrect: z.number().int().min(10).max(40),
+});
+
 export const GameSpecSchema = z.discriminatedUnion("kind", [
   QuizSpecSchema,
   ScrambleSpecSchema,
@@ -210,6 +269,9 @@ export const GameSpecSchema = z.discriminatedUnion("kind", [
   BudgetSpecSchema,
   WhatIfSpecSchema,
   ChartReadSpecSchema,
+  RankListSpecSchema,
+  EstimateRangeSpecSchema,
+  OddOneOutSpecSchema,
 ]);
 export type GameSpec = z.infer<typeof GameSpecSchema>;
 

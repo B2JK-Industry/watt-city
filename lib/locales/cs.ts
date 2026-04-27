@@ -325,6 +325,9 @@ const cs: typeof plDict = {
     aiArchiveTitle: "Archiv AI výzev",
     aiArchiveBody:
       "Medaile za každou minulou AI výzvu — zůstávají tu natrvalo, i když samotná hra už vypršela.",
+    aiArchiveEmptyTitle: "Archiv se brzy zaplní",
+    aiArchiveEmptyBody:
+      "První AI výzvy právě dokončují svůj cyklus — jakmile vyprší, top-3 medaile zůstanou zde natrvalo. Zahraj dnes a buď první v archivu.",
     liveMedalNote:
       "Top 3 ve chvíli vypršení hry získávají medaili natrvalo. Níže aktuální pozice — mění se živě.",
     leaderLink: "Celá liga →",

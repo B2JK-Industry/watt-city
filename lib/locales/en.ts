@@ -325,6 +325,9 @@ const en: typeof plDict = {
     aiArchiveTitle: "AI challenge archive",
     aiArchiveBody:
       "Medals from every past AI challenge — they stay here forever, even after the game itself expired.",
+    aiArchiveEmptyTitle: "Archive fills up soon",
+    aiArchiveEmptyBody:
+      "The first AI challenges are wrapping their cycle — once they expire, top-3 medals stay here forever. Play today to be first in the archive.",
     liveMedalNote:
       "Top 3 at the moment the game expires earns a permanent medal. Current standings below — they update live.",
     leaderLink: "Full league →",
