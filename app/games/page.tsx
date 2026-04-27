@@ -98,7 +98,15 @@ export default async function GamesHubPage() {
           })}
         </p>
       </header>
-      <CityScene games={cityGames} loggedIn={Boolean(session)} aiGames={cityAiGames} />
+      {/* G-33 — same sunset backdrop as homepage + dashboard for visual
+          consistency. PR-P G-27 already added the prop on the compact
+          previews; the full /games hero needed it explicitly too. */}
+      <CityScene
+        games={cityGames}
+        loggedIn={Boolean(session)}
+        aiGames={cityAiGames}
+        backdrop="sunset"
+      />
       <aside className="card p-5 flex flex-col gap-3 text-sm text-[var(--ink-muted)]">
         <h2 className="section-heading text-lg">{t.buildingsMap}</h2>
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-1.5">

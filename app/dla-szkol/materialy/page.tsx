@@ -216,7 +216,7 @@ const COPY = {
       "UODO: polský dozorový orgán.",
       "KNF disclaimery na každé stránce s úvěrem.",
       "EU hosting: Upstash Frankfurt + Vercel EU.",
-      "Plně auditovateľné: ledger každé transakce.",
+      "Plně auditovatelné: ledger každé transakce.",
     ],
     ctaTitle: "Kontakt",
     ctaBody:
