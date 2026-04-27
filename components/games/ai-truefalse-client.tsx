@@ -5,6 +5,7 @@ import type { z } from "zod";
 import type { TrueFalseSpecSchema } from "@/lib/ai-pipeline/types";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
 import { RoundResult } from "@/components/games/round-result";
+import { shuffle } from "@/lib/shuffle";
 import type { Dict } from "@/lib/i18n";
 
 type TrueFalseSpec = z.infer<typeof TrueFalseSpecSchema>;
@@ -20,6 +21,12 @@ export function AiTrueFalseClient({
   dict: Dict;
 }) {
   const t = dict.ai;
+  // G-37 — shuffle statement order per session. The True/False answer
+  // itself is binary so option-position bias doesn't apply, but
+  // replaying the same envelope shouldn't show statements in the
+  // same order (or in PL-source-document order, which Claude tends
+  // to follow).
+  const [shuffledItems] = useState(() => shuffle([...spec.items]));
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>("playing");
   const [chosen, setChosen] = useState<boolean | null>(null);
@@ -28,7 +35,7 @@ export function AiTrueFalseClient({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [result, setResult] = useState<ScoreResponse | null>(null);
 
-  const items = spec.items;
+  const items = shuffledItems;
   const total = items.length;
   const current = items[index];
   const xpPer = spec.xpPerCorrect;

@@ -11,6 +11,7 @@ import type { z } from "zod";
 import type { PriceGuessSpecSchema } from "@/lib/ai-pipeline/types";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
 import { RoundResult } from "@/components/games/round-result";
+import { shuffle } from "@/lib/shuffle";
 import type { Dict } from "@/lib/i18n";
 
 type PriceGuessSpec = z.infer<typeof PriceGuessSpecSchema>;
@@ -33,7 +34,11 @@ export function AiPriceGuessClient({
   dict: Dict;
 }) {
   const t = dict.ai;
-  const items = spec.items;
+  // G-37 — randomise item order so a replay shows a different
+  // sequence. Each item's correct answer is a number (no options to
+  // shuffle), so per-item shuffle isn't needed; only the order.
+  const [shuffledItems] = useState(() => shuffle([...spec.items]));
+  const items = shuffledItems;
   const total = items.length;
   const xpPer = spec.xpPerCorrect;
   const xpCap = total * xpPer;

@@ -5,6 +5,7 @@ import type { z } from "zod";
 import type { ChartReadSpecSchema } from "@/lib/ai-pipeline/types";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
 import { RoundResult } from "@/components/games/round-result";
+import { shuffle } from "@/lib/shuffle";
 import type { Dict } from "@/lib/i18n";
 
 type Spec = z.infer<typeof ChartReadSpecSchema>;
@@ -96,6 +97,18 @@ export function AiChartReadClient({
   dict: Dict;
 }) {
   const t = dict.ai;
+  // G-37 — shuffle the 4 options + recompute correctIndex so the
+  // answer position varies between sessions. Single question per
+  // chart-read spec → mount-time shuffle is enough; no per-item
+  // loop needed.
+  const [shuffled] = useState(() => {
+    const correctOption = spec.options[spec.correctIndex];
+    const shuffledOptions = shuffle([...spec.options]);
+    return {
+      options: shuffledOptions,
+      correctIndex: shuffledOptions.indexOf(correctOption),
+    };
+  });
   const [chosen, setChosen] = useState<number | null>(null);
   const [revealed, setRevealed] = useState(false);
   const [done, setDone] = useState(false);
@@ -103,7 +116,7 @@ export function AiChartReadClient({
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ScoreResponse | null>(null);
 
-  const isCorrect = chosen === spec.correctIndex;
+  const isCorrect = chosen === shuffled.correctIndex;
 
   const submit = useCallback(
     async (xp: number) => {
@@ -137,8 +150,8 @@ export function AiChartReadClient({
       <div className="card p-5 flex flex-col gap-4">
         <p className="font-semibold">{spec.question}</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {spec.options.map((opt, i) => {
-            const isAnswer = i === spec.correctIndex;
+          {shuffled.options.map((opt, i) => {
+            const isAnswer = i === shuffled.correctIndex;
             const isChosen = chosen === i;
             const tone = !revealed
               ? isChosen

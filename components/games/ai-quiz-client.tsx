@@ -5,6 +5,7 @@ import type { z } from "zod";
 import type { QuizSpecSchema } from "@/lib/ai-pipeline/types";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
 import { RoundResult } from "@/components/games/round-result";
+import { shuffle } from "@/lib/shuffle";
 import type { Dict } from "@/lib/i18n";
 
 type QuizSpec = z.infer<typeof QuizSpecSchema>;
@@ -20,6 +21,28 @@ export function AiQuizClient({
   dict: Dict;
 }) {
   const t = dict.ai;
+  // G-37 — shuffle option order per item + question order per session.
+  // The AI generator's correctIndex distribution can be lopsided
+  // (Claude tends to put the correct option at index 0 disproportion-
+  // ately often), and the spec is deterministic — replaying the same
+  // envelope shows the same answer pattern. Shuffling at mount via
+  // `useState` initializer makes every mount session distinct without
+  // re-shuffling on every re-render (which would scramble options
+  // mid-question and confuse the player). Same pattern as the
+  // evergreen `pickRound` in app/games/finance-quiz/page.tsx.
+  const [shuffledItems] = useState(() =>
+    shuffle(
+      spec.items.map((item) => {
+        const correctOption = item.options[item.correctIndex];
+        const shuffledOptions = shuffle([...item.options]);
+        return {
+          ...item,
+          options: shuffledOptions,
+          correctIndex: shuffledOptions.indexOf(correctOption),
+        };
+      }),
+    ),
+  );
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>("playing");
   const [chosen, setChosen] = useState<number | null>(null);
@@ -28,7 +51,7 @@ export function AiQuizClient({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [result, setResult] = useState<ScoreResponse | null>(null);
 
-  const items = spec.items;
+  const items = shuffledItems;
   const total = items.length;
   const current = items[index];
   const xpPer = spec.xpPerCorrect;

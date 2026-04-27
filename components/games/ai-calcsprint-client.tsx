@@ -5,6 +5,7 @@ import type { z } from "zod";
 import type { CalcSpecSchema } from "@/lib/ai-pipeline/types";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
 import { RoundResult } from "@/components/games/round-result";
+import { shuffle } from "@/lib/shuffle";
 import type { Dict } from "@/lib/i18n";
 
 type Spec = z.infer<typeof CalcSpecSchema>;
@@ -25,6 +26,11 @@ export function AiCalcSprintClient({
   dict: Dict;
 }) {
   const t = dict.ai;
+  // G-37 — randomise problem order so a replay shows different
+  // problems first. Calc-sprint cycles through items repeatedly
+  // (`index % length`), so shuffling once at mount also reshuffles
+  // each lap relative to a vanilla replay.
+  const [shuffledItems] = useState(() => shuffle([...spec.items]));
   const [index, setIndex] = useState(0);
   const [input, setInput] = useState("");
   const [correctCount, setCorrectCount] = useState(0);
@@ -69,7 +75,7 @@ export function AiCalcSprintClient({
     return () => clearInterval(id);
   }, [done, submit, spec.xpPerCorrect]);
 
-  const current = spec.items[index % spec.items.length];
+  const current = shuffledItems[index % shuffledItems.length];
 
   function check() {
     const n = Number(input.replace(",", "."));

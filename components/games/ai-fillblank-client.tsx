@@ -5,6 +5,7 @@ import type { z } from "zod";
 import type { FillBlankSpecSchema } from "@/lib/ai-pipeline/types";
 import { submitScore, type ScoreResponse } from "@/lib/client-api";
 import { RoundResult } from "@/components/games/round-result";
+import { shuffle } from "@/lib/shuffle";
 import type { Dict } from "@/lib/i18n";
 
 type Spec = z.infer<typeof FillBlankSpecSchema>;
@@ -26,6 +27,10 @@ export function AiFillBlankClient({
   dict: Dict;
 }) {
   const t = dict.ai;
+  // G-37 — randomise item order on mount so a replay shows different
+  // sentences first. Each item's answer is a free-form string so
+  // there are no options to per-item-shuffle.
+  const [shuffledItems] = useState(() => shuffle([...spec.items]));
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>("playing");
   const [input, setInput] = useState("");
@@ -34,8 +39,8 @@ export function AiFillBlankClient({
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ScoreResponse | null>(null);
 
-  const total = spec.items.length;
-  const current = spec.items[index];
+  const total = shuffledItems.length;
+  const current = shuffledItems[index];
 
   const submit = useCallback(
     async (xp: number) => {
