@@ -4,6 +4,28 @@ import { revalidatePath } from "next/cache";
 import { LANGS, COOKIE_NAME, type Lang } from "@/lib/i18n";
 
 export async function POST(req: NextRequest) {
+  // G-22 — same-origin check. Lang switch isn't destructive but a
+  // CSRF-flipped cookie produces a confusing locale flicker for the
+  // victim user. Origin header is set by every modern browser for
+  // fetch/XHR; missing-origin requests (e.g. curl) still pass
+  // since the operation is low-stakes — strict-strict mode would
+  // block legit dev/test tooling. Mismatched origin → 403.
+  const origin = req.headers.get("origin");
+  if (origin) {
+    try {
+      if (new URL(origin).host !== new URL(req.url).host) {
+        return Response.json(
+          { ok: false, error: "cross-origin" },
+          { status: 403 },
+        );
+      }
+    } catch {
+      return Response.json(
+        { ok: false, error: "bad-origin" },
+        { status: 403 },
+      );
+    }
+  }
   const body = (await req.json().catch(() => ({}))) as { lang?: string };
   const lang = body.lang;
   if (!lang || !(LANGS as readonly string[]).includes(lang)) {

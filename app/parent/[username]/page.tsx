@@ -1,4 +1,5 @@
-import { notFound, redirect } from "next/navigation";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { getLang } from "@/lib/i18n-server";
 import { isParentOf, readChildParentPrivacy } from "@/lib/roles";
@@ -22,7 +23,46 @@ export default async function ParentChildView({
     getLang(),
   ]);
   if (!session) redirect("/login");
-  if (!(await isParentOf(session.username, username))) notFound();
+  // G-26 — explicit 403 explainer instead of generic notFound(). The
+  // page renders to authenticated parents only; a wrong username or
+  // a yet-unlinked relationship deserves a clear "request invite"
+  // pointer, not a confusing "page doesn't exist".
+  if (!(await isParentOf(session.username, username))) {
+    const t = {
+      pl: {
+        title: "Brak dostępu do tego profilu",
+        body: "Nie jesteś powiązany z tym kontem dziecka. Jeśli chcesz uzyskać dostęp, poproś o zaproszenie z poziomu sekcji Rodzic.",
+        cta: "Panel rodzica",
+      },
+      uk: {
+        title: "Немає доступу до цього профілю",
+        body: "Ти не пов'язаний з цим дитячим акаунтом. Запроси доступ через панель Батьки.",
+        cta: "Панель батьків",
+      },
+      cs: {
+        title: "Nemáš přístup k tomuto profilu",
+        body: "Nejsi propojen s tímto dětským účtem. Požádej o pozvánku v sekci Rodič.",
+        cta: "Panel rodiče",
+      },
+      en: {
+        title: "No access to this profile",
+        body: "You're not linked to this child account. Request an invite from the Parent dashboard.",
+        cta: "Parent dashboard",
+      },
+    }[lang];
+    return (
+      <main className="max-w-xl mx-auto py-12 flex flex-col items-center gap-4 text-center animate-slide-up">
+        <span aria-hidden className="text-5xl">
+          🚫
+        </span>
+        <h1 className="t-h2 text-[var(--accent)]">{t.title}</h1>
+        <p className="text-[var(--ink-muted)] max-w-md">{t.body}</p>
+        <Link href="/rodzic" className="btn btn-primary">
+          {t.cta}
+        </Link>
+      </main>
+    );
+  }
   const privacy = await readChildParentPrivacy(username);
   const [state, stats, achievements] = await Promise.all([
     getPlayerState(username),
