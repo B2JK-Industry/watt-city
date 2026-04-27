@@ -32,29 +32,32 @@ const SECTIONS: Record<
   en: { play: "Play", about: "Platform", legal: "Legal", help: "Help" },
 };
 
+// G-02 + G-24 — FAQ + Kontakt are now real routes (not "wkrótce").
+// compareLoans link migrated from the deprecated /loans/compare
+// standalone (PR-O F-01) to the inline panel anchor on /miasto.
 const HELP_LABELS: Record<
   Lang,
   { compareLoans: string; faq: string; contact: string }
 > = {
   pl: {
     compareLoans: "Porównaj kredyty",
-    faq: "FAQ — wkrótce",
-    contact: "Kontakt — wkrótce",
+    faq: "FAQ",
+    contact: "Kontakt",
   },
   uk: {
     compareLoans: "Порівняй кредити",
-    faq: "FAQ — скоро",
-    contact: "Контакти — скоро",
+    faq: "FAQ",
+    contact: "Контакти",
   },
   cs: {
     compareLoans: "Porovnat půjčky",
-    faq: "FAQ — brzy",
-    contact: "Kontakt — brzy",
+    faq: "FAQ",
+    contact: "Kontakt",
   },
   en: {
     compareLoans: "Compare loans",
-    faq: "FAQ — soon",
-    contact: "Contact — soon",
+    faq: "FAQ",
+    contact: "Contact",
   },
 };
 
@@ -138,13 +141,9 @@ export function SiteFooter({ lang, dict, theme }: Props) {
             <FooterLink href="/sin-slavy">{dict.nav.hall}</FooterLink>
           </FooterColumn>
           <FooterColumn heading={sections.help}>
-            <FooterLink href="/loans/compare">{help.compareLoans}</FooterLink>
-            <span className="t-body-sm text-[var(--ink-muted)]" aria-disabled="true">
-              {help.faq}
-            </span>
-            <span className="t-body-sm text-[var(--ink-muted)]" aria-disabled="true">
-              {help.contact}
-            </span>
+            <FooterLink href="/miasto#hypoteka">{help.compareLoans}</FooterLink>
+            <FooterLink href="/faq">{help.faq}</FooterLink>
+            <FooterLink href="/kontakt">{help.contact}</FooterLink>
             <FooterLink
               href="https://github.com/B2JK-Industry/watt-city"
               external

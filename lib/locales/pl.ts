@@ -1,4 +1,57 @@
 const pl = {
+  faq: {
+    title: "Najczęstsze pytania",
+    intro: "Krótkie odpowiedzi na najczęstsze pytania o Watt City. Coś jeszcze niejasne? Napisz na /kontakt.",
+    items: [
+      {
+        q: "Jak działa Watt City?",
+        a: "Grasz w mini-gry, zarabiasz Waty (XP). Każda gra dodaje budynek do twojego miasteczka — od Domku po Varso Tower. Codziennie 0-3 nowych AI mini-gier (top 3 zostaje w profilu).",
+      },
+      {
+        q: "Czy to prawdziwe pieniądze?",
+        a: "Nie. Wszystko (Waty, kredyty, budynki, hipoteki) istnieje tylko w grze. Nie pobieramy żadnych opłat, nie ma transakcji finansowych — to czysta edukacja.",
+      },
+      {
+        q: "Mam mniej niż 16 lat — czy mogę grać?",
+        a: "Tak, pod warunkiem zgody rodzica. Przy rejestracji prosimy o e-mail rodzica zgodnie z RODO-K. Bez tej zgody konto pozostaje w trybie ograniczonym.",
+      },
+      {
+        q: "Jak chronicie moje dane?",
+        a: "Zbieramy minimum: pseudonim, hash hasła, rok urodzenia, wyniki gier. Bez analityki, bez śledzenia, bez reklam. Hosting w UE (Frankfurt). Pełny opis: /ochrana-sukromia.",
+      },
+      {
+        q: "Mogę grać bez konta?",
+        a: "Tak — kliknij dowolną grę z listy /games (np. Quiz finansowy) i zagraj w trybie demo. Wynik nie zapisze się w rankingu, ale poczujesz, jak to działa.",
+      },
+      {
+        q: "Co to PKO XP: Gaming?",
+        a: "Wartość partnerska z PKO Bank Polski w ramach ETHSilesia 2026. PKO finansuje rozwój platformy edukacyjnej; bank nie ma dostępu do twoich danych ani logów gry.",
+      },
+    ],
+    contactCta: "Coś innego? Napisz na",
+    contactLinkLabel: "Kontakt",
+  },
+  kontakt: {
+    title: "Kontakt",
+    intro: "Masz pytanie, znalazłeś bug, chcesz zaprosić platformę do swojej szkoły? Napisz — odpowiadamy w 2 dni robocze.",
+    nameLabel: "Imię",
+    emailLabel: "E-mail",
+    topicLabel: "Temat",
+    messageLabel: "Wiadomość",
+    topicGeneral: "Ogólne pytanie",
+    topicBug: "Zgłoszenie błędu",
+    topicSchool: "Szkoła / klasa",
+    topicPress: "Prasa / media",
+    topicPrivacy: "Ochrona danych",
+    submit: "Wyślij",
+    submitting: "Wysyłam…",
+    successTitle: "Dziękujemy!",
+    successBody: "Wiadomość dotarła. Odpowiemy w 2 dni robocze.",
+    errorRate: "Zbyt wiele prób. Spróbuj za chwilę.",
+    errorGeneric: "Coś poszło nie tak. Spróbuj ponownie.",
+    schoolLabel: "Nazwa szkoły",
+    schoolNamePlaceholder: "np. Zespół Szkół nr 1",
+  },
   aiHub: {
     title: "Dzisiejsze AI minigry",
     body: "Codziennie 0-3 świeżych minigier wygenerowanych przez Claude. Każda znika po wyznaczonym czasie — top 3 zostają w profilu.",

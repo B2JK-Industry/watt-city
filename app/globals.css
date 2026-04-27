@@ -485,6 +485,23 @@ body {
 :where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#fbbf24"] { fill: #fbbf24; }
 :where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#a21caf"] { fill: #a21caf; }
 :where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#c026d3"] { fill: #c026d3; }
+/* G-32 — AI envelope palette (AI_ROOF_PALETTE + AI_BODY_PALETTE +
+ * AI_WINDOW_PRIMARY/SECONDARY in city-scene.tsx). Each AI building's
+ * draw assigns colours via `hashId(envelope.id) % palette.length`,
+ * so any of these can land on a body rect. Add explicit passthroughs
+ * so the broad mass `[fill="X"]` retints don't catch them on
+ * /games hub or the dashboard preview. */
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#ec4899"] { fill: #ec4899; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#f97316"] { fill: #f97316; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#8b5cf6"] { fill: #8b5cf6; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#14b8a6"] { fill: #14b8a6; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#f43f5e"] { fill: #f43f5e; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#831843"] { fill: #831843; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#164e63"] { fill: #164e63; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#581c87"] { fill: #581c87; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#7c2d12"] { fill: #7c2d12; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#fb7185"] { fill: #fb7185; }
+:where([data-skin="pko"]) .city-scene-root [data-building-body="true"] [fill="#1e1b4b"] { fill: #1e1b4b; }
 
 /* R-06 — visible custom slider thumb for the mortgage panel. The
  * default WebKit/Firefox thumb is barely 12 px and disappears against

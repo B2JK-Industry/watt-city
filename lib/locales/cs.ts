@@ -1,6 +1,59 @@
 import type plDict from "./pl";
 
 const cs: typeof plDict = {
+  faq: {
+    title: "Časté otázky",
+    intro: "Stručné odpovědi na nejčastější otázky o Watt City. Něco dalšího nejasné? Napiš na /kontakt.",
+    items: [
+      {
+        q: "Jak Watt City funguje?",
+        a: "Hraješ minihry, vyděláváš Watty (XP). Každá hra přidá budovu do tvého městečka — od Domku po Varso Tower. Každý den 0-3 nové AI minihry (top 3 zůstává v profilu).",
+      },
+      {
+        q: "Jsou to skutečné peníze?",
+        a: "Ne. Vše (Watty, úvěry, budovy, hypotéky) existuje jen ve hře. Nevybíráme žádné platby — je to čistá edukace.",
+      },
+      {
+        q: "Je mi méně než 16 — můžu hrát?",
+        a: "Ano, se souhlasem rodiče. Při registraci žádáme o email rodiče dle GDPR-K. Bez souhlasu zůstává účet v omezeném režimu.",
+      },
+      {
+        q: "Jak chráníte moje data?",
+        a: "Sbíráme minimum: přezdívku, hash hesla, rok narození, výsledky her. Žádná analytika, žádné sledování, žádné reklamy. Hosting v EU (Frankfurt). Detail: /ochrana-sukromia.",
+      },
+      {
+        q: "Můžu hrát bez účtu?",
+        a: "Ano — klikni na libovolnou hru z /games (např. Finanční kvíz) a hraj v demo režimu. Skóre se neuloží do žebříčku.",
+      },
+      {
+        q: "Co je PKO XP: Gaming?",
+        a: "Partnerství s PKO Bank Polski v rámci ETHSilesia 2026. PKO financuje rozvoj edukační platformy; banka nemá přístup k tvým datům ani logům hry.",
+      },
+    ],
+    contactCta: "Něco jiného? Napiš na",
+    contactLinkLabel: "Kontakt",
+  },
+  kontakt: {
+    title: "Kontakt",
+    intro: "Máš otázku, našel jsi bug, chceš pozvat platformu do své školy? Napiš — odpovídáme do 2 pracovních dnů.",
+    nameLabel: "Jméno",
+    emailLabel: "E-mail",
+    topicLabel: "Téma",
+    messageLabel: "Zpráva",
+    topicGeneral: "Obecná otázka",
+    topicBug: "Hlášení chyby",
+    topicSchool: "Škola / třída",
+    topicPress: "Tisk / média",
+    topicPrivacy: "Ochrana dat",
+    submit: "Odeslat",
+    submitting: "Odesílám…",
+    successTitle: "Děkujeme!",
+    successBody: "Zpráva dorazila. Odpovíme do 2 pracovních dnů.",
+    errorRate: "Příliš mnoho pokusů. Zkus za chvíli.",
+    errorGeneric: "Něco se pokazilo. Zkus znovu.",
+    schoolLabel: "Název školy",
+    schoolNamePlaceholder: "např. ZŠ Kladno",
+  },
   aiHub: {
     title: "Dnešní AI minihry",
     body: "Každý den 0-3 čerstvých her vygenerovaných Claudem. Každá zmizí v určený čas — top 3 zůstává v profilu.",

@@ -1232,7 +1232,12 @@ function ConstructionSlot({
       )}
     </g>
   );
-  if (!interactive) return <g>{node}</g>;
+  // G-32 — `data-building-body="true"` opts the AI slot into the
+  // F-02 exception (inverse filter + per-hex passthrough). Without
+  // it, AI envelope buildings rendered washed-grey on the sunset
+  // backdrop because the broad `[fill="X"]` retints + `.city-scene-root`
+  // saturate filter caught the procedurally-generated palette.
+  if (!interactive) return <g data-building-body="true">{node}</g>;
   const href = aiGame ? `/games/ai/${aiGame.id}` : "/sin-slavy";
   const label = aiGame
     ? `Wyzwanie AI dnia — ${aiGame.title}`
@@ -1246,7 +1251,11 @@ function ConstructionSlot({
       : "Wyzwanie AI dnia · w budowie";
   return (
     <Link href={href} aria-label={label}>
-      <g className="building-link" data-powered={live}>
+      <g
+        className="building-link"
+        data-building-body="true"
+        data-powered={live}
+      >
         <title>{title}</title>
         <rect
           x={plan.x - 6}
