@@ -28,7 +28,7 @@ async function register(
     data: {
       username,
       password: "correct horse battery 1",
-      birthYear: opts.birthYear ?? 2000,
+      birthYear: opts.birthYear ?? 2012,
     },
   });
   expect(r.ok(), `register ${username}: ${r.status()} ${await r.text()}`).toBeTruthy();

@@ -35,7 +35,7 @@ async function registerFresh(
     data: {
       username,
       password: "correct horse battery 1",
-      birthYear: opts.birthYear ?? 2000,
+      birthYear: opts.birthYear ?? 2012,
       ...(opts.parentEmail ? { parentEmail: opts.parentEmail } : {}),
     },
   });
