@@ -531,13 +531,20 @@ export const SLOT_MAP: SlotDef[] = [
   { id: 12, category: "residential", x: 1350, y: 320, w: 80, h: 80 },
   { id: 13, category: "residential", x: 1440, y: 320, w: 80, h: 80 },
   // Row 5 — decorative (any), 4 slots
-  { id: 14, category: "decorative", x: 1530, y: 340, w: 60, h: 60 },
-  { id: 15, category: "decorative", x: 1600, y: 340, w: 60, h: 60 },
-  { id: 16, category: "decorative", x: 1670, y: 340, w: 60, h: 60 },
-  { id: 17, category: "decorative", x: 1740, y: 340, w: 50, h: 60 },
-  // Row 6 — civic at bottom
+  // G-36 — slots 14-17 + 19 rebalanced. Pre-fix slot 19 was a 10-px
+  // "edge filler" sitting at x=1790 (literally last 10 SVG units of
+  // a 1800-wide canvas). At ~1240-px container width it rendered as
+  // ~7 px on screen — the user reported it as "slot not visible".
+  // Re-spaced so all 5 right-edge slots are 50 px wide with 5-px
+  // gaps and the row leaves 10 px of breathing room before the
+  // canvas edge. Slot ids unchanged → no save migration needed.
+  { id: 14, category: "decorative", x: 1530, y: 340, w: 50, h: 60 },
+  { id: 15, category: "decorative", x: 1585, y: 340, w: 50, h: 60 },
+  { id: 16, category: "decorative", x: 1640, y: 340, w: 50, h: 60 },
+  { id: 17, category: "decorative", x: 1695, y: 340, w: 50, h: 60 },
+  // Row 6 — civic at the canvas extremes
   { id: 18, category: "civic", x: 10, y: 340, w: 40, h: 60 },
-  { id: 19, category: "civic", x: 1790, y: 340, w: 10, h: 60 }, // edge filler, usable but small
+  { id: 19, category: "civic", x: 1750, y: 340, w: 40, h: 60 },
 ];
 
 export function getSlot(id: number): SlotDef | null {
