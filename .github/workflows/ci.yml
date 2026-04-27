@@ -60,6 +60,11 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
+      - name: Generate API inventory
+        # `e2e/api-contracts.spec.ts` reads `tmp/api-inventory.json`;
+        # `tmp/` is gitignored so the file doesn't survive checkout.
+        # Regenerate it from the live route tree before running e2e.
+        run: node scripts/audit-api-contracts.mjs
       - name: Run chromium project
         env:
           CI: "1"
