@@ -34,6 +34,12 @@ export type TeacherAccount = {
   createdAt: number;
   classIds: string[]; // denormalized for fast lookup
   tourSeenAt?: number;
+  /** G-14 — email-verified gate. Class creation is blocked until
+   *  the teacher clicks the verify link (24h TTL token, see
+   *  lib/teacher-verify.ts). Pre-G-14 accounts default to undefined,
+   *  treated as verified (grandfathered) so existing teachers don't
+   *  lose class creation overnight. */
+  verified?: boolean;
 };
 
 export type SchoolClass = {
@@ -93,9 +99,29 @@ export async function createTeacher(input: {
     schoolName: input.schoolName,
     createdAt: Date.now(),
     classIds: [],
+    // G-14 — new teachers start unverified; class creation gate
+    // unblocks on /verify?token=… consumption.
+    verified: false,
   };
   await saveTeacher(t);
   return t;
+}
+
+/** G-14 — flips the verified flag on a teacher account. Called from
+ *  the /verify page after a successful token consume. Idempotent —
+ *  re-clicking a stored email link a second time is a no-op. */
+export async function markTeacherVerified(username: string): Promise<void> {
+  const t = await getTeacher(username);
+  if (!t) return;
+  if (t.verified) return;
+  await saveTeacher({ ...t, verified: true });
+}
+
+/** G-14 — true when the teacher is grandfathered (pre-G-14 account
+ *  with no `verified` field) OR has clicked the verify link. The
+ *  /api/class POST guard uses this to gate class creation. */
+export function teacherIsVerified(t: TeacherAccount): boolean {
+  return t.verified !== false;
 }
 
 // ---------------------------------------------------------------------------

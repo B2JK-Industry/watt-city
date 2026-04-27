@@ -4,22 +4,31 @@ import { registerUser } from "@/lib/auth";
 import { createSession, getSession } from "@/lib/session";
 import { createTeacher, isTeacher } from "@/lib/class";
 import { containsPII, writeAgeBucket } from "@/lib/gdpr-k";
+import { openTeacherVerification } from "@/lib/teacher-verify";
+import { sendTeacherVerifyEmail } from "@/lib/mailer";
 
-/* V4.1 — teacher signup.
+/* V4.1 + G-14 — teacher signup.
  *
  * POST /api/nauczyciel/signup
- *   { username, password, displayName, email?, schoolName }
+ *   { username, password, displayName, email, schoolName }
  *
  * Creates a normal user record (`registerUser`) + flags it as a teacher
  * (`createTeacher`). Session cookie issued on success so the wizard can
  * immediately proceed to class creation.
+ *
+ * G-14 — email is now REQUIRED (was optional). New teacher accounts
+ * land in `verified=false` state; class creation is blocked until
+ * the teacher clicks the /verify?token=… link sent to their email.
+ * 24h TTL token, single-use. Pre-G-14 teacher accounts are
+ * grandfathered (verified field undefined → treated as verified).
  */
 
 const BodySchema = z.object({
   username: z.string().min(1).max(64),
   password: z.string().min(8).max(200),
   displayName: z.string().min(1).max(120),
-  email: z.string().email().max(200).optional().or(z.literal("")),
+  // G-14 — email required so we can send the verify link.
+  email: z.string().email().max(200),
   schoolName: z.string().min(1).max(200),
 });
 
@@ -64,11 +73,16 @@ export async function POST(req: NextRequest) {
   await createTeacher({
     username,
     displayName,
-    email: email && email.length > 0 ? email : null,
+    email,
     schoolName,
   });
   await createSession(username);
-  return Response.json({ ok: true });
+  // G-14 — open a fresh 24h verify token + send the email. Failure
+  // to deliver is logged but does NOT block the signup response —
+  // the teacher can request a re-send via /nauczyciel later.
+  const { token } = await openTeacherVerification(username, email);
+  await sendTeacherVerifyEmail(email, displayName, token);
+  return Response.json({ ok: true, verifySent: true });
 }
 
 export async function GET() {

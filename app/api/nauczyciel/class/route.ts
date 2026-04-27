@@ -1,11 +1,23 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
 import { getSession } from "@/lib/session";
-import { createClass, isTeacher, listClassesFor } from "@/lib/class";
+import {
+  createClass,
+  getTeacher,
+  isTeacher,
+  listClassesFor,
+  teacherIsVerified,
+} from "@/lib/class";
 
-/* V4.1 — class CRUD for the signed-in teacher.
+/* V4.1 + G-14 — class CRUD for the signed-in teacher.
  *   GET  /api/nauczyciel/class     — list my classes
  *   POST /api/nauczyciel/class     — create a class
+ *
+ * G-14 — POST is gated behind email verification. Pre-G-14 accounts
+ * are grandfathered (verified field undefined → treated as verified).
+ * Unverified teachers get 403 with `error: "teacher-not-verified"`
+ * so the UI can render a "check your inbox" hint instead of a
+ * generic failure.
  */
 
 const CreateBody = z.object({
@@ -29,6 +41,16 @@ export async function POST(req: NextRequest) {
   if (!session) return Response.json({ ok: false, error: "unauthorized" }, { status: 401 });
   if (!(await isTeacher(session.username))) {
     return Response.json({ ok: false, error: "not-teacher" }, { status: 403 });
+  }
+  // G-14 — verified-email gate. Pre-G-14 accounts (verified field
+  // undefined) are grandfathered; new signups must redeem the
+  // /verify?token=… link before creating their first class.
+  const teacher = await getTeacher(session.username);
+  if (teacher && !teacherIsVerified(teacher)) {
+    return Response.json(
+      { ok: false, error: "teacher-not-verified" },
+      { status: 403 },
+    );
   }
   let body;
   try {

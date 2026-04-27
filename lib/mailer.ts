@@ -132,6 +132,36 @@ export async function sendMail(env: MailEnvelope): Promise<SendResult> {
   return logOnly(env, "no-provider-configured");
 }
 
+/** G-14 — teacher verification email. Builds + sends in one call so
+ *  the signup route doesn't need to know about envelope shapes. */
+export async function sendTeacherVerifyEmail(
+  email: string,
+  displayName: string,
+  token: string,
+): Promise<SendResult> {
+  const base =
+    process.env.NEXT_PUBLIC_APP_URL ??
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+  const verifyUrl = `${base}/verify?token=${encodeURIComponent(token)}`;
+  return sendMail({
+    to: email,
+    subject: "Watt City — potvrď svoj učiteľský účet",
+    text: [
+      `Cześć ${displayName},`,
+      ``,
+      `Dziękujemy za rejestrację w Watt City. Aby aktywować konto`,
+      `nauczycielskie (tworzenie klas), kliknij link poniżej:`,
+      ``,
+      verifyUrl,
+      ``,
+      `Link działa przez 24 godziny. Jeśli to nie ty, zignoruj tę`,
+      `wiadomość — bez potwierdzenia konto pozostaje zablokowane.`,
+      ``,
+      `— Watt City`,
+    ].join("\n"),
+  });
+}
+
 /** Build the parental-consent email envelope. Centralised so the
  *  copy + link shape are reviewable in one place for RODO-K sign-off. */
 export function buildParentalConsentMessage(opts: {
