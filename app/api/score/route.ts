@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
   // the anti-grind rule: replays that don't beat the prior best yield 0.
   // Ledger dedupe key: `score:${gameId}:${previousBest}->${newBest}` — that
   // exact transition can happen at most once per player.
-  let resources = null as Awaited<ReturnType<typeof getPlayerState>>["resources"] | null;
+  let resources: Partial<Record<ResourceKey, number>> | null = null;
   let capped = false;
   // HIGH-4: expose the breakdown so the post-game modal can render the
   // ladder; the final number the modal shows is guaranteed to match the
@@ -169,7 +169,11 @@ export async function POST(request: NextRequest) {
           ),
         );
       }
-      resources = credit.resources;
+      // Return the credited delta (what this score added), not the
+      // post-credit total state — the post-game modal reads this field
+      // as a delta and would otherwise render the player's full balance
+      // as the per-game gain.
+      resources = trimmed;
     }
   }
 
