@@ -22,7 +22,7 @@ async function freshUser(page: Page): Promise<{ username: string }> {
     data: {
       username,
       password: "correct horse battery 1",
-      birthYear: 2012,
+      birthYear: 2010,
     },
   });
   expect(res.ok(), `register ${username}: ${res.status()}`).toBeTruthy();
@@ -111,10 +111,10 @@ test.describe("security — IDOR: one user can't read another's private data", (
     const userB = `b_${randomAlphaSuffix(10)}`;
 
     await pageA.request.post("/api/auth/register", {
-      data: { username: userA, password: "correct horse battery 1", birthYear: 2012 },
+      data: { username: userA, password: "correct horse battery 1", birthYear: 2010 },
     });
     await pageB.request.post("/api/auth/register", {
-      data: { username: userB, password: "correct horse battery 1", birthYear: 2012 },
+      data: { username: userB, password: "correct horse battery 1", birthYear: 2010 },
     });
 
     // A tries to read B's child data. Parent dashboard reads require
@@ -198,7 +198,7 @@ test.describe("security — PII validator edge cases", () => {
     test(`register "${c.name}" → ${c.expect}`, async ({ page }) => {
       const u = c.username();
       const r = await page.request.post("/api/auth/register", {
-        data: { username: u, password: "correct horse battery 1", birthYear: 2012 },
+        data: { username: u, password: "correct horse battery 1", birthYear: 2010 },
         failOnStatusCode: false,
       });
       if (c.expect === "reject") {

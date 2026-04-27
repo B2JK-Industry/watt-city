@@ -60,7 +60,7 @@ test.describe("smoke — landing + auth + city", () => {
       data: {
         username: u,
         password: "correct horse battery 1",
-        birthYear: 2012,
+        birthYear: 2010,
       },
     });
     expect(res.ok()).toBeTruthy();

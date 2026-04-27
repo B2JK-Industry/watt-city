@@ -15,7 +15,7 @@ async function freshUser(page: Page): Promise<{ username: string }> {
   // `/api/auth/register` is CSRF-exempt so page.request is enough.
   const username = `di_${randomAlphaSuffix(12)}`;
   const res = await page.request.post("/api/auth/register", {
-    data: { username, password: "correct horse battery 1", birthYear: 2012 },
+    data: { username, password: "correct horse battery 1", birthYear: 2010 },
   });
   expect(res.ok(), `register ${username}: ${res.status()}`).toBeTruthy();
   // Prime wc_csrf so subsequent mutating POSTs carry the header.
@@ -146,10 +146,10 @@ test.describe("data integrity — leaderboard ordering stable under concurrent w
     const u1 = `lb1_${randomAlphaSuffix(10)}`;
     const u2 = `lb2_${randomAlphaSuffix(10)}`;
     await p1.request.post("/api/auth/register", {
-      data: { username: u1, password: "correct horse battery 1", birthYear: 2012 },
+      data: { username: u1, password: "correct horse battery 1", birthYear: 2010 },
     });
     await p2.request.post("/api/auth/register", {
-      data: { username: u2, password: "correct horse battery 1", birthYear: 2012 },
+      data: { username: u2, password: "correct horse battery 1", birthYear: 2010 },
     });
 
     await primeCsrf(p1);

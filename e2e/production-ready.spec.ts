@@ -35,7 +35,7 @@ async function registerFresh(
     data: {
       username,
       password: "correct horse battery 1",
-      birthYear: opts.birthYear ?? 2012,
+      birthYear: opts.birthYear ?? 2010,
       ...(opts.parentEmail ? { parentEmail: opts.parentEmail } : {}),
     },
   });
@@ -249,7 +249,7 @@ test.describe("db persistence — writes survive a fresh browser context", () =>
     const username = `db_${randomAlphaSuffix(10)}`;
     const password = "correct horse battery 1";
     await pageA.request.post("/api/auth/register", {
-      data: { username, password, birthYear: 2012 },
+      data: { username, password, birthYear: 2010 },
     });
     await primeCsrf(pageA);
     // xp=250 is capped by finance-quiz's xpCap=100; what matters for
@@ -289,10 +289,10 @@ test.describe("db persistence — writes survive a fresh browser context", () =>
     const kidName = `k_${randomAlphaSuffix(10)}`;
     const parentName = `p_${randomAlphaSuffix(10)}`;
     await kid.request.post("/api/auth/register", {
-      data: { username: kidName, password: "correct horse battery 1", birthYear: 2012 },
+      data: { username: kidName, password: "correct horse battery 1", birthYear: 2010 },
     });
     await parent.request.post("/api/auth/register", {
-      data: { username: parentName, password: "correct horse battery 1", birthYear: 2012 },
+      data: { username: parentName, password: "correct horse battery 1", birthYear: 2010 },
     });
     await primeCsrf(kid);
     await primeCsrf(parent);

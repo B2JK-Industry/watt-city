@@ -24,7 +24,7 @@ const isProd = (process.env.PLAYWRIGHT_BASE_URL ?? "").includes(PROD_HOST);
 async function register(page: Page): Promise<void> {
   const username = `rl_${randomAlphaSuffix(12)}`;
   const r = await page.request.post("/api/auth/register", {
-    data: { username, password: "correct horse battery 1", birthYear: 2012 },
+    data: { username, password: "correct horse battery 1", birthYear: 2010 },
   });
   expect(r.ok(), `register ${username}: ${r.status()}`).toBeTruthy();
   await primeCsrf(page);

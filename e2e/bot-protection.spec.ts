@@ -40,7 +40,7 @@ test.describe("bot protection — /api/auth/register IP rate limit", () => {
         data: {
           username: `bot_${randomAlphaSuffix(10)}`,
           password: "correct horse battery 1",
-          birthYear: 2012,
+          birthYear: 2010,
         },
         headers: { "x-forwarded-for": ip },
         failOnStatusCode: false,

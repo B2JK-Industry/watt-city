@@ -28,7 +28,7 @@ async function register(
     data: {
       username,
       password: "correct horse battery 1",
-      birthYear: opts.birthYear ?? 2012,
+      birthYear: opts.birthYear ?? 2010,
     },
   });
   expect(r.ok(), `register ${username}: ${r.status()} ${await r.text()}`).toBeTruthy();
@@ -178,10 +178,10 @@ test.describe("golden paths", () => {
     const kidUser = `k_${randomAlphaSuffix(10)}`;
     const parentUser = `p_${randomAlphaSuffix(10)}`;
     await kid.request.post("/api/auth/register", {
-      data: { username: kidUser, password: "correct horse battery 1", birthYear: 2012 },
+      data: { username: kidUser, password: "correct horse battery 1", birthYear: 2010 },
     });
     await parent.request.post("/api/auth/register", {
-      data: { username: parentUser, password: "correct horse battery 1", birthYear: 2012 },
+      data: { username: parentUser, password: "correct horse battery 1", birthYear: 2010 },
     });
     await primeCsrf(kid);
     await primeCsrf(parent);
@@ -243,7 +243,7 @@ test.describe("golden paths", () => {
     expect(code, `class create body: ${JSON.stringify(createClass.body)}`).toBeTruthy();
 
     await s.request.post("/api/auth/register", {
-      data: { username: studentUser, password: "correct horse battery 1", birthYear: 2012, parentEmail: "p@example.com" },
+      data: { username: studentUser, password: "correct horse battery 1", birthYear: 2010, parentEmail: "p@example.com" },
     });
     await primeCsrf(s);
     const join = await postJson(s, "/api/klasa/join", { code });
