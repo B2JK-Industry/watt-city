@@ -30,7 +30,7 @@ test.describe("smoke — landing + auth + city", () => {
     const u = `smoke${randomAlphaSuffix()}`;
     await page.goto("/register");
     await page.getByLabel(/Użytkownik|Username|Ім'я|Jméno/i).fill(u);
-    await page.getByLabel(/Hasło|Password|Пароль|Heslo/i).fill("correct horse battery");
+    await page.getByLabel(/Hasło|Password|Пароль|Heslo/i).fill("correct horse battery 1");
     // 16-plus birth year to skip parent-email
     await page
       .getByLabel(/Rok urodzenia|RODO-K/i)
@@ -59,8 +59,8 @@ test.describe("smoke — landing + auth + city", () => {
     const res = await page.request.post("/api/auth/register", {
       data: {
         username: u,
-        password: "correct horse battery",
-        birthYear: 2000,
+        password: "correct horse battery 1",
+        birthYear: 2012,
       },
     });
     expect(res.ok()).toBeTruthy();

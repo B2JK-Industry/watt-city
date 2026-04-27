@@ -27,7 +27,7 @@ async function register(
   const r = await page.request.post("/api/auth/register", {
     data: {
       username,
-      password: "correct horse battery staple",
+      password: "correct horse battery 1",
       birthYear: opts.birthYear ?? 2000,
     },
   });
@@ -178,10 +178,10 @@ test.describe("golden paths", () => {
     const kidUser = `k_${randomAlphaSuffix(10)}`;
     const parentUser = `p_${randomAlphaSuffix(10)}`;
     await kid.request.post("/api/auth/register", {
-      data: { username: kidUser, password: "correct horse battery", birthYear: 2000 },
+      data: { username: kidUser, password: "correct horse battery 1", birthYear: 2012 },
     });
     await parent.request.post("/api/auth/register", {
-      data: { username: parentUser, password: "correct horse battery", birthYear: 1985 },
+      data: { username: parentUser, password: "correct horse battery 1", birthYear: 2012 },
     });
     await primeCsrf(kid);
     await primeCsrf(parent);
@@ -222,7 +222,7 @@ test.describe("golden paths", () => {
     await primeCsrf(t);
     const tSignup = await postJson(t, "/api/nauczyciel/signup", {
       username: teacherUser,
-      password: "correct horse battery teacher",
+      password: "correct horse battery 1",
       displayName: "Teacher Test",
       schoolName: "Playwright School",
     });
@@ -243,7 +243,7 @@ test.describe("golden paths", () => {
     expect(code, `class create body: ${JSON.stringify(createClass.body)}`).toBeTruthy();
 
     await s.request.post("/api/auth/register", {
-      data: { username: studentUser, password: "correct horse battery", birthYear: 2012, parentEmail: "p@example.com" },
+      data: { username: studentUser, password: "correct horse battery 1", birthYear: 2012, parentEmail: "p@example.com" },
     });
     await primeCsrf(s);
     const join = await postJson(s, "/api/klasa/join", { code });

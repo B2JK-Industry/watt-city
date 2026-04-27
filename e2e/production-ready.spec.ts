@@ -34,7 +34,7 @@ async function registerFresh(
   const r = await page.request.post("/api/auth/register", {
     data: {
       username,
-      password: "correct horse battery staple",
+      password: "correct horse battery 1",
       birthYear: opts.birthYear ?? 2000,
       ...(opts.parentEmail ? { parentEmail: opts.parentEmail } : {}),
     },
@@ -121,7 +121,7 @@ test.describe("user journey — state persists across reload + logout/login", ()
     expect(anonMe.authenticated).toBe(false);
 
     const login = await page.request.post("/api/auth/login", {
-      data: { username: u, password: "correct horse battery staple" },
+      data: { username: u, password: "correct horse battery 1" },
     });
     expect(login.ok(), `login: ${login.status()}`).toBeTruthy();
     await primeCsrf(page);
@@ -247,9 +247,9 @@ test.describe("db persistence — writes survive a fresh browser context", () =>
     const pageB = await ctxB.newPage();
 
     const username = `db_${randomAlphaSuffix(10)}`;
-    const password = "correct horse battery staple";
+    const password = "correct horse battery 1";
     await pageA.request.post("/api/auth/register", {
-      data: { username, password, birthYear: 2000 },
+      data: { username, password, birthYear: 2012 },
     });
     await primeCsrf(pageA);
     // xp=250 is capped by finance-quiz's xpCap=100; what matters for
@@ -289,10 +289,10 @@ test.describe("db persistence — writes survive a fresh browser context", () =>
     const kidName = `k_${randomAlphaSuffix(10)}`;
     const parentName = `p_${randomAlphaSuffix(10)}`;
     await kid.request.post("/api/auth/register", {
-      data: { username: kidName, password: "correct horse battery", birthYear: 2000 },
+      data: { username: kidName, password: "correct horse battery 1", birthYear: 2012 },
     });
     await parent.request.post("/api/auth/register", {
-      data: { username: parentName, password: "correct horse battery", birthYear: 1985 },
+      data: { username: parentName, password: "correct horse battery 1", birthYear: 2012 },
     });
     await primeCsrf(kid);
     await primeCsrf(parent);
@@ -372,7 +372,7 @@ test.describe("web3 mint — defense-in-depth gate matrix", () => {
     const reg = await page.request.post("/api/auth/register", {
       data: {
         username: u,
-        password: "correct horse battery",
+        password: "correct horse battery 1",
         birthYear: now - 10,
         parentEmail: "parent@example.com",
       },

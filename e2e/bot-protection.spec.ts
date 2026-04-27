@@ -39,8 +39,8 @@ test.describe("bot protection — /api/auth/register IP rate limit", () => {
       const r = await request.post("/api/auth/register", {
         data: {
           username: `bot_${randomAlphaSuffix(10)}`,
-          password: "correct horse battery staple",
-          birthYear: 2000,
+          password: "correct horse battery 1",
+          birthYear: 2012,
         },
         headers: { "x-forwarded-for": ip },
         failOnStatusCode: false,

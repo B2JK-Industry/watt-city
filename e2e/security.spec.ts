@@ -21,8 +21,8 @@ async function freshUser(page: Page): Promise<{ username: string }> {
   const res = await page.request.post("/api/auth/register", {
     data: {
       username,
-      password: "correct horse battery staple",
-      birthYear: 2000,
+      password: "correct horse battery 1",
+      birthYear: 2012,
     },
   });
   expect(res.ok(), `register ${username}: ${res.status()}`).toBeTruthy();
@@ -111,10 +111,10 @@ test.describe("security — IDOR: one user can't read another's private data", (
     const userB = `b_${randomAlphaSuffix(10)}`;
 
     await pageA.request.post("/api/auth/register", {
-      data: { username: userA, password: "correct horse battery", birthYear: 2000 },
+      data: { username: userA, password: "correct horse battery 1", birthYear: 2012 },
     });
     await pageB.request.post("/api/auth/register", {
-      data: { username: userB, password: "correct horse battery", birthYear: 2000 },
+      data: { username: userB, password: "correct horse battery 1", birthYear: 2012 },
     });
 
     // A tries to read B's child data. Parent dashboard reads require
@@ -198,7 +198,7 @@ test.describe("security — PII validator edge cases", () => {
     test(`register "${c.name}" → ${c.expect}`, async ({ page }) => {
       const u = c.username();
       const r = await page.request.post("/api/auth/register", {
-        data: { username: u, password: "correct horse battery", birthYear: 2000 },
+        data: { username: u, password: "correct horse battery 1", birthYear: 2012 },
         failOnStatusCode: false,
       });
       if (c.expect === "reject") {
@@ -221,7 +221,7 @@ test.describe("security — age gate", () => {
     const r = await request.post("/api/auth/register", {
       data: {
         username: `k_${randomAlphaSuffix(8)}`,
-        password: "correct horse battery",
+        password: "correct horse battery 1",
         birthYear: now - 10,
       },
       failOnStatusCode: false,
@@ -237,7 +237,7 @@ test.describe("security — age gate", () => {
     const r = await page.request.post("/api/auth/register", {
       data: {
         username,
-        password: "correct horse battery",
+        password: "correct horse battery 1",
         birthYear: now - 10,
         parentEmail: "parent@example.com",
       },
@@ -254,7 +254,7 @@ test.describe("security — age gate", () => {
     const r = await request.post("/api/auth/register", {
       data: {
         username: `f_${randomAlphaSuffix(8)}`,
-        password: "correct horse battery",
+        password: "correct horse battery 1",
         birthYear: future,
       },
       failOnStatusCode: false,
