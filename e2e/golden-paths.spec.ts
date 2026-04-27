@@ -230,6 +230,15 @@ test.describe("golden paths", () => {
       schoolName: "Playwright School",
     });
     expect(tSignup.status, `teacher signup: ${JSON.stringify(tSignup)}`).toBeLessThan(400);
+    // G-14 — new teachers default to verified=false; class POST is
+    // 403 until /verify?token=… is consumed. Tests bypass via the
+    // admin shortcut endpoint (see app/api/admin/teacher-verify).
+    const ADMIN_SECRET =
+      process.env.E2E_ADMIN_SECRET ?? "e2e-admin-secret-not-for-production";
+    await t.request.post("/api/admin/teacher-verify", {
+      headers: { authorization: `Bearer ${ADMIN_SECRET}` },
+      data: { username: teacherUser },
+    });
 
     // Class POST requires { name, grade, subject? } — see
     // app/api/nauczyciel/class/route.ts.
