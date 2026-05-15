@@ -191,11 +191,6 @@ export default async function RootLayout({
         >
           {children}
         </main>
-        {/* CashflowHud moved to per-page mount — see
-            components/cashflow-hud-mount.tsx. Lives on /miasto
-            and /loans/compare where the hourly-yield + watt-balance
-            numbers feed an active decision. Other pages use the
-            resource-bar in SiteNav for passive state. */}
         {session && <BottomTabs lang={lang} />}
         {session && (
           <>

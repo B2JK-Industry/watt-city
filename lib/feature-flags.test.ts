@@ -113,7 +113,7 @@ describe("persistence", () => {
 
   it("getFlags returns DEFAULT_FLAGS when nothing stored", async () => {
     const f = await getFlags();
-    expect(f.v2_cashflow_hud).toEqual(DEFAULT_FLAGS.v2_cashflow_hud);
+    expect(f.v2_city_level_card).toEqual(DEFAULT_FLAGS.v2_city_level_card);
   });
 
   it("setFlags persists + getFlags reads them back", async () => {
@@ -123,7 +123,7 @@ describe("persistence", () => {
     const f = await getFlags();
     expect(f.my_flag).toEqual({ mode: "percentage", value: 42 });
     // Defaults still merged in (stored overrides win).
-    expect(f.v2_cashflow_hud).toBeDefined();
+    expect(f.v2_city_level_card).toBeDefined();
   });
 
   it("isFlagEnabled hot-path end-to-end", async () => {

@@ -47,10 +47,6 @@ export const DEFAULT_FLAGS: FlagsBundle = {
   // default because the card is additive and doesn't remove V1 surface.
   v2_city_level_card: { mode: "on" },
 
-  // R2.3 cashflow HUD: global kill-switch in case a bug surfaces after
-  // rollout. "on" initially — we can flip to "off" without a deploy.
-  v2_cashflow_hud: { mode: "on" },
-
   // R3.4 post-game modal: the score endpoint returns `multBreakdown`
   // (see app/api/score/route.ts) and the RoundResult mounts the modal
   // via cleanup issue 3. D7 demo-polish ramp — flipped from 50%→on so
