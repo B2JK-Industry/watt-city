@@ -12,11 +12,11 @@ active.
 > preserved at the `xp-arena-final-v1.0` tag. Pre-merge feature branches
 > are preserved under `archive/*` tags — see "Repo history" below.
 
-## Current state (2026-04-22)
+## Current state (2026-05-15)
 
-Production on https://watt-city.vercel.app. 635 / 635 vitest across 80
-files, 14 Playwright specs (~600 E2E assertions), 81 API routes,
-76 static pages, 4 locales (423 keys each, zero drift).
+Production on https://watt-city.vercel.app. 616 / 616 vitest across
+72 files, 14 Playwright specs (~600 E2E assertions), 85 API routes,
+48 page routes, 4 locales (423 keys each, zero drift).
 
 **Shipped core loop**
 - **Hourly AI rotation**: fresh Sonnet/Haiku game every hour, single-flight
@@ -37,6 +37,12 @@ files, 14 Playwright specs (~600 E2E assertions), 81 API routes,
   50 000 W$), credit score 0–100 (+1 on-time / −5 miss / −20 default
   after 3 consecutive misses), early repayment bonus.
 - **9 evergreen minigames** + **daily AI challenge** with a top-3 Hall-of-Fame.
+- **AI mission reviewer queue** at `/admin/review` — operator UI to
+  approve / request-changes / reject every live AI mission, with a
+  permanent audit log. Aligned with the governance flow shown in the
+  PKO Internal Review deck §09. Role-gated (`role === "admin"`) for
+  UI; REST endpoint `/api/admin/review[/:id]` accepts ADMIN_SECRET
+  Bearer for scripted ops.
 - **Parent observer flow** (V4.6): parent-link bridge (invite code +
   consent), `/rodzic` dashboard, GDPR-K gating for under-16 accounts.
 - **Teacher/classroom flow**: `/nauczyciel` class dashboard, invite
@@ -239,8 +245,8 @@ rotation, language switch, mobile.
 
 ## Tests
 
-`pnpm test` runs the vitest suite (635/635 across 80 files as of
-2026-04-22 — research bucket, rotation idempotency, resource yield math,
+`pnpm test` runs the vitest suite (616/616 across 72 files as of
+2026-05-15 — research bucket, rotation idempotency, resource yield math,
 ledger dedupe, building place/upgrade/demolish, tick catch-up with 30-day
 cap, amortization formula, default after 3 misses, cron auth matrix,
 rate-limit keying, mailer fallback, awardXP lock, parent-link redeem).
